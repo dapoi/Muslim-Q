@@ -1,16 +1,44 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MuslimQ" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MuslimQ" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/green_base</item>
+        <item name="colorPrimaryVariant">@color/green_dark</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@android:color/white</item>
         <!-- Customize your theme here. -->
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:navigationBarColor" tools:targetApi="m">@color/white</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
+
+    <style name="Theme.MuslimQ.Toolbar">
+        <item name="android:textColor">@color/green_base</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="collapsedTitleStyle">
+        <item name="android:textColor">@color/green_base</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MyCollapsedTitle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/green_base</item>
+        <item name="android:fontFamily">@font/poppins_bold</item>
+        <item name="android:textSize">21sp</item>
+    </style>
+
+    <style name="expandedTitleStyle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textColor">@color/green_base</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">21sp</item>
+    </style>
+
 </resources>

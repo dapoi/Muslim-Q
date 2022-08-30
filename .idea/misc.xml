@@ -3,7 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Projek/MuslimQ/app/src/main/res/layout/activity_home.xml" value="0.17962962962962964" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/bg_gradient.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/bg_gradient_drawer.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/bg_search.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/ic_book.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/ic_motive.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/ic_muslim.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/drawable/ic_quran.xml" value="0.147" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/font/poppins.xml" value="0.23020833333333332" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/layout/activity_home.xml" value="0.22" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/layout/fragment_home.xml" value="0.22" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/layout/item_list_surah.xml" value="0.4466666666666667" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/layout/nav_header.xml" value="0.22" />
+        <entry key="..\:/Projek/MuslimQ/app/src/main/res/menu/menu_drawer.xml" value="0.16324786324786325" />
       </map>
     </option>
   </component>
