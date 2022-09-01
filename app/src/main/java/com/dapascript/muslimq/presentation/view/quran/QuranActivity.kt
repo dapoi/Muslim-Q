@@ -1,4 +1,4 @@
-package com.dapascript.muslimq.presentation.view.home
+package com.dapascript.muslimq.presentation.view.quran
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
