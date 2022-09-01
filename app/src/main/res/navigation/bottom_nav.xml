@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_nav"
+    app:startDestination="@id/quranFragment">
+
+    <fragment
+        android:id="@+id/quranFragment"
+        android:name="com.dapascript.muslimq.presentation.view.home.QuranFragment"
+        android:label="fragment_quran"
+        tools:layout="@layout/fragment_quran" />
+    <fragment
+        android:id="@+id/shalatFragment"
+        android:name="com.dapascript.muslimq.presentation.view.shalat.ShalatFragment"
+        android:label="fragment_shalat"
+        tools:layout="@layout/fragment_shalat" />
+    <fragment
+        android:id="@+id/kiblahFragment"
+        android:name="com.dapascript.muslimq.presentation.view.kiblah.KiblahFragment"
+        android:label="fragment_kiblah"
+        tools:layout="@layout/fragment_kiblah" />
+    <fragment
+        android:id="@+id/doaFragment"
+        android:name="com.dapascript.muslimq.presentation.view.doa.DoaFragment"
+        android:label="fragment_doa"
+        tools:layout="@layout/fragment_doa" />
+    <fragment
+        android:id="@+id/othersFragment"
+        android:name="com.dapascript.muslimq.presentation.view.others.OthersFragment"
+        android:label="fragment_others"
+        tools:layout="@layout/fragment_others" />
+</navigation>

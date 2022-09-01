@@ -3,10 +3,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_read">Terakhir dibaca</string>
-    <string name="kiblah">Arah Kiblat</string>
-    <string name="daily_prayer">Doa Sehari-hari</string>
-    <string name="schedule_pray">Jadwal Shalat</string>
+    <string name="kiblah">Kiblat</string>
+    <string name="daily_prayer">Doa</string>
+    <string name="schedule_pray">Shalat</string>
     <string name="other">Lainnya</string>
     <string name="about">Tentang Aplikasi</string>
     <string name="contact">Kontak</string>
+    <string name="quran">Qur\'an</string>
+    <string name="others">Lainnya</string>
+    <string name="no_internet">Sepertinya ada masalah, tarik ke bawah untuk memuat ulang</string>
 </resources>
