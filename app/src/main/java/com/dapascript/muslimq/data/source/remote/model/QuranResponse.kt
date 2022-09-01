@@ -2,7 +2,7 @@ package com.dapascript.muslimq.data.source.remote.model
 
 import com.squareup.moshi.Json
 
-data class SurahResponse(
+data class QuranResponse(
 
     @Json(name = "nomor")
     val nomor: Int,
