@@ -1,21 +1,21 @@
-package com.dapascript.muslimq.presentation.view.quran
+package com.dapascript.muslimq.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.dapascript.muslimq.R
-import com.dapascript.muslimq.databinding.ActivityQuranBinding
+import com.dapascript.muslimq.databinding.ActivityBaseBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class QuranActivity : AppCompatActivity() {
+class BaseActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityQuranBinding
+    private lateinit var binding: ActivityBaseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityQuranBinding.inflate(layoutInflater)
+        binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navHosFragment =
