@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dapascript.muslimq.data.source.local.model.QuranEntity
 import com.dapascript.muslimq.databinding.ItemListSurahBinding
@@ -24,11 +25,13 @@ class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filte
         fun onItemClick(surah: QuranEntity)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setList(list: List<QuranEntity>) {
-        surahList = list as ArrayList<QuranEntity>
-        surahListFiltered = surahList
-        notifyDataSetChanged()
+        val diffResult = DiffUtil.calculateDiff(QuranDiffCallback(surahList, list))
+        surahList.clear()
+        surahList.addAll(list)
+        surahListFiltered.clear()
+        surahListFiltered.addAll(list)
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = surahListFiltered.size
@@ -65,6 +68,21 @@ class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filte
                 }
             }
         }
+    }
+
+    inner class QuranDiffCallback(
+        private val oldList: List<QuranEntity>,
+        private val newList: List<QuranEntity>
+    ) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldList[oldItemPosition].nomor == newList[newItemPosition].nomor
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+            oldList[oldItemPosition] == newList[newItemPosition]
     }
 
     @Suppress("UNCHECKED_CAST")
