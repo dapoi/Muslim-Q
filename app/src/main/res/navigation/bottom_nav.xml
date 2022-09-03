@@ -9,7 +9,11 @@
         android:id="@+id/quranFragment"
         android:name="com.dapascript.muslimq.presentation.view.quran.QuranFragment"
         android:label="fragment_quran"
-        tools:layout="@layout/fragment_quran" />
+        tools:layout="@layout/fragment_quran" >
+        <action
+            android:id="@+id/action_quranFragment_to_quranDetailFragment"
+            app:destination="@id/quranDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/shalatFragment"
         android:name="com.dapascript.muslimq.presentation.view.shalat.ShalatFragment"
@@ -30,4 +34,13 @@
         android:name="com.dapascript.muslimq.presentation.view.others.OthersFragment"
         android:label="fragment_others"
         tools:layout="@layout/fragment_others" />
+    <fragment
+        android:id="@+id/quranDetailFragment"
+        android:name="com.dapascript.muslimq.presentation.view.detail.QuranDetailFragment"
+        android:label="fragment_quran_detail"
+        tools:layout="@layout/fragment_quran_detail" >
+        <action
+            android:id="@+id/action_quranDetailFragment_to_quranFragment"
+            app:destination="@id/quranFragment" />
+    </fragment>
 </navigation>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_child"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_circle"
+            app:layout_constraintStart_toEndOf="@id/v_accent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_ayah_number"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_circle"
+                android:gravity="center"
+                android:paddingHorizontal="6dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="2" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_ayah_arabic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:fontFamily="@font/amiri_bold"
+            android:lineSpacingExtra="30dp"
+            android:letterSpacing="0.1"
+            android:textColor="@color/green_base"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/cl_child"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ" />
+
+        <TextView
+            android:id="@+id/tv_ayah_latin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/tv_ayah_arabic"
+            app:layout_constraintStart_toStartOf="@id/cl_child"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_arabic"
+            tools:text="al-ḥamdu lillāhi rabbil-‘ālamīn(a)" />
+
+        <TextView
+            android:id="@+id/tv_ayah_meaning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_ayah_latin"
+            app:layout_constraintStart_toStartOf="@+id/tv_ayah_latin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin"
+            tools:text="Segala puji bagi Allah, Tuhan seluruh alam" />
+
+        <View
+            android:id="@+id/v_accent"
+            android:layout_width="5dp"
+            android:layout_height="0dp"
+            android:background="@color/green_base"
+            app:layout_constraintBottom_toBottomOf="@id/tv_ayah_meaning"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

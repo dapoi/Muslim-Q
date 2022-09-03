@@ -1,6 +1,7 @@
 package com.dapascript.muslimq.presentation
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -22,5 +23,14 @@ class BaseActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHosFragment.navController
         binding.bottomNav.setupWithNavController(navController)
+    }
+
+
+    fun showBottomNavigation() {
+        binding.bottomNav.visibility = View.VISIBLE
+    }
+
+    fun hideBottomNavigation() {
+        binding.bottomNav.visibility = View.GONE
     }
 }

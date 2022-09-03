@@ -1,5 +1,6 @@
 package com.dapascript.muslimq.presentation.view.quran
 
+import android.annotation.SuppressLint
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
@@ -13,8 +14,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dapascript.muslimq.R
 import com.dapascript.muslimq.data.source.local.model.QuranEntity
 import com.dapascript.muslimq.databinding.FragmentQuranBinding
 import com.dapascript.muslimq.presentation.adapter.QuranAdapter
@@ -54,6 +57,14 @@ class QuranFragment : Fragment() {
 
             quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
                 override fun onItemClick(surah: QuranEntity) {
+                    findNavController().navigate(
+                        R.id.action_quranFragment_to_quranDetailFragment,
+                        Bundle().apply {
+                            putInt("surahNumber", surah.nomor)
+                            putString("surahName", surah.namaLatin)
+                            putString("surahDesc", surah.deskripsi)
+                        }
+                    )
                     hideKeyboard(requireActivity())
                     deleteLastReadSurah(requireActivity())
                     saveLastReadSurah(requireActivity(), surah)
@@ -136,21 +147,27 @@ class QuranFragment : Fragment() {
                 }
             }
 
-            if (it is Resource.Loading && it.data.isNullOrEmpty()) {
-                stateLoading(true)
-            } else if (it is Resource.Error && it.data.isNullOrEmpty()) {
-                stateLoading(false)
-                binding.clNoInternet.visibility = View.VISIBLE
-                Log.e("TAG", it.error?.localizedMessage.toString())
-            } else {
-                stateLoading(false)
-                quranAdapter.setList(it.data!!)
+            when {
+                it is Resource.Loading && it.data.isNullOrEmpty() -> {
+                    stateLoading(true)
+                }
+                it is Resource.Error && it.data.isNullOrEmpty() -> {
+                    stateLoading(false)
+                    binding.clNoInternet.visibility = View.VISIBLE
+                    Log.e("TAG", it.error?.localizedMessage.toString())
+                }
+                else -> {
+                    stateLoading(false)
+                    quranAdapter.setList(it.data!!)
+                }
             }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         quranAdapter = QuranAdapter()
+        quranAdapter.notifyDataSetChanged()
         binding.rvSurah.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = quranAdapter

@@ -13,5 +13,5 @@ import javax.inject.Inject
 class QuranViewModel @Inject constructor(
     repositoryImpl: QuranRepositoryImpl
 ) : ViewModel() {
-    val getSurah: LiveData<Resource<List<QuranEntity>>> = repositoryImpl.getSurah().asLiveData()
+    val getSurah: LiveData<Resource<List<QuranEntity>>> = repositoryImpl.getQuran().asLiveData()
 }

@@ -6,5 +6,6 @@ import javax.inject.Singleton
 
 @Singleton
 class RemoteDataSource @Inject constructor(private val quranApi: QuranApi) {
-    suspend fun getQuran() = quranApi.getSurah()
+    suspend fun getQuran() = quranApi.getQuran()
+    suspend fun getQuranDetail(id: Int) = quranApi.getQuranDetail(id)
 }

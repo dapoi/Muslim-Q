@@ -1,6 +1,8 @@
 package com.dapascript.muslimq.data.repository
 
 import com.dapascript.muslimq.data.source.local.LocalDataSource
+import com.dapascript.muslimq.data.source.local.model.Ayat
+import com.dapascript.muslimq.data.source.local.model.QuranDetailEntity
 import com.dapascript.muslimq.data.source.local.model.QuranEntity
 import com.dapascript.muslimq.data.source.remote.RemoteDataSource
 import com.dapascript.muslimq.utils.Resource
@@ -16,7 +18,7 @@ class QuranRepositoryImpl @Inject constructor(
     private val localDataSource: LocalDataSource
 ) : QuranRepository {
 
-    override fun getSurah(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
+    override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
         query = {
             localDataSource.getQuran()
         },
@@ -43,4 +45,37 @@ class QuranRepositoryImpl @Inject constructor(
             localDataSource.insertQuran(local)
         }
     )
+
+    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> =
+        networkBoundResource(
+            query = {
+                localDataSource.getQuranDetail(id)
+            },
+            fetch = {
+                delay(2000)
+                remoteDataSource.getQuranDetail(id)
+            },
+            saveFetchResult = { quran ->
+                val local = QuranDetailEntity(
+                    quran.nomor,
+                    id,
+                    quran.nama,
+                    quran.nama_latin,
+                    quran.jumlah_ayat,
+                    quran.tempat_turun,
+                    quran.arti,
+                    quran.deskripsi,
+                    quran.audio,
+                    quran.ayat.map { ayat ->
+                        Ayat(
+                            ayat.nomor,
+                            ayat.ar,
+                            ayat.tr,
+                            ayat.idn
+                        )
+                    }
+                )
+                localDataSource.insertQuranDetail(local)
+            }
+        )
 }
