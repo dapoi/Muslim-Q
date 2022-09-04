@@ -9,7 +9,7 @@ android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.dapascript.muslimq"
+        applicationId "com.prodev.muslimq"
         minSdk 22
         targetSdk 32
         versionCode 1

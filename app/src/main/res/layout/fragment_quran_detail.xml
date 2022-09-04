@@ -39,9 +39,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginTop="60dp"
+                    android:visibility="gone"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_gradient_round"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -191,15 +191,6 @@
                     android:layout_gravity="end"
                     android:layout_marginStart="20dp"
                     android:src="@drawable/ic_font_size"
-                    app:tint="@color/black"
-                    tools:ignore="ContentDescription" />
-
-                <ImageView
-                    android:id="@+id/iv_audio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:src="@drawable/ic_play"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
 
