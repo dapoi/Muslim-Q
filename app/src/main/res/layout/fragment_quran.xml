@@ -54,7 +54,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_surah"
                     android:layout_width="match_parent"
-                    android:layout_height="131dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginHorizontal="24dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_gradient_round"
@@ -88,12 +88,13 @@
 
                     <TextView
                         android:id="@+id/tv_surah_name"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:fontFamily="@font/poppins_semibold"
                         android:textColor="@color/white"
                         android:textSize="18sp"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
                         app:layout_constraintStart_toStartOf="@+id/iv_last_read"
                         app:layout_constraintTop_toBottomOf="@+id/tv_last_read"
                         tools:text="Al-Fatihah" />

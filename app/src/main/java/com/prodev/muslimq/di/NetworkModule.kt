@@ -1,6 +1,7 @@
 package com.prodev.muslimq.di
 
 import com.prodev.muslimq.data.source.remote.network.QuranApi
+import com.prodev.muslimq.data.source.remote.network.ShalatApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +17,11 @@ object NetworkModule {
     @Provides
     fun provideQuranApi(@Quran retrofit: Retrofit): QuranApi {
         return retrofit.create(QuranApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideShalatApi(@Shalat retrofit: Retrofit): ShalatApi {
+        return retrofit.create(ShalatApi::class.java)
     }
 }

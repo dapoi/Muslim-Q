@@ -18,7 +18,11 @@
         android:id="@+id/shalatFragment"
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatFragment"
         android:label="fragment_shalat"
-        tools:layout="@layout/fragment_shalat" />
+        tools:layout="@layout/fragment_shalat" >
+        <action
+            android:id="@+id/action_shalatFragment_to_shalatCityFragment"
+            app:destination="@id/shalatCityFragment" />
+    </fragment>
     <fragment
         android:id="@+id/kiblahFragment"
         android:name="com.prodev.muslimq.presentation.view.kiblah.KiblahFragment"
@@ -38,9 +42,10 @@
         android:id="@+id/quranDetailFragment"
         android:name="com.prodev.muslimq.presentation.view.detail.QuranDetailFragment"
         android:label="fragment_quran_detail"
-        tools:layout="@layout/fragment_quran_detail" >
-        <action
-            android:id="@+id/action_quranDetailFragment_to_quranFragment"
-            app:destination="@id/quranFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_quran_detail" />
+    <fragment
+        android:id="@+id/shalatCityFragment"
+        android:name="com.prodev.muslimq.presentation.view.shalat.ShalatCityFragment"
+        android:label="fragment_shalat_city"
+        tools:layout="@layout/fragment_shalat_city" />
 </navigation>

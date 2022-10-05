@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.prodev.muslimq.data.source.local.database.QuranDao
 import com.prodev.muslimq.data.source.local.database.QuranDatabase
+import com.prodev.muslimq.data.source.local.database.ShalatDao
+import com.prodev.muslimq.data.source.local.database.ShalatDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,10 +19,19 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun getInstance(@ApplicationContext context: Context): QuranDatabase = Room.databaseBuilder(
+    fun getQuranDB(@ApplicationContext context: Context): QuranDatabase = Room.databaseBuilder(
         context, QuranDatabase::class.java, "quran.db"
+    ).build()
+
+    @Singleton
+    @Provides
+    fun getShalatDB(@ApplicationContext context: Context): ShalatDatabase = Room.databaseBuilder(
+        context, ShalatDatabase::class.java, "shalat.db"
     ).build()
 
     @Provides
     fun getQuranDao(database: QuranDatabase): QuranDao = database.quranDao()
+
+    @Provides
+    fun getShalatDao(database: ShalatDatabase): ShalatDao = database.shalatDao()
 }

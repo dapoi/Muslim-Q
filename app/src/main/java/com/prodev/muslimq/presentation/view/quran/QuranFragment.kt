@@ -46,35 +46,41 @@ class QuranFragment : Fragment() {
             binding
         } else {
             binding = FragmentQuranBinding.inflate(inflater, container, false)
-            binding.apply {
-                fabBackToTop.setOnClickListener {
-                    rvSurah.smoothScrollToPosition(0)
-                }
-            }
 
             setAdapter()
             setViewModel()
+        }
+        return binding.root
+    }
 
-            quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
-                override fun onItemClick(surah: QuranEntity) {
-                    findNavController().navigate(
-                        R.id.action_quranFragment_to_quranDetailFragment,
-                        Bundle().apply {
-                            putInt("surahNumber", surah.nomor)
-                            putString("surahName", surah.namaLatin)
-                            putString("surahDesc", surah.deskripsi)
-                        }
-                    )
-                    hideKeyboard(requireActivity())
-                    deleteLastReadSurah(requireActivity())
-                    saveLastReadSurah(requireActivity(), surah)
-                    getLastReadSurah(requireActivity())
-                }
-            })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            getLastReadSurah(requireActivity())
+        quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
+            override fun onItemClick(surah: QuranEntity) {
+                findNavController().navigate(
+                    R.id.action_quranFragment_to_quranDetailFragment,
+                    Bundle().apply {
+                        putInt("surahNumber", surah.nomor)
+                        putString("surahName", surah.namaLatin)
+                        putString("surahDesc", surah.deskripsi)
+                    }
+                )
+                hideKeyboard(requireActivity())
+                deleteLastReadSurah(requireActivity())
+                saveLastReadSurah(requireActivity(), surah)
+                getLastReadSurah(requireActivity())
+            }
+        })
 
-            binding.svSurah.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        getLastReadSurah(requireActivity())
+
+        binding.apply {
+            fabBackToTop.setOnClickListener {
+                rvSurah.smoothScrollToPosition(0)
+            }
+
+            svSurah.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     hideKeyboard(requireActivity())
                     return false
@@ -86,7 +92,6 @@ class QuranFragment : Fragment() {
                 }
             })
         }
-        return binding.root
     }
 
     private fun deleteLastReadSurah(requireActivity: FragmentActivity) {
@@ -105,12 +110,21 @@ class QuranFragment : Fragment() {
         editor.apply()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getLastReadSurah(requireActivity: FragmentActivity) {
         val sharedPref = requireActivity.getSharedPreferences("Quran", MODE_PRIVATE)
         val name = sharedPref.getString("name", "")
         val meaning = sharedPref.getString("meaning", "")
-        binding.tvSurahName.text = name
-        binding.tvSurahMeaning.text = meaning
+        binding.apply {
+            if (name.isNullOrEmpty() && meaning.isNullOrEmpty()) {
+                tvSurahName.text = "Belum ada surah yang dibaca"
+                tvSurahMeaning.visibility = View.GONE
+            } else {
+                tvSurahName.text = name
+                tvSurahMeaning.text = meaning
+                tvSurahMeaning.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun setViewModel() {

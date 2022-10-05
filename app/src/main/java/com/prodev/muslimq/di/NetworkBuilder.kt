@@ -30,26 +30,27 @@ object NetworkBuilder {
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
         .addInterceptor(
-            ChuckerInterceptor.Builder(context)
-                .collector(ChuckerCollector(context))
-                .maxContentLength(250000L)
-                .redactHeaders(emptySet())
-                .alwaysReadResponseBody(false)
+            ChuckerInterceptor.Builder(context).collector(ChuckerCollector(context))
+                .maxContentLength(250000L).redactHeaders(emptySet()).alwaysReadResponseBody(false)
                 .build()
-        )
-        .connectTimeout(120, TimeUnit.SECONDS)
-        .readTimeout(120, TimeUnit.SECONDS)
-        .build()
+        ).connectTimeout(120, TimeUnit.SECONDS).readTimeout(120, TimeUnit.SECONDS).build()
 
     @Singleton
     @Provides
     @Quran
     fun provideQuranApi(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl("https://equran.id/api/")
-        .addConverterFactory(MoshiConverterFactory.create())
-        .client(provideOkHttpClient(context))
+    ): Retrofit = Retrofit.Builder().baseUrl("https://equran.id/api/")
+        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
+        .build()
+
+    @Singleton
+    @Provides
+    @Shalat
+    fun provideShalatApi(
+        @ApplicationContext context: Context,
+    ): Retrofit = Retrofit.Builder().baseUrl("https://api.myquran.com/v1/")
+        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
         .build()
 
 }
