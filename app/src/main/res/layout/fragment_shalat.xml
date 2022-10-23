@@ -12,7 +12,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/icon_loc"
         android:src="@drawable/ic_location"
         app:layout_constraintStart_toStartOf="parent"
@@ -99,7 +99,6 @@
             android:layout_marginEnd="-40dp"
             android:alpha="0.27"
             android:contentDescription="@string/icon_mosque"
-
             android:src="@drawable/ic_mosque"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -174,17 +173,13 @@
         android:id="@+id/srl_shalat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cl_info_shalat"
-        tools:layout_editor_absoluteX="20dp">
+        app:layout_constraintTop_toBottomOf="@+id/cl_info_shalat">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_shalat"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:overScrollMode="never"
-            tools:listitem="@layout/item_list_shalat" />
+        <include
+            android:id="@+id/shalat_layout"
+            layout="@layout/item_shalat"
+            android:visibility="gone" />
 
     </com.simform.refresh.SSPullToRefreshLayout>
 
@@ -192,7 +187,6 @@
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="24dp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/cl_info_shalat">
 
@@ -201,15 +195,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/item_list_shalat_placeholder" />
+            <include layout="@layout/item_shalat_placeholder" />
 
-            <include layout="@layout/item_list_shalat_placeholder" />
-
-            <include layout="@layout/item_list_shalat_placeholder" />
-
-            <include layout="@layout/item_list_shalat_placeholder" />
-
-            <include layout="@layout/item_list_shalat_placeholder" />
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>

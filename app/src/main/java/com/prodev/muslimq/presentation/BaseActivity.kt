@@ -23,15 +23,23 @@ class BaseActivity : AppCompatActivity() {
         val navHosFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHosFragment.navController
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            binding.bottomNav.visibility = when (destination.id) {
+                R.id.quranDetailFragment -> View.GONE
+                R.id.shalatProvinceFragment -> View.GONE
+                R.id.shalatCityFragment -> View.GONE
+                else -> View.VISIBLE
+            }
+        }
         binding.bottomNav.setupWithNavController(navController)
     }
 
 
-    fun showBottomNavigation() {
-        binding.bottomNav.visibility = View.VISIBLE
-    }
-
-    fun hideBottomNavigation() {
-        binding.bottomNav.visibility = View.GONE
-    }
+//    fun showBottomNavigation() {
+//        binding.bottomNav.visibility = View.VISIBLE
+//    }
+//
+//    fun hideBottomNavigation() {
+//        binding.bottomNav.visibility = View.GONE
+//    }
 }

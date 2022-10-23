@@ -8,4 +8,8 @@ annotation class Quran
 
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
+annotation class Area
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
 annotation class Shalat

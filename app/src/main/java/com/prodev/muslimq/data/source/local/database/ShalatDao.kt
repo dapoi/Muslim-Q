@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface ShalatDao {
 
     @Query("SELECT * FROM shalat WHERE id = :id")
-    fun getShalatDailyByCity(id: Int): Flow<List<ShalatEntity>>
+    fun getShalatDailyByCity(id: Int): Flow<ShalatEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertShalat(shalat: List<ShalatEntity>)
+    suspend fun insertShalat(shalat: ShalatEntity)
 
     @Query("DELETE FROM shalat")
     suspend fun deleteShalat()

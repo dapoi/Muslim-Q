@@ -5,24 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".presentation.view.shalat.ShalatCityFragment">
+    tools:context=".presentation.view.shalat.ShalatProvinceFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@null"
-        app:layout_constraintEnd_toStartOf="@+id/sv_city"
+        app:layout_constraintEnd_toStartOf="@+id/sv_province"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_back">
 
         <TextView
-            android:id="@+id/tv_title_city"
+            android:id="@+id/tv_title_province"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:text="@string/city_choose"
+            android:text="@string/province_choose"
             android:textColor="@color/green_base"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -30,12 +30,12 @@
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.appcompat.widget.SearchView
-        android:id="@+id/sv_city"
+        android:id="@+id/sv_province"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:inputType="text"
-        app:layout_constraintBottom_toTopOf="@+id/srl_city"
+        app:layout_constraintBottom_toTopOf="@+id/srl_province"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="Cari kota/daerah"
@@ -43,7 +43,7 @@
         tools:ignore="ContentDescription" />
 
     <com.simform.refresh.SSPullToRefreshLayout
-        android:id="@+id/srl_city"
+        android:id="@+id/srl_province"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
@@ -53,7 +53,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_city"
+            android:id="@+id/rv_province"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipToPadding="true"
@@ -72,19 +72,15 @@
         android:clipToPadding="true"
         android:paddingTop="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/srl_city"
-        app:layout_constraintEnd_toEndOf="@+id/srl_city"
-        app:layout_constraintStart_toStartOf="@+id/srl_city"
-        app:layout_constraintTop_toTopOf="@+id/srl_city">
+        app:layout_constraintBottom_toBottomOf="@+id/srl_province"
+        app:layout_constraintEnd_toEndOf="@+id/srl_province"
+        app:layout_constraintStart_toStartOf="@+id/srl_province"
+        app:layout_constraintTop_toTopOf="@+id/srl_province">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
-            <include layout="@layout/item_list_area_placeholder" />
-
-            <include layout="@layout/item_list_area_placeholder" />
 
             <include layout="@layout/item_list_area_placeholder" />
 
@@ -119,7 +115,7 @@
         android:layout_marginBottom="?attr/actionBarSize"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/srl_city">
+        app:layout_constraintTop_toTopOf="@+id/srl_province">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_empty"
@@ -156,7 +152,7 @@
         android:layout_marginBottom="?attr/actionBarSize"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/srl_city">
+        app:layout_constraintTop_toTopOf="@+id/srl_province">
 
         <ImageView
             android:id="@+id/iv_empty"

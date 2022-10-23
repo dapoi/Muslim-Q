@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/iv_shubuh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/light_gray"
+        android:contentDescription="@string/shubuh"
+        android:src="@drawable/ic_shalat_shubuh"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/light_gray" />
+
+    <TextView
+        android:id="@+id/tv_shubuh"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_shubuh"
+        app:layout_constraintStart_toEndOf="@id/iv_shubuh"
+        app:layout_constraintTop_toTopOf="@id/iv_shubuh" />
+
+    <TextView
+        android:id="@+id/tv_shubuh_time"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_shubuh"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_shubuh" />
+
+    <ImageView
+        android:id="@+id/iv_dzuhur"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:contentDescription="@string/dzuhur"
+        android:src="@drawable/ic_shalat_dzuhur"
+        app:layout_constraintStart_toStartOf="@id/iv_shubuh"
+        app:layout_constraintTop_toBottomOf="@id/iv_shubuh"
+        app:tint="@color/light_gray" />
+
+    <TextView
+        android:id="@+id/tv_dzuhur"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_dzuhur"
+        app:layout_constraintStart_toEndOf="@id/iv_dzuhur"
+        app:layout_constraintTop_toTopOf="@id/iv_dzuhur" />
+
+    <TextView
+        android:id="@+id/tv_dzuhur_time"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_dzuhur"
+        app:layout_constraintEnd_toEndOf="@id/tv_shubuh_time"
+        app:layout_constraintTop_toTopOf="@id/tv_dzuhur" />
+
+    <ImageView
+        android:id="@+id/iv_ashar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:contentDescription="@string/ashar"
+        android:src="@drawable/ic_shalat_ashar"
+        app:layout_constraintStart_toStartOf="@id/iv_dzuhur"
+        app:layout_constraintTop_toBottomOf="@id/iv_dzuhur"
+        app:tint="@color/light_gray" />
+
+    <TextView
+        android:id="@+id/tv_ashar"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_ashar"
+        app:layout_constraintStart_toEndOf="@id/iv_ashar"
+        app:layout_constraintTop_toTopOf="@id/iv_ashar" />
+
+    <TextView
+        android:id="@+id/tv_ashar_time"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_ashar"
+        app:layout_constraintEnd_toEndOf="@id/tv_dzuhur_time"
+        app:layout_constraintTop_toTopOf="@id/tv_ashar" />
+
+    <ImageView
+        android:id="@+id/iv_maghrib"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:contentDescription="@string/maghrib"
+        android:src="@drawable/ic_shalat_maghrib"
+        app:layout_constraintStart_toStartOf="@id/iv_ashar"
+        app:layout_constraintTop_toBottomOf="@id/iv_ashar"
+        app:tint="@color/light_gray" />
+
+    <TextView
+        android:id="@+id/tv_maghrib"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingTop="2dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_maghrib"
+        app:layout_constraintStart_toEndOf="@id/iv_maghrib"
+        app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
+
+    <TextView
+        android:id="@+id/tv_maghrib_time"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_maghrib"
+        app:layout_constraintEnd_toEndOf="@id/tv_ashar_time"
+        app:layout_constraintTop_toTopOf="@id/tv_maghrib" />
+
+    <ImageView
+        android:id="@+id/iv_isya"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:background="@color/light_gray"
+        android:contentDescription="@string/isya"
+        android:src="@drawable/ic_shalat_isya"
+        app:layout_constraintStart_toStartOf="@id/iv_maghrib"
+        app:layout_constraintTop_toBottomOf="@id/iv_maghrib"
+        app:tint="@color/light_gray" />
+
+    <TextView
+        android:id="@+id/tv_isya"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:paddingTop="2dp"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_isya"
+        app:layout_constraintStart_toEndOf="@id/iv_isya"
+        app:layout_constraintTop_toTopOf="@id/iv_isya" />
+
+    <TextView
+        android:id="@+id/tv_isya_time"
+        android:layout_width="50dp"
+        android:layout_height="0dp"
+        android:background="@color/light_gray"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/gray"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_isya"
+        app:layout_constraintEnd_toEndOf="@id/tv_maghrib_time"
+        app:layout_constraintTop_toTopOf="@id/tv_isya" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

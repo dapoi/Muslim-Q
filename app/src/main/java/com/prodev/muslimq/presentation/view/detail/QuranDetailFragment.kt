@@ -17,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
-import com.prodev.muslimq.presentation.BaseActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.viewmodel.QuranDetailViewModel
 import com.prodev.muslimq.utils.Resource
@@ -230,16 +229,6 @@ class QuranDetailFragment : Fragment() {
                 apply()
             }
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (activity as BaseActivity).hideBottomNavigation()
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        (activity as BaseActivity).showBottomNavigation()
     }
 
     override fun onDestroyView() {

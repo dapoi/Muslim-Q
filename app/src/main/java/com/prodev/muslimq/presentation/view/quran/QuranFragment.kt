@@ -1,7 +1,6 @@
 package com.prodev.muslimq.presentation.view.quran
 
 import android.annotation.SuppressLint
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,10 +9,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +21,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.FragmentQuranBinding
 import com.prodev.muslimq.presentation.adapter.QuranAdapter
+import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.prodev.muslimq.utils.InternetReceiver
 import com.prodev.muslimq.utils.Resource
@@ -28,6 +29,7 @@ import com.prodev.muslimq.utils.hideKeyboard
 import com.prodev.muslimq.utils.isOnline
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuranFragment : Fragment() {
@@ -36,11 +38,10 @@ class QuranFragment : Fragment() {
     private lateinit var quranAdapter: QuranAdapter
 
     private val quranViewModel: QuranViewModel by viewModels()
+    private val dataStorePreference: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         if (this::binding.isInitialized) {
             binding
@@ -64,18 +65,23 @@ class QuranFragment : Fragment() {
                         putInt("surahNumber", surah.nomor)
                         putString("surahName", surah.namaLatin)
                         putString("surahDesc", surah.deskripsi)
-                    }
-                )
+                    })
                 hideKeyboard(requireActivity())
-                deleteLastReadSurah(requireActivity())
-                saveLastReadSurah(requireActivity(), surah)
-                getLastReadSurah(requireActivity())
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    dataStorePreference.saveSurah(surah.namaLatin, surah.arti)
+                }
+
+                binding.apply {
+                    getLastReadSurah(tvSurahName, tvSurahMeaning)
+                }
             }
         })
 
-        getLastReadSurah(requireActivity())
 
         binding.apply {
+            getLastReadSurah(tvSurahName, tvSurahMeaning)
+
             fabBackToTop.setOnClickListener {
                 rvSurah.smoothScrollToPosition(0)
             }
@@ -94,35 +100,16 @@ class QuranFragment : Fragment() {
         }
     }
 
-    private fun deleteLastReadSurah(requireActivity: FragmentActivity) {
-        val sharedPref = requireActivity.getSharedPreferences("Quran", MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.remove("name")
-        editor.remove("meaning")
-        editor.apply()
-    }
+    private fun getLastReadSurah(tvSurahName: TextView, tvSurahMeaning: TextView) {
+        dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
+            if (data.first != "" || data.second != "") {
+                tvSurahName.text = data.first
 
-    private fun saveLastReadSurah(requireActivity: FragmentActivity, data: QuranEntity) {
-        val sharedPref = requireActivity.getSharedPreferences("Quran", MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        editor.putString("name", data.namaLatin)
-        editor.putString("meaning", data.arti)
-        editor.apply()
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun getLastReadSurah(requireActivity: FragmentActivity) {
-        val sharedPref = requireActivity.getSharedPreferences("Quran", MODE_PRIVATE)
-        val name = sharedPref.getString("name", "")
-        val meaning = sharedPref.getString("meaning", "")
-        binding.apply {
-            if (name.isNullOrEmpty() && meaning.isNullOrEmpty()) {
-                tvSurahName.text = "Belum ada surah yang dibaca"
-                tvSurahMeaning.visibility = View.GONE
-            } else {
-                tvSurahName.text = name
-                tvSurahMeaning.text = meaning
                 tvSurahMeaning.visibility = View.VISIBLE
+                tvSurahMeaning.text = data.second
+            } else {
+                tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
+                tvSurahMeaning.visibility = View.GONE
             }
         }
     }
@@ -168,7 +155,7 @@ class QuranFragment : Fragment() {
                 it is Resource.Error && it.data.isNullOrEmpty() -> {
                     stateLoading(false)
                     binding.clNoInternet.visibility = View.VISIBLE
-                    Log.e("TAG", it.error?.localizedMessage.toString())
+                    Log.e("Quran Fragment", it.error?.localizedMessage.toString())
                 }
                 else -> {
                     stateLoading(false)

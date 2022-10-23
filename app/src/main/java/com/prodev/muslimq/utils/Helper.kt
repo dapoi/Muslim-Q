@@ -8,6 +8,20 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.inputmethod.InputMethodManager
+import java.util.*
+
+fun capitalizeEachWord(str: String): String {
+    val words = str.split(" ")
+    val capitalizeWordList: ArrayList<String> = ArrayList()
+    for (word in words) {
+        val first = word.substring(0, 1)
+        val afterFirst = word.substring(1)
+        capitalizeWordList.add(
+            first.uppercase(Locale.getDefault()) + afterFirst.lowercase(Locale.getDefault())
+        )
+    }
+    return capitalizeWordList.joinToString(" ")
+}
 
 fun hideKeyboard(activity: Activity) {
     val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

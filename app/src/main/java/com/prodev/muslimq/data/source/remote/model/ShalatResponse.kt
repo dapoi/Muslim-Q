@@ -4,11 +4,14 @@ import com.squareup.moshi.Json
 
 data class ShalatResponse(
 
-	@Json(name="data")
-	val data: Data,
+	@Json(name="code")
+	val code: Int,
 
 	@Json(name="status")
-	val status: Boolean
+	val status: String,
+
+	@Json(name="data")
+	val data: Data,
 )
 
 data class Koordinat(

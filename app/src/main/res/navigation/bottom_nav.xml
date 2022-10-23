@@ -20,8 +20,8 @@
         android:label="fragment_shalat"
         tools:layout="@layout/fragment_shalat" >
         <action
-            android:id="@+id/action_shalatFragment_to_shalatCityFragment"
-            app:destination="@id/shalatCityFragment" />
+            android:id="@+id/action_shalatFragment_to_shalatProvinceFragment"
+            app:destination="@id/shalatProvinceFragment" />
     </fragment>
     <fragment
         android:id="@+id/kiblahFragment"
@@ -48,4 +48,13 @@
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatCityFragment"
         android:label="fragment_shalat_city"
         tools:layout="@layout/fragment_shalat_city" />
+    <fragment
+        android:id="@+id/shalatProvinceFragment"
+        android:name="com.prodev.muslimq.presentation.view.shalat.ShalatProvinceFragment"
+        android:label="fragment_shalat_province"
+        tools:layout="@layout/fragment_shalat_province" >
+        <action
+            android:id="@+id/action_shalatProvinceFragment_to_shalatCityFragment"
+            app:destination="@id/shalatCityFragment" />
+    </fragment>
 </navigation>

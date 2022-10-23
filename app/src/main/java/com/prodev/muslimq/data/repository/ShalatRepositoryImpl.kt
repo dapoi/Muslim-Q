@@ -1,51 +1,38 @@
 package com.prodev.muslimq.data.repository
 
-import com.prodev.muslimq.data.source.local.LocalDataSource
-import com.prodev.muslimq.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.data.source.remote.model.CityResponse
+import com.prodev.muslimq.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.utils.Resource
-import com.prodev.muslimq.utils.networkBoundResource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShalatRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource
+    private val remoteDataSource: RemoteDataSource
 ) : ShalatRepository {
 
-    override suspend fun getAllCity(): Flow<Resource<List<CityResponse>>> {
-        return remoteDataSource.getAllCity()
-    }
-
-    override fun getShalatDailyByCity(
-        id: Int, year: Int, month: Int, day: Int
-    ): Flow<Resource<List<ShalatEntity>>> = networkBoundResource(
-        query = {
-            localDataSource.getShalatDailyByCity(id)
-        },
-        fetch = {
-            remoteDataSource.getShalatDailyByCity(id, year, month, day)
-        },
-        saveFetchResult = { shalat ->
-            val local = ArrayList<ShalatEntity>()
-            val cityId = shalat.data.id
-            shalat.data.jadwal.let {
-                local.add(
-                    ShalatEntity(
-                        id = cityId.toInt(),
-                        imsak = it.imsak,
-                        subuh = it.subuh,
-                        dzuhur = it.dzuhur,
-                        ashar = it.ashar,
-                        maghrib = it.maghrib,
-                        isya = it.isya,
-                    )
-                )
-            }
-            localDataSource.deleteShalatDaily()
-            localDataSource.insertShalatDaily(local)
+    override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = remoteDataSource.getAllProvince()
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e))
         }
-    )
+    }.flowOn(Dispatchers.IO)
+
+    override fun getAllCity(id: String): Flow<Resource<List<CityResponse>>> = flow {
+        emit(Resource.Loading())
+        try {
+            val response = remoteDataSource.getAllCity(id)
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e))
+        }
+    }.flowOn(Dispatchers.IO)
 }

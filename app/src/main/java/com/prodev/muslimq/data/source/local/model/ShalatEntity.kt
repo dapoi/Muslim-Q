@@ -6,8 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "shalat")
 data class ShalatEntity(
 
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val imsak: String,
+    @PrimaryKey val id: String,
     val subuh: String,
     val dzuhur: String,
     val ashar: String,

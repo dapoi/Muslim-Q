@@ -46,10 +46,19 @@ object NetworkBuilder {
 
     @Singleton
     @Provides
+    @Area
+    fun provideArea(
+        @ApplicationContext context: Context,
+    ): Retrofit = Retrofit.Builder().baseUrl("https://emsifa.github.io/api-wilayah-indonesia/api/")
+        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
+        .build()
+
+    @Singleton
+    @Provides
     @Shalat
     fun provideShalatApi(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://api.myquran.com/v1/")
+    ): Retrofit = Retrofit.Builder().baseUrl("http://api.aladhan.com/v1/")
         .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
         .build()
 

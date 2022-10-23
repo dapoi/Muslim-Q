@@ -16,7 +16,14 @@
     <string name="icon_loc">ikon lokasi</string>
     <string name="icon_mosque">ikon masjid</string>
     <string name="next_prayer">Waktu Shalat Berikutnya</string>
-    <string name="city_choose">Pilih Lokasi</string>
+    <string name="province_choose">Pilih provinsi</string>
+    <string name="city_choose">Pilih kota di %s</string>
     <string name="choose_your_location">Pilih Lokasi Anda</string>
     <string name="location_not_found">Lokasi tidak ditemukan, cari lokasi lain</string>
+    <string name="last_read_surah_empty">"Belum ada surah yang dibaca"</string>
+    <string name="shubuh">Shubuh</string>
+    <string name="dzuhur">Dzuhur</string>
+    <string name="ashar">Ashar</string>
+    <string name="maghrib">Maghrib</string>
+    <string name="isya">Isya</string>
 </resources>

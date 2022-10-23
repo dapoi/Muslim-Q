@@ -11,5 +11,7 @@ class ShalatViewModel @Inject constructor(
     private val repository: ShalatRepository
 ) : ViewModel() {
 
-    suspend fun getAllCity() = repository.getAllCity().asLiveData()
+    fun getAllProvince() = repository.getAllProvince().asLiveData()
+
+    fun getAllCity(id: String) = repository.getAllCity(id).asLiveData()
 }

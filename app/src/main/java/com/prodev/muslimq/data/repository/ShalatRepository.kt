@@ -1,18 +1,13 @@
 package com.prodev.muslimq.data.repository
 
-import com.prodev.muslimq.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.data.source.remote.model.CityResponse
+import com.prodev.muslimq.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.utils.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface ShalatRepository {
 
-    suspend fun getAllCity(): Flow<Resource<List<CityResponse>>>
+    fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>>
 
-    fun getShalatDailyByCity(
-        id: Int,
-        year: Int,
-        month: Int,
-        day: Int
-    ): Flow<Resource<List<ShalatEntity>>>
+    fun getAllCity(id: String): Flow<Resource<List<CityResponse>>>
 }
