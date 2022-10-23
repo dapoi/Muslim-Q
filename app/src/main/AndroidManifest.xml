@@ -21,6 +21,7 @@
         <activity
             android:name="com.prodev.muslimq.presentation.BaseActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

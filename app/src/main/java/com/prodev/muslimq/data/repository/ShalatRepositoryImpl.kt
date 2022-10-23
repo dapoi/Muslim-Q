@@ -1,9 +1,12 @@
 package com.prodev.muslimq.data.repository
 
+import com.prodev.muslimq.data.source.local.LocalDataSource
+import com.prodev.muslimq.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.data.source.remote.model.CityResponse
 import com.prodev.muslimq.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.utils.Resource
+import com.prodev.muslimq.utils.networkBoundResource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,7 +16,8 @@ import javax.inject.Singleton
 
 @Singleton
 class ShalatRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
 ) : ShalatRepository {
 
     override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
@@ -35,4 +39,23 @@ class ShalatRepositoryImpl @Inject constructor(
             emit(Resource.Error(e))
         }
     }.flowOn(Dispatchers.IO)
+
+    override fun getShalatDaily(city: String): Flow<Resource<ShalatEntity>> = networkBoundResource(
+        query = { localDataSource.getShalatDailyByCity(city) },
+        fetch = { remoteDataSource.getShalatDaily(city) },
+        saveFetchResult = { shalat ->
+            for (pray in shalat.items) {
+                val local = ShalatEntity(
+                    city = city,
+                    shubuh = pray.fajr,
+                    dzuhur = pray.dhuhr,
+                    ashar = pray.asr,
+                    maghrib = pray.maghrib,
+                    isya = pray.isha
+                )
+                localDataSource.deleteShalatDaily()
+                localDataSource.insertShalatDaily(local)
+            }
+        }
+    )
 }

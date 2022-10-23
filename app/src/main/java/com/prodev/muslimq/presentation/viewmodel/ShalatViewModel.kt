@@ -14,4 +14,6 @@ class ShalatViewModel @Inject constructor(
     fun getAllProvince() = repository.getAllProvince().asLiveData()
 
     fun getAllCity(id: String) = repository.getAllCity(id).asLiveData()
+
+    fun getShalatDaily(city: String) = repository.getShalatDaily(city).asLiveData()
 }

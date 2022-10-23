@@ -6,11 +6,8 @@ import retrofit2.http.Path
 
 interface ShalatApi {
 
-    @GET("sholat/jadwal/{idkota}/{tahun}/{bulan}/{tanggal}")
-    suspend fun getShalatDailyByCity(
-        @Path("idkota") id: Int,
-        @Path("tahun") year: Int,
-        @Path("bulan") month: Int,
-        @Path("tanggal") day: Int
+    @GET("{city}/daily.json")
+    suspend fun getShalatDaily(
+        @Path("city") city: String
     ): ShalatResponse
 }

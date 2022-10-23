@@ -19,10 +19,8 @@ class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>
 
     @SuppressLint("NotifyDataSetChanged")
     fun setList(province: List<ProvinceResponse>) {
-        listProvince.clear()
-        listProvince.addAll(province)
-        listProvinceFiltered.clear()
-        listProvinceFiltered.addAll(province)
+        listProvince = province as ArrayList<ProvinceResponse>
+        listProvinceFiltered = listProvince
         notifyDataSetChanged()
     }
 

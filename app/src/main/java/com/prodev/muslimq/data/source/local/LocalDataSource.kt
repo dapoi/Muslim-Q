@@ -21,7 +21,7 @@ class LocalDataSource @Inject constructor(
 
     suspend fun deleteQuran() = quranDao.deleteQuran()
 
-    fun getShalatDailyByCity(id: Int) = shalatDao.getShalatDailyByCity(id)
+    fun getShalatDailyByCity(city: String) = shalatDao.getShalatDailyByCity(city)
 
     suspend fun insertShalatDaily(shalat: ShalatEntity) = shalatDao.insertShalat(shalat)
     suspend fun deleteShalatDaily() = shalatDao.deleteShalat()

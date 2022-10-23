@@ -9,7 +9,7 @@
         android:id="@+id/quranFragment"
         android:name="com.prodev.muslimq.presentation.view.quran.QuranFragment"
         android:label="fragment_quran"
-        tools:layout="@layout/fragment_quran" >
+        tools:layout="@layout/fragment_quran">
         <action
             android:id="@+id/action_quranFragment_to_quranDetailFragment"
             app:destination="@id/quranDetailFragment" />
@@ -18,7 +18,7 @@
         android:id="@+id/shalatFragment"
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatFragment"
         android:label="fragment_shalat"
-        tools:layout="@layout/fragment_shalat" >
+        tools:layout="@layout/fragment_shalat">
         <action
             android:id="@+id/action_shalatFragment_to_shalatProvinceFragment"
             app:destination="@id/shalatProvinceFragment" />
@@ -47,12 +47,18 @@
         android:id="@+id/shalatCityFragment"
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatCityFragment"
         android:label="fragment_shalat_city"
-        tools:layout="@layout/fragment_shalat_city" />
+        tools:layout="@layout/fragment_shalat_city">
+        <action
+            android:id="@+id/action_shalatCityFragment_to_shalatFragment"
+            app:destination="@id/shalatFragment"
+            app:popUpTo="@id/shalatProvinceFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/shalatProvinceFragment"
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatProvinceFragment"
         android:label="fragment_shalat_province"
-        tools:layout="@layout/fragment_shalat_province" >
+        tools:layout="@layout/fragment_shalat_province">
         <action
             android:id="@+id/action_shalatProvinceFragment_to_shalatCityFragment"
             app:destination="@id/shalatCityFragment" />

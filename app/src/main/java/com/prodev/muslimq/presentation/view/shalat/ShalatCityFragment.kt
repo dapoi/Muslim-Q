@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.view.shalat
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -24,7 +25,6 @@ import com.prodev.muslimq.utils.hideKeyboard
 import com.prodev.muslimq.utils.isOnline
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ShalatCityFragment : Fragment() {
@@ -81,6 +81,7 @@ class ShalatCityFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         cityAdapter = CityAdapter()
         binding.rvCity.apply {
@@ -89,57 +90,57 @@ class ShalatCityFragment : Fragment() {
             setHasFixedSize(true)
 
             cityAdapter.onCLick = { city ->
-                viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launchWhenResumed {
                     dataStoreViewModel.saveCityData(city.name)
+                    Log.d("TAG", "setAdapter: ${city.name}")
                 }
+                findNavController().navigate(R.id.action_shalatCityFragment_to_shalatFragment)
             }
         }
     }
 
     private fun setViewModel() {
         dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { dataProv ->
-            viewLifecycleOwner.lifecycleScope.launch {
-                shalatViewModel.getAllCity(dataProv.first).observe(viewLifecycleOwner) {
-                    with(binding) {
-                        srlCity.apply {
-                            setLottieAnimation("loading.json")
-                            setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                            setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                            setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                                override fun onRefresh() {
-                                    val handlerData = Handler(Looper.getMainLooper())
-                                    val check = isOnline(requireContext())
-                                    if (check) {
-                                        handlerData.postDelayed({
-                                            setRefreshing(false)
-                                        }, 2000)
-
-                                        handlerData.postDelayed({
-                                            clNoInternet.visibility = View.GONE
-                                            setViewModel()
-                                        }, 2350)
-                                    } else {
-                                        rvCity.visibility = View.GONE
-                                        clNoInternet.visibility = View.VISIBLE
+            shalatViewModel.getAllCity(dataProv.first).observe(viewLifecycleOwner) {
+                with(binding) {
+                    srlCity.apply {
+                        setLottieAnimation("loading.json")
+                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
+                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
+                            override fun onRefresh() {
+                                val handlerData = Handler(Looper.getMainLooper())
+                                val check = isOnline(requireContext())
+                                if (check) {
+                                    handlerData.postDelayed({
                                         setRefreshing(false)
-                                    }
-                                }
-                            })
-                        }
+                                    }, 2000)
 
-                        when (it) {
-                            is Resource.Loading -> stateLoading(true)
-                            is Resource.Success -> {
-                                stateLoading(false)
-                                cityAdapter.setList(it.data!!)
-                                clNoInternet.visibility = View.GONE
+                                    handlerData.postDelayed({
+                                        clNoInternet.visibility = View.GONE
+                                        setViewModel()
+                                    }, 2350)
+                                } else {
+                                    rvCity.visibility = View.GONE
+                                    clNoInternet.visibility = View.VISIBLE
+                                    setRefreshing(false)
+                                }
                             }
-                            is Resource.Error -> {
-                                stateLoading(false)
-                                rvCity.visibility = View.GONE
-                                clNoInternet.visibility = View.VISIBLE
-                                Log.e("Error", it.error.toString())
-                            }
+                        })
+                    }
+
+                    when (it) {
+                        is Resource.Loading -> stateLoading(true)
+                        is Resource.Success -> {
+                            stateLoading(false)
+                            cityAdapter.setList(it.data!!)
+                            clNoInternet.visibility = View.GONE
+                        }
+                        is Resource.Error -> {
+                            stateLoading(false)
+                            rvCity.visibility = View.GONE
+                            clNoInternet.visibility = View.VISIBLE
+                            Log.e("Error", it.error.toString())
                         }
                     }
                 }

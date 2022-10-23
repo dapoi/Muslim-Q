@@ -12,6 +12,7 @@
     <string name="quran">Qur\'an</string>
     <string name="others">Lainnya</string>
     <string name="no_internet">Sepertinya ada masalah, tarik ke bawah untuk memuat ulang</string>
+    <string name="no_data">Pilih lokasi untuk melihat jadwal shalat. Jika ada masalah, tarik ke bawah untuk memuat ulang</string>
     <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
     <string name="icon_loc">ikon lokasi</string>
     <string name="icon_mosque">ikon masjid</string>

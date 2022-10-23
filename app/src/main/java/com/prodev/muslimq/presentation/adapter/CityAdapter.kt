@@ -19,10 +19,8 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterab
 
     @SuppressLint("NotifyDataSetChanged")
     fun setList(list: List<CityResponse>) {
-        listCity.clear()
-        listCity.addAll(list)
-        listCityFiltered.clear()
-        listCityFiltered.addAll(list)
+        listCity = list as ArrayList<CityResponse>
+        listCityFiltered = listCity
         notifyDataSetChanged()
     }
 

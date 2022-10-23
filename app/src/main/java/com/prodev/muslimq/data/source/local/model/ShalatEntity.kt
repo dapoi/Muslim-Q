@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "shalat")
 data class ShalatEntity(
 
-    @PrimaryKey val id: String,
-    val subuh: String,
+    @PrimaryKey val city: String,
+    val shubuh: String,
     val dzuhur: String,
     val ashar: String,
     val maghrib: String,
