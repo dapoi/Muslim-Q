@@ -49,7 +49,7 @@ object NetworkBuilder {
     @Area
     fun provideArea(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://emsifa.github.io/api-wilayah-indonesia/api/")
+    ): Retrofit = Retrofit.Builder().baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
         .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
         .build()
 
