@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.view.shalat
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -30,6 +31,12 @@ class ShalatFragment : Fragment() {
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+
+    private var shubuh = ""
+    private var dzuhur = ""
+    private var ashar = ""
+    private var maghrib = ""
+    private var isya = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -103,7 +110,8 @@ class ShalatFragment : Fragment() {
                             shalatLayout.root.visibility = View.GONE
                         }
                         else -> {
-                            getData(it.data!!)
+                            it.data?.let { data -> getData(data) }
+                            nextTimePray()
                         }
                     }
                 }
@@ -111,15 +119,67 @@ class ShalatFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun nextTimePray() {
+        val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+        val nextTimeShalat = binding.tvTimeShalat
+        when {
+            timeNow < shubuh -> {
+                nextTimeShalat.text = "Shubuh pukul $shubuh"
+            }
+            timeNow < dzuhur -> {
+                nextTimeShalat.text = "Dzuhur pukul $dzuhur"
+            }
+            timeNow < ashar -> {
+                nextTimeShalat.text = "Ashar pukul $ashar"
+            }
+            timeNow < maghrib -> {
+                nextTimeShalat.text = "Maghrib pukul $maghrib"
+            }
+            timeNow < isya -> {
+                nextTimeShalat.text = "Isya pukul $isya"
+            }
+            else -> {
+                nextTimeShalat.text = "-"
+            }
+        }
+    }
+
     private fun getData(data: ShalatEntity) {
+        val currentFormat = "hh:mm a"
+        val targetFormat = "HH:mm"
+        val timeZone = "Asia/Jakarta"
+        val idFormat = Locale("in", "ID")
+        val currentTimeFormat = SimpleDateFormat(currentFormat, idFormat)
+        currentTimeFormat.timeZone = TimeZone.getTimeZone(timeZone)
+        val targetTimeFormat = SimpleDateFormat(targetFormat, idFormat)
+
+        try {
+            val newShubuh = currentTimeFormat.parse(data.shubuh)
+            val newDzuhur = currentTimeFormat.parse(data.dzuhur)
+            val newAshar = currentTimeFormat.parse(data.ashar)
+            val newMaghrib = currentTimeFormat.parse(data.maghrib)
+            val newIsya = currentTimeFormat.parse(data.isya)
+            shubuh = targetTimeFormat.format(newShubuh!!)
+            dzuhur = targetTimeFormat.format(newDzuhur!!)
+            ashar = targetTimeFormat.format(newAshar!!)
+            maghrib = targetTimeFormat.format(newMaghrib!!)
+            isya = targetTimeFormat.format(newIsya!!)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         with(binding) {
             progressBar.visibility = View.GONE
-            shalatLayout.root.visibility = View.VISIBLE
-            shalatLayout.tvShubuhTime.text = data.shubuh
-            shalatLayout.tvDzuhurTime.text = data.dzuhur
-            shalatLayout.tvAsharTime.text = data.ashar
-            shalatLayout.tvMaghribTime.text = data.maghrib
-            shalatLayout.tvIsyaTime.text = data.isya
+            shalatLayout.apply {
+                root.visibility = View.VISIBLE
+                tvShubuhTime.text = shubuh
+                tvDzuhurTime.text = dzuhur
+                tvAsharTime.text = ashar
+                tvMaghribTime.text = maghrib
+                tvIsyaTime.text = isya
+            }
             clNoInternet.visibility = View.GONE
         }
     }

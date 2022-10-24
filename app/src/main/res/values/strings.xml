@@ -16,7 +16,7 @@
     <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
     <string name="icon_loc">ikon lokasi</string>
     <string name="icon_mosque">ikon masjid</string>
-    <string name="next_prayer">Waktu Shalat Berikutnya</string>
+    <string name="next_prayer">Waktu Shalat Berikutnya :</string>
     <string name="province_choose">Pilih provinsi</string>
     <string name="city_choose">Pilih kota di %s</string>
     <string name="choose_your_location">Pilih Lokasi Anda</string>
