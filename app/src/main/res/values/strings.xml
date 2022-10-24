@@ -27,4 +27,6 @@
     <string name="ashar">Ashar</string>
     <string name="maghrib">Maghrib</string>
     <string name="isya">Isya</string>
+    <string name="small">Kecil</string>
+    <string name="big">Besar</string>
 </resources>

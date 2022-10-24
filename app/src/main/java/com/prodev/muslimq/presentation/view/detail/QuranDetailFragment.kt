@@ -89,7 +89,7 @@ class QuranDetailFragment : Fragment() {
         sbCurrent = seekBar!!
         with(builder) {
             setTitle("Atur ukuran ayat")
-            sbCurrent.max = 32
+            sbCurrent.max = 36
             sbCurrent.min = 16
             sbCurrent.progress = fontSize ?: 22
             sbCurrent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
