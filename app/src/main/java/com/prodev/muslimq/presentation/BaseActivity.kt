@@ -33,13 +33,4 @@ class BaseActivity : AppCompatActivity() {
         }
         binding.bottomNav.setupWithNavController(navController)
     }
-
-
-//    fun showBottomNavigation() {
-//        binding.bottomNav.visibility = View.VISIBLE
-//    }
-//
-//    fun hideBottomNavigation() {
-//        binding.bottomNav.visibility = View.GONE
-//    }
 }
