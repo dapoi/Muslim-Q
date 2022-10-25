@@ -34,4 +34,6 @@
     <string name="south">S</string>
     <string name="east">T</string>
     <string name="west">B</string>
+    <string name="setting_font">Atur Ukuran Ayat</string>
+    <string name="save">Simpan</string>
 </resources>

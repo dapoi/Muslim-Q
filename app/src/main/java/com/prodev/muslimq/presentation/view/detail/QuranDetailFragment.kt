@@ -9,6 +9,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.SeekBar
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
@@ -30,8 +31,10 @@ class QuranDetailFragment : Fragment() {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrent: SeekBar
+
     private var fontSize: Int? = null
     private var _binding: FragmentQuranDetailBinding? = null
+
     private val binding get() = _binding!!
     private val detailViewModel: QuranDetailViewModel by viewModels()
 
@@ -65,53 +68,6 @@ class QuranDetailFragment : Fragment() {
             ivFontSetting.setOnClickListener {
                 showFontSettingDialog()
             }
-        }
-    }
-
-    private fun showDescSurah() {
-        val surahDesc = arguments?.getString("surahDesc")
-        val htmlFormat = HtmlCompat.fromHtml(surahDesc.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle("Deskripsi Surah")
-        builder.setMessage(htmlFormat)
-        builder.setPositiveButton("Selesai") { dialog, _ ->
-            dialog.dismiss()
-        }
-        builder.show()
-    }
-
-    @SuppressLint("NewApi", "InflateParams")
-    private fun showFontSettingDialog() {
-        val builder = AlertDialog.Builder(requireActivity())
-        val inflaterDialog = requireActivity().layoutInflater
-        val dialogLayout = inflaterDialog.inflate(R.layout.dialog_font_setting, null)
-        val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
-        sbCurrent = seekBar!!
-        with(builder) {
-            setTitle("Atur ukuran ayat")
-            sbCurrent.max = 36
-            sbCurrent.min = 16
-            sbCurrent.progress = fontSize ?: 22
-            sbCurrent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    fontSize = progress
-                    sbCurrent.progress = fontSize!!
-                    detailAdapter.setFontSize(progress)
-                }
-
-                override fun onStartTrackingTouch(p0: SeekBar?) {}
-
-                override fun onStopTrackingTouch(p0: SeekBar?) {}
-            })
-            setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-            }
-            setView(dialogLayout)
-            show()
         }
     }
 
@@ -163,19 +119,17 @@ class QuranDetailFragment : Fragment() {
                             }
                         })
                     }
-                }
 
-                when {
-                    result is Resource.Loading && result.data == null -> {
-                        stateLoading(true)
-                    }
-                    result is Resource.Error && result.data == null -> {
-                        stateLoading(false)
-                        binding.clNoInternet.visibility = View.VISIBLE
-                        binding.clSurah.visibility = View.GONE
-                    }
-                    else -> {
-                        binding.apply {
+                    when {
+                        result is Resource.Loading && result.data == null -> {
+                            stateLoading(true)
+                        }
+                        result is Resource.Error && result.data == null -> {
+                            stateLoading(false)
+                            clNoInternet.visibility = View.VISIBLE
+                            clSurah.visibility = View.GONE
+                        }
+                        else -> {
                             stateLoading(false)
                             clNoInternet.visibility = View.GONE
                             tvSurahName.text = result.data?.namaLatin
@@ -208,6 +162,53 @@ class QuranDetailFragment : Fragment() {
                 progressHeader.visibility = View.GONE
                 clSurah.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun showDescSurah() {
+        val surahDesc = arguments?.getString("surahDesc")
+        val htmlFormat = HtmlCompat.fromHtml(surahDesc.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setTitle("Deskripsi Surah")
+        builder.setMessage(htmlFormat)
+        builder.setPositiveButton("Selesai") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.show()
+    }
+
+    @SuppressLint("NewApi", "InflateParams")
+    private fun showFontSettingDialog() {
+        val builder = AlertDialog.Builder(requireActivity()).create()
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
+        val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
+        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
+        sbCurrent = seekBar!!
+        with(builder) {
+            setView(dialogLayout)
+            sbCurrent.max = 36
+            sbCurrent.min = 16
+            sbCurrent.progress = fontSize ?: 24
+            sbCurrent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    fontSize = progress
+                    sbCurrent.progress = fontSize!!
+                    detailAdapter.setFontSize(progress)
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {}
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {}
+            })
+            buttonSave.setOnClickListener {
+                dismiss()
+            }
+            setCanceledOnTouchOutside(false)
+            show()
         }
     }
 

@@ -9,7 +9,7 @@ import com.prodev.muslimq.databinding.ItemListAyahBinding
 class QuranDetailAdapter : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {
 
     private var ayahs = ArrayList<Ayat>()
-    private var textSize: Int = 22
+    private var textSize: Int = 24
 
     fun setList(ayahs: List<Ayat>) {
         this.ayahs.clear()
