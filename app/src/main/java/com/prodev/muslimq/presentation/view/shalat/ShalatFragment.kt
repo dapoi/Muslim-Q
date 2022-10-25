@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -124,27 +125,66 @@ class ShalatFragment : Fragment() {
         val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
         val nextTimeShalat = binding.tvTimeShalat
-        when {
-            timeNow < shubuh -> {
-                nextTimeShalat.text = "Shubuh pukul $shubuh"
-            }
-            timeNow < dzuhur -> {
-                nextTimeShalat.text = "Dzuhur pukul $dzuhur"
-            }
-            timeNow < ashar -> {
-                nextTimeShalat.text = "Ashar pukul $ashar"
-            }
-            timeNow < maghrib -> {
-                nextTimeShalat.text = "Maghrib pukul $maghrib"
-            }
-            timeNow < isya -> {
-                nextTimeShalat.text = "Isya pukul $isya"
-            }
-            else -> {
-                nextTimeShalat.text = "-"
+        binding.apply {
+            when {
+                timeNow < shubuh -> {
+                    nextTimeShalat.text = "Shubuh pukul $shubuh"
+                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
+                timeNow < dzuhur -> {
+                    nextTimeShalat.text = "Dzuhur pukul $dzuhur"
+                    shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
+                timeNow < ashar -> {
+                    nextTimeShalat.text = "Ashar pukul $ashar"
+                    shalatLayout.clAshar.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
+                timeNow < maghrib -> {
+                    nextTimeShalat.text = "Maghrib pukul $maghrib"
+                    shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
+                timeNow < isya -> {
+                    nextTimeShalat.text = "Isya pukul $isya"
+                    shalatLayout.clIsya.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
+                else -> {
+                    nextTimeShalat.text = "Shubuh pukul $shubuh"
+                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
+                        requireContext(), R.drawable.bg_item_shalat
+                    )
+                }
             }
         }
     }
+
+//    private fun getDifferentTime(time: String): Long {
+//        return convertToDateFormat(time).time - convertToDateFormat(convertTo24HrFormat(getCurrentTimeFormat)).time
+//    }
+//
+//    // Date Format
+//    @SuppressLint("SimpleDateFormat")
+//    private val m24HourSDF = SimpleDateFormat("HH:mm")
+//
+//    @SuppressLint("SimpleDateFormat")
+//    private val m12HourSDF = SimpleDateFormat("hh:mm aa")
+//
+//    @SuppressLint("SimpleDateFormat")
+//    val getCurrentTimeFormat: String = SimpleDateFormat("hh:mm aa").format(Date())
+//
+//    @SuppressLint("SimpleDateFormat")
+//    fun convertTo24HrFormat(date: String): String = m24HourSDF.format(m12HourSDF.parse(date)!!)
+//
+//    fun convertToDateFormat(date: String) = m24HourSDF.parse(date)!!
 
     private fun getData(data: ShalatEntity) {
         val currentFormat = "hh:mm a"
