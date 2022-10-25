@@ -27,13 +27,13 @@
     <style name="collapsedTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
         <item name="android:textColor">@color/green_base</item>
         <item name="android:fontFamily">@font/poppins_bold</item>
-        <item name="android:textSize">21sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="expandedTitleStyle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textColor">@color/green_base</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textSize">21sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
 </resources>

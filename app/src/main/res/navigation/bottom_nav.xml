@@ -24,10 +24,10 @@
             app:destination="@id/shalatProvinceFragment" />
     </fragment>
     <fragment
-        android:id="@+id/kiblahFragment"
-        android:name="com.prodev.muslimq.presentation.view.kiblah.KiblahFragment"
-        android:label="fragment_kiblah"
-        tools:layout="@layout/fragment_kiblah" />
+        android:id="@+id/qiblaFragment"
+        android:name="com.prodev.muslimq.presentation.view.qibla.QiblaFragment"
+        android:label="fragment_qibla"
+        tools:layout="@layout/fragment_qibla" />
     <fragment
         android:id="@+id/doaFragment"
         android:name="com.prodev.muslimq.presentation.view.doa.DoaFragment"

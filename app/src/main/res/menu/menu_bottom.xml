@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_shalat"
         android:title="@string/schedule_pray" />
     <item
-        android:id="@+id/kiblahFragment"
+        android:id="@+id/qiblaFragment"
         android:icon="@drawable/ic_compass"
         android:title="@string/kiblah" />
     <item

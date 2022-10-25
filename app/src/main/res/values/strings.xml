@@ -29,4 +29,9 @@
     <string name="isya">Isya</string>
     <string name="small">Kecil</string>
     <string name="big">Besar</string>
+    <string name="find_qibla">Temukan arah kiblat di kota Anda</string>
+    <string name="north">U</string>
+    <string name="south">S</string>
+    <string name="east">T</string>
+    <string name="west">B</string>
 </resources>
