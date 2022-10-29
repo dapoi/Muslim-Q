@@ -1,60 +1,87 @@
 package com.prodev.muslimq.presentation.view.doa
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.prodev.muslimq.R
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
+import com.prodev.muslimq.databinding.FragmentDoaBinding
+import com.prodev.muslimq.presentation.adapter.DoaAdapter
+import com.prodev.muslimq.presentation.viewmodel.DoaViewModel
+import com.prodev.muslimq.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DoaFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class DoaFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private lateinit var binding: FragmentDoaBinding
+    private lateinit var doaAdapter: DoaAdapter
+
+    private val doaViewModel: DoaViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentDoaBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setAdapter()
+        setViewModel()
+
+        binding.svDoa.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                val imm =
+                    requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                doaAdapter.filter.filter(newText)
+                return false
+            }
+        })
+    }
+
+    private fun setAdapter() {
+        doaAdapter = DoaAdapter()
+        binding.rvDoa.apply {
+            adapter = doaAdapter
+            layoutManager = LinearLayoutManager(context)
+            (binding.rvDoa.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+            setHasFixedSize(true)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_doa, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DoaFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DoaFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun setViewModel() {
+        doaViewModel.getDoa().observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                is Resource.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    doaAdapter.setDoa(it.data!!)
+                    Log.d("DoaFragment", "setViewModel: ${it.data}")
+                }
+                is Resource.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.rvDoa.visibility = View.GONE
+                    Log.e("DoaFragment", "Kenapa error? ${it.error}")
                 }
             }
+        }
     }
 }

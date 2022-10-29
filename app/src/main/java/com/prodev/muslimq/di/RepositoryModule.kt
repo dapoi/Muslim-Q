@@ -1,9 +1,6 @@
 package com.prodev.muslimq.di
 
-import com.prodev.muslimq.data.repository.QuranRepository
-import com.prodev.muslimq.data.repository.QuranRepositoryImpl
-import com.prodev.muslimq.data.repository.ShalatRepository
-import com.prodev.muslimq.data.repository.ShalatRepositoryImpl
+import com.prodev.muslimq.data.repository.*
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +15,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideShalatRepository(shalatRepository: ShalatRepositoryImpl): ShalatRepository
+
+    @Binds
+    abstract fun provideDoaRepository(doaRepository: DoaRepositoryImpl): DoaRepository
 }
