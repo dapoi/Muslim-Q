@@ -349,4 +349,10 @@ class ShalatFragment : Fragment() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        nexTimePray()
+    }
 }
