@@ -40,7 +40,7 @@ class ShalatFragment : Fragment() {
     private var ashar = ""
     private var maghrib = ""
     private var isya = ""
-    private var isAlarmOn = false
+    private var isAlarmOn = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -49,7 +49,6 @@ class ShalatFragment : Fragment() {
             binding
         } else {
             binding = FragmentShalatBinding.inflate(inflater, container, false)
-            setViewModel()
         }
         return binding.root
     }
@@ -67,6 +66,8 @@ class ShalatFragment : Fragment() {
             dateGregorianAndHijri()
             stateAlarmImage()
         }
+
+        setViewModel()
     }
 
     private fun stateAlarmImage() {
@@ -245,7 +246,7 @@ class ShalatFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun nexTimePray() {
+    fun nexTimePray() {
         val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
 
         binding.apply {
@@ -348,11 +349,5 @@ class ShalatFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        nexTimePray()
     }
 }
