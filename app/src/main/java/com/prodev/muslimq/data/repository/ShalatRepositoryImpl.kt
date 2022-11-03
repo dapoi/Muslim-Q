@@ -44,7 +44,7 @@ class ShalatRepositoryImpl @Inject constructor(
         query = { localDataSource.getShalatDailyByCity(city) },
         fetch = { remoteDataSource.getShalatDaily(city) },
         saveFetchResult = { shalat ->
-            for (pray in shalat.items) {
+            shalat.items.map { pray ->
                 val local = ShalatEntity(
                     city = city,
                     shubuh = pray.fajr,

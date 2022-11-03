@@ -37,4 +37,5 @@
     <string name="setting_font">Atur Ukuran Ayat</string>
     <string name="save">Simpan</string>
     <string name="daily_doa">Doa sehari-hari</string>
+    <string name="alarm">alarm</string>
 </resources>

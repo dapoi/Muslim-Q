@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,6 +30,7 @@ import java.util.*
 class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
+    private lateinit var alarmReceiver: AlarmReceiver
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -38,6 +40,7 @@ class ShalatFragment : Fragment() {
     private var ashar = ""
     private var maghrib = ""
     private var isya = ""
+    private var isAlarmOn = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -54,12 +57,80 @@ class ShalatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        alarmReceiver = AlarmReceiver()
+
         binding.apply {
             ivIconChoose.setOnClickListener {
                 findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
             }
 
             dateGregorianAndHijri()
+            stateAlarmImage()
+        }
+    }
+
+    private fun stateAlarmImage() {
+        with(binding.shalatLayout) {
+            ivNotifShubuhOn.setOnClickListener {
+                ivNotifShubuhOn.visibility = View.GONE
+                ivNotifShubuhOff.visibility = View.VISIBLE
+                isAlarmOn = false
+                Toast.makeText(context, "Alarm Shubuh Off", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifShubuhOff.setOnClickListener {
+                ivNotifShubuhOff.visibility = View.GONE
+                ivNotifShubuhOn.visibility = View.VISIBLE
+                isAlarmOn = true
+                Toast.makeText(context, "Alarm Shubuh On", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifDzuhurOn.setOnClickListener {
+                ivNotifDzuhurOn.visibility = View.GONE
+                ivNotifDzuhurOff.visibility = View.VISIBLE
+                isAlarmOn = false
+                Toast.makeText(context, "Alarm Dzuhur Off", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifDzuhurOff.setOnClickListener {
+                ivNotifDzuhurOff.visibility = View.GONE
+                ivNotifDzuhurOn.visibility = View.VISIBLE
+                isAlarmOn = true
+                Toast.makeText(context, "Alarm Dzuhur On", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifAsharOn.setOnClickListener {
+                ivNotifAsharOn.visibility = View.GONE
+                ivNotifAsharOff.visibility = View.VISIBLE
+                isAlarmOn = false
+                Toast.makeText(context, "Alarm Ashar Off", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifAsharOff.setOnClickListener {
+                ivNotifAsharOff.visibility = View.GONE
+                ivNotifAsharOn.visibility = View.VISIBLE
+                isAlarmOn = true
+                Toast.makeText(context, "Alarm Ashar On", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifMaghribOn.setOnClickListener {
+                ivNotifMaghribOn.visibility = View.GONE
+                ivNotifMaghribOff.visibility = View.VISIBLE
+                isAlarmOn = false
+                Toast.makeText(context, "Alarm Maghrib Off", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifMaghribOff.setOnClickListener {
+                ivNotifMaghribOff.visibility = View.GONE
+                ivNotifMaghribOn.visibility = View.VISIBLE
+                isAlarmOn = true
+                Toast.makeText(context, "Alarm Maghrib On", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifIsyaOn.setOnClickListener {
+                ivNotifIsyaOn.visibility = View.GONE
+                ivNotifIsyaOff.visibility = View.VISIBLE
+                isAlarmOn = false
+                Toast.makeText(context, "Alarm Isya Off", Toast.LENGTH_SHORT).show()
+            }
+            ivNotifIsyaOff.setOnClickListener {
+                ivNotifIsyaOff.visibility = View.GONE
+                ivNotifIsyaOn.visibility = View.VISIBLE
+                isAlarmOn = true
+                Toast.makeText(context, "Alarm Isya On", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -112,7 +183,7 @@ class ShalatFragment : Fragment() {
                         }
                         else -> {
                             it.data?.let { data -> getData(data) }
-                            nextTimePray()
+                            nexTimePray()
                         }
                     }
                 }
@@ -121,71 +192,6 @@ class ShalatFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun nextTimePray() {
-        val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-
-        val nextTimeShalat = binding.tvTimeShalat
-        binding.apply {
-            when {
-                timeNow < shubuh -> {
-                    nextTimeShalat.text = "Shubuh pukul $shubuh"
-                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < dzuhur -> {
-                    nextTimeShalat.text = "Dzuhur pukul $dzuhur"
-                    shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < ashar -> {
-                    nextTimeShalat.text = "Ashar pukul $ashar"
-                    shalatLayout.clAshar.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < maghrib -> {
-                    nextTimeShalat.text = "Maghrib pukul $maghrib"
-                    shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < isya -> {
-                    nextTimeShalat.text = "Isya pukul $isya"
-                    shalatLayout.clIsya.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-                else -> {
-                    nextTimeShalat.text = "Shubuh pukul $shubuh"
-                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
-                        requireContext(), R.drawable.bg_item_shalat
-                    )
-                }
-            }
-        }
-    }
-
-//    private fun getDifferentTime(time: String): Long {
-//        return convertToDateFormat(time).time - convertToDateFormat(convertTo24HrFormat(getCurrentTimeFormat)).time
-//    }
-//
-//    // Date Format
-//    @SuppressLint("SimpleDateFormat")
-//    private val m24HourSDF = SimpleDateFormat("HH:mm")
-//
-//    @SuppressLint("SimpleDateFormat")
-//    private val m12HourSDF = SimpleDateFormat("hh:mm aa")
-//
-//    @SuppressLint("SimpleDateFormat")
-//    val getCurrentTimeFormat: String = SimpleDateFormat("hh:mm aa").format(Date())
-//
-//    @SuppressLint("SimpleDateFormat")
-//    fun convertTo24HrFormat(date: String): String = m24HourSDF.format(m12HourSDF.parse(date)!!)
-//
-//    fun convertToDateFormat(date: String) = m24HourSDF.parse(date)!!
-
     private fun getData(data: ShalatEntity) {
         val currentFormat = "hh:mm a"
         val targetFormat = "HH:mm"
@@ -214,11 +220,11 @@ class ShalatFragment : Fragment() {
             progressBar.visibility = View.GONE
             shalatLayout.apply {
                 root.visibility = View.VISIBLE
-                tvShubuhTime.text = shubuh
-                tvDzuhurTime.text = dzuhur
-                tvAsharTime.text = ashar
-                tvMaghribTime.text = maghrib
-                tvIsyaTime.text = isya
+                tvShubuhTime.text = "$shubuh WIB"
+                tvDzuhurTime.text = "$dzuhur WIB"
+                tvAsharTime.text = "$ashar WIB"
+                tvMaghribTime.text = "$maghrib WIB"
+                tvIsyaTime.text = "$isya WIB"
             }
             clNoInternet.visibility = View.GONE
         }
@@ -235,6 +241,112 @@ class ShalatFragment : Fragment() {
             val hijriDate =
                 "${hijriCalendar.dayOfMonth} ${hijriCalendar.monthName} ${hijriCalendar.year}H"
             tvIslamicDate.text = hijriDate
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun nexTimePray() {
+        val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
+
+        binding.apply {
+            when {
+                timeNow < shubuh -> {
+                    tvTimeShalat.text = "Shubuh pukul $shubuh WIB"
+                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            shubuh,
+                            "Adzan Shubuh",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+                timeNow < dzuhur -> {
+                    tvTimeShalat.text = "Dzuhur pukul $dzuhur WIB"
+                    shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            dzuhur,
+                            "Adzan Dzuhur",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+                timeNow < ashar -> {
+                    tvTimeShalat.text = "Ashar pukul $ashar WIB"
+                    shalatLayout.clAshar.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            ashar,
+                            "Adzan Ashar",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+                timeNow < maghrib -> {
+                    tvTimeShalat.text = "Maghrib pukul $maghrib WIB"
+                    shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            maghrib,
+                            "Adzan Maghrib",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+                timeNow < isya -> {
+                    tvTimeShalat.text = "Isya pukul $isya WIB"
+                    shalatLayout.clIsya.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            isya,
+                            "Adzan Isya",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+                else -> {
+                    tvTimeShalat.text = "Shubuh pukul $shubuh WIB"
+                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        R.drawable.bg_item_shalat
+                    )
+                    if (isAlarmOn) {
+                        alarmReceiver.setRepeatingAlarm(
+                            requireActivity(),
+                            shubuh,
+                            "Adzan Shubuh",
+                        )
+                    } else {
+                        alarmReceiver.cancelAlarm(requireActivity())
+                    }
+                }
+            }
         }
     }
 }

@@ -14,15 +14,14 @@ class LocalDataSource @Inject constructor(
     private val shalatDao: ShalatDao
 ) {
     fun getQuran() = quranDao.getQuran()
-    fun getQuranDetail(id: Int) = quranDao.getQuranDetail(id)
     suspend fun insertQuran(quran: List<QuranEntity>) = quranDao.insertQuran(quran)
+    suspend fun deleteQuran() = quranDao.deleteQuran()
+
+    fun getQuranDetail(id: Int) = quranDao.getQuranDetail(id)
     suspend fun insertQuranDetail(quran: QuranDetailEntity) =
         quranDao.insertQuranDetail(quran)
 
-    suspend fun deleteQuran() = quranDao.deleteQuran()
-
     fun getShalatDailyByCity(city: String) = shalatDao.getShalatDailyByCity(city)
-
     suspend fun insertShalatDaily(shalat: ShalatEntity) = shalatDao.insertShalat(shalat)
     suspend fun deleteShalatDaily() = shalatDao.deleteShalat()
 }
