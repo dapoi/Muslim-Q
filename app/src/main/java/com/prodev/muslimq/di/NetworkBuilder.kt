@@ -3,6 +3,7 @@ package com.prodev.muslimq.di
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
+import com.prodev.muslimq.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,13 +28,22 @@ object NetworkBuilder {
     @Provides
     fun provideOkHttpClient(
         @ApplicationContext context: Context
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-        .addInterceptor(
-            ChuckerInterceptor.Builder(context).collector(ChuckerCollector(context))
-                .maxContentLength(250000L).redactHeaders(emptySet()).alwaysReadResponseBody(false)
-                .build()
-        ).connectTimeout(120, TimeUnit.SECONDS).readTimeout(120, TimeUnit.SECONDS).build()
+    ): OkHttpClient {
+        val logging = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val chuckerInterceptor = ChuckerInterceptor.Builder(context)
+            .collector(ChuckerCollector(context))
+            .maxContentLength(250000L)
+            .alwaysReadResponseBody(true)
+            .build()
+
+        return if (BuildConfig.DEBUG) {
+            OkHttpClient.Builder().addInterceptor(logging).addInterceptor(chuckerInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build()
+        } else {
+            OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS).build()
+        }
+    }
 
     @Singleton
     @Provides

@@ -102,7 +102,6 @@ class QuranDetailFragment : Fragment() {
                                     handlerData.postDelayed({
                                         if (result.data == null) {
                                             setViewModel()
-                                            setAdapter()
                                             clNoInternet.visibility = View.GONE
                                         } else {
                                             clSurah.visibility = View.VISIBLE
@@ -144,6 +143,7 @@ class QuranDetailFragment : Fragment() {
                                 } • ${result.data?.jumlahAyat} ayat"
 
                             detailAdapter.setList(result.data?.ayat!!)
+                            rvAyah.visibility = View.VISIBLE
                         }
                     }
                 }

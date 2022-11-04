@@ -52,7 +52,7 @@
                 android:ellipsize="end"
                 android:fontFamily="@font/amiri_bold"
                 android:letterSpacing="0.1"
-                android:lineSpacingExtra="30dp"
+                android:lineSpacingExtra="20dp"
                 android:textColor="@color/green_base"
                 android:textSize="28sp"
                 app:layout_constraintEnd_toEndOf="parent"

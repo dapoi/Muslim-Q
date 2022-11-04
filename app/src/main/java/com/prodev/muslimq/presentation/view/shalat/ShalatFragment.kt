@@ -45,11 +45,7 @@ class ShalatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        if (this::binding.isInitialized) {
-            binding
-        } else {
-            binding = FragmentShalatBinding.inflate(inflater, container, false)
-        }
+        binding = FragmentShalatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -66,8 +62,6 @@ class ShalatFragment : Fragment() {
             dateGregorianAndHijri()
             stateAlarmImage()
         }
-
-        setViewModel()
     }
 
     private fun stateAlarmImage() {
@@ -349,5 +343,10 @@ class ShalatFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setViewModel()
     }
 }

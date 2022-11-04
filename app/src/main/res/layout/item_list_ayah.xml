@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/amiri_bold"
-            android:lineSpacingExtra="30dp"
+            android:lineSpacingExtra="20dp"
             android:letterSpacing="0.1"
             android:textColor="@color/green_base"
             android:textSize="22sp"

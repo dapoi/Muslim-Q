@@ -86,7 +86,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             NOTIF_ID,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_MUTABLE
         )
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,

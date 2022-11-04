@@ -6,6 +6,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Users/luthfidaffaprabowo/Documents/Project/muslimkey')
+            storePassword 'Lutpi220201'
+            keyAlias 'dapoi'
+            keyPassword 'Lutpi220201'
+        }
+    }
     compileSdk 33
 
     defaultConfig {
@@ -17,6 +25,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        signingConfig signingConfigs.release
     }
 
     android {
@@ -49,7 +58,7 @@ dependencies {
     // Core
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
