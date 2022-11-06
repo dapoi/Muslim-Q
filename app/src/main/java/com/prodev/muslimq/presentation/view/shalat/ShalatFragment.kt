@@ -40,7 +40,11 @@ class ShalatFragment : Fragment() {
     private var ashar = ""
     private var maghrib = ""
     private var isya = ""
-    private var isAlarmOn = true
+    private var alarmShubuh = true
+    private var alarmDzuhur = true
+    private var alarmAshar = true
+    private var alarmMaghrib = true
+    private var alarmIsya = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -65,66 +69,159 @@ class ShalatFragment : Fragment() {
     }
 
     private fun stateAlarmImage() {
+        checkShubuhState()
+        checkDzuhurState()
+        checkAsharState()
+        checkMaghribState()
+        checkIsyaState()
+    }
+
+    private fun checkShubuhState() {
         with(binding.shalatLayout) {
             ivNotifShubuhOn.setOnClickListener {
+                alarmShubuh = false
+                dataStoreViewModel.saveShubuhState(alarmShubuh)
                 ivNotifShubuhOn.visibility = View.GONE
                 ivNotifShubuhOff.visibility = View.VISIBLE
-                isAlarmOn = false
-                Toast.makeText(context, "Alarm Shubuh Off", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Alarm Shubuh Mati", Toast.LENGTH_SHORT).show()
             }
+
             ivNotifShubuhOff.setOnClickListener {
-                ivNotifShubuhOff.visibility = View.GONE
+                alarmShubuh = true
+                dataStoreViewModel.saveShubuhState(alarmShubuh)
                 ivNotifShubuhOn.visibility = View.VISIBLE
-                isAlarmOn = true
-                Toast.makeText(context, "Alarm Shubuh On", Toast.LENGTH_SHORT).show()
+                ivNotifShubuhOff.visibility = View.GONE
+                Toast.makeText(requireContext(), "Alarm Shubuh Hidup", Toast.LENGTH_SHORT).show()
             }
+
+            dataStoreViewModel.getShubuhState.observe(viewLifecycleOwner) { state ->
+                if (state) {
+                    ivNotifShubuhOn.visibility = View.VISIBLE
+                    ivNotifShubuhOff.visibility = View.GONE
+                } else {
+                    ivNotifShubuhOn.visibility = View.GONE
+                    ivNotifShubuhOff.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun checkDzuhurState() {
+        with(binding.shalatLayout) {
             ivNotifDzuhurOn.setOnClickListener {
+                alarmDzuhur = false
+                dataStoreViewModel.saveDzuhurState(alarmDzuhur)
                 ivNotifDzuhurOn.visibility = View.GONE
                 ivNotifDzuhurOff.visibility = View.VISIBLE
-                isAlarmOn = false
-                Toast.makeText(context, "Alarm Dzuhur Off", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Alarm Dzuhur Mati", Toast.LENGTH_SHORT).show()
             }
+
             ivNotifDzuhurOff.setOnClickListener {
-                ivNotifDzuhurOff.visibility = View.GONE
+                alarmDzuhur = true
+                dataStoreViewModel.saveDzuhurState(alarmDzuhur)
                 ivNotifDzuhurOn.visibility = View.VISIBLE
-                isAlarmOn = true
-                Toast.makeText(context, "Alarm Dzuhur On", Toast.LENGTH_SHORT).show()
+                ivNotifDzuhurOff.visibility = View.GONE
+                Toast.makeText(requireContext(), "Alarm Dzuhur Hidup", Toast.LENGTH_SHORT).show()
             }
+
+            dataStoreViewModel.getDzuhurState.observe(viewLifecycleOwner) { state ->
+                if (state) {
+                    ivNotifDzuhurOn.visibility = View.VISIBLE
+                    ivNotifDzuhurOff.visibility = View.GONE
+                } else {
+                    ivNotifDzuhurOn.visibility = View.GONE
+                    ivNotifDzuhurOff.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun checkAsharState() {
+        with(binding.shalatLayout) {
             ivNotifAsharOn.setOnClickListener {
+                alarmAshar = false
+                dataStoreViewModel.saveAsharState(alarmAshar)
                 ivNotifAsharOn.visibility = View.GONE
                 ivNotifAsharOff.visibility = View.VISIBLE
-                isAlarmOn = false
-                Toast.makeText(context, "Alarm Ashar Off", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Alarm Ashar Mati", Toast.LENGTH_SHORT).show()
             }
+
             ivNotifAsharOff.setOnClickListener {
-                ivNotifAsharOff.visibility = View.GONE
+                alarmAshar = true
+                dataStoreViewModel.saveAsharState(alarmAshar)
                 ivNotifAsharOn.visibility = View.VISIBLE
-                isAlarmOn = true
-                Toast.makeText(context, "Alarm Ashar On", Toast.LENGTH_SHORT).show()
+                ivNotifAsharOff.visibility = View.GONE
+                Toast.makeText(requireContext(), "Alarm Ashar Hidup", Toast.LENGTH_SHORT).show()
             }
+
+            dataStoreViewModel.getAsharState.observe(viewLifecycleOwner) { state ->
+                if (state) {
+                    ivNotifAsharOn.visibility = View.VISIBLE
+                    ivNotifAsharOff.visibility = View.GONE
+                } else {
+                    ivNotifAsharOn.visibility = View.GONE
+                    ivNotifAsharOff.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun checkMaghribState() {
+        with(binding.shalatLayout) {
             ivNotifMaghribOn.setOnClickListener {
+                alarmMaghrib = false
+                dataStoreViewModel.saveMaghribState(alarmMaghrib)
                 ivNotifMaghribOn.visibility = View.GONE
                 ivNotifMaghribOff.visibility = View.VISIBLE
-                isAlarmOn = false
-                Toast.makeText(context, "Alarm Maghrib Off", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Alarm Maghrib Mati", Toast.LENGTH_SHORT).show()
             }
+
             ivNotifMaghribOff.setOnClickListener {
-                ivNotifMaghribOff.visibility = View.GONE
+                alarmMaghrib = true
+                dataStoreViewModel.saveMaghribState(alarmMaghrib)
                 ivNotifMaghribOn.visibility = View.VISIBLE
-                isAlarmOn = true
-                Toast.makeText(context, "Alarm Maghrib On", Toast.LENGTH_SHORT).show()
+                ivNotifMaghribOff.visibility = View.GONE
+                Toast.makeText(requireContext(), "Alarm Maghrib Hidup", Toast.LENGTH_SHORT).show()
             }
+
+            dataStoreViewModel.getMaghribState.observe(viewLifecycleOwner) { state ->
+                if (state) {
+                    ivNotifMaghribOn.visibility = View.VISIBLE
+                    ivNotifMaghribOff.visibility = View.GONE
+                } else {
+                    ivNotifMaghribOn.visibility = View.GONE
+                    ivNotifMaghribOff.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
+    private fun checkIsyaState() {
+        with(binding.shalatLayout) {
             ivNotifIsyaOn.setOnClickListener {
+                alarmIsya = false
+                dataStoreViewModel.saveIsyaState(alarmIsya)
                 ivNotifIsyaOn.visibility = View.GONE
                 ivNotifIsyaOff.visibility = View.VISIBLE
-                isAlarmOn = false
-                Toast.makeText(context, "Alarm Isya Off", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Alarm Isya Mati", Toast.LENGTH_SHORT).show()
             }
+
             ivNotifIsyaOff.setOnClickListener {
-                ivNotifIsyaOff.visibility = View.GONE
+                alarmIsya = true
+                dataStoreViewModel.saveIsyaState(alarmIsya)
                 ivNotifIsyaOn.visibility = View.VISIBLE
-                isAlarmOn = true
-                Toast.makeText(context, "Alarm Isya On", Toast.LENGTH_SHORT).show()
+                ivNotifIsyaOff.visibility = View.GONE
+                Toast.makeText(requireContext(), "Alarm Isya Hidup", Toast.LENGTH_SHORT).show()
+            }
+
+            dataStoreViewModel.getIsyaState.observe(viewLifecycleOwner) { state ->
+                if (state) {
+                    ivNotifIsyaOn.visibility = View.VISIBLE
+                    ivNotifIsyaOff.visibility = View.GONE
+                } else {
+                    ivNotifIsyaOn.visibility = View.GONE
+                    ivNotifIsyaOff.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -251,11 +348,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmShubuh) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             shubuh,
                             "Adzan Shubuh",
+                            "Waktunya shalat shubuh"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -267,11 +365,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmDzuhur) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             dzuhur,
                             "Adzan Dzuhur",
+                            "Waktunya shalat dzuhur"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -283,11 +382,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmAshar) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             ashar,
                             "Adzan Ashar",
+                            "Waktunya shalat ashar"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -299,11 +399,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmMaghrib) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             maghrib,
                             "Adzan Maghrib",
+                            "Waktunya shalat maghrib"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -315,11 +416,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmIsya) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             isya,
                             "Adzan Isya",
+                            "Waktunya shalat isya"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -331,11 +433,12 @@ class ShalatFragment : Fragment() {
                         requireActivity(),
                         R.drawable.bg_item_shalat
                     )
-                    if (isAlarmOn) {
+                    if (alarmShubuh) {
                         alarmReceiver.setRepeatingAlarm(
                             requireActivity(),
                             shubuh,
                             "Adzan Shubuh",
+                            "Waktunya shalat shubuh"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())

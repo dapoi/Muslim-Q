@@ -18,15 +18,17 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        val message = intent.getStringExtra(EXTRA_MESSAGE)
+        val title = intent.getStringExtra(TITLE)
+        val message = intent.getStringExtra(MESSAGE)
 
-        if (message != null) {
-            showAlarmNotification(context, message)
+        if (title != null && message != null) {
+            showAlarmNotification(context, title, message)
         }
     }
 
     private fun showAlarmNotification(
         context: Context,
+        title: String,
         message: String
     ) {
         val channelId = "Channel_101"
@@ -36,17 +38,13 @@ class AlarmReceiver : BroadcastReceiver() {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_book)
-            .setContentTitle(NOTIF_NAME)
+            .setSmallIcon(R.drawable.ic_notif_on)
+            .setContentTitle(title)
             .setContentText(message)
             .setColor(ContextCompat.getColor(context, android.R.color.transparent))
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
             .setSound(alarmSound)
 
-        /*
-        Untuk android Oreo ke atas perlu menambahkan notification channel
-        Materi ini akan dibahas lebih lanjut di modul extended
-         */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
             /* Create or update. */
@@ -69,11 +67,12 @@ class AlarmReceiver : BroadcastReceiver() {
         notificationManagerCompat.notify(NOTIF_ID, notification)
     }
 
-    fun setRepeatingAlarm(context: Context, time: String, message: String) {
+    fun setRepeatingAlarm(context: Context, time: String, title: String, message: String) {
 
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra(EXTRA_MESSAGE, message)
+        intent.putExtra(TITLE, title)
+        intent.putExtra(MESSAGE, message)
 
         val timeArray = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
 
@@ -104,7 +103,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             requestCode,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_MUTABLE
         )
         pendingIntent.cancel()
 
@@ -112,8 +111,8 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        private const val NOTIF_NAME = "Sudah Waktunya Shalat"
         private const val NOTIF_ID = 101
-        const val EXTRA_MESSAGE = "message"
+        private const val TITLE = "title"
+        private const val MESSAGE = "message"
     }
 }

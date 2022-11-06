@@ -20,15 +20,11 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    val getSurah = dataStorePreference.getSurah.asLiveData()
-
     fun saveProvinceData(provinceId: String, provinceName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStorePreference.saveProvinceData(provinceId, provinceName)
         }
     }
-
-    val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
 
     fun saveCityData(cityName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -36,5 +32,49 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveShubuhState(state: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveShubuhState(state)
+        }
+    }
+
+    fun saveDzuhurState(alarmDzuhur: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveDzuhurState(alarmDzuhur)
+        }
+    }
+
+    fun saveAsharState(alarmAshar: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveAsharState(alarmAshar)
+        }
+    }
+
+    fun saveMaghribState(alarmMaghrib: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveMaghribState(alarmMaghrib)
+        }
+    }
+
+    fun saveIsyaState(alarmIsya: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveIsyaState(alarmIsya)
+        }
+    }
+
+    val getSurah = dataStorePreference.getSurah.asLiveData()
+
+    val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
+
     val getCityData = dataStorePreference.getCityData.asLiveData()
+
+    val getShubuhState = dataStorePreference.getShubuhState.asLiveData()
+
+    val getDzuhurState = dataStorePreference.getDzuhurState.asLiveData()
+
+    val getAsharState = dataStorePreference.getAsharState.asLiveData()
+
+    val getMaghribState = dataStorePreference.getMaghribState.asLiveData()
+
+    val getIsyaState = dataStorePreference.getIsyaState.asLiveData()
 }
