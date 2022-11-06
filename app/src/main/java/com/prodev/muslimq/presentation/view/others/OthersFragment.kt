@@ -1,60 +1,86 @@
 package com.prodev.muslimq.presentation.view.others
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.prodev.muslimq.R
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.prodev.muslimq.BuildConfig
+import com.prodev.muslimq.databinding.FragmentOthersBinding
+import com.prodev.muslimq.presentation.adapter.OthersAdapter
+import com.prodev.muslimq.utils.OthersObject
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [OthersFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class OthersFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val binding: FragmentOthersBinding by lazy(LazyThreadSafetyMode.NONE) {
+        FragmentOthersBinding.inflate(layoutInflater)
     }
+
+    private lateinit var othersAdapter: OthersAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_others, container, false)
+    ): View {
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OthersFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OthersFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    @SuppressLint("SetTextI18n")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setRecyclerView()
+        binding.tvVersion.text = "Versi ${BuildConfig.VERSION_NAME}"
+    }
+
+    private fun setRecyclerView() {
+        othersAdapter = OthersAdapter()
+        binding.rvOthers.apply {
+            adapter = othersAdapter
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(true)
+        }
+        othersAdapter.setList(OthersObject.listData)
+        othersAdapter.onClick = {
+            when (it) {
+                0 -> {
+                    Toast.makeText(context, "Tersimpan", Toast.LENGTH_SHORT).show()
+                }
+                1 -> {
+                    val email = "luthfidaffa2202@gmail.com"
+                    val subject = "Feedback Aplikasi MuslimQ"
+                    val body = "Silahkan tulis pesan Anda di sini"
+
+                    Intent(Intent.ACTION_SENDTO).let { actionTo ->
+                        val urlString =
+                            "mailto:${Uri.encode(email)}?subject=${Uri.encode(subject)}&body=${
+                                Uri.encode(body)
+                            }"
+                        actionTo.data = Uri.parse(urlString)
+
+                        Intent(Intent.ACTION_SEND).apply {
+                            type = "message/rfc822"
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+                            putExtra(Intent.EXTRA_SUBJECT, subject)
+                            putExtra(Intent.EXTRA_TEXT, body)
+                            selector = actionTo
+                            startActivity(Intent.createChooser(this, "Kirim Email"))
+                        }
+                    }
+                }
+                2 -> {
+                    Toast.makeText(context, "Dukung Kami", Toast.LENGTH_SHORT).show()
+                }
+                3 -> {
+                    Toast.makeText(context, "Tentang", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
     }
 }
