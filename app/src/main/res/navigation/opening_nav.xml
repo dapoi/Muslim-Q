@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/opening_nav.xml"
+    app:startDestination="@id/splashScreenFragment">
+
+    <fragment
+        android:id="@+id/splashScreenFragment"
+        android:name="com.prodev.muslimq.presentation.view.splashscreen.SplashScreenFragment"
+        android:label="fragment_splash_screen"
+        tools:layout="@layout/fragment_splash_screen">
+        <action
+            android:id="@+id/action_splashScreenFragment_to_baseActivity"
+            app:destination="@id/baseActivity"
+            app:enterAnim="@anim/to_up"
+            app:exitAnim="@anim/to_down"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/splashScreenFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <activity
+        android:id="@+id/baseActivity"
+        android:name="com.prodev.muslimq.presentation.BaseActivity"
+        android:label="activity_base"
+        tools:layout="@layout/activity_base" />
+</navigation>

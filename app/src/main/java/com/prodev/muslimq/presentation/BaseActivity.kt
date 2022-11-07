@@ -25,6 +25,7 @@ class BaseActivity : AppCompatActivity() {
         val navController = navHosFragment.navController
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNav.visibility = when (destination.id) {
+                R.id.splashScreenFragment -> View.GONE
                 R.id.quranDetailFragment -> View.GONE
                 R.id.shalatProvinceFragment -> View.GONE
                 R.id.shalatCityFragment -> View.GONE
