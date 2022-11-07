@@ -32,6 +32,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveAyahSize(ayahSize: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePreference.saveAyahSize(ayahSize)
+        }
+    }
+
     fun saveShubuhState(state: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStorePreference.saveShubuhState(state)
@@ -67,6 +73,8 @@ class DataStoreViewModel @Inject constructor(
     val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
 
     val getCityData = dataStorePreference.getCityData.asLiveData()
+
+    val getAyahSize = dataStorePreference.getAyahSize.asLiveData()
 
     val getShubuhState = dataStorePreference.getShubuhState.asLiveData()
 

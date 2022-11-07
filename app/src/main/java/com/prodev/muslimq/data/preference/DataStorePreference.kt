@@ -2,10 +2,7 @@ package com.prodev.muslimq.data.preference
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.map
@@ -15,6 +12,7 @@ import javax.inject.Singleton
 private val SURAH_NAME = stringPreferencesKey("surah_name")
 private val SURAH_MEANING = stringPreferencesKey("surah_meaning")
 private val PROVINCE_ID = stringPreferencesKey("province_id")
+private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
 private val SHUBUH_STATE = booleanPreferencesKey("shubuh_state")
@@ -65,6 +63,22 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         val provinceId = preferences[PROVINCE_ID] ?: ""
         val provinceName = preferences[PROVINCE_NAME] ?: ""
         Pair(provinceId, provinceName)
+    }
+
+    /**
+     * Save ayah size to data store
+     */
+    suspend fun saveAyahSize(ayahSize: Int) {
+        dataStore.edit { preferences ->
+            preferences[AYAH_SIZE] = ayahSize
+        }
+    }
+
+    /**
+     * Get ayah size from data store
+     */
+    val getAyahSize = dataStore.data.map { preferences ->
+        preferences[AYAH_SIZE] ?: 24
     }
 
     /**

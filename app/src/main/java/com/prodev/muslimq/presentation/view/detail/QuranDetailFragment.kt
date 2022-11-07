@@ -2,7 +2,6 @@ package com.prodev.muslimq.presentation.view.detail
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
+import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranDetailViewModel
 import com.prodev.muslimq.utils.Resource
 import com.prodev.muslimq.utils.isOnline
@@ -37,6 +37,7 @@ class QuranDetailFragment : Fragment() {
 
     private val binding get() = _binding!!
     private val detailViewModel: QuranDetailViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -197,7 +198,7 @@ class QuranDetailFragment : Fragment() {
                 ) {
                     fontSize = progress
                     sbCurrent.progress = fontSize!!
-                    detailAdapter.setFontSize(progress)
+                    detailAdapter.setFontSize(fontSize!!)
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {}
@@ -215,21 +216,16 @@ class QuranDetailFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-        fontSize = sharedPref.getInt("fontSize", 22)
-        detailAdapter.setFontSize(fontSize!!)
+        dataStoreViewModel.getAyahSize.observe(viewLifecycleOwner) { size ->
+            fontSize = size
+            detailAdapter.setFontSize(fontSize!!)
+        }
     }
 
     override fun onPause() {
         super.onPause()
 
-        fontSize?.let {
-            val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
-            with(sharedPref.edit()) {
-                putInt("fontSize", it)
-                apply()
-            }
-        }
+        fontSize?.let { size -> dataStoreViewModel.saveAyahSize(size) }
     }
 
     override fun onDestroyView() {
