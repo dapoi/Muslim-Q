@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,6 +16,7 @@ import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.databinding.FragmentShalatBinding
+import com.prodev.muslimq.presentation.BaseActivity
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.utils.Resource
@@ -83,7 +83,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveShubuhState(alarmShubuh)
                 ivNotifShubuhOn.visibility = View.GONE
                 ivNotifShubuhOff.visibility = View.VISIBLE
-                Toast.makeText(requireContext(), "Alarm Shubuh Mati", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Shubuh Dinonaktifkan",
+                )
             }
 
             ivNotifShubuhOff.setOnClickListener {
@@ -91,7 +95,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveShubuhState(alarmShubuh)
                 ivNotifShubuhOn.visibility = View.VISIBLE
                 ivNotifShubuhOff.visibility = View.GONE
-                Toast.makeText(requireContext(), "Alarm Shubuh Hidup", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Shubuh Diaktifkan",
+                )
             }
 
             dataStoreViewModel.getShubuhState.observe(viewLifecycleOwner) { state ->
@@ -113,7 +121,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveDzuhurState(alarmDzuhur)
                 ivNotifDzuhurOn.visibility = View.GONE
                 ivNotifDzuhurOff.visibility = View.VISIBLE
-                Toast.makeText(requireContext(), "Alarm Dzuhur Mati", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Dzuhur Dinonaktifkan",
+                )
             }
 
             ivNotifDzuhurOff.setOnClickListener {
@@ -121,7 +133,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveDzuhurState(alarmDzuhur)
                 ivNotifDzuhurOn.visibility = View.VISIBLE
                 ivNotifDzuhurOff.visibility = View.GONE
-                Toast.makeText(requireContext(), "Alarm Dzuhur Hidup", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Dzuhur Diaktifkan",
+                )
             }
 
             dataStoreViewModel.getDzuhurState.observe(viewLifecycleOwner) { state ->
@@ -143,7 +159,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveAsharState(alarmAshar)
                 ivNotifAsharOn.visibility = View.GONE
                 ivNotifAsharOff.visibility = View.VISIBLE
-                Toast.makeText(requireContext(), "Alarm Ashar Mati", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Ashar Dinonaktifkan",
+                )
             }
 
             ivNotifAsharOff.setOnClickListener {
@@ -151,7 +171,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveAsharState(alarmAshar)
                 ivNotifAsharOn.visibility = View.VISIBLE
                 ivNotifAsharOff.visibility = View.GONE
-                Toast.makeText(requireContext(), "Alarm Ashar Hidup", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Ashar Diaktifkan",
+                )
             }
 
             dataStoreViewModel.getAsharState.observe(viewLifecycleOwner) { state ->
@@ -173,7 +197,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveMaghribState(alarmMaghrib)
                 ivNotifMaghribOn.visibility = View.GONE
                 ivNotifMaghribOff.visibility = View.VISIBLE
-                Toast.makeText(requireContext(), "Alarm Maghrib Mati", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Maghrib Dinonaktifkan",
+                )
             }
 
             ivNotifMaghribOff.setOnClickListener {
@@ -181,7 +209,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveMaghribState(alarmMaghrib)
                 ivNotifMaghribOn.visibility = View.VISIBLE
                 ivNotifMaghribOff.visibility = View.GONE
-                Toast.makeText(requireContext(), "Alarm Maghrib Hidup", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Maghrib Diaktifkan",
+                )
             }
 
             dataStoreViewModel.getMaghribState.observe(viewLifecycleOwner) { state ->
@@ -203,7 +235,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveIsyaState(alarmIsya)
                 ivNotifIsyaOn.visibility = View.GONE
                 ivNotifIsyaOff.visibility = View.VISIBLE
-                Toast.makeText(requireContext(), "Alarm Isya Mati", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Isya Dinonaktifkan",
+                )
             }
 
             ivNotifIsyaOff.setOnClickListener {
@@ -211,7 +247,11 @@ class ShalatFragment : Fragment() {
                 dataStoreViewModel.saveIsyaState(alarmIsya)
                 ivNotifIsyaOn.visibility = View.VISIBLE
                 ivNotifIsyaOff.visibility = View.GONE
-                Toast.makeText(requireContext(), "Alarm Isya Hidup", Toast.LENGTH_SHORT).show()
+                (requireActivity() as BaseActivity).customSnackbar(
+                    requireActivity(),
+                    binding.root,
+                    "Adzan Isya Diaktifkan",
+                )
             }
 
             dataStoreViewModel.getIsyaState.observe(viewLifecycleOwner) { state ->

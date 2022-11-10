@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="20dp"
-    android:paddingVertical="24dp">
+    android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_shubuh"

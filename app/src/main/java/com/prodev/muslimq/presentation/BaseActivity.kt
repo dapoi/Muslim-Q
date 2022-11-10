@@ -1,10 +1,14 @@
 package com.prodev.muslimq.presentation
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.ActivityBaseBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,5 +37,21 @@ class BaseActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
+    }
+
+    fun customSnackbar(context: Context, view: View, message: String) {
+        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
+            anchorView = binding.bottomNav
+            setBackgroundTint(
+                ContextCompat.getColor(
+                    context,
+                    R.color.green_base
+                )
+            )
+        }
+        val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.setMargins(60, 0, 60, 50)
+        snackbar.view.layoutParams = layoutParams
+        snackbar.show()
     }
 }
