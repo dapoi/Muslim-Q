@@ -16,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
+import com.prodev.muslimq.data.source.local.model.Ayat
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
@@ -143,7 +144,14 @@ class QuranDetailFragment : Fragment() {
                                     }
                                 } • ${result.data?.jumlahAyat} ayat"
 
-                            detailAdapter.setList(result.data?.ayat!!)
+                            val ayahs = ArrayList<Ayat>()
+                            result.data?.ayat?.let { ayahs.addAll(it) }
+                            if (ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")) {
+                                ayahs.removeAt(0)
+                                detailAdapter.setList(ayahs)
+                            } else {
+                                detailAdapter.setList(ayahs)
+                            }
                             rvAyah.visibility = View.VISIBLE
                         }
                     }
