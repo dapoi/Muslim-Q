@@ -35,23 +35,25 @@ import kotlinx.coroutines.launch
 class QuranFragment : Fragment() {
 
     private lateinit var binding: FragmentQuranBinding
-    private lateinit var quranAdapter: QuranAdapter
 
+    private val quranAdapter = QuranAdapter()
     private val quranViewModel: QuranViewModel by viewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
+
+    private var mRootView: ViewGroup? = null
+    private var isFirstLoad = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        if (this::binding.isInitialized) {
-            binding
+        binding = FragmentQuranBinding.inflate(inflater, container, false)
+        if (mRootView == null) {
+            mRootView = binding.root
+            isFirstLoad = true
         } else {
-            binding = FragmentQuranBinding.inflate(inflater, container, false)
-
-            setAdapter()
-            setViewModel()
+            isFirstLoad = false
         }
-        return binding.root
+        return mRootView as ViewGroup
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,8 +61,7 @@ class QuranFragment : Fragment() {
 
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
-                findNavController().navigate(
-                    R.id.action_quranFragment_to_quranDetailFragment,
+                findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
                         putInt("surahNumber", surah.nomor)
                         putString("surahName", surah.namaLatin)
@@ -97,6 +98,11 @@ class QuranFragment : Fragment() {
                     return false
                 }
             })
+        }
+
+        if (isFirstLoad) {
+            setViewModel()
+            setAdapter()
         }
     }
 
@@ -167,8 +173,6 @@ class QuranFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
-        quranAdapter = QuranAdapter()
-        quranAdapter.notifyDataSetChanged()
         binding.rvSurah.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = quranAdapter

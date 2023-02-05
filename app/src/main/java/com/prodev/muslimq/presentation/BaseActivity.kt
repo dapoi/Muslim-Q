@@ -13,12 +13,10 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.ActivityBaseBinding
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class BaseActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBaseBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityBaseBinding.inflate(layoutInflater)
@@ -39,15 +37,24 @@ class BaseActivity : AppCompatActivity() {
         binding.bottomNav.setupWithNavController(navController)
     }
 
-    fun customSnackbar(context: Context, view: View, message: String) {
+    fun customSnackbar(state: Boolean, context: Context, view: View, message: String) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
             anchorView = binding.bottomNav
-            setBackgroundTint(
-                ContextCompat.getColor(
-                    context,
-                    R.color.green_base
+            if (state) {
+                setBackgroundTint(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.green_base
+                    )
                 )
-            )
+            } else {
+                setBackgroundTint(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.red
+                    )
+                )
+            }
         }
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.setMargins(60, 0, 60, 50)

@@ -84,6 +84,7 @@ class ShalatFragment : Fragment() {
                 ivNotifShubuhOn.visibility = View.GONE
                 ivNotifShubuhOff.visibility = View.VISIBLE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    false,
                     requireActivity(),
                     binding.root,
                     "Adzan Shubuh Dinonaktifkan",
@@ -96,6 +97,7 @@ class ShalatFragment : Fragment() {
                 ivNotifShubuhOn.visibility = View.VISIBLE
                 ivNotifShubuhOff.visibility = View.GONE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    true,
                     requireActivity(),
                     binding.root,
                     "Adzan Shubuh Diaktifkan",
@@ -122,6 +124,7 @@ class ShalatFragment : Fragment() {
                 ivNotifDzuhurOn.visibility = View.GONE
                 ivNotifDzuhurOff.visibility = View.VISIBLE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    false,
                     requireActivity(),
                     binding.root,
                     "Adzan Dzuhur Dinonaktifkan",
@@ -134,6 +137,7 @@ class ShalatFragment : Fragment() {
                 ivNotifDzuhurOn.visibility = View.VISIBLE
                 ivNotifDzuhurOff.visibility = View.GONE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    true,
                     requireActivity(),
                     binding.root,
                     "Adzan Dzuhur Diaktifkan",
@@ -160,6 +164,7 @@ class ShalatFragment : Fragment() {
                 ivNotifAsharOn.visibility = View.GONE
                 ivNotifAsharOff.visibility = View.VISIBLE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    false,
                     requireActivity(),
                     binding.root,
                     "Adzan Ashar Dinonaktifkan",
@@ -172,6 +177,7 @@ class ShalatFragment : Fragment() {
                 ivNotifAsharOn.visibility = View.VISIBLE
                 ivNotifAsharOff.visibility = View.GONE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    true,
                     requireActivity(),
                     binding.root,
                     "Adzan Ashar Diaktifkan",
@@ -198,6 +204,7 @@ class ShalatFragment : Fragment() {
                 ivNotifMaghribOn.visibility = View.GONE
                 ivNotifMaghribOff.visibility = View.VISIBLE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    false,
                     requireActivity(),
                     binding.root,
                     "Adzan Maghrib Dinonaktifkan",
@@ -210,6 +217,7 @@ class ShalatFragment : Fragment() {
                 ivNotifMaghribOn.visibility = View.VISIBLE
                 ivNotifMaghribOff.visibility = View.GONE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    true,
                     requireActivity(),
                     binding.root,
                     "Adzan Maghrib Diaktifkan",
@@ -236,6 +244,7 @@ class ShalatFragment : Fragment() {
                 ivNotifIsyaOn.visibility = View.GONE
                 ivNotifIsyaOff.visibility = View.VISIBLE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    false,
                     requireActivity(),
                     binding.root,
                     "Adzan Isya Dinonaktifkan",
@@ -248,6 +257,7 @@ class ShalatFragment : Fragment() {
                 ivNotifIsyaOn.visibility = View.VISIBLE
                 ivNotifIsyaOff.visibility = View.GONE
                 (requireActivity() as BaseActivity).customSnackbar(
+                    true,
                     requireActivity(),
                     binding.root,
                     "Adzan Isya Diaktifkan",
@@ -379,26 +389,11 @@ class ShalatFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     fun nexTimePray() {
         val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
+        Log.d("Waktu sekarang", timeNow)
+        Log.d("Waktu shubuh", shubuh)
 
         binding.apply {
             when {
-                timeNow < shubuh -> {
-                    tvTimeShalat.text = "Shubuh pukul $shubuh WIB"
-                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
-                    )
-                    if (alarmShubuh) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            shubuh,
-                            "Adzan Shubuh",
-                            "Waktunya shalat shubuh"
-                        )
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
-                }
                 timeNow < dzuhur -> {
                     tvTimeShalat.text = "Dzuhur pukul $dzuhur WIB"
                     shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
@@ -410,7 +405,7 @@ class ShalatFragment : Fragment() {
                             requireActivity(),
                             dzuhur,
                             "Adzan Dzuhur",
-                            "Waktunya shalat dzuhur"
+                            "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -427,7 +422,7 @@ class ShalatFragment : Fragment() {
                             requireActivity(),
                             ashar,
                             "Adzan Ashar",
-                            "Waktunya shalat ashar"
+                            "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -444,7 +439,7 @@ class ShalatFragment : Fragment() {
                             requireActivity(),
                             maghrib,
                             "Adzan Maghrib",
-                            "Waktunya shalat maghrib"
+                            "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -461,7 +456,7 @@ class ShalatFragment : Fragment() {
                             requireActivity(),
                             isya,
                             "Adzan Isya",
-                            "Waktunya shalat isya"
+                            "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -474,12 +469,14 @@ class ShalatFragment : Fragment() {
                         R.drawable.bg_item_shalat
                     )
                     if (alarmShubuh) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            shubuh,
-                            "Adzan Shubuh",
-                            "Waktunya shalat shubuh"
-                        )
+                        if (timeNow < shubuh) {
+                            alarmReceiver.setRepeatingAlarm(
+                                requireActivity(),
+                                shubuh,
+                                "Adzan Shubuh",
+                                "Waktunya shalat"
+                            )
+                        }
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
                     }
