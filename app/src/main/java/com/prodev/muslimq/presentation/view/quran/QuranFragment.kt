@@ -46,14 +46,22 @@ class QuranFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentQuranBinding.inflate(inflater, container, false)
-        if (mRootView == null) {
-            mRootView = binding.root
-            isFirstLoad = true
-        } else {
+        if (this::binding.isInitialized) {
+            binding
             isFirstLoad = false
+        } else {
+            binding = FragmentQuranBinding.inflate(inflater, container, false)
+            isFirstLoad = true
         }
-        return mRootView as ViewGroup
+        return binding.root
+//        binding = FragmentQuranBinding.inflate(inflater, container, false)
+//        if (mRootView == null) {
+//            mRootView = binding.root
+//            isFirstLoad = true
+//        } else {
+//            isFirstLoad = false
+//        }
+//        return mRootView as ViewGroup
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

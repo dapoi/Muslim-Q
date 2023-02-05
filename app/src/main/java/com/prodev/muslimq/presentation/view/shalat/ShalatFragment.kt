@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -283,7 +282,6 @@ class ShalatFragment : Fragment() {
 
     private fun setViewModel() {
         dataStoreViewModel.getCityData.observe(viewLifecycleOwner) { cityData ->
-            Log.d("ShalatFragment", "setViewModel: $cityData")
             if (cityData.isEmpty()) {
                 binding.tvChooseLocation.text = resources.getString(R.string.choose_your_location)
             } else {
@@ -327,7 +325,6 @@ class ShalatFragment : Fragment() {
                             progressBar.visibility = View.GONE
                             clNoInternet.visibility = View.VISIBLE
                             shalatLayout.root.visibility = View.GONE
-                            Log.e("Failed to get data", it.error?.message.toString())
                         }
                         else -> {
                             it.data?.let { data -> getData(data) }
@@ -388,7 +385,6 @@ class ShalatFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     fun nexTimePray() {
         val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
-        Log.d("aaa",shubuh)
 
         binding.apply {
             when {
