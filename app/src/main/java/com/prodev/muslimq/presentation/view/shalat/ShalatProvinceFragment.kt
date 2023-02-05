@@ -120,9 +120,11 @@ class ShalatProvinceFragment : Fragment() {
                 when (it) {
                     is Resource.Loading -> stateLoading(true)
                     is Resource.Success -> {
-                        stateLoading(false)
-                        provinceAdapter.setList(it.data!!)
-                        clNoInternet.visibility = View.GONE
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            stateLoading(false)
+                            provinceAdapter.setList(it.data!!)
+                            clNoInternet.visibility = View.GONE
+                        }, 1500)
                     }
                     is Resource.Error -> {
                         stateLoading(false)

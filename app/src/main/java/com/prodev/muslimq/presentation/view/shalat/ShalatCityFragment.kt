@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.view.shalat
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +24,7 @@ import com.prodev.muslimq.utils.hideKeyboard
 import com.prodev.muslimq.utils.isOnline
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ShalatCityFragment : Fragment() {
@@ -81,7 +81,6 @@ class ShalatCityFragment : Fragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         cityAdapter = CityAdapter()
         binding.rvCity.apply {
@@ -90,9 +89,8 @@ class ShalatCityFragment : Fragment() {
             setHasFixedSize(true)
 
             cityAdapter.onCLick = { city ->
-                viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                viewLifecycleOwner.lifecycleScope.launch {
                     dataStoreViewModel.saveCityData(city.name)
-                    Log.d("TAG", "setAdapter: ${city.name}")
                 }
                 findNavController().navigate(R.id.action_shalatCityFragment_to_shalatFragment)
             }
@@ -132,9 +130,11 @@ class ShalatCityFragment : Fragment() {
                     when (it) {
                         is Resource.Loading -> stateLoading(true)
                         is Resource.Success -> {
-                            stateLoading(false)
-                            cityAdapter.setList(it.data!!)
-                            clNoInternet.visibility = View.GONE
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stateLoading(false)
+                                cityAdapter.setList(it.data!!)
+                                clNoInternet.visibility = View.GONE
+                            }, 1000)
                         }
                         is Resource.Error -> {
                             stateLoading(false)

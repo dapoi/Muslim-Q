@@ -68,7 +68,7 @@ object NetworkBuilder {
     @Shalat
     fun provideShalatApi(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://muslimsalat.com/")
+    ): Retrofit = Retrofit.Builder().baseUrl("https://api.aladhan.com/")
         .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
         .build()
 

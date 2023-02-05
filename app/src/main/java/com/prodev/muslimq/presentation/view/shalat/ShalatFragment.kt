@@ -35,6 +35,11 @@ class ShalatFragment : Fragment() {
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
+    private var shubuhWithZone = ""
+    private var dzuhurWithZone = ""
+    private var asharWithZone = ""
+    private var maghribWithZone = ""
+    private var isyaWithZone = ""
     private var shubuh = ""
     private var dzuhur = ""
     private var ashar = ""
@@ -322,6 +327,7 @@ class ShalatFragment : Fragment() {
                             progressBar.visibility = View.GONE
                             clNoInternet.visibility = View.VISIBLE
                             shalatLayout.root.visibility = View.GONE
+                            Log.e("Failed to get data", it.error?.message.toString())
                         }
                         else -> {
                             it.data?.let { data -> getData(data) }
@@ -335,25 +341,18 @@ class ShalatFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun getData(data: ShalatEntity) {
-        val currentFormat = "hh:mm a"
-        val targetFormat = "HH:mm"
-        val timeZone = "Asia/Jakarta"
-        val idFormat = Locale("in", "ID")
-        val currentTimeFormat = SimpleDateFormat(currentFormat, idFormat)
-        currentTimeFormat.timeZone = TimeZone.getTimeZone(timeZone)
-        val targetTimeFormat = SimpleDateFormat(targetFormat, idFormat)
+        shubuhWithZone = data.shubuh
+        dzuhurWithZone = data.dzuhur
+        asharWithZone = data.ashar
+        maghribWithZone = data.maghrib
+        isyaWithZone = data.isya
 
         try {
-            val newShubuh = currentTimeFormat.parse(data.shubuh)
-            val newDzuhur = currentTimeFormat.parse(data.dzuhur)
-            val newAshar = currentTimeFormat.parse(data.ashar)
-            val newMaghrib = currentTimeFormat.parse(data.maghrib)
-            val newIsya = currentTimeFormat.parse(data.isya)
-            shubuh = targetTimeFormat.format(newShubuh!!)
-            dzuhur = targetTimeFormat.format(newDzuhur!!)
-            ashar = targetTimeFormat.format(newAshar!!)
-            maghrib = targetTimeFormat.format(newMaghrib!!)
-            isya = targetTimeFormat.format(newIsya!!)
+            shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
+            dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
+            ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
+            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
+            isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -362,11 +361,11 @@ class ShalatFragment : Fragment() {
             progressBar.visibility = View.GONE
             shalatLayout.apply {
                 root.visibility = View.VISIBLE
-                tvShubuhTime.text = "$shubuh WIB"
-                tvDzuhurTime.text = "$dzuhur WIB"
-                tvAsharTime.text = "$ashar WIB"
-                tvMaghribTime.text = "$maghrib WIB"
-                tvIsyaTime.text = "$isya WIB"
+                tvShubuhTime.text = shubuhWithZone
+                tvDzuhurTime.text = dzuhurWithZone
+                tvAsharTime.text = asharWithZone
+                tvMaghribTime.text = maghribWithZone
+                tvIsyaTime.text = isyaWithZone
             }
             clNoInternet.visibility = View.GONE
         }
@@ -389,13 +388,12 @@ class ShalatFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     fun nexTimePray() {
         val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
-        Log.d("Waktu sekarang", timeNow)
-        Log.d("Waktu shubuh", shubuh)
+        Log.d("aaa",shubuh)
 
         binding.apply {
             when {
                 timeNow < dzuhur -> {
-                    tvTimeShalat.text = "Dzuhur pukul $dzuhur WIB"
+                    tvTimeShalat.text = "Dzuhur pukul $dzuhurWithZone"
                     shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -412,7 +410,7 @@ class ShalatFragment : Fragment() {
                     }
                 }
                 timeNow < ashar -> {
-                    tvTimeShalat.text = "Ashar pukul $ashar WIB"
+                    tvTimeShalat.text = "Ashar pukul $asharWithZone"
                     shalatLayout.clAshar.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -429,7 +427,7 @@ class ShalatFragment : Fragment() {
                     }
                 }
                 timeNow < maghrib -> {
-                    tvTimeShalat.text = "Maghrib pukul $maghrib WIB"
+                    tvTimeShalat.text = "Maghrib pukul $maghribWithZone"
                     shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -446,7 +444,7 @@ class ShalatFragment : Fragment() {
                     }
                 }
                 timeNow < isya -> {
-                    tvTimeShalat.text = "Isya pukul $isya WIB"
+                    tvTimeShalat.text = "Isya pukul $isyaWithZone"
                     shalatLayout.clIsya.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -463,7 +461,7 @@ class ShalatFragment : Fragment() {
                     }
                 }
                 else -> {
-                    tvTimeShalat.text = "Shubuh pukul $shubuh WIB"
+                    tvTimeShalat.text = "Shubuh pukul $shubuhWithZone"
                     shalatLayout.clShubuh.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat

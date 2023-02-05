@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,14 +46,17 @@ class ShalatRepositoryImpl @Inject constructor(
         query = { localDataSource.getShalatDailyByCity(city) },
         fetch = { remoteDataSource.getShalatDaily(city) },
         saveFetchResult = { shalat ->
-            shalat.items.map { pray ->
+            val simpleDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            shalat.data.filter {
+                it.date.readable.contains(simpleDateFormat.format(Date()))
+            }.map { pray ->
                 val local = ShalatEntity(
                     city = city,
-                    shubuh = pray.fajr,
-                    dzuhur = pray.dhuhr,
-                    ashar = pray.asr,
-                    maghrib = pray.maghrib,
-                    isya = pray.isha
+                    shubuh = pray.timings.Fajr,
+                    dzuhur = pray.timings.Dhuhr,
+                    ashar = pray.timings.Asr,
+                    maghrib = pray.timings.Maghrib,
+                    isya = pray.timings.Isha
                 )
                 localDataSource.deleteShalatDaily()
                 localDataSource.insertShalatDaily(local)
