@@ -8,9 +8,9 @@ plugins {
 android {
     signingConfigs {
         release {
-            storeFile file('/Users/luthfidaffaprabowo/Documents/Project/muslimkey')
+            storeFile file('D:\\Projek\\Key\\muslimkey.jks')
             storePassword 'Lutpi220201'
-            keyAlias 'dapoi'
+            keyAlias 'muslimq'
             keyPassword 'Lutpi220201'
         }
     }
