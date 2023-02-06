@@ -34,6 +34,7 @@ class ShalatFragment : Fragment() {
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
+    private var timeNow = ""
     private var shubuhWithZone = ""
     private var dzuhurWithZone = ""
     private var asharWithZone = ""
@@ -384,12 +385,12 @@ class ShalatFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     fun nexTimePray() {
-        val timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
+        timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
 
         binding.apply {
             when {
-                timeNow < dzuhur -> {
-                    tvTimeShalat.text = "Dzuhur pukul $dzuhurWithZone"
+                timeNow < dzuhur && timeNow > shubuh -> {
+                    tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
                     shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -405,8 +406,8 @@ class ShalatFragment : Fragment() {
                         alarmReceiver.cancelAlarm(requireActivity())
                     }
                 }
-                timeNow < ashar -> {
-                    tvTimeShalat.text = "Ashar pukul $asharWithZone"
+                timeNow < ashar && timeNow > dzuhur -> {
+                    tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     shalatLayout.clAshar.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -422,8 +423,8 @@ class ShalatFragment : Fragment() {
                         alarmReceiver.cancelAlarm(requireActivity())
                     }
                 }
-                timeNow < maghrib -> {
-                    tvTimeShalat.text = "Maghrib pukul $maghribWithZone"
+                timeNow < maghrib && timeNow > ashar -> {
+                    tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -439,8 +440,8 @@ class ShalatFragment : Fragment() {
                         alarmReceiver.cancelAlarm(requireActivity())
                     }
                 }
-                timeNow < isya -> {
-                    tvTimeShalat.text = "Isya pukul $isyaWithZone"
+                timeNow < isya && timeNow > maghrib -> {
+                    tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     shalatLayout.clIsya.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -457,7 +458,7 @@ class ShalatFragment : Fragment() {
                     }
                 }
                 else -> {
-                    tvTimeShalat.text = "Shubuh pukul $shubuhWithZone"
+                    tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
                     shalatLayout.clShubuh.background = ContextCompat.getDrawable(
                         requireActivity(),
                         R.drawable.bg_item_shalat
@@ -477,6 +478,21 @@ class ShalatFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun countDownShalat(timeShalat: String): String {
+        val timeNowComponent = timeNow.split(":").map { it.toInt() }
+        val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
+        var diff = (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 +
+                timeShalatComponent[1] - timeNowComponent[1]
+        if (diff < 0) diff += 1440
+
+        val hours = diff / 60
+        diff %= 60
+
+        val minutes = diff
+
+        return "$hours jam $minutes menit"
     }
 
     override fun onResume() {

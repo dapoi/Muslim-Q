@@ -55,7 +55,7 @@ class QuranDetailFragment : Fragment() {
         setAdapter()
         setViewModel()
 
-        val surahName = arguments?.getString("surahName")
+        val surahName = arguments?.getString(SURAH_NAME)
 
         binding.apply {
             toolbar.title = surahName
@@ -84,7 +84,7 @@ class QuranDetailFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setViewModel() {
-        val id = arguments?.getInt("surahNumber")
+        val id = arguments?.getInt(SURAH_NUMBER)
         id?.let { idSurah ->
             detailViewModel.getQuranDetail(idSurah).observe(viewLifecycleOwner) { result ->
                 with(binding) {
@@ -175,7 +175,7 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun showDescSurah() {
-        val surahDesc = arguments?.getString("surahDesc")
+        val surahDesc = arguments?.getString(SURAH_DESC)
         val htmlFormat = HtmlCompat.fromHtml(surahDesc.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle("Deskripsi Surah")
@@ -239,5 +239,11 @@ class QuranDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val SURAH_NUMBER = "surahNumber"
+        const val SURAH_NAME = "surahName"
+        const val SURAH_DESC = "surahDesc"
     }
 }

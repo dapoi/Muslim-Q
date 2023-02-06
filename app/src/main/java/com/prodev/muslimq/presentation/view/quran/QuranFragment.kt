@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.view.quran
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -21,6 +20,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.FragmentQuranBinding
 import com.prodev.muslimq.presentation.adapter.QuranAdapter
+import com.prodev.muslimq.presentation.view.detail.QuranDetailFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.prodev.muslimq.utils.InternetReceiver
@@ -40,7 +40,6 @@ class QuranFragment : Fragment() {
     private val quranViewModel: QuranViewModel by viewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
-    private var mRootView: ViewGroup? = null
     private var isFirstLoad = false
 
     override fun onCreateView(
@@ -54,14 +53,6 @@ class QuranFragment : Fragment() {
             isFirstLoad = true
         }
         return binding.root
-//        binding = FragmentQuranBinding.inflate(inflater, container, false)
-//        if (mRootView == null) {
-//            mRootView = binding.root
-//            isFirstLoad = true
-//        } else {
-//            isFirstLoad = false
-//        }
-//        return mRootView as ViewGroup
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,9 +62,9 @@ class QuranFragment : Fragment() {
             override fun onItemClick(surah: QuranEntity) {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
-                        putInt("surahNumber", surah.nomor)
-                        putString("surahName", surah.namaLatin)
-                        putString("surahDesc", surah.deskripsi)
+                        putInt(QuranDetailFragment.SURAH_NUMBER, surah.nomor)
+                        putString(QuranDetailFragment.SURAH_NAME, surah.namaLatin)
+                        putString(QuranDetailFragment.SURAH_DESC, surah.deskripsi)
                     })
                 hideKeyboard(requireActivity())
 
@@ -179,7 +170,6 @@ class QuranFragment : Fragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun setAdapter() {
         binding.rvSurah.apply {
             layoutManager = LinearLayoutManager(context)

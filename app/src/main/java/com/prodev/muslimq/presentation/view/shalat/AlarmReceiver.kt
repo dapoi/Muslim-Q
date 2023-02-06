@@ -45,7 +45,7 @@ class AlarmReceiver : BroadcastReceiver() {
             Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.adzan_regular)
         }
         val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_notif_circle)
+            .setSmallIcon(R.drawable.ic_muslim)
             .setContentTitle(title)
             .setContentText(message)
             .setColor(ContextCompat.getColor(context, android.R.color.transparent))
