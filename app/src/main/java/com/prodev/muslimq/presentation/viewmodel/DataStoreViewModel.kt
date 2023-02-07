@@ -3,7 +3,7 @@ package com.prodev.muslimq.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.prodev.muslimq.data.preference.DataStorePreference
+import com.prodev.muslimq.core.data.preference.DataStorePreference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

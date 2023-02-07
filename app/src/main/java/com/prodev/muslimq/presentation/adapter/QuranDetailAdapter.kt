@@ -3,7 +3,7 @@ package com.prodev.muslimq.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.data.source.local.model.Ayat
+import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.databinding.ItemListAyahBinding
 
 class QuranDetailAdapter : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {

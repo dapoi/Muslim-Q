@@ -40,7 +40,7 @@
         tools:layout="@layout/fragment_others" />
     <fragment
         android:id="@+id/quranDetailFragment"
-        android:name="com.prodev.muslimq.presentation.view.detail.QuranDetailFragment"
+        android:name="com.prodev.muslimq.presentation.view.quran.QuranDetailFragment"
         android:label="fragment_quran_detail"
         tools:layout="@layout/fragment_quran_detail" />
     <fragment

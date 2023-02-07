@@ -13,13 +13,13 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.prodev.muslimq.R
-import com.prodev.muslimq.data.source.local.model.ShalatEntity
+import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
+import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.BaseActivity
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.prodev.muslimq.utils.Resource
-import com.prodev.muslimq.utils.isOnline
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat

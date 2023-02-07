@@ -11,9 +11,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.BuildConfig
+import com.prodev.muslimq.core.utils.OthersObject
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
-import com.prodev.muslimq.utils.OthersObject
 
 class OthersFragment : Fragment() {
 

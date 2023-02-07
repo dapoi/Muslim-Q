@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.databinding.FragmentDoaBinding
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
 import com.prodev.muslimq.presentation.viewmodel.DoaViewModel
-import com.prodev.muslimq.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 
 
