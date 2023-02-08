@@ -9,7 +9,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
-import com.prodev.muslimq.data.source.local.model.DoaEntity
+import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import com.prodev.muslimq.databinding.ItemListDoaBinding
 import java.util.*
 

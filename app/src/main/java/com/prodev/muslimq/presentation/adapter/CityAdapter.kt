@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.data.source.remote.model.CityResponse
+import com.prodev.muslimq.core.data.source.remote.model.CityResponse
+import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.databinding.ItemListAreaBinding
-import com.prodev.muslimq.utils.capitalizeEachWord
 
 class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterable {
 

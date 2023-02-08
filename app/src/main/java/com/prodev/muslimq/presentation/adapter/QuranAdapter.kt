@@ -7,7 +7,7 @@ import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.data.source.local.model.QuranEntity
+import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.ItemListSurahBinding
 
 class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filterable {

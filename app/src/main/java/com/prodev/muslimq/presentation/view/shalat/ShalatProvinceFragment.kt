@@ -14,13 +14,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
+import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.core.utils.hideKeyboard
+import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.prodev.muslimq.utils.Resource
-import com.prodev.muslimq.utils.hideKeyboard
-import com.prodev.muslimq.utils.isOnline
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
