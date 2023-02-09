@@ -1,6 +1,4 @@
 <resources>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="last_read">Terakhir dibaca</string>
     <string name="kiblah">Kiblat</string>
     <string name="daily_prayer">Doa</string>
@@ -11,13 +9,13 @@
     <string name="quran">Qur\'an</string>
     <string name="others">Lainnya</string>
     <string name="no_internet">Sepertinya ada masalah, tarik ke bawah untuk memuat ulang</string>
-    <string name="no_data">Pilih lokasi untuk melihat jadwal shalat. Jika ada masalah, tarik ke bawah untuk memuat ulang</string>
+    <string name="no_prayer_time">Anda belum memilih lokasi untuk melihat jadwal shalat</string>
     <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
     <string name="icon_loc">ikon lokasi</string>
     <string name="icon_mosque">ikon masjid</string>
     <string name="next_prayer">Waktu Shalat Berikutnya :</string>
-    <string name="province_choose">Pilih provinsi</string>
-    <string name="city_choose">Pilih kota di %s</string>
+    <string name="province_choose">Pilih Provinsi</string>
+    <string name="city_choose">Pilih Kota di %s</string>
     <string name="choose_your_location">Pilih Lokasi Anda</string>
     <string name="location_not_found">Lokasi tidak ditemukan, cari lokasi lain</string>
     <string name="last_read_surah_empty">"Belum ada surah yang dibaca"</string>
@@ -28,13 +26,15 @@
     <string name="isya">Isya</string>
     <string name="small">Kecil</string>
     <string name="big">Besar</string>
-    <string name="find_qibla">Temukan arah kiblat di kota Anda</string>
+    <string name="find_qibla">Temukan arah kiblat di sekitar Anda</string>
     <string name="north">U</string>
     <string name="south">S</string>
     <string name="east">T</string>
     <string name="west">B</string>
     <string name="setting_font">Atur Ukuran Ayat</string>
     <string name="save">Simpan</string>
-    <string name="daily_doa">Doa sehari-hari</string>
+    <string name="daily_doa">Doa Sehari-hari</string>
     <string name="alarm">alarm</string>
+    <string name="bookmark">Baca Nanti</string>
+    <string name="bookmark_empty">Tidak ada surah yang disimpan</string>
 </resources>

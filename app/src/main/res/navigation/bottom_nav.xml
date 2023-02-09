@@ -37,7 +37,11 @@
         android:id="@+id/othersFragment"
         android:name="com.prodev.muslimq.presentation.view.others.OthersFragment"
         android:label="fragment_others"
-        tools:layout="@layout/fragment_others" />
+        tools:layout="@layout/fragment_others" >
+        <action
+            android:id="@+id/action_othersFragment_to_quranBookmarkFragment"
+            app:destination="@id/quranBookmarkFragment" />
+    </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
         android:name="com.prodev.muslimq.presentation.view.quran.QuranDetailFragment"
@@ -62,5 +66,14 @@
         <action
             android:id="@+id/action_shalatProvinceFragment_to_shalatCityFragment"
             app:destination="@id/shalatCityFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/quranBookmarkFragment"
+        android:name="com.prodev.muslimq.presentation.view.quran.QuranBookmarkFragment"
+        android:label="fragment_quran_bookmark"
+        tools:layout="@layout/fragment_quran_bookmark" >
+        <action
+            android:id="@+id/action_quranBookmarkFragment_to_quranDetailFragment"
+            app:destination="@id/quranDetailFragment" />
     </fragment>
 </navigation>

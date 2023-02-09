@@ -119,7 +119,7 @@ class QuranFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        quranViewModel.getSurah.observe(viewLifecycleOwner) {
+        quranViewModel.getSurah().observe(viewLifecycleOwner) {
             with(binding) {
                 srlSurah.apply {
                     setLottieAnimation("loading.json")

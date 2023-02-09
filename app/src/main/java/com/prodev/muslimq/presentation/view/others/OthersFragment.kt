@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.BuildConfig
+import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.OthersObject
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
@@ -50,32 +52,26 @@ class OthersFragment : Fragment() {
         othersAdapter.onClick = {
             when (it) {
                 0 -> {
-                    Toast.makeText(context, "Tersimpan", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(
+                        R.id.action_othersFragment_to_quranBookmarkFragment
+                    )
                 }
                 1 -> {
                     val email = "luthfidaffa2202@gmail.com"
                     val subject = "Feedback Aplikasi MuslimQ"
                     val body = "Silahkan tulis pesan Anda di sini"
 
-                    Intent(Intent.ACTION_SENDTO).let { actionTo ->
-                        val urlString =
-                            "mailto:${Uri.encode(email)}?subject=${Uri.encode(subject)}&body=${
-                                Uri.encode(body)
-                            }"
-                        actionTo.data = Uri.parse(urlString)
-
-                        Intent(Intent.ACTION_SEND).apply {
-                            type = "message/rfc822"
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-                            putExtra(Intent.EXTRA_SUBJECT, subject)
-                            putExtra(Intent.EXTRA_TEXT, body)
-                            selector = actionTo
-                            startActivity(Intent.createChooser(this, "Kirim Email"))
-                        }
+                    // intent to send email
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:")
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+                        putExtra(Intent.EXTRA_SUBJECT, subject)
+                        putExtra(Intent.EXTRA_TEXT, body)
                     }
+                    startActivity(intent)
                 }
                 2 -> {
-                    Toast.makeText(context, "Dukung Kami", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Segera Datang", Toast.LENGTH_SHORT).show()
                 }
                 3 -> {
                     Toast.makeText(context, "Tentang", Toast.LENGTH_SHORT).show()

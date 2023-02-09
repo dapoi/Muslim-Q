@@ -1,9 +1,6 @@
 package com.prodev.muslimq.core.data.source.local.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +13,12 @@ interface QuranDao {
 
     @Query("SELECT * FROM quran_detail WHERE surahId = :surahId")
     fun getQuranDetail(surahId: Int): Flow<QuranDetailEntity>
+
+    @Update
+    fun updateBookmark(quran: QuranDetailEntity)
+
+    @Query("SELECT * FROM quran_detail WHERE isBookmarked = 1")
+    fun getBookmark(): Flow<List<QuranDetailEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuran(quran: List<QuranEntity>)

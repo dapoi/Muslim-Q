@@ -31,6 +31,7 @@ class BaseActivity : AppCompatActivity() {
                 R.id.quranDetailFragment -> View.GONE
                 R.id.shalatProvinceFragment -> View.GONE
                 R.id.shalatCityFragment -> View.GONE
+                R.id.quranBookmarkFragment -> View.GONE
                 else -> View.VISIBLE
             }
         }

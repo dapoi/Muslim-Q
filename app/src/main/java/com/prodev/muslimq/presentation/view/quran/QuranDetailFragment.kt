@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,7 +23,7 @@ import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.presentation.viewmodel.QuranDetailViewModel
+import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -37,13 +38,11 @@ class QuranDetailFragment : Fragment() {
     private var _binding: FragmentQuranDetailBinding? = null
 
     private val binding get() = _binding!!
-    private val detailViewModel: QuranDetailViewModel by viewModels()
+    private val detailViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -132,17 +131,17 @@ class QuranDetailFragment : Fragment() {
                         }
                         else -> {
                             stateLoading(false)
+
                             clNoInternet.visibility = View.GONE
                             tvSurahName.text = result.data?.namaLatin
                             tvAyahMeaning.text = result.data?.artiQuran
-                            tvCityAndTotalAyah.text =
-                                "${
-                                    result.data?.tempatTurun?.replaceFirstChar {
-                                        if (it.isLowerCase()) it.titlecase(
-                                            Locale.getDefault()
-                                        ) else it.toString()
-                                    }
-                                } • ${result.data?.jumlahAyat} ayat"
+                            tvCityAndTotalAyah.text = "${
+                                result.data?.tempatTurun?.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                }
+                            } • ${result.data?.jumlahAyat} ayat"
 
                             val ayahs = ArrayList<Ayat>()
                             result.data?.ayat?.let { ayahs.addAll(it) }
@@ -153,9 +152,42 @@ class QuranDetailFragment : Fragment() {
                                 detailAdapter.setList(ayahs)
                             }
                             rvAyah.visibility = View.VISIBLE
+
+                            result.data?.let { quranDetailEntity ->
+                                var bookmarked = quranDetailEntity.isBookmarked
+                                setBookmark(bookmarked)
+                                ivBookmark.setOnClickListener {
+                                    bookmarked = !bookmarked
+                                    setBookmark(bookmarked)
+                                    detailViewModel.insertToBookmark(quranDetailEntity, bookmarked)
+                                    if (bookmarked) {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Berhasil Disimpan",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Berhasil Dihapus",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun setBookmark(bookmarkStatus: Boolean) {
+        binding.apply {
+            if (bookmarkStatus) {
+                ivBookmark.setImageResource(R.drawable.ic_bookmark_true)
+            } else {
+                ivBookmark.setImageResource(R.drawable.ic_bookmark_false)
             }
         }
     }
@@ -200,9 +232,7 @@ class QuranDetailFragment : Fragment() {
             sbCurrent.progress = fontSize ?: 24
             sbCurrent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
+                    seekBar: SeekBar?, progress: Int, fromUser: Boolean
                 ) {
                     fontSize = progress
                     sbCurrent.progress = fontSize!!
