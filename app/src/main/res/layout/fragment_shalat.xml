@@ -179,7 +179,7 @@
         <include
             android:id="@+id/shalat_layout"
             layout="@layout/item_shalat"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </com.simform.refresh.SSPullToRefreshLayout>
 
@@ -202,7 +202,7 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_no_internet"
+        android:id="@+id/cl_negative_case"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="?attr/actionBarSize"
@@ -211,7 +211,7 @@
         app:layout_constraintTop_toBottomOf="@id/cl_info_shalat">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_empty"
+            android:id="@+id/lottie_no_internet"
             android:layout_width="210dp"
             android:layout_height="210dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -223,18 +223,31 @@
             app:lottie_loop="true"
             app:lottie_speed="1" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_no_location"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="location.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1" />
+
         <TextView
             android:id="@+id/tv_result"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/no_data"
+            android:text="@string/no_prayer_time"
             android:textAlignment="center"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
+            app:layout_constraintTop_toBottomOf="@+id/lottie_no_internet" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
