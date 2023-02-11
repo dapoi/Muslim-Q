@@ -38,7 +38,13 @@ class BaseActivity : AppCompatActivity() {
         binding.bottomNav.setupWithNavController(navController)
     }
 
-    fun customSnackbar(state: Boolean, context: Context, view: View, message: String) {
+    fun customSnackbar(
+        state: Boolean,
+        context: Context,
+        view: View,
+        message: String,
+        action: Boolean = false
+    ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
             anchorView = binding.bottomNav
             if (state) {
@@ -55,6 +61,21 @@ class BaseActivity : AppCompatActivity() {
                         R.color.red
                     )
                 )
+            }
+
+            setTextColor(ContextCompat.getColor(context, R.color.white))
+            if (action) {
+                setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                setAction("IZINKAN") {
+                    // intent to notification setting device
+                    val intent = android.content.Intent()
+                    intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    intent.putExtra(
+                        "android.provider.extra.APP_PACKAGE",
+                        context.packageName
+                    )
+                    startActivity(intent)
+                }
             }
         }
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams

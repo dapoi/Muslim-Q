@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/poppins_medium"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -123,8 +123,7 @@
             android:id="@+id/tv_islamic_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/poppins"
+            android:fontFamily="@font/poppins_medium"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -156,17 +155,16 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_next_shalat"
             tools:text="Shubuh" />
 
-        <TextView
-            android:id="@+id/tv_countdown"
+        <ImageView
+            android:id="@+id/iv_icon_adzan_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:fontFamily="@font/poppins_medium"
-            android:textColor="@color/white"
+            android:src="@drawable/ic_notif_on"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_gregorian_date"
-            tools:text="-" />
-
+            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.simform.refresh.SSPullToRefreshLayout

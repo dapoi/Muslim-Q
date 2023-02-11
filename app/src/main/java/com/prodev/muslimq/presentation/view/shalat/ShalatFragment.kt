@@ -10,17 +10,16 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.work.*
 import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
@@ -28,6 +27,7 @@ import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.BaseActivity
+import com.prodev.muslimq.presentation.receiver.AlarmReceiver
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.simform.refresh.SSPullToRefreshLayout
@@ -45,70 +45,117 @@ class ShalatFragment : Fragment() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private var timeNow = ""
+
+    // prayer time with zone
     private var shubuhWithZone = ""
     private var dzuhurWithZone = ""
     private var asharWithZone = ""
     private var maghribWithZone = ""
     private var isyaWithZone = ""
+
+    // prayer time without zone
     private var shubuh = ""
     private var dzuhur = ""
     private var ashar = ""
     private var maghrib = ""
     private var isya = ""
-    private var alarmShubuh = true
-    private var alarmDzuhur = true
-    private var alarmAshar = true
-    private var alarmMaghrib = true
-    private var alarmIsya = true
+
+    private var notifAdzanState = false
+    private var isOnline = false
+    private var isFirstLoad = false
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            Toast.makeText(requireContext(), "Notifikasi Diizinkan", Toast.LENGTH_SHORT).show()
-        } else if (ActivityCompat.shouldShowRequestPermissionRationale(
-                requireActivity(), Manifest.permission.POST_NOTIFICATIONS
-            )
-        ) {
-            Toast.makeText(requireContext(), "Notifikasi Ditolak", Toast.LENGTH_SHORT).show()
-        }
+    ) {
+        if (it) return@registerForActivityResult
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentShalatBinding.inflate(inflater, container, false)
+        if (this::binding.isInitialized) {
+            binding
+            isFirstLoad = false
+        } else {
+            binding = FragmentShalatBinding.inflate(inflater, container, false)
+            isFirstLoad = true
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        alarmReceiver = AlarmReceiver()
-
-        binding.apply {
-            ivIconChoose.setOnClickListener {
-                findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
-            }
-
-            dateGregorianAndHijri()
-            stateAlarmImage()
+        binding.ivIconChoose.setOnClickListener {
+            findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
         }
 
-        checkNotificationPermissionWhenLaunch()
+        if (isFirstLoad) {
+            alarmReceiver = AlarmReceiver()
+            setViewModel()
+        }
+
+        dateGregorianAndHijri()
+        stateNotifButton()
+    }
+
+    private fun stateNotifButton() {
+        binding.apply {
+
+            ivIconAdzanState.setOnClickListener {
+                checkNotificationPermissionWhenLaunch()
+            }
+
+            dataStoreViewModel.getNotifState.observe(viewLifecycleOwner) { state ->
+                notifAdzanState = state
+
+                if (state) {
+                    ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
+                } else {
+                    ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
+                }
+            }
+        }
     }
 
     private fun checkNotificationPermissionWhenLaunch() {
-        if (ContextCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                    return
-                } else {
+        if (Build.VERSION.SDK_INT >= 33) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    with(binding) {
+                        if (notifAdzanState) {
+                            dataStoreViewModel.saveNotifState(false)
+                            ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
+                            (activity as BaseActivity).customSnackbar(
+                                false,
+                                requireContext(),
+                                binding.root,
+                                "Notifikasi adzan dinonaktifkan",
+                            )
+                        } else {
+                            dataStoreViewModel.saveNotifState(true)
+                            ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
+                            (activity as BaseActivity).customSnackbar(
+                                true,
+                                requireContext(),
+                                binding.root,
+                                "Notifikasi adzan diaktifkan",
+                            )
+                        }
+                    }
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    (activity as BaseActivity).customSnackbar(
+                        true,
+                        requireContext(),
+                        binding.root,
+                        "Izinkan notifikasi adzan",
+                        true
+                    )
+                }
+                else -> {
                     requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
@@ -131,8 +178,8 @@ class ShalatFragment : Fragment() {
                         setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
                             override fun onRefresh() {
                                 val handlerData = Handler(Looper.getMainLooper())
-                                val check = isOnline(requireContext())
-                                if (check) {
+                                isOnline = isOnline(requireContext())
+                                if (isOnline) {
                                     handlerData.postDelayed({
                                         setRefreshing(false)
                                     }, 2000)
@@ -157,7 +204,11 @@ class ShalatFragment : Fragment() {
                         }
                         it is Resource.Error && it.data == null -> {
                             progressBar.visibility = View.GONE
-                            negativeCase(false)
+                            if (isOnline) {
+                                negativeCase(true)
+                            } else {
+                                negativeCase(false)
+                            }
                             shalatLayout.root.visibility = View.GONE
                         }
                         else -> {
@@ -209,6 +260,9 @@ class ShalatFragment : Fragment() {
                 lottieNoLocation.visibility = View.GONE
                 lottieNoInternet.visibility = View.VISIBLE
                 tvResult.text = getString(R.string.no_internet)
+                clNegativeCase.applyConstraint {
+                    topToBottom(tvResult, lottieNoInternet, 16)
+                }
             } else {
                 lottieNoLocation.visibility = View.VISIBLE
                 lottieNoInternet.visibility = View.GONE
@@ -231,214 +285,6 @@ class ShalatFragment : Fragment() {
         connect(v1.id, TOP, v2.id, BOTTOM, margin)
     }
 
-    private fun stateAlarmImage() {
-        checkShubuhState()
-        checkDzuhurState()
-        checkAsharState()
-        checkMaghribState()
-        checkIsyaState()
-    }
-
-    private fun checkShubuhState() {
-        with(binding.shalatLayout) {
-            ivNotifShubuhOn.setOnClickListener {
-                alarmShubuh = false
-                dataStoreViewModel.saveShubuhState(alarmShubuh)
-                ivNotifShubuhOn.visibility = View.GONE
-                ivNotifShubuhOff.visibility = View.VISIBLE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    false,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Shubuh Dinonaktifkan",
-                )
-            }
-
-            ivNotifShubuhOff.setOnClickListener {
-                alarmShubuh = true
-                dataStoreViewModel.saveShubuhState(alarmShubuh)
-                ivNotifShubuhOn.visibility = View.VISIBLE
-                ivNotifShubuhOff.visibility = View.GONE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    true,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Shubuh Diaktifkan",
-                )
-            }
-
-            dataStoreViewModel.getShubuhState.observe(viewLifecycleOwner) { state ->
-                if (state) {
-                    ivNotifShubuhOn.visibility = View.VISIBLE
-                    ivNotifShubuhOff.visibility = View.GONE
-                } else {
-                    ivNotifShubuhOn.visibility = View.GONE
-                    ivNotifShubuhOff.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun checkDzuhurState() {
-        with(binding.shalatLayout) {
-            ivNotifDzuhurOn.setOnClickListener {
-                alarmDzuhur = false
-                dataStoreViewModel.saveDzuhurState(alarmDzuhur)
-                ivNotifDzuhurOn.visibility = View.GONE
-                ivNotifDzuhurOff.visibility = View.VISIBLE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    false,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Dzuhur Dinonaktifkan",
-                )
-            }
-
-            ivNotifDzuhurOff.setOnClickListener {
-                alarmDzuhur = true
-                dataStoreViewModel.saveDzuhurState(alarmDzuhur)
-                ivNotifDzuhurOn.visibility = View.VISIBLE
-                ivNotifDzuhurOff.visibility = View.GONE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    true,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Dzuhur Diaktifkan",
-                )
-            }
-
-            dataStoreViewModel.getDzuhurState.observe(viewLifecycleOwner) { state ->
-                if (state) {
-                    ivNotifDzuhurOn.visibility = View.VISIBLE
-                    ivNotifDzuhurOff.visibility = View.GONE
-                } else {
-                    ivNotifDzuhurOn.visibility = View.GONE
-                    ivNotifDzuhurOff.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun checkAsharState() {
-        with(binding.shalatLayout) {
-            ivNotifAsharOn.setOnClickListener {
-                alarmAshar = false
-                dataStoreViewModel.saveAsharState(alarmAshar)
-                ivNotifAsharOn.visibility = View.GONE
-                ivNotifAsharOff.visibility = View.VISIBLE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    false,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Ashar Dinonaktifkan",
-                )
-            }
-
-            ivNotifAsharOff.setOnClickListener {
-                alarmAshar = true
-                dataStoreViewModel.saveAsharState(alarmAshar)
-                ivNotifAsharOn.visibility = View.VISIBLE
-                ivNotifAsharOff.visibility = View.GONE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    true,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Ashar Diaktifkan",
-                )
-            }
-
-            dataStoreViewModel.getAsharState.observe(viewLifecycleOwner) { state ->
-                if (state) {
-                    ivNotifAsharOn.visibility = View.VISIBLE
-                    ivNotifAsharOff.visibility = View.GONE
-                } else {
-                    ivNotifAsharOn.visibility = View.GONE
-                    ivNotifAsharOff.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun checkMaghribState() {
-        with(binding.shalatLayout) {
-            ivNotifMaghribOn.setOnClickListener {
-                alarmMaghrib = false
-                dataStoreViewModel.saveMaghribState(alarmMaghrib)
-                ivNotifMaghribOn.visibility = View.GONE
-                ivNotifMaghribOff.visibility = View.VISIBLE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    false,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Maghrib Dinonaktifkan",
-                )
-            }
-
-            ivNotifMaghribOff.setOnClickListener {
-                alarmMaghrib = true
-                dataStoreViewModel.saveMaghribState(alarmMaghrib)
-                ivNotifMaghribOn.visibility = View.VISIBLE
-                ivNotifMaghribOff.visibility = View.GONE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    true,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Maghrib Diaktifkan",
-                )
-            }
-
-            dataStoreViewModel.getMaghribState.observe(viewLifecycleOwner) { state ->
-                if (state) {
-                    ivNotifMaghribOn.visibility = View.VISIBLE
-                    ivNotifMaghribOff.visibility = View.GONE
-                } else {
-                    ivNotifMaghribOn.visibility = View.GONE
-                    ivNotifMaghribOff.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
-    private fun checkIsyaState() {
-        with(binding.shalatLayout) {
-            ivNotifIsyaOn.setOnClickListener {
-                alarmIsya = false
-                dataStoreViewModel.saveIsyaState(alarmIsya)
-                ivNotifIsyaOn.visibility = View.GONE
-                ivNotifIsyaOff.visibility = View.VISIBLE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    false,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Isya Dinonaktifkan",
-                )
-            }
-
-            ivNotifIsyaOff.setOnClickListener {
-                alarmIsya = true
-                dataStoreViewModel.saveIsyaState(alarmIsya)
-                ivNotifIsyaOn.visibility = View.VISIBLE
-                ivNotifIsyaOff.visibility = View.GONE
-                (requireActivity() as BaseActivity).customSnackbar(
-                    true,
-                    requireActivity(),
-                    binding.root,
-                    "Adzan Isya Diaktifkan",
-                )
-            }
-
-            dataStoreViewModel.getIsyaState.observe(viewLifecycleOwner) { state ->
-                if (state) {
-                    ivNotifIsyaOn.visibility = View.VISIBLE
-                    ivNotifIsyaOff.visibility = View.GONE
-                } else {
-                    ivNotifIsyaOn.visibility = View.GONE
-                    ivNotifIsyaOff.visibility = View.VISIBLE
-                }
-            }
-        }
-    }
-
     private fun dateGregorianAndHijri() {
         binding.apply {
             val indonesia = Locale("in", "ID")
@@ -454,8 +300,40 @@ class ShalatFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    fun nexTimePray() {
+    private fun nexTimePray() {
         timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
+
+        val listAdzanTime = mapOf(
+            "Adzan Shubuh" to shubuh,
+            "Adzan Dzuhur" to dzuhur,
+            "Adzan Ashar" to ashar,
+            "Adzan Maghrib" to maghrib,
+            "Adzan Isya" to isya
+        )
+
+        if (notifAdzanState) {
+            for (adzanTime in listAdzanTime) {
+                if (timeNow == adzanTime.value) {
+                    if (timeNow == shubuh) {
+                        alarmReceiver.scheduleAdzan(
+                            requireActivity(),
+                            adzanTime.value,
+                            adzanTime.key,
+                            true
+                        )
+                    } else {
+                        alarmReceiver.scheduleAdzan(
+                            requireActivity(),
+                            adzanTime.value,
+                            adzanTime.key,
+                            false
+                        )
+                    }
+                }
+            }
+        } else {
+            alarmReceiver.removeAdzan(requireActivity())
+        }
 
         binding.apply {
             when {
@@ -464,67 +342,31 @@ class ShalatFragment : Fragment() {
                     shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
                         requireActivity(), R.drawable.bg_item_shalat
                     )
-                    if (alarmDzuhur) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(), dzuhur, "Adzan Dzuhur", "Waktunya shalat"
-                        )
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
+
                 }
                 timeNow < ashar && timeNow > dzuhur -> {
                     tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     shalatLayout.clAshar.background = ContextCompat.getDrawable(
                         requireActivity(), R.drawable.bg_item_shalat
                     )
-                    if (alarmAshar) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(), ashar, "Adzan Ashar", "Waktunya shalat"
-                        )
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
                 }
                 timeNow < maghrib && timeNow > ashar -> {
                     tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
                         requireActivity(), R.drawable.bg_item_shalat
                     )
-                    if (alarmMaghrib) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(), maghrib, "Adzan Maghrib", "Waktunya shalat"
-                        )
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
                 }
                 timeNow < isya && timeNow > maghrib -> {
                     tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     shalatLayout.clIsya.background = ContextCompat.getDrawable(
                         requireActivity(), R.drawable.bg_item_shalat
                     )
-                    if (alarmIsya) {
-                        alarmReceiver.setRepeatingAlarm(
-                            requireActivity(), isya, "Adzan Isya", "Waktunya shalat"
-                        )
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
                 }
                 else -> {
                     tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
                     shalatLayout.clShubuh.background = ContextCompat.getDrawable(
                         requireActivity(), R.drawable.bg_item_shalat
                     )
-                    if (alarmShubuh) {
-                        if (timeNow < shubuh) {
-                            alarmReceiver.setRepeatingAlarm(
-                                requireActivity(), shubuh, "Adzan Shubuh", "Waktunya shalat", true
-                            )
-                        }
-                    } else {
-                        alarmReceiver.cancelAlarm(requireActivity())
-                    }
                 }
             }
         }
@@ -543,10 +385,5 @@ class ShalatFragment : Fragment() {
         val minutes = diff
 
         return "$hours jam $minutes menit"
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setViewModel()
     }
 }

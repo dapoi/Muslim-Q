@@ -38,31 +38,6 @@
             app:layout_constraintStart_toEndOf="@id/iv_shubuh"
             app:layout_constraintTop_toTopOf="@id/iv_shubuh" />
 
-        <ImageView
-            android:id="@+id/iv_notif_shubuh_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintBottom_toBottomOf="@id/tv_shubuh_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_shubuh_time"
-            app:layout_constraintTop_toTopOf="@id/tv_shubuh_time"
-            app:tint="@color/green_base" />
-
-        <ImageView
-            android:id="@+id/iv_notif_shubuh_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_off"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tv_shubuh_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_shubuh_time"
-            app:layout_constraintTop_toTopOf="@id/tv_shubuh_time"
-            app:tint="@color/gray" />
-
         <TextView
             android:id="@+id/tv_shubuh_time"
             android:layout_width="wrap_content"
@@ -108,31 +83,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_dzuhur"
             app:layout_constraintStart_toEndOf="@id/iv_dzuhur"
             app:layout_constraintTop_toTopOf="@id/iv_dzuhur" />
-
-        <ImageView
-            android:id="@+id/iv_notif_dzuhur_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintBottom_toBottomOf="@id/tv_dzuhur_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_dzuhur_time"
-            app:layout_constraintTop_toTopOf="@id/tv_dzuhur_time"
-            app:tint="@color/green_base" />
-
-        <ImageView
-            android:id="@+id/iv_notif_dzuhur_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_off"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tv_dzuhur_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_dzuhur_time"
-            app:layout_constraintTop_toTopOf="@id/tv_dzuhur_time"
-            app:tint="@color/gray" />
 
         <TextView
             android:id="@+id/tv_dzuhur_time"
@@ -180,31 +130,6 @@
             app:layout_constraintStart_toEndOf="@id/iv_ashar"
             app:layout_constraintTop_toTopOf="@id/iv_ashar" />
 
-        <ImageView
-            android:id="@+id/iv_notif_ashar_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintBottom_toBottomOf="@id/tv_ashar_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_ashar_time"
-            app:layout_constraintTop_toTopOf="@id/tv_ashar_time"
-            app:tint="@color/green_base" />
-
-        <ImageView
-            android:id="@+id/iv_notif_ashar_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_off"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tv_ashar_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_ashar_time"
-            app:layout_constraintTop_toTopOf="@id/tv_ashar_time"
-            app:tint="@color/gray" />
-
         <TextView
             android:id="@+id/tv_ashar_time"
             android:layout_width="wrap_content"
@@ -251,31 +176,6 @@
             app:layout_constraintStart_toEndOf="@id/iv_maghrib"
             app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
 
-        <ImageView
-            android:id="@+id/iv_notif_maghrib_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintBottom_toBottomOf="@id/tv_maghrib_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_maghrib_time"
-            app:layout_constraintTop_toTopOf="@id/tv_maghrib_time"
-            app:tint="@color/green_base" />
-
-        <ImageView
-            android:id="@+id/iv_notif_maghrib_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_off"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tv_maghrib_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_maghrib_time"
-            app:layout_constraintTop_toTopOf="@id/tv_maghrib_time"
-            app:tint="@color/gray" />
-
         <TextView
             android:id="@+id/tv_maghrib_time"
             android:layout_width="wrap_content"
@@ -321,31 +221,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_isya"
             app:layout_constraintStart_toEndOf="@id/iv_isya"
             app:layout_constraintTop_toTopOf="@id/iv_isya" />
-
-        <ImageView
-            android:id="@+id/iv_notif_isya_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintBottom_toBottomOf="@id/tv_isya_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_isya_time"
-            app:layout_constraintTop_toTopOf="@id/tv_isya_time"
-            app:tint="@color/green_base" />
-
-        <ImageView
-            android:id="@+id/iv_notif_isya_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="@string/alarm"
-            android:src="@drawable/ic_notif_off"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/tv_isya_time"
-            app:layout_constraintEnd_toStartOf="@id/tv_isya_time"
-            app:layout_constraintTop_toTopOf="@id/tv_isya_time"
-            app:tint="@color/gray" />
 
         <TextView
             android:id="@+id/tv_isya_time"

@@ -6,9 +6,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
         android:name=".Application"
@@ -37,9 +37,9 @@
         </activity>
 
         <receiver
-            android:name=".presentation.view.shalat.AlarmReceiver"
+            android:name=".presentation.receiver.AlarmReceiver"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
             android:name="com.prodev.muslimq.presentation.BaseActivity"

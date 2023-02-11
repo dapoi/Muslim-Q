@@ -38,33 +38,9 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveShubuhState(state: Boolean) {
+    fun saveNotifState(shalatState: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveShubuhState(state)
-        }
-    }
-
-    fun saveDzuhurState(alarmDzuhur: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveDzuhurState(alarmDzuhur)
-        }
-    }
-
-    fun saveAsharState(alarmAshar: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveAsharState(alarmAshar)
-        }
-    }
-
-    fun saveMaghribState(alarmMaghrib: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveMaghribState(alarmMaghrib)
-        }
-    }
-
-    fun saveIsyaState(alarmIsya: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveIsyaState(alarmIsya)
+            dataStorePreference.saveNotifState(shalatState)
         }
     }
 
@@ -76,13 +52,5 @@ class DataStoreViewModel @Inject constructor(
 
     val getAyahSize = dataStorePreference.getAyahSize.asLiveData()
 
-    val getShubuhState = dataStorePreference.getShubuhState.asLiveData()
-
-    val getDzuhurState = dataStorePreference.getDzuhurState.asLiveData()
-
-    val getAsharState = dataStorePreference.getAsharState.asLiveData()
-
-    val getMaghribState = dataStorePreference.getMaghribState.asLiveData()
-
-    val getIsyaState = dataStorePreference.getIsyaState.asLiveData()
+    val getNotifState = dataStorePreference.getNotifState.asLiveData()
 }

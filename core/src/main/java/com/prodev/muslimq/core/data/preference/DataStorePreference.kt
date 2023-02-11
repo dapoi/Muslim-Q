@@ -15,11 +15,7 @@ private val PROVINCE_ID = stringPreferencesKey("province_id")
 private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
-private val SHUBUH_STATE = booleanPreferencesKey("shubuh_state")
-private val DZUHUR_STATE = booleanPreferencesKey("dzuhur_state")
-private val ASHAR_STATE = booleanPreferencesKey("ashar_state")
-private val MAGHRIB_STATE = booleanPreferencesKey("maghrib_state")
-private val ISYA_STATE = booleanPreferencesKey("isya_state")
+private val SHALAT_STATE = booleanPreferencesKey("shalat_state")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -98,82 +94,18 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     }
 
     /**
-     * Save shubuh state to data store
+     * Save shalat state
      */
-    suspend fun saveShubuhState(state: Boolean) {
+    suspend fun saveNotifState(state: Boolean) {
         dataStore.edit { preferences ->
-            preferences[SHUBUH_STATE] = state
+            preferences[SHALAT_STATE] = state
         }
     }
 
     /**
-     * Get shubuh state from data store
+     * Get shalat state
      */
-    val getShubuhState = dataStore.data.map { preferences ->
-        preferences[SHUBUH_STATE] ?: true
-    }
-
-    /**
-     * Save dzuhur state to data store
-     */
-    suspend fun saveDzuhurState(state: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[DZUHUR_STATE] = state
-        }
-    }
-
-    /**
-     * Get dzuhur state from data store
-     */
-    val getDzuhurState = dataStore.data.map { preferences ->
-        preferences[DZUHUR_STATE] ?: true
-    }
-
-    /**
-     * Save ashar state to data store
-     */
-    suspend fun saveAsharState(state: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[ASHAR_STATE] = state
-        }
-    }
-
-    /**
-     * Get ashar state from data store
-     */
-    val getAsharState = dataStore.data.map { preferences ->
-        preferences[ASHAR_STATE] ?: true
-    }
-
-    /**
-     * Save maghrib state to data store
-     */
-    suspend fun saveMaghribState(state: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[MAGHRIB_STATE] = state
-        }
-    }
-
-    /**
-     * Get maghrib state from data store
-     */
-    val getMaghribState = dataStore.data.map { preferences ->
-        preferences[MAGHRIB_STATE] ?: true
-    }
-
-    /**
-     * Save isya state to data store
-     */
-    suspend fun saveIsyaState(state: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[ISYA_STATE] = state
-        }
-    }
-
-    /**
-     * Get isya state from data store
-     */
-    val getIsyaState = dataStore.data.map { preferences ->
-        preferences[ISYA_STATE] ?: true
+    val getNotifState = dataStore.data.map { preferences ->
+        preferences[SHALAT_STATE] ?: false
     }
 }
