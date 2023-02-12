@@ -30,32 +30,20 @@ object NetworkBuilder {
         @ApplicationContext context: Context
     ): OkHttpClient {
         val logging = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         } else {
-            HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.NONE
-            }
+            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
         }
-        val chuckerInterceptor = ChuckerInterceptor.Builder(context)
-            .collector(ChuckerCollector(context))
-            .maxContentLength(250000L)
-            .alwaysReadResponseBody(true)
-            .build()
+        val chuckerInterceptor =
+            ChuckerInterceptor.Builder(context).collector(ChuckerCollector(context))
+                .maxContentLength(250000L).alwaysReadResponseBody(true).build()
 
         return if (BuildConfig.DEBUG) {
-            OkHttpClient.Builder()
-                .addInterceptor(logging)
-                .addInterceptor(chuckerInterceptor)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .build()
+            OkHttpClient.Builder().addInterceptor(logging).addInterceptor(chuckerInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build()
         } else {
-            OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .build()
+            OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS).build()
         }
 
     }

@@ -1,12 +1,22 @@
 package com.prodev.muslimq.presentation.view.shalat
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.Px
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.constraintlayout.widget.ConstraintSet.*
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -51,6 +61,19 @@ class ShalatFragment : Fragment() {
     private var alarmMaghrib = true
     private var alarmIsya = true
 
+    private val requestPermissionPostNotification = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            Toast.makeText(requireContext(), "Notifikasi Diizinkan", Toast.LENGTH_SHORT).show()
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(), Manifest.permission.POST_NOTIFICATIONS
+            )
+        ) {
+            Toast.makeText(requireContext(), "Notifikasi Ditolak", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -71,6 +94,141 @@ class ShalatFragment : Fragment() {
             dateGregorianAndHijri()
             stateAlarmImage()
         }
+
+        checkNotificationPermissionWhenLaunch()
+    }
+
+    private fun checkNotificationPermissionWhenLaunch() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                    return
+                } else {
+                    requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun setViewModel() {
+        dataStoreViewModel.getCityData.observe(viewLifecycleOwner) { cityData ->
+            if (cityData.isEmpty()) {
+                binding.tvChooseLocation.text = resources.getString(R.string.choose_your_location)
+            } else {
+                binding.tvChooseLocation.text = cityData
+            }
+            shalatViewModel.getShalatDaily(cityData).observe(viewLifecycleOwner) {
+                with(binding) {
+                    srlShalat.apply {
+                        setLottieAnimation("loading.json")
+                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
+                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
+                            override fun onRefresh() {
+                                val handlerData = Handler(Looper.getMainLooper())
+                                val check = isOnline(requireContext())
+                                if (check) {
+                                    handlerData.postDelayed({
+                                        setRefreshing(false)
+                                    }, 2000)
+
+                                    handlerData.postDelayed({
+                                        clNegativeCase.visibility = View.GONE
+                                        setViewModel()
+                                    }, 2350)
+                                } else {
+                                    negativeCase(true)
+                                    setRefreshing(false)
+                                }
+                            }
+                        })
+                    }
+
+                    when {
+                        it is Resource.Loading && it.data == null -> {
+                            progressBar.visibility = View.VISIBLE
+                            clNegativeCase.visibility = View.GONE
+                            shalatLayout.root.visibility = View.GONE
+                        }
+                        it is Resource.Error && it.data == null -> {
+                            progressBar.visibility = View.GONE
+                            negativeCase(false)
+                            shalatLayout.root.visibility = View.GONE
+                        }
+                        else -> {
+                            it.data?.let { data -> getData(data) }
+                            nexTimePray()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun getData(data: ShalatEntity) {
+        shubuhWithZone = data.shubuh
+        dzuhurWithZone = data.dzuhur
+        asharWithZone = data.ashar
+        maghribWithZone = data.maghrib
+        isyaWithZone = data.isya
+
+        try {
+            shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
+            dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
+            ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
+            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
+            isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        with(binding) {
+            progressBar.visibility = View.GONE
+            shalatLayout.apply {
+                root.visibility = View.VISIBLE
+                tvShubuhTime.text = shubuhWithZone
+                tvDzuhurTime.text = dzuhurWithZone
+                tvAsharTime.text = asharWithZone
+                tvMaghribTime.text = maghribWithZone
+                tvIsyaTime.text = isyaWithZone
+            }
+            clNegativeCase.visibility = View.GONE
+        }
+    }
+
+    private fun negativeCase(noInternet: Boolean) {
+        with(binding) {
+            clNegativeCase.visibility = View.VISIBLE
+            if (noInternet) {
+                lottieNoLocation.visibility = View.GONE
+                lottieNoInternet.visibility = View.VISIBLE
+                tvResult.text = getString(R.string.no_internet)
+            } else {
+                lottieNoLocation.visibility = View.VISIBLE
+                lottieNoInternet.visibility = View.GONE
+                tvResult.text = getString(R.string.no_prayer_time)
+                clNegativeCase.applyConstraint {
+                    topToBottom(tvResult, lottieNoLocation, 16)
+                }
+            }
+        }
+    }
+
+    private fun ConstraintLayout.applyConstraint(block: ConstraintSet.() -> Unit) {
+        ConstraintSet().apply {
+            clone(this@applyConstraint)
+            block(this)
+        }.applyTo(this)
+    }
+
+    private fun ConstraintSet.topToBottom(v1: View, v2: View, @Px margin: Int = 0) {
+        connect(v1.id, TOP, v2.id, BOTTOM, margin)
     }
 
     private fun stateAlarmImage() {
@@ -281,94 +439,6 @@ class ShalatFragment : Fragment() {
         }
     }
 
-    private fun setViewModel() {
-        dataStoreViewModel.getCityData.observe(viewLifecycleOwner) { cityData ->
-            if (cityData.isEmpty()) {
-                binding.tvChooseLocation.text = resources.getString(R.string.choose_your_location)
-            } else {
-                binding.tvChooseLocation.text = cityData
-            }
-            shalatViewModel.getShalatDaily(cityData).observe(viewLifecycleOwner) {
-                with(binding) {
-                    srlShalat.apply {
-                        setLottieAnimation("loading.json")
-                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                            override fun onRefresh() {
-                                val handlerData = Handler(Looper.getMainLooper())
-                                val check = isOnline(requireContext())
-                                if (check) {
-                                    handlerData.postDelayed({
-                                        setRefreshing(false)
-                                    }, 2000)
-
-                                    handlerData.postDelayed({
-                                        clNoInternet.visibility = View.GONE
-                                        setViewModel()
-                                    }, 2350)
-                                } else {
-                                    clNoInternet.visibility = View.VISIBLE
-                                    shalatLayout.root.visibility = View.GONE
-                                    setRefreshing(false)
-                                }
-                            }
-                        })
-                    }
-
-                    when {
-                        it is Resource.Loading && it.data == null -> {
-                            progressBar.visibility = View.VISIBLE
-                            clNoInternet.visibility = View.GONE
-                            shalatLayout.root.visibility = View.GONE
-                        }
-                        it is Resource.Error && it.data == null -> {
-                            progressBar.visibility = View.GONE
-                            clNoInternet.visibility = View.VISIBLE
-                            shalatLayout.root.visibility = View.GONE
-                        }
-                        else -> {
-                            it.data?.let { data -> getData(data) }
-                            nexTimePray()
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun getData(data: ShalatEntity) {
-        shubuhWithZone = data.shubuh
-        dzuhurWithZone = data.dzuhur
-        asharWithZone = data.ashar
-        maghribWithZone = data.maghrib
-        isyaWithZone = data.isya
-
-        try {
-            shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
-            dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
-            ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
-            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
-            isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        with(binding) {
-            progressBar.visibility = View.GONE
-            shalatLayout.apply {
-                root.visibility = View.VISIBLE
-                tvShubuhTime.text = shubuhWithZone
-                tvDzuhurTime.text = dzuhurWithZone
-                tvAsharTime.text = asharWithZone
-                tvMaghribTime.text = maghribWithZone
-                tvIsyaTime.text = isyaWithZone
-            }
-            clNoInternet.visibility = View.GONE
-        }
-    }
-
     private fun dateGregorianAndHijri() {
         binding.apply {
             val indonesia = Locale("in", "ID")
@@ -392,15 +462,11 @@ class ShalatFragment : Fragment() {
                 timeNow < dzuhur && timeNow > shubuh -> {
                     tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
                     shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
+                        requireActivity(), R.drawable.bg_item_shalat
                     )
                     if (alarmDzuhur) {
                         alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            dzuhur,
-                            "Adzan Dzuhur",
-                            "Waktunya shalat"
+                            requireActivity(), dzuhur, "Adzan Dzuhur", "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -409,15 +475,11 @@ class ShalatFragment : Fragment() {
                 timeNow < ashar && timeNow > dzuhur -> {
                     tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     shalatLayout.clAshar.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
+                        requireActivity(), R.drawable.bg_item_shalat
                     )
                     if (alarmAshar) {
                         alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            ashar,
-                            "Adzan Ashar",
-                            "Waktunya shalat"
+                            requireActivity(), ashar, "Adzan Ashar", "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -426,15 +488,11 @@ class ShalatFragment : Fragment() {
                 timeNow < maghrib && timeNow > ashar -> {
                     tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
+                        requireActivity(), R.drawable.bg_item_shalat
                     )
                     if (alarmMaghrib) {
                         alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            maghrib,
-                            "Adzan Maghrib",
-                            "Waktunya shalat"
+                            requireActivity(), maghrib, "Adzan Maghrib", "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -443,15 +501,11 @@ class ShalatFragment : Fragment() {
                 timeNow < isya && timeNow > maghrib -> {
                     tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     shalatLayout.clIsya.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
+                        requireActivity(), R.drawable.bg_item_shalat
                     )
                     if (alarmIsya) {
                         alarmReceiver.setRepeatingAlarm(
-                            requireActivity(),
-                            isya,
-                            "Adzan Isya",
-                            "Waktunya shalat"
+                            requireActivity(), isya, "Adzan Isya", "Waktunya shalat"
                         )
                     } else {
                         alarmReceiver.cancelAlarm(requireActivity())
@@ -460,16 +514,12 @@ class ShalatFragment : Fragment() {
                 else -> {
                     tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
                     shalatLayout.clShubuh.background = ContextCompat.getDrawable(
-                        requireActivity(),
-                        R.drawable.bg_item_shalat
+                        requireActivity(), R.drawable.bg_item_shalat
                     )
                     if (alarmShubuh) {
                         if (timeNow < shubuh) {
                             alarmReceiver.setRepeatingAlarm(
-                                requireActivity(),
-                                shubuh,
-                                "Adzan Shubuh",
-                                "Waktunya shalat"
+                                requireActivity(), shubuh, "Adzan Shubuh", "Waktunya shalat", true
                             )
                         }
                     } else {
@@ -483,8 +533,8 @@ class ShalatFragment : Fragment() {
     private fun countDownShalat(timeShalat: String): String {
         val timeNowComponent = timeNow.split(":").map { it.toInt() }
         val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
-        var diff = (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 +
-                timeShalatComponent[1] - timeNowComponent[1]
+        var diff =
+            (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 + timeShalatComponent[1] - timeNowComponent[1]
         if (diff < 0) diff += 1440
 
         val hours = diff / 60

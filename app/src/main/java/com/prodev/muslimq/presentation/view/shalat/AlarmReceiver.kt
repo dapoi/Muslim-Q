@@ -5,16 +5,18 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.media.MediaPlayer
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.prodev.muslimq.R
+import com.prodev.muslimq.presentation.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -24,60 +26,57 @@ class AlarmReceiver : BroadcastReceiver() {
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
         if (title != null && message != null) {
-            showAlarmNotification(context, title, message, isShubuh)
+            showAlarmNotification(context, title, message)
+            val mediaPlayer = MediaPlayer.create(
+                context, if (isShubuh) R.raw.adzan_shubuh else R.raw.adzan_regular
+            )
+            mediaPlayer.apply {
+                isLooping = false
+                start()
+            }
         }
     }
 
     private fun showAlarmNotification(
         context: Context,
         title: String,
-        message: String,
-        isShubuh: Boolean
+        message: String
     ) {
-        val channelId = "Channel_101"
-        val channelName = "AlarmManager channel"
-
-        val notificationManagerCompat =
+        val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val adzan = if (isShubuh) {
-            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.adzan_shubuh)
-        } else {
-            Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + context.packageName + "/" + R.raw.adzan_regular)
-        }
-        val builder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.drawable.ic_muslim)
+
+        val intent = Intent(context, BaseActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, ID_REPEATING, intent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) PendingIntent.FLAG_IMMUTABLE
+            else PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(title)
             .setContentText(message)
+            .setContentIntent(pendingIntent)
             .setColor(ContextCompat.getColor(context, android.R.color.transparent))
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
-            .setSound(adzan)
+            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-
-            if (adzan != null) {
-                builder.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
-
-                val audioAttributes = android.media.AudioAttributes.Builder()
-                    .setContentType(android.media.AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                    .setUsage(android.media.AudioAttributes.USAGE_ALARM)
-                    .build()
-
-                /* Create or update. */
-                val channel = NotificationChannel(
-                    channelId,
-                    channelName,
-                    NotificationManager.IMPORTANCE_DEFAULT
-                )
-                channel.setSound(adzan, audioAttributes)
-                channel.enableVibration(true)
-                channel.vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
-
-                builder.setChannelId(channelId)
-
-                notificationManagerCompat.createNotificationChannel(channel)
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                enableVibration(true)
+                vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             }
+            builder.setChannelId(CHANNEL_ID)
+            notificationManager.createNotificationChannel(channel)
         }
-        notificationManagerCompat.notify(ID_REPEATING, builder.build())
+        notificationManager.notify(ID_REPEATING, builder.build())
     }
 
     fun setRepeatingAlarm(
@@ -104,7 +103,7 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             ID_REPEATING,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         alarmManager.setInexactRepeating(
@@ -123,13 +122,16 @@ class AlarmReceiver : BroadcastReceiver() {
             context,
             requestCode,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         pendingIntent.cancel()
         alarmManager.cancel(pendingIntent)
     }
 
     companion object {
+        private const val CHANNEL_ID = "Channel_101"
+        private const val CHANNEL_NAME = "AlarmManager channel"
+
         private const val ID_REPEATING = 101
         private const val TITLE = "title"
         private const val MESSAGE = "message"

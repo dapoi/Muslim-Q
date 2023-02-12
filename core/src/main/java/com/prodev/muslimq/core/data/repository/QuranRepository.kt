@@ -8,4 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface QuranRepository {
     fun getQuran(): Flow<Resource<List<QuranEntity>>>
     fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>>
+    fun getBookmark(): Flow<List<QuranDetailEntity>>
+    fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean)
 }

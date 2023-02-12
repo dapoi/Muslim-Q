@@ -1,5 +1,6 @@
 package com.prodev.muslimq.core.utils
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
 inline fun <ResultType, RequestType> networkBoundResource(
@@ -24,4 +25,4 @@ inline fun <ResultType, RequestType> networkBoundResource(
     }
 
     emitAll(flow)
-}
+}.flowOn(Dispatchers.IO)

@@ -74,12 +74,10 @@ class DoaFragment : Fragment() {
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     doaAdapter.setDoa(it.data!!)
-                    Log.d("DoaFragment", "setViewModel: ${it.data}")
                 }
                 is Resource.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.rvDoa.visibility = View.GONE
-                    Log.e("DoaFragment", "Kenapa error? ${it.error}")
                 }
             }
         }
