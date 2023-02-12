@@ -37,6 +37,8 @@ android {
 }
 
 dependencies {
+    // WorkManager
+    api "androidx.work:work-runtime-ktx:2.8.0"
 
     // Room
     def roomVersion = '2.5.0'
