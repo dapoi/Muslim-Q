@@ -94,8 +94,11 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        alarmManager.setExact(
-            AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent
+        alarmManager.setInexactRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_HALF_HOUR,
+            pendingIntent
         )
     }
 

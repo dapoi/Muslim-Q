@@ -66,8 +66,8 @@ class ShalatFragment : Fragment() {
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {
-        if (it) return@registerForActivityResult
+    ) { isGranted ->
+        if (isGranted) dataStoreViewModel.saveNotifState(true)
     }
 
     override fun onCreateView(
