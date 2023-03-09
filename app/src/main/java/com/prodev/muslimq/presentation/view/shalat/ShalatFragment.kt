@@ -19,7 +19,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.work.*
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
@@ -27,19 +29,20 @@ import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.BaseActivity
-import com.prodev.muslimq.presentation.receiver.AlarmReceiver
+import com.prodev.muslimq.presentation.service.AdzanReminderWorker
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
-    private lateinit var alarmReceiver: AlarmReceiver
+    private lateinit var workManager: WorkManager
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -66,8 +69,8 @@ class ShalatFragment : Fragment() {
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) dataStoreViewModel.saveNotifState(true)
+    ) {
+        dataStoreViewModel.saveNotifState(it)
     }
 
     override fun onCreateView(
@@ -91,19 +94,23 @@ class ShalatFragment : Fragment() {
         }
 
         if (isFirstLoad) {
-            alarmReceiver = AlarmReceiver()
+            workManager = WorkManager.getInstance(requireContext())
             setViewModel()
         }
 
         dateGregorianAndHijri()
-        stateNotifButton()
+        checkStatusIconReminder()
     }
 
-    private fun stateNotifButton() {
+    private fun checkStatusIconReminder() {
         binding.apply {
 
             ivIconAdzanState.setOnClickListener {
-                checkNotificationPermissionWhenLaunch()
+                if (Build.VERSION.SDK_INT >= 33) {
+                    checkNotificationPermissionWhenLaunch()
+                } else {
+                    stateNotifIcon()
+                }
             }
 
             dataStoreViewModel.getNotifState.observe(viewLifecycleOwner) { state ->
@@ -124,40 +131,40 @@ class ShalatFragment : Fragment() {
                 ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    with(binding) {
-                        if (notifAdzanState) {
-                            dataStoreViewModel.saveNotifState(false)
-                            ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
-                            (activity as BaseActivity).customSnackbar(
-                                false,
-                                requireContext(),
-                                binding.root,
-                                "Notifikasi adzan dinonaktifkan",
-                            )
-                        } else {
-                            dataStoreViewModel.saveNotifState(true)
-                            ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
-                            (activity as BaseActivity).customSnackbar(
-                                true,
-                                requireContext(),
-                                binding.root,
-                                "Notifikasi adzan diaktifkan",
-                            )
-                        }
-                    }
+                    stateNotifIcon()
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     (activity as BaseActivity).customSnackbar(
-                        true,
-                        requireContext(),
-                        binding.root,
-                        "Izinkan notifikasi adzan",
-                        true
+                        true, requireContext(), binding.root, "Izinkan notifikasi adzan", true
                     )
                 }
                 else -> {
                     requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
+            }
+        }
+    }
+
+    private fun stateNotifIcon() {
+        with(binding) {
+            if (notifAdzanState) {
+                dataStoreViewModel.saveNotifState(false)
+                ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
+                (activity as BaseActivity).customSnackbar(
+                    false,
+                    requireContext(),
+                    binding.root,
+                    "Notifikasi adzan dinonaktifkan",
+                )
+            } else {
+                dataStoreViewModel.saveNotifState(true)
+                ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
+                (activity as BaseActivity).customSnackbar(
+                    true,
+                    requireContext(),
+                    binding.root,
+                    "Notifikasi adzan diaktifkan",
+                )
             }
         }
     }
@@ -311,28 +318,27 @@ class ShalatFragment : Fragment() {
             "Adzan Isya" to isya
         )
 
-        if (notifAdzanState) {
-            for (adzanTime in listAdzanTime) {
-                if (timeNow == adzanTime.value) {
-                    if (timeNow == shubuh) {
-                        alarmReceiver.scheduleAdzan(
-                            requireActivity(),
-                            adzanTime.value,
-                            adzanTime.key,
-                            true
-                        )
-                    } else {
-                        alarmReceiver.scheduleAdzan(
-                            requireActivity(),
-                            adzanTime.value,
-                            adzanTime.key,
-                            false
-                        )
-                    }
-                }
+        for (adzanTime in listAdzanTime) {
+            if (notifAdzanState) {
+                val data = workDataOf(
+                    "timeNow" to timeNow,
+                    "title" to adzanTime.key,
+                    "time" to adzanTime.value,
+                    "isShubuh" to (adzanTime.value == shubuh)
+                )
+
+                val interval = intervalTime(timeNow, adzanTime.value)
+
+                val workRequest = PeriodicWorkRequest.Builder(
+                    AdzanReminderWorker::class.java,
+                    interval,
+                    TimeUnit.MILLISECONDS
+                ).setInputData(data).build()
+
+                workManager.enqueue(workRequest)
+            } else {
+                workManager.cancelAllWork()
             }
-        } else {
-            alarmReceiver.removeAdzan(requireActivity())
         }
 
         binding.apply {
@@ -370,6 +376,22 @@ class ShalatFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun intervalTime(timeNow: String, adzanTime: String): Long {
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val timeNowCal = Calendar.getInstance()
+        timeNowCal.time = sdf.parse(timeNow)!!
+
+        val adzanTimeCal = Calendar.getInstance()
+        adzanTimeCal.time = sdf.parse(adzanTime)!!
+
+        if (adzanTimeCal.before(timeNowCal)) {
+            adzanTimeCal.add(Calendar.DATE, 1)
+        }
+
+        val diff = adzanTimeCal.timeInMillis - timeNowCal.timeInMillis
+        return TimeUnit.MILLISECONDS.toDays(diff)
     }
 
     private fun countDownShalat(timeShalat: String): String {

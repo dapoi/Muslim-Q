@@ -13,7 +13,6 @@
         android:layout_marginTop="65dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_header_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -86,6 +85,49 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        app:layout_constraintTop_toBottomOf="@id/cl_surah">
+
+        <ImageView
+            android:id="@+id/iv_sound"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_circle_gray"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white"
+            tools:ignore="ContentDescription" />
+
+        <SeekBar
+            android:id="@+id/sb_sound"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/light_gray"
+            android:thumbTint="@color/light_gray"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
+            app:layout_constraintEnd_toStartOf="@id/tv_sound_duration"
+            app:layout_constraintStart_toEndOf="@id/iv_sound"
+            app:layout_constraintTop_toTopOf="@id/iv_sound" />
+
+        <TextView
+            android:id="@+id/tv_sound_duration"
+            android:layout_width="91dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:background="@color/light_gray"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_sound" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
