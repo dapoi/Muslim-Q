@@ -2,6 +2,7 @@ package com.prodev.muslimq.presentation.view.quran
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,7 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.SeekBar
-import android.widget.Toast
+import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,6 +23,7 @@ import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
+import com.prodev.muslimq.presentation.BaseActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
@@ -33,13 +36,17 @@ class QuranDetailFragment : Fragment() {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrent: SeekBar
+    private lateinit var mediaPlayer: MediaPlayer
 
     private var fontSize: Int? = null
-    private var _binding: FragmentQuranDetailBinding? = null
 
+    private var _binding: FragmentQuranDetailBinding? = null
     private val binding get() = _binding!!
+
     private val detailViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+
+    private var audioIsPlaying = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -94,8 +101,8 @@ class QuranDetailFragment : Fragment() {
                         setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
                             override fun onRefresh() {
                                 val handlerData = Handler(Looper.getMainLooper())
-                                val check = isOnline(requireContext())
-                                if (check) {
+                                val online = isOnline(requireContext())
+                                if (online) {
                                     handlerData.postDelayed({
                                         setRefreshing(false)
                                     }, 2000)
@@ -106,12 +113,15 @@ class QuranDetailFragment : Fragment() {
                                             clNoInternet.visibility = View.GONE
                                         } else {
                                             clSurah.visibility = View.VISIBLE
+                                            clSound.visibility = View.VISIBLE
                                             rvAyah.visibility = View.VISIBLE
                                             clNoInternet.visibility = View.GONE
+                                            setUpMediaPlayer(result.data?.audio!!)
                                         }
                                     }, 2350)
                                 } else {
                                     clSurah.visibility = View.GONE
+                                    clSound.visibility = View.GONE
                                     rvAyah.visibility = View.GONE
                                     clNoInternet.visibility = View.VISIBLE
                                     setRefreshing(false)
@@ -128,6 +138,7 @@ class QuranDetailFragment : Fragment() {
                             stateLoading(false)
                             clNoInternet.visibility = View.VISIBLE
                             clSurah.visibility = View.GONE
+                            clSound.visibility = View.GONE
                         }
                         else -> {
                             stateLoading(false)
@@ -161,18 +172,29 @@ class QuranDetailFragment : Fragment() {
                                     setBookmark(bookmarked)
                                     detailViewModel.insertToBookmark(quranDetailEntity, bookmarked)
                                     if (bookmarked) {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Berhasil Disimpan",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        (activity as BaseActivity).customSnackbar(
+                                            state = true,
+                                            context = requireContext(),
+                                            view = binding.root,
+                                            message = "Berhasil Ditambahkan",
+                                            action = true,
+                                            toBookmark = true
+                                        )
                                     } else {
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Berhasil Dihapus",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        (activity as BaseActivity).customSnackbar(
+                                            state = false,
+                                            context = requireContext(),
+                                            view = binding.root,
+                                            message = "Berhasil Dihapus",
+                                        )
                                     }
+                                }
+
+                                if (isOnline(requireContext())) {
+                                    clSound.visibility = View.VISIBLE
+                                    setUpMediaPlayer(quranDetailEntity.audio)
+                                } else {
+                                    clSound.visibility = View.GONE
                                 }
                             }
                         }
@@ -180,6 +202,85 @@ class QuranDetailFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun setUpMediaPlayer(audio: String) {
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.apply {
+            setDataSource(audio)
+            prepareAsync()
+            with(binding) {
+                setOnPreparedListener {
+                    sbSound.max = mediaPlayer.duration
+
+                    ivSound.setOnClickListener {
+                        if (isPlaying) {
+                            audioIsPlaying = false
+                            pause()
+                            ivSound.setImageResource(R.drawable.ic_play)
+                        } else {
+                            audioIsPlaying = true
+                            start()
+                            ivSound.setImageResource(R.drawable.ic_pause)
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.postDelayed(object : Runnable {
+                                override fun run() {
+                                    try {
+                                        sbSound.progress = mediaPlayer.currentPosition
+                                        handler.postDelayed(this, 1000)
+                                    } catch (e: Exception) {
+                                        sbSound.progress = 0
+                                    }
+                                }
+                            }, 0)
+                        }
+                    }
+
+                    var currentProgress = currentPosition
+                    val audioDuration = duration
+                    durationText(tvSoundDuration, currentProgress, audioDuration)
+
+                    sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                        override fun onProgressChanged(
+                            seekBar: SeekBar?,
+                            progress: Int,
+                            fromUser: Boolean
+                        ) {
+                            if (fromUser) {
+                                seekTo(progress)
+                            }
+
+                            currentProgress = progress
+                            durationText(tvSoundDuration, currentProgress, audioDuration)
+                        }
+
+                        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                        }
+
+                        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                        }
+                    })
+                }
+
+                setOnCompletionListener {
+                    ivSound.setImageResource(R.drawable.ic_play)
+                }
+            }
+        }
+    }
+
+    private fun durationText(tvDuration: TextView, progress: Int, duration: Int) {
+        tvDuration.text = buildString {
+            append(formatDuration(progress))
+            append(" / ")
+            append(formatDuration(duration))
+        }
+    }
+
+    private fun formatDuration(duration: Int): String {
+        val minutes = duration / 1000 / 60
+        val seconds = duration / 1000 % 60
+        return "${String.format("%02d", minutes)}:${String.format("%02d", seconds)}"
     }
 
     private fun setBookmark(bookmarkStatus: Boolean) {
@@ -198,10 +299,12 @@ class QuranDetailFragment : Fragment() {
                 progressBar.visibility = View.VISIBLE
                 progressHeader.visibility = View.VISIBLE
                 clSurah.visibility = View.GONE
+                clSound.visibility = View.GONE
             } else {
                 progressBar.visibility = View.GONE
                 progressHeader.visibility = View.GONE
                 clSurah.visibility = View.VISIBLE
+                clSound.visibility = View.VISIBLE
             }
         }
     }
@@ -212,7 +315,8 @@ class QuranDetailFragment : Fragment() {
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle("Deskripsi Surah")
         builder.setMessage(htmlFormat)
-        builder.setPositiveButton("Selesai") { dialog, _ ->
+        builder.setCancelable(false)
+        builder.setPositiveButton("Tutup") { dialog, _ ->
             dialog.dismiss()
         }
         builder.show()
@@ -230,7 +334,7 @@ class QuranDetailFragment : Fragment() {
             sbCurrent.max = 36
             sbCurrent.min = 16
             sbCurrent.progress = fontSize ?: 24
-            sbCurrent.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            sbCurrent.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?, progress: Int, fromUser: Boolean
                 ) {
@@ -268,6 +372,12 @@ class QuranDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        if (audioIsPlaying) {
+            mediaPlayer.stop()
+            mediaPlayer.release()
+        }
+
         _binding = null
     }
 

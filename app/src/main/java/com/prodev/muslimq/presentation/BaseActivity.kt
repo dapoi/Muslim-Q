@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
@@ -43,7 +44,8 @@ class BaseActivity : AppCompatActivity() {
         context: Context,
         view: View,
         message: String,
-        action: Boolean = false
+        action: Boolean = false,
+        toBookmark: Boolean = false
     ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
             anchorView = binding.bottomNav
@@ -64,17 +66,21 @@ class BaseActivity : AppCompatActivity() {
             }
 
             setTextColor(ContextCompat.getColor(context, R.color.white))
+            val goToBookmark = if (toBookmark) "LIHAT" else "IZINKAN"
             if (action) {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
-                setAction("IZINKAN") {
-                    // intent to notification setting device
-                    val intent = android.content.Intent()
-                    intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                    intent.putExtra(
-                        "android.provider.extra.APP_PACKAGE",
-                        context.packageName
-                    )
-                    startActivity(intent)
+                setAction(goToBookmark) {
+                    if (toBookmark) {
+                        findNavController(R.id.nav_host_fragment).navigate(R.id.quranBookmarkFragment)
+                    } else {
+                        val intent = android.content.Intent()
+                        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                        intent.putExtra(
+                            "android.provider.extra.APP_PACKAGE",
+                            context.packageName
+                        )
+                        startActivity(intent)
+                    }
                 }
             }
         }

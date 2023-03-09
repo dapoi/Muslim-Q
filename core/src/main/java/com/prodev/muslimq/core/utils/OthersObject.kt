@@ -12,7 +12,7 @@ object OthersObject {
     )
 
     private val menuTitle = arrayOf(
-        "Tersimpan",
+        "Baca Nanti",
         "Kirim Masukan",
         "Dukung Kami",
         "Tentang"

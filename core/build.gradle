@@ -37,8 +37,6 @@ android {
 }
 
 dependencies {
-    // WorkManager
-    api "androidx.work:work-runtime-ktx:2.8.0"
 
     // Room
     def roomVersion = '2.5.0'
@@ -57,8 +55,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     // Coroutine lifecycle scopes
-    def lifeCycleScopeVersion = "2.5.1"
+    def lifeCycleScopeVersion = "2.6.0"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleScopeVersion"
+
+    // WorkManager
+    api "androidx.work:work-runtime-ktx:2.8.0"
 }
