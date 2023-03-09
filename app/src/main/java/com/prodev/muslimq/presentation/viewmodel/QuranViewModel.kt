@@ -19,7 +19,12 @@ class QuranViewModel @Inject constructor(
     fun getQuranDetail(surahNumber: Int) = repositoryImpl.getQuranDetail(surahNumber).asLiveData()
 
     fun getBookmark(): LiveData<List<QuranDetailEntity>> = repositoryImpl.getBookmark().asLiveData()
+
     fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
         repositoryImpl.insertToBookmark(quran, isBookmarked)
+    }
+
+    fun deleteAllBookmark() {
+        repositoryImpl.deleteAllBookmark()
     }
 }

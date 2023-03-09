@@ -28,4 +28,8 @@ interface QuranDao {
 
     @Query("DELETE FROM quran")
     suspend fun deleteQuran()
+
+    // delete all bookmark
+    @Query("UPDATE quran_detail SET isBookmarked = 0")
+    suspend fun deleteAllBookmark()
 }

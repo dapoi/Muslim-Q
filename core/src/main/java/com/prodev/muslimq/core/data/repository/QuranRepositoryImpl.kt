@@ -82,4 +82,10 @@ class QuranRepositoryImpl @Inject constructor(
             localDataSource.insertToBookmark(quran, isBookmarked)
         }
     }
+
+    override fun deleteAllBookmark() {
+        CoroutineScope(Dispatchers.IO).launch {
+            localDataSource.deleteAllBookmark()
+        }
+    }
 }

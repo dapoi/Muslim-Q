@@ -37,4 +37,9 @@
     <string name="alarm">alarm</string>
     <string name="bookmark">Baca Nanti</string>
     <string name="bookmark_empty">Tidak ada surah yang disimpan</string>
+    <string name="delete_all">Hapus Semua</string>
+    <string name="are_you_sure">Apakah Anda yakin ingin menghapus?</string>
+    <string name="delete">Hapus</string>
+    <string name="cancel">Batal</string>
+    <string name="are_you_sure_desc">Jika memilih hapus, maka seluruh data surah yang sudah Anda simpan sebelumnya akan terhapus.</string>
 </resources>

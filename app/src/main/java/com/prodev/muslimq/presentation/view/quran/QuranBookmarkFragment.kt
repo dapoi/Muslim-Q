@@ -1,9 +1,13 @@
 package com.prodev.muslimq.presentation.view.quran
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -37,7 +41,40 @@ class QuranBookmarkFragment : Fragment() {
         initAdapter()
         initViewModel()
 
-        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        binding.apply {
+            toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+
+            ivMore.setOnClickListener { showMenuOption() }
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun showMenuOption() {
+        val popupMenu = PopupMenu(requireContext(), binding.ivMore)
+        popupMenu.menuInflater.inflate(R.menu.menu_bookmark, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_delete_all -> {
+                    val builder = AlertDialog.Builder(requireActivity()).create()
+                    val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
+                    val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
+                    val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                    with(builder) {
+                        setView(dialogLayout)
+                        tvConfirm.setOnClickListener {
+                            quranBookmarkViewModel.deleteAllBookmark()
+                            dismiss()
+                        }
+                        tvCancel.setOnClickListener { dismiss() }
+                        setCanceledOnTouchOutside(false)
+                        show()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
     }
 
     private fun initAdapter() {
@@ -62,9 +99,11 @@ class QuranBookmarkFragment : Fragment() {
                 if (quran.isNullOrEmpty()) {
                     clNegativeCase.visibility = View.VISIBLE
                     rvSurah.visibility = View.GONE
+                    ivMore.visibility = View.GONE
                 } else {
                     clNegativeCase.visibility = View.GONE
                     rvSurah.visibility = View.VISIBLE
+                    ivMore.visibility = View.VISIBLE
                     quranBookmarkAdapter.setList(quran)
                 }
             }
