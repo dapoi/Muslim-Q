@@ -331,8 +331,8 @@ class QuranDetailFragment : Fragment() {
         sbCurrent = seekBar!!
         with(builder) {
             setView(dialogLayout)
-            sbCurrent.max = 36
-            sbCurrent.min = 16
+            sbCurrent.max = 38
+            sbCurrent.min = 18
             sbCurrent.progress = fontSize ?: 24
             sbCurrent.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.utils.InternetReceiver
@@ -34,12 +34,14 @@ import kotlinx.coroutines.launch
 class QuranFragment : Fragment() {
 
     private lateinit var binding: FragmentQuranBinding
+    private lateinit var bottomNav: BottomNavigationView
 
     private val quranAdapter = QuranAdapter()
     private val quranViewModel: QuranViewModel by viewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
     private var isFirstLoad = false
+    private var isOnline = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -56,6 +58,9 @@ class QuranFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        bottomNav = requireActivity().findViewById(R.id.bottom_nav)
+        isOnline = isOnline(requireContext())
 
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
@@ -82,7 +87,9 @@ class QuranFragment : Fragment() {
             getLastReadSurah(tvSurahName, tvSurahMeaning)
 
             fabBackToTop.setOnClickListener {
+                // scroll to parent
                 rvSurah.smoothScrollToPosition(0)
+                appBar.setExpanded(true, true)
             }
 
             svSurah.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -128,8 +135,8 @@ class QuranFragment : Fragment() {
                     setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
                         override fun onRefresh() {
                             val handlerData = Handler(Looper.getMainLooper())
-                            val check = isOnline(requireContext())
-                            if (check) {
+                            isOnline = isOnline(requireContext())
+                            if (isOnline) {
                                 handlerData.postDelayed({
                                     setRefreshing(false)
                                 }, 2000)
@@ -150,20 +157,19 @@ class QuranFragment : Fragment() {
                         }
                     })
                 }
-            }
 
-            when {
-                it is Resource.Loading && it.data.isNullOrEmpty() -> {
-                    stateLoading(true)
-                }
-                it is Resource.Error && it.data.isNullOrEmpty() -> {
-                    stateLoading(false)
-                    binding.clNoInternet.visibility = View.VISIBLE
-                    Log.e("Quran Fragment", it.error?.localizedMessage.toString())
-                }
-                else -> {
-                    stateLoading(false)
-                    quranAdapter.setList(it.data!!)
+                when {
+                    it is Resource.Loading && it.data.isNullOrEmpty() -> {
+                        stateLoading(true)
+                    }
+                    it is Resource.Error && it.data.isNullOrEmpty() -> {
+                        stateLoading(false)
+
+                    }
+                    else -> {
+                        stateLoading(false)
+                        quranAdapter.setList(it.data!!)
+                    }
                 }
             }
         }
@@ -197,6 +203,31 @@ class QuranFragment : Fragment() {
     }
 
     private fun stateLoading(state: Boolean) {
-        binding.progressBar.visibility = if (state) View.VISIBLE else View.GONE
+        binding.apply {
+            if (state) {
+                progressBar.visibility = View.VISIBLE
+                progressHeader.visibility = View.VISIBLE
+                tvTitle.visibility = View.GONE
+                clSurah.visibility = View.GONE
+                bottomNav.visibility = View.GONE
+                clNoInternet.visibility = View.GONE
+            } else {
+                if (isOnline) {
+                    progressBar.visibility = View.GONE
+                    progressHeader.visibility = View.GONE
+                    tvTitle.visibility = View.VISIBLE
+                    clSurah.visibility = View.VISIBLE
+                    bottomNav.visibility = View.VISIBLE
+                } else {
+                    progressBar.visibility = View.GONE
+                    progressHeader.visibility = View.GONE
+                    tvTitle.visibility = View.GONE
+                    clSurah.visibility = View.GONE
+                    bottomNav.visibility = View.GONE
+                    clNoInternet.visibility = View.VISIBLE
+                    ctlHeader.visibility = View.GONE
+                }
+            }
+        }
     }
 }

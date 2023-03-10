@@ -300,19 +300,19 @@ class ShalatFragment : Fragment() {
 
         binding.apply {
             when {
-                timeNow < dzuhur && timeNow > shubuh -> {
+                timeNow <= dzuhur && timeNow > shubuh -> {
                     tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
                     setNextPrayShalatBackground(shalatLayout.clDzuhur)
                 }
-                timeNow < ashar && timeNow > dzuhur -> {
+                timeNow <= ashar && timeNow > dzuhur -> {
                     tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     setNextPrayShalatBackground(shalatLayout.clAshar)
                 }
-                timeNow < maghrib && timeNow > ashar -> {
+                timeNow <= maghrib && timeNow > ashar -> {
                     tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     setNextPrayShalatBackground(shalatLayout.clMaghrib)
                 }
-                timeNow < isya && timeNow > maghrib -> {
+                timeNow <= isya && timeNow > maghrib -> {
                     tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     setNextPrayShalatBackground(shalatLayout.clIsya)
                 }

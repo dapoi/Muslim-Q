@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".presentation.view.quran.QuranBookmarkFragment">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:navigationIcon="@drawable/ic_back"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/ic_back">
 
         <TextView
             android:id="@+id/tv_title"
@@ -30,9 +30,10 @@
             android:layout_gravity="end"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_more"
-            app:tint="@color/green_base" />
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
 
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_surah"

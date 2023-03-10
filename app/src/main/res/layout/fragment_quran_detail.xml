@@ -25,7 +25,7 @@
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:scrimAnimationDuration="200"
-            app:scrimVisibleHeightTrigger="300dp"
+            app:scrimVisibleHeightTrigger="400dp"
             app:titleCollapseMode="fade"
             app:titleEnabled="true">
 
@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:layout_marginTop="65dp"
+                    android:layout_marginTop="70dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_gradient_round"
                     android:visibility="gone"

@@ -59,6 +59,7 @@
             android:layout_marginStart="50dp"
             android:layout_marginBottom="130dp"
             android:src="@drawable/ic_kaaba"
+            android:rotation="-67"
             app:layout_constraintBottom_toBottomOf="@+id/cl_direction_child"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

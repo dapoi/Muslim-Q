@@ -16,9 +16,7 @@ import kotlin.math.roundToInt
 
 class QiblaFragment : Fragment(), SensorEventListener {
 
-    private val binding: FragmentQiblaBinding by lazy(LazyThreadSafetyMode.NONE) {
-        FragmentQiblaBinding.inflate(layoutInflater)
-    }
+    private lateinit var binding: FragmentQiblaBinding
 
     private lateinit var sensorManager: SensorManager
     private lateinit var sensor: Sensor
@@ -28,6 +26,7 @@ class QiblaFragment : Fragment(), SensorEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        binding = FragmentQiblaBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,7 +35,6 @@ class QiblaFragment : Fragment(), SensorEventListener {
 
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -57,5 +55,15 @@ class QiblaFragment : Fragment(), SensorEventListener {
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // Do nothing
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_STATUS_ACCURACY_HIGH )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
     }
 }

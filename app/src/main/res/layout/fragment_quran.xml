@@ -15,8 +15,9 @@
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/ctl_header"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
+            android:layout_height="wrap_content"
             android:background="@color/white"
             app:collapsedTitleGravity="center"
             app:collapsedTitleTextAppearance="@style/collapsedTitleStyle"
@@ -41,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="40dp"
                     android:fontFamily="@font/poppins_bold"
                     android:text="@string/app_name"
                     android:textColor="@color/green_base"
@@ -54,7 +55,7 @@
                     android:id="@+id/cl_surah"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="24dp"
                     android:background="@drawable/bg_gradient_round"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -130,7 +131,7 @@
                     android:id="@+id/sv_surah"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="35dp"
+                    android:layout_marginVertical="20dp"
                     android:background="@drawable/bg_search"
                     android:elevation="1.5dp"
                     android:inputType="text"
@@ -143,12 +144,28 @@
                     app:queryHint="Cari surah"
                     tools:ignore="Autofill" />
 
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/progress_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <include layout="@layout/item_header_quran" />
+
+                    </LinearLayout>
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="45dp"
                 android:background="@android:color/transparent"
                 android:fitsSystemWindows="true"
                 android:theme="@style/Theme.MuslimQ.Toolbar"
@@ -186,40 +203,6 @@
 
         </com.simform.refresh.SSPullToRefreshLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_no_internet"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="60dp"
-            android:visibility="gone">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lottie_empty"
-                android:layout_width="210dp"
-                android:layout_height="210dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="no_internet.json"
-                app:lottie_loop="true"
-                app:lottie_speed="1" />
-
-            <TextView
-                android:id="@+id/tv_result"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="@string/no_internet"
-                android:textAlignment="center"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/progress_bar"
             android:layout_width="match_parent"
@@ -231,6 +214,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <include layout="@layout/item_list_surah_placeholder" />
 
                 <include layout="@layout/item_list_surah_placeholder" />
 
@@ -263,5 +248,39 @@
         app:maxImageSize="40dp"
         app:tint="@color/white"
         tools:ignore="ContentDescription" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_empty"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="no_internet.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1" />
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/no_internet"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
