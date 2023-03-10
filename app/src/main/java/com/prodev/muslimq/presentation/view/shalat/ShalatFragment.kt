@@ -19,9 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
@@ -29,23 +26,22 @@ import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.BaseActivity
-import com.prodev.muslimq.presentation.service.AdzanReminderWorker
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
+import com.prodev.muslimq.service.AdzanReceiver
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
-    private lateinit var workManager: WorkManager
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val adzanReceiver = AdzanReceiver()
 
     private var timeNow = ""
 
@@ -89,17 +85,61 @@ class ShalatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        isOnline = isOnline(requireContext())
+
         binding.ivIconChoose.setOnClickListener {
             findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
         }
 
         if (isFirstLoad) {
-            workManager = WorkManager.getInstance(requireContext())
             setViewModel()
         }
 
+        swipeRefresh()
         dateGregorianAndHijri()
         checkStatusIconReminder()
+    }
+
+    private fun swipeRefresh() {
+        with(binding) {
+            srlShalat.apply {
+                setLottieAnimation("loading.json")
+                setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
+                setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+                setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
+                    override fun onRefresh() {
+                        val handlerData = Handler(Looper.getMainLooper())
+                        if (isOnline) {
+                            handlerData.postDelayed({
+                                setRefreshing(false)
+                            }, 2000)
+
+                            handlerData.postDelayed({
+                                clNegativeCase.visibility = View.GONE
+                                setViewModel()
+                            }, 2350)
+                        } else {
+                            negativeCase(true)
+                            setRefreshing(false)
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    private fun dateGregorianAndHijri() {
+        binding.apply {
+            val indonesia = Locale("in", "ID")
+            val simpleDateFormat = SimpleDateFormat("EEEE, dd MMM yyyy", indonesia)
+            val date = simpleDateFormat.format(Date())
+            tvGregorianDate.text = date
+
+            val hijriCalendar = HijriCalendar()
+            val hijriDate =
+                "${hijriCalendar.dayOfMonth} ${hijriCalendar.monthName} ${hijriCalendar.year}H"
+            tvIslamicDate.text = hijriDate
+        }
     }
 
     private fun checkStatusIconReminder() {
@@ -176,33 +216,9 @@ class ShalatFragment : Fragment() {
             } else {
                 binding.tvChooseLocation.text = cityData
             }
+
             shalatViewModel.getShalatDaily(cityData).observe(viewLifecycleOwner) {
                 with(binding) {
-                    srlShalat.apply {
-                        setLottieAnimation("loading.json")
-                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                            override fun onRefresh() {
-                                val handlerData = Handler(Looper.getMainLooper())
-                                isOnline = isOnline(requireContext())
-                                if (isOnline) {
-                                    handlerData.postDelayed({
-                                        setRefreshing(false)
-                                    }, 2000)
-
-                                    handlerData.postDelayed({
-                                        clNegativeCase.visibility = View.GONE
-                                        setViewModel()
-                                    }, 2350)
-                                } else {
-                                    negativeCase(true)
-                                    setRefreshing(false)
-                                }
-                            }
-                        })
-                    }
-
                     when {
                         it is Resource.Loading && it.data == null -> {
                             progressBar.visibility = View.VISIBLE
@@ -211,7 +227,7 @@ class ShalatFragment : Fragment() {
                         }
                         it is Resource.Error && it.data == null -> {
                             progressBar.visibility = View.GONE
-                            if (isOnline) {
+                            if (!isOnline) {
                                 negativeCase(true)
                             } else {
                                 negativeCase(false)
@@ -219,8 +235,8 @@ class ShalatFragment : Fragment() {
                             shalatLayout.root.visibility = View.GONE
                         }
                         else -> {
-                            it.data?.let { data -> getData(data) }
-                            nexTimePray()
+                            it.data?.let { data -> getAllShalatData(data) }
+                            setReminderAdzanTime()
                         }
                     }
                 }
@@ -228,23 +244,20 @@ class ShalatFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun getData(data: ShalatEntity) {
+    private fun getAllShalatData(data: ShalatEntity) {
+        // shalat time with zone
         shubuhWithZone = data.shubuh
         dzuhurWithZone = data.dzuhur
         asharWithZone = data.ashar
         maghribWithZone = data.maghrib
         isyaWithZone = data.isya
 
-        try {
-            shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
-            dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
-            ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
-            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
-            isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        // shalat time without zone
+        shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
+        dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
+        ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
+        maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
+        isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
 
         with(binding) {
             progressBar.visibility = View.GONE
@@ -260,9 +273,82 @@ class ShalatFragment : Fragment() {
         }
     }
 
+
+    @SuppressLint("SetTextI18n")
+    private fun setReminderAdzanTime() {
+        timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+        val listAdzanTime = mapOf(
+            "Adzan Shubuh" to shubuh,
+            "Adzan Dzuhur" to dzuhur,
+            "Adzan Ashar" to ashar,
+            "Adzan Maghrib" to maghrib,
+            "Adzan Isya" to isya
+        )
+
+        for ((adzanName, adzanTime) in listAdzanTime) {
+            if (notifAdzanState) {
+                adzanReceiver.setAdzanReminder(
+                    requireActivity(),
+                    adzanTime,
+                    adzanName
+                )
+            } else {
+                adzanReceiver.cancelAdzanReminder(requireActivity(), adzanName)
+            }
+        }
+
+        binding.apply {
+            when {
+                timeNow < dzuhur && timeNow > shubuh -> {
+                    tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
+                    setNextPrayShalatBackground(shalatLayout.clDzuhur)
+                }
+                timeNow < ashar && timeNow > dzuhur -> {
+                    tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
+                    setNextPrayShalatBackground(shalatLayout.clAshar)
+                }
+                timeNow < maghrib && timeNow > ashar -> {
+                    tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
+                    setNextPrayShalatBackground(shalatLayout.clMaghrib)
+                }
+                timeNow < isya && timeNow > maghrib -> {
+                    tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
+                    setNextPrayShalatBackground(shalatLayout.clIsya)
+                }
+                else -> {
+                    tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
+                    setNextPrayShalatBackground(shalatLayout.clShubuh)
+                }
+            }
+        }
+    }
+
+    private fun countDownShalat(timeShalat: String): String {
+        val timeNowComponent = timeNow.split(":").map { it.toInt() }
+        val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
+        var diff =
+            (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 + timeShalatComponent[1] - timeNowComponent[1]
+        if (diff < 0) diff += 1440
+
+        val hours = diff / 60
+        diff %= 60
+
+        val minutes = diff
+
+        return "$hours jam $minutes menit"
+    }
+
+    private fun setNextPrayShalatBackground(clShalat: ConstraintLayout) {
+        clShalat.background = ContextCompat.getDrawable(
+            requireActivity(), R.drawable.bg_item_shalat
+        )
+    }
+
     private fun negativeCase(noInternet: Boolean) {
         with(binding) {
             clNegativeCase.visibility = View.VISIBLE
+            shalatLayout.root.visibility = View.GONE
             if (noInternet) {
                 lottieNoLocation.visibility = View.GONE
                 lottieNoInternet.visibility = View.VISIBLE
@@ -290,122 +376,5 @@ class ShalatFragment : Fragment() {
 
     private fun ConstraintSet.topToBottom(v1: View, v2: View, @Px margin: Int = 0) {
         connect(v1.id, TOP, v2.id, BOTTOM, margin)
-    }
-
-    private fun dateGregorianAndHijri() {
-        binding.apply {
-            val indonesia = Locale("in", "ID")
-            val simpleDateFormat = SimpleDateFormat("EEEE, dd MMM yyyy", indonesia)
-            val date = simpleDateFormat.format(Date())
-            tvGregorianDate.text = date
-
-            val hijriCalendar = HijriCalendar()
-            val hijriDate =
-                "${hijriCalendar.dayOfMonth} ${hijriCalendar.monthName} ${hijriCalendar.year}H"
-            tvIslamicDate.text = hijriDate
-        }
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun nexTimePray() {
-        timeNow = SimpleDateFormat("HH:mm", Locale("in", "ID")).format(Date())
-
-        val listAdzanTime = mapOf(
-            "Adzan Shubuh" to shubuh,
-            "Adzan Dzuhur" to dzuhur,
-            "Adzan Ashar" to ashar,
-            "Adzan Maghrib" to maghrib,
-            "Adzan Isya" to isya
-        )
-
-        for (adzanTime in listAdzanTime) {
-            if (notifAdzanState) {
-                val data = workDataOf(
-                    "timeNow" to timeNow,
-                    "title" to adzanTime.key,
-                    "time" to adzanTime.value,
-                    "isShubuh" to (adzanTime.value == shubuh)
-                )
-
-                val interval = intervalTime(timeNow, adzanTime.value)
-
-                val workRequest = PeriodicWorkRequest.Builder(
-                    AdzanReminderWorker::class.java,
-                    interval,
-                    TimeUnit.MILLISECONDS
-                ).setInputData(data).build()
-
-                workManager.enqueue(workRequest)
-            } else {
-                workManager.cancelAllWork()
-            }
-        }
-
-        binding.apply {
-            when {
-                timeNow < dzuhur && timeNow > shubuh -> {
-                    tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
-                    shalatLayout.clDzuhur.background = ContextCompat.getDrawable(
-                        requireActivity(), R.drawable.bg_item_shalat
-                    )
-
-                }
-                timeNow < ashar && timeNow > dzuhur -> {
-                    tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
-                    shalatLayout.clAshar.background = ContextCompat.getDrawable(
-                        requireActivity(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < maghrib && timeNow > ashar -> {
-                    tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
-                    shalatLayout.clMaghrib.background = ContextCompat.getDrawable(
-                        requireActivity(), R.drawable.bg_item_shalat
-                    )
-                }
-                timeNow < isya && timeNow > maghrib -> {
-                    tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
-                    shalatLayout.clIsya.background = ContextCompat.getDrawable(
-                        requireActivity(), R.drawable.bg_item_shalat
-                    )
-                }
-                else -> {
-                    tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
-                    shalatLayout.clShubuh.background = ContextCompat.getDrawable(
-                        requireActivity(), R.drawable.bg_item_shalat
-                    )
-                }
-            }
-        }
-    }
-
-    private fun intervalTime(timeNow: String, adzanTime: String): Long {
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val timeNowCal = Calendar.getInstance()
-        timeNowCal.time = sdf.parse(timeNow)!!
-
-        val adzanTimeCal = Calendar.getInstance()
-        adzanTimeCal.time = sdf.parse(adzanTime)!!
-
-        if (adzanTimeCal.before(timeNowCal)) {
-            adzanTimeCal.add(Calendar.DATE, 1)
-        }
-
-        val diff = adzanTimeCal.timeInMillis - timeNowCal.timeInMillis
-        return TimeUnit.MILLISECONDS.toDays(diff)
-    }
-
-    private fun countDownShalat(timeShalat: String): String {
-        val timeNowComponent = timeNow.split(":").map { it.toInt() }
-        val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
-        var diff =
-            (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 + timeShalatComponent[1] - timeNowComponent[1]
-        if (diff < 0) diff += 1440
-
-        val hours = diff / 60
-        diff %= 60
-
-        val minutes = diff
-
-        return "$hours jam $minutes menit"
     }
 }

@@ -6,7 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.simform.refresh.SSPullToRefreshLayout
 
 fun capitalizeEachWord(str: String, delimiter: String = " ", separator: String = " "): String {
     return str.split(delimiter).joinToString(separator) {
@@ -33,6 +39,40 @@ fun isOnline(context: Context): Boolean {
         }
     }
     return result
+}
+
+fun swipeRefresh(
+    context: Context,
+    method: () -> Unit,
+    srl: SSPullToRefreshLayout,
+    clNoInternet: ConstraintLayout,
+    rv: RecyclerView = RecyclerView(context),
+) {
+    srl.apply {
+        setLottieAnimation("loading.json")
+        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
+        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                val handlerData = Handler(Looper.getMainLooper())
+                val check = isOnline(context)
+                if (check) {
+                    handlerData.postDelayed({
+                        setRefreshing(false)
+                    }, 2000)
+
+                    handlerData.postDelayed({
+                        clNoInternet.visibility = View.GONE
+                        method()
+                    }, 2350)
+                } else {
+                    rv.visibility = View.GONE
+                    clNoInternet.visibility = View.VISIBLE
+                    setRefreshing(false)
+                }
+            }
+        })
+    }
 }
 
 class InternetReceiver : BroadcastReceiver() {

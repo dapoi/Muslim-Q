@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
@@ -21,6 +22,7 @@
         android:theme="@style/Theme.MuslimQ"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name=".presentation.view.splashscreen.OpeningActivity"
             android:exported="true">
@@ -34,12 +36,19 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name="com.prodev.muslimq.presentation.BaseActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan" />
+
+        <receiver
+            android:name=".service.AdzanReceiver"
+            android:exported="false" />
+
+        <service
+            android:name=".service.AdzanService"
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

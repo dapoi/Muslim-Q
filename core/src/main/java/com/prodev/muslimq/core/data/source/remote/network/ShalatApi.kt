@@ -9,6 +9,6 @@ interface ShalatApi {
     @GET("v1/calendarByCity")
     suspend fun getShalatDaily(
         @Query("city") city: String,
-        @Query("country") country: String = "Indonesia",
+        @Query("country") country: String = "",
     ): ShalatResponse
 }

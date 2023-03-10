@@ -3,7 +3,6 @@ package com.prodev.muslimq.presentation.view.shalat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +15,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -56,6 +54,15 @@ class ShalatProvinceFragment : Fragment() {
         binding.apply {
             toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
+            svProvince.setOnSearchClickListener {
+                tvTitleProvince.visibility = View.GONE
+            }
+
+            svProvince.setOnCloseListener {
+                tvTitleProvince.visibility = View.VISIBLE
+                false
+            }
+
             svProvince.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     hideKeyboard(requireActivity())
@@ -67,6 +74,14 @@ class ShalatProvinceFragment : Fragment() {
                     return true
                 }
             })
+
+            swipeRefresh(
+                requireContext(),
+                { setViewModel() },
+                srlProvince,
+                clNoInternet,
+                rvProvince
+            )
         }
     }
 
@@ -91,32 +106,6 @@ class ShalatProvinceFragment : Fragment() {
     private fun setViewModel() {
         shalatViewModel.getAllProvince().observe(viewLifecycleOwner) {
             with(binding) {
-                srlProvince.apply {
-                    setLottieAnimation("loading.json")
-                    setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                    setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                    setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                        override fun onRefresh() {
-                            val handlerData = Handler(Looper.getMainLooper())
-                            val check = isOnline(requireContext())
-                            if (check) {
-                                handlerData.postDelayed({
-                                    setRefreshing(false)
-                                }, 2000)
-
-                                handlerData.postDelayed({
-                                    clNoInternet.visibility = View.GONE
-                                    setViewModel()
-                                }, 2350)
-                            } else {
-                                rvProvince.visibility = View.GONE
-                                clNoInternet.visibility = View.VISIBLE
-                                setRefreshing(false)
-                            }
-                        }
-                    })
-                }
-
                 when (it) {
                     is Resource.Loading -> stateLoading(true)
                     is Resource.Success -> {
@@ -130,7 +119,6 @@ class ShalatProvinceFragment : Fragment() {
                         stateLoading(false)
                         rvProvince.visibility = View.GONE
                         clNoInternet.visibility = View.VISIBLE
-                        Log.e("Error Province", it.error.toString())
                     }
                 }
             }

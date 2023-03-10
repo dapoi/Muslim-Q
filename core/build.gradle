@@ -59,7 +59,4 @@ dependencies {
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleScopeVersion"
-
-    // WorkManager
-    api "androidx.work:work-runtime-ktx:2.8.0"
 }

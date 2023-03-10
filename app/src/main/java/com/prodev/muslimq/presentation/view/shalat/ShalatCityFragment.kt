@@ -3,7 +3,6 @@ package com.prodev.muslimq.presentation.view.shalat
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,12 +16,11 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.presentation.adapter.CityAdapter
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -67,6 +65,15 @@ class ShalatCityFragment : Fragment() {
                 tvTitleCity.text = getString(R.string.city_choose, provinceName)
             }
 
+            svCity.setOnSearchClickListener {
+                tvTitleCity.visibility = View.GONE
+            }
+
+            svCity.setOnCloseListener {
+                tvTitleCity.visibility = View.VISIBLE
+                false
+            }
+
             svCity.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     hideKeyboard(requireActivity())
@@ -78,6 +85,14 @@ class ShalatCityFragment : Fragment() {
                     return true
                 }
             })
+
+            swipeRefresh(
+                requireContext(),
+                { setViewModel() },
+                srlCity,
+                clNoInternet,
+                rvCity
+            )
         }
     }
 
@@ -101,32 +116,6 @@ class ShalatCityFragment : Fragment() {
         dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { dataProv ->
             shalatViewModel.getAllCity(dataProv.first).observe(viewLifecycleOwner) {
                 with(binding) {
-                    srlCity.apply {
-                        setLottieAnimation("loading.json")
-                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                            override fun onRefresh() {
-                                val handlerData = Handler(Looper.getMainLooper())
-                                val check = isOnline(requireContext())
-                                if (check) {
-                                    handlerData.postDelayed({
-                                        setRefreshing(false)
-                                    }, 2000)
-
-                                    handlerData.postDelayed({
-                                        clNoInternet.visibility = View.GONE
-                                        setViewModel()
-                                    }, 2350)
-                                } else {
-                                    rvCity.visibility = View.GONE
-                                    clNoInternet.visibility = View.VISIBLE
-                                    setRefreshing(false)
-                                }
-                            }
-                        })
-                    }
-
                     when (it) {
                         is Resource.Loading -> stateLoading(true)
                         is Resource.Success -> {
@@ -140,7 +129,6 @@ class ShalatCityFragment : Fragment() {
                             stateLoading(false)
                             rvCity.visibility = View.GONE
                             clNoInternet.visibility = View.VISIBLE
-                            Log.e("Error", it.error.toString())
                         }
                     }
                 }

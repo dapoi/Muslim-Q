@@ -1,6 +1,7 @@
 package com.prodev.muslimq.presentation
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.ActivityBaseBinding
+import com.prodev.muslimq.service.AdzanReceiver.Companion.FROM_NOTIFICATION
+import com.prodev.muslimq.service.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,6 +40,11 @@ class BaseActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
+
+        val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
+        if (fromNotif) {
+            stopService(Intent(this, AdzanService::class.java))
+        }
     }
 
     fun customSnackbar(
@@ -73,7 +81,7 @@ class BaseActivity : AppCompatActivity() {
                     if (toBookmark) {
                         findNavController(R.id.nav_host_fragment).navigate(R.id.quranBookmarkFragment)
                     } else {
-                        val intent = android.content.Intent()
+                        val intent = Intent()
                         intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
                         intent.putExtra(
                             "android.provider.extra.APP_PACKAGE",
