@@ -9,7 +9,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="22dp"
         android:layout_marginTop="40dp"
         android:background="@drawable/bg_header_gray"
         android:fontFamily="@font/poppins_bold"
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/bg_header_gray"
         app:layout_constraintTop_toBottomOf="@id/tv_title">
 
@@ -96,7 +96,7 @@
         android:id="@+id/sv_surah"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="20dp"
+        android:layout_marginVertical="24dp"
         android:background="@drawable/bg_header_gray"
         android:elevation="1.5dp"
         android:inputType="text"

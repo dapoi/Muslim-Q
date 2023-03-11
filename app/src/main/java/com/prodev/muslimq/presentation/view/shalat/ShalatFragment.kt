@@ -291,7 +291,8 @@ class ShalatFragment : Fragment() {
                 adzanReceiver.setAdzanReminder(
                     requireActivity(),
                     adzanTime,
-                    adzanName
+                    adzanName,
+                    adzanName == "Adzan Shubuh"
                 )
             } else {
                 adzanReceiver.cancelAdzanReminder(requireActivity(), adzanName)

@@ -20,17 +20,8 @@
             android:id="@+id/iv_motive"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/light_gray"
+            android:background="@drawable/bg_header_gray"
             tools:ignore="ContentDescription" />
-
-        <TextView
-            android:id="@+id/tv_surah_number"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray"
-            android:gravity="center"
-            android:textColor="@color/black"
-            android:textSize="14sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -40,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="-2dp"
-        android:background="@color/light_gray"
+        android:background="@drawable/bg_header_gray"
         android:fontFamily="@font/poppins_medium"
         android:textColor="@color/light_gray"
         android:textSize="16sp"
@@ -52,7 +43,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="-2dp"
-        android:background="@color/light_gray"
+        android:background="@drawable/bg_header_gray"
         android:fontFamily="@font/poppins_medium"
         android:textColor="@color/light_gray"
         android:textSize="12sp"
@@ -63,7 +54,7 @@
         android:id="@+id/tv_surah_name_arabic"
         android:layout_width="40dp"
         android:layout_height="50dp"
-        android:background="@color/light_gray"
+        android:background="@drawable/bg_header_gray"
         android:fontFamily="@font/amiri_bold"
         android:textColor="@color/light_gray"
         android:textSize="20sp"

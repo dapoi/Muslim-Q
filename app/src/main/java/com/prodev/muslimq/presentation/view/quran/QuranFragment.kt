@@ -9,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
@@ -60,7 +62,7 @@ class QuranFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         bottomNav = requireActivity().findViewById(R.id.bottom_nav)
-        isOnline = isOnline(requireContext())
+        isOnline = isOnline(requireActivity())
 
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
@@ -161,14 +163,17 @@ class QuranFragment : Fragment() {
                 when {
                     it is Resource.Loading && it.data.isNullOrEmpty() -> {
                         stateLoading(true)
+                        clNoInternet.visibility = View.GONE
                     }
                     it is Resource.Error && it.data.isNullOrEmpty() -> {
                         stateLoading(false)
-
+                        stateNoInternet(ctlHeader, clNoInternet, true)
                     }
                     else -> {
                         stateLoading(false)
+                        stateNoInternet(ctlHeader, clNoInternet, false)
                         quranAdapter.setList(it.data!!)
+                        bottomNav.visibility = View.VISIBLE
                     }
                 }
             }
@@ -210,24 +215,26 @@ class QuranFragment : Fragment() {
                 tvTitle.visibility = View.GONE
                 clSurah.visibility = View.GONE
                 bottomNav.visibility = View.GONE
-                clNoInternet.visibility = View.GONE
             } else {
-                if (isOnline) {
-                    progressBar.visibility = View.GONE
-                    progressHeader.visibility = View.GONE
-                    tvTitle.visibility = View.VISIBLE
-                    clSurah.visibility = View.VISIBLE
-                    bottomNav.visibility = View.VISIBLE
-                } else {
-                    progressBar.visibility = View.GONE
-                    progressHeader.visibility = View.GONE
-                    tvTitle.visibility = View.GONE
-                    clSurah.visibility = View.GONE
-                    bottomNav.visibility = View.GONE
-                    clNoInternet.visibility = View.VISIBLE
-                    ctlHeader.visibility = View.GONE
-                }
+                progressBar.visibility = View.GONE
+                progressHeader.visibility = View.GONE
+                tvTitle.visibility = View.VISIBLE
+                clSurah.visibility = View.VISIBLE
             }
+        }
+    }
+
+    private fun stateNoInternet(
+        ctlHeader: CollapsingToolbarLayout,
+        clNoInternet: ConstraintLayout,
+        isDataEmpty: Boolean,
+    ) {
+        if (isDataEmpty) {
+            ctlHeader.visibility = View.GONE
+            clNoInternet.visibility = View.VISIBLE
+        } else {
+            ctlHeader.visibility = View.VISIBLE
+            clNoInternet.visibility = View.GONE
         }
     }
 }

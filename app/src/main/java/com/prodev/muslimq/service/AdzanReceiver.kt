@@ -17,7 +17,11 @@ import java.util.concurrent.TimeUnit
 class AdzanReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        val adzanData = when (intent.getIntExtra(ADZAN_CODE, 0)) {
+
+        val adzanData = intent.getIntExtra(ADZAN_CODE, 0)
+        val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
+
+        val adzanName = when (adzanData) {
             "Adzan Shubuh".hashCode() -> "Adzan Shubuh"
             "Adzan Dzuhur".hashCode() -> "Adzan Dzuhur"
             "Adzan Ashar".hashCode() -> "Adzan Ashar"
@@ -25,15 +29,15 @@ class AdzanReceiver : BroadcastReceiver() {
             "Adzan Isya".hashCode() -> "Adzan Isya"
             else -> ""
         }
+        createNotification(context, adzanName)
 
-        createNotification(context, adzanData)
         val serviceIntent = Intent(context, AdzanService::class.java).apply {
-            putExtra(ADZAN_CODE, adzanData)
+            putExtra(IS_SHUBUH, isShubuh)
         }
         context.startService(serviceIntent)
     }
 
-    private fun createNotification(context: Context, adzanData: String) {
+    private fun createNotification(context: Context, adzanName: String) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
@@ -50,7 +54,7 @@ class AdzanReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notif_circle)
-            .setContentTitle(adzanData)
+            .setContentTitle(adzanName)
             .setContentText("Waktunya Shalat")
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
@@ -67,14 +71,20 @@ class AdzanReceiver : BroadcastReceiver() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(adzanData.hashCode(), notification.build())
+        notificationManager.notify(adzanName.hashCode(), notification.build())
     }
 
-    fun setAdzanReminder(context: Context, adzanTime: String, adzanName: String) {
+    fun setAdzanReminder(
+        context: Context,
+        adzanTime: String,
+        adzanName: String,
+        isShubuh: Boolean
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AdzanReceiver::class.java).apply {
             putExtra(ADZAN_CODE, adzanName.hashCode())
+            putExtra(IS_SHUBUH, isShubuh)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -123,6 +133,7 @@ class AdzanReceiver : BroadcastReceiver() {
 
     companion object {
         const val ADZAN_CODE = "adzan_code"
+        const val IS_SHUBUH = "is_shubuh"
         const val FROM_NOTIFICATION = "from_notification"
         private const val CHANNEL_ID = "prayer_time_channel"
     }
