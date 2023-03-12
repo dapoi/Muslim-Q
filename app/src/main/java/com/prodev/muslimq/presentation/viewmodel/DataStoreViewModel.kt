@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -38,9 +39,15 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveNotifState(shalatState: Boolean) {
+//    fun saveNotifState(shalatState: Boolean) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            dataStorePreference.saveNotifState(shalatState)
+//        }
+//    }
+
+    fun saveSwitchState(switchName: String, isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveNotifState(shalatState)
+            dataStorePreference.saveSwitchState(switchName, isChecked)
         }
     }
 
@@ -52,5 +59,8 @@ class DataStoreViewModel @Inject constructor(
 
     val getAyahSize = dataStorePreference.getAyahSize.asLiveData()
 
-    val getNotifState = dataStorePreference.getNotifState.asLiveData()
+    fun getSwitchState(switchName: String): LiveData<Boolean> =
+        dataStorePreference.getSwitchState(switchName).asLiveData()
+
+//    val getNotifState = dataStorePreference.getNotifState.asLiveData()
 }

@@ -38,6 +38,14 @@
             app:layout_constraintStart_toEndOf="@id/iv_shubuh"
             app:layout_constraintTop_toTopOf="@id/iv_shubuh" />
 
+        <Switch
+            android:id="@+id/switch_shubuh"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_shubuh_time"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
         <TextView
             android:id="@+id/tv_shubuh_time"
             android:layout_width="wrap_content"
@@ -83,6 +91,14 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_dzuhur"
             app:layout_constraintStart_toEndOf="@id/iv_dzuhur"
             app:layout_constraintTop_toTopOf="@id/iv_dzuhur" />
+
+        <Switch
+            android:id="@+id/switch_dzuhur"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_dzuhur_time"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <TextView
             android:id="@+id/tv_dzuhur_time"
@@ -130,6 +146,14 @@
             app:layout_constraintStart_toEndOf="@id/iv_ashar"
             app:layout_constraintTop_toTopOf="@id/iv_ashar" />
 
+        <Switch
+            android:id="@+id/switch_ashar"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_ashar_time"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
         <TextView
             android:id="@+id/tv_ashar_time"
             android:layout_width="wrap_content"
@@ -176,6 +200,14 @@
             app:layout_constraintStart_toEndOf="@id/iv_maghrib"
             app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
 
+        <Switch
+            android:id="@+id/switch_maghrib"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_maghrib_time"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
         <TextView
             android:id="@+id/tv_maghrib_time"
             android:layout_width="wrap_content"
@@ -221,6 +253,14 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_isya"
             app:layout_constraintStart_toEndOf="@id/iv_isya"
             app:layout_constraintTop_toTopOf="@id/iv_isya" />
+
+        <Switch
+            android:id="@+id/switch_isya"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintEnd_toStartOf="@id/tv_isya_time"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <TextView
             android:id="@+id/tv_isya_time"

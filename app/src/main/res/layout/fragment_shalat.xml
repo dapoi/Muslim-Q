@@ -9,22 +9,22 @@
 
     <ImageView
         android:id="@+id/iv_icon_loc"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
         android:contentDescription="@string/icon_loc"
         android:src="@drawable/ic_location"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/yellow" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_info_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginHorizontal="8dp"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_icon_loc"
         app:layout_constraintEnd_toStartOf="@+id/iv_icon_choose"
         app:layout_constraintStart_toEndOf="@+id/iv_icon_loc"
         app:layout_constraintTop_toTopOf="@+id/iv_icon_loc">
@@ -34,12 +34,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
+            android:text="Lokasi Anda"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Lokasi anda" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_your_location"
@@ -48,10 +48,10 @@
             android:fontFamily="@font/poppins_medium"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@+id/tv_your_location_title"
             app:layout_constraintTop_toBottomOf="@id/tv_your_location_title"
-            tools:text="Bekasi" />
+            tools:text="BEKASI" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -59,8 +59,9 @@
         android:id="@+id/tv_choose_location"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="8dp"
         android:fontFamily="@font/poppins_medium"
+        android:paddingTop="5dp"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_icon_loc"
@@ -155,16 +156,6 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_next_shalat"
             tools:text="Shubuh" />
 
-        <ImageView
-            android:id="@+id/iv_icon_adzan_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:fontFamily="@font/poppins_medium"
-            android:src="@drawable/ic_notif_on"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_gregorian_date"
-            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.simform.refresh.SSPullToRefreshLayout

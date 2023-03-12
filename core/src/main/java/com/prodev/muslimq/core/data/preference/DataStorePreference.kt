@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,6 +17,7 @@ private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
 private val SHALAT_STATE = booleanPreferencesKey("shalat_state")
+private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -93,19 +95,32 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         preferences[CITY_NAME] ?: ""
     }
 
-    /**
-     * Save shalat state
-     */
-    suspend fun saveNotifState(state: Boolean) {
+//    /**
+//     * Save shalat state
+//     */
+//    suspend fun saveNotifState(state: Boolean) {
+//        dataStore.edit { preferences ->
+//            preferences[SHALAT_STATE] = state
+//        }
+//    }
+
+//    /**
+//     * Get shalat state
+//     */
+//    val getNotifState = dataStore.data.map { preferences ->
+//        preferences[SHALAT_STATE] ?: false
+//    }
+
+    suspend fun saveSwitchState(switchName: String, switchState: Boolean) {
         dataStore.edit { preferences ->
-            preferences[SHALAT_STATE] = state
+            preferences[SWITCH_NAME_KEY] = switchName
+            preferences[booleanPreferencesKey(switchName)] = switchState
         }
     }
 
-    /**
-     * Get shalat state
-     */
-    val getNotifState = dataStore.data.map { preferences ->
-        preferences[SHALAT_STATE] ?: false
+    fun getSwitchState(switchName: String): Flow<Boolean> {
+        return dataStore.data.map { preferences ->
+            preferences[booleanPreferencesKey(switchName)] ?: false
+        }
     }
 }

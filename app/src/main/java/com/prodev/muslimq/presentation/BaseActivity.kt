@@ -43,7 +43,8 @@ class BaseActivity : AppCompatActivity() {
 
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
         if (fromNotif) {
-            stopService(Intent(this, AdzanService::class.java))
+            val serviceIntent = Intent(this, AdzanService::class.java)
+            stopService(serviceIntent)
         }
     }
 
@@ -55,7 +56,7 @@ class BaseActivity : AppCompatActivity() {
         action: Boolean = false,
         toBookmark: Boolean = false
     ) {
-        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT).apply {
+        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
             if (state) {
                 setBackgroundTint(

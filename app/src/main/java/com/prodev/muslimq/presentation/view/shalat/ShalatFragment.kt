@@ -10,6 +10,8 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.Switch
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,6 +40,7 @@ import java.util.*
 class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
+    private lateinit var listOfSwitch: List<Switch>
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -59,14 +62,14 @@ class ShalatFragment : Fragment() {
     private var maghrib = ""
     private var isya = ""
 
-    private var notifAdzanState = false
     private var isOnline = false
     private var isFirstLoad = false
+    private var stateAdzanName = ""
 
-    private val requestPermissionPostNotification = registerForActivityResult(
+    val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) {
-        dataStoreViewModel.saveNotifState(it)
+    ) { isGranted ->
+        dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
     }
 
     override fun onCreateView(
@@ -97,7 +100,6 @@ class ShalatFragment : Fragment() {
 
         swipeRefresh()
         dateGregorianAndHijri()
-        checkStatusIconReminder()
     }
 
     private fun swipeRefresh() {
@@ -142,79 +144,17 @@ class ShalatFragment : Fragment() {
         }
     }
 
-    private fun checkStatusIconReminder() {
-        binding.apply {
-
-            ivIconAdzanState.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= 33) {
-                    checkNotificationPermissionWhenLaunch()
-                } else {
-                    stateNotifIcon()
-                }
-            }
-
-            dataStoreViewModel.getNotifState.observe(viewLifecycleOwner) { state ->
-                notifAdzanState = state
-
-                if (state) {
-                    ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
-                } else {
-                    ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
-                }
-            }
-        }
-    }
-
-    private fun checkNotificationPermissionWhenLaunch() {
-        if (Build.VERSION.SDK_INT >= 33) {
-            when {
-                ContextCompat.checkSelfPermission(
-                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    stateNotifIcon()
-                }
-                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
-                    (activity as BaseActivity).customSnackbar(
-                        true, requireContext(), binding.root, "Izinkan notifikasi adzan", true
-                    )
-                }
-                else -> {
-                    requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-            }
-        }
-    }
-
-    private fun stateNotifIcon() {
-        with(binding) {
-            if (notifAdzanState) {
-                dataStoreViewModel.saveNotifState(false)
-                ivIconAdzanState.setImageResource(R.drawable.ic_notif_off)
-                (activity as BaseActivity).customSnackbar(
-                    false,
-                    requireContext(),
-                    binding.root,
-                    "Notifikasi adzan dinonaktifkan",
-                )
-            } else {
-                dataStoreViewModel.saveNotifState(true)
-                ivIconAdzanState.setImageResource(R.drawable.ic_notif_on)
-                (activity as BaseActivity).customSnackbar(
-                    true,
-                    requireContext(),
-                    binding.root,
-                    "Notifikasi adzan diaktifkan",
-                )
-            }
-        }
-    }
-
     private fun setViewModel() {
         dataStoreViewModel.getCityData.observe(viewLifecycleOwner) { cityData ->
-            if (cityData.isEmpty()) {
-                binding.tvChooseLocation.text = resources.getString(R.string.choose_your_location)
-            } else {
-                binding.tvChooseLocation.text = cityData
+            with(binding) {
+                if (cityData.isEmpty()) {
+                    clInfoLocation.visibility = View.GONE
+                    tvChooseLocation.text = resources.getString(R.string.choose_your_location)
+                } else {
+                    clInfoLocation.visibility = View.VISIBLE
+                    tvYourLocation.text = cityData
+                    tvChooseLocation.visibility = View.GONE
+                }
             }
 
             shalatViewModel.getShalatDaily(cityData).observe(viewLifecycleOwner) {
@@ -286,16 +226,46 @@ class ShalatFragment : Fragment() {
             "Adzan Isya" to isya
         )
 
-        for ((adzanName, adzanTime) in listAdzanTime) {
-            if (notifAdzanState) {
-                adzanReceiver.setAdzanReminder(
-                    requireActivity(),
-                    adzanTime,
-                    adzanName,
-                    adzanName == "Adzan Shubuh"
-                )
-            } else {
-                adzanReceiver.cancelAdzanReminder(requireActivity(), adzanName)
+        with(binding.shalatLayout) {
+            listOfSwitch = listOf(
+                switchShubuh, switchDzuhur, switchAshar, switchMaghrib, switchIsya
+            )
+
+            listOfSwitch.withIndex().forEach { (index, switch) ->
+                val adzanName = listAdzanTime.keys.toList()[index]
+
+                dataStoreViewModel.getSwitchState(adzanName).observe(viewLifecycleOwner) { state ->
+                    if (ContextCompat.checkSelfPermission(
+                            requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        switch.isChecked = false
+                    } else {
+                        switch.isChecked = state
+                    }
+                }
+
+                switch.setOnCheckedChangeListener { adzanSwitch, isChecked ->
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        checkNotificationPermissionWhenLaunch(adzanName, isChecked, adzanSwitch)
+                    } else {
+                        stateNotifIcon(adzanName, isChecked)
+                    }
+                }
+
+
+                if (switch.isChecked) {
+                    listAdzanTime[adzanName]?.let { adzanTime ->
+                        adzanReceiver.setAdzanReminder(
+                            requireActivity(),
+                            adzanTime,
+                            adzanName,
+                            adzanName == "Adzan Shubuh"
+                        )
+                    }
+                } else {
+                    adzanReceiver.cancelAdzanReminder(requireActivity(), adzanName)
+                }
             }
         }
 
@@ -322,6 +292,58 @@ class ShalatFragment : Fragment() {
                     setNextPrayShalatBackground(shalatLayout.clShubuh)
                 }
             }
+        }
+    }
+
+    private fun checkNotificationPermissionWhenLaunch(
+        adzanName: String,
+        isChecked: Boolean,
+        adzanSwitch: CompoundButton
+    ) {
+        if (Build.VERSION.SDK_INT >= 33) {
+            stateAdzanName = adzanName
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    stateNotifIcon(adzanName, isChecked)
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    adzanSwitch.isChecked = false
+                    (activity as BaseActivity).customSnackbar(
+                        true,
+                        requireContext(),
+                        binding.root,
+                        "Izinkan notifikasi untuk mengaktifkan adzan",
+                        true
+                    )
+                }
+                else -> {
+                    requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        }
+    }
+
+    private fun stateNotifIcon(adzanName: String, isChecked: Boolean) {
+        val lowerCaseAdzanName =
+            adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
+        if (isChecked) {
+            dataStoreViewModel.saveSwitchState(adzanName, true)
+            (activity as BaseActivity).customSnackbar(
+                true,
+                requireContext(),
+                binding.root,
+                "$lowerCaseAdzanName diaktifkan",
+            )
+        } else {
+            dataStoreViewModel.saveSwitchState(adzanName, false)
+            (activity as BaseActivity).customSnackbar(
+                false,
+                requireContext(),
+                binding.root,
+                "$lowerCaseAdzanName dinonaktifkan",
+            )
         }
     }
 

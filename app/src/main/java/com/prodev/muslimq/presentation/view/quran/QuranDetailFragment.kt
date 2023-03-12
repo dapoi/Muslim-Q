@@ -176,7 +176,7 @@ class QuranDetailFragment : Fragment() {
                                             state = true,
                                             context = requireContext(),
                                             view = binding.root,
-                                            message = "Berhasil Ditambahkan",
+                                            message = "Berhasil ditambahkan ke \"Baca Nanti\"",
                                             action = true,
                                             toBookmark = true
                                         )
@@ -185,7 +185,7 @@ class QuranDetailFragment : Fragment() {
                                             state = false,
                                             context = requireContext(),
                                             view = binding.root,
-                                            message = "Berhasil Dihapus",
+                                            message = "Berhasil dihapus dari \"Baca Nanti\"",
                                         )
                                     }
                                 }
