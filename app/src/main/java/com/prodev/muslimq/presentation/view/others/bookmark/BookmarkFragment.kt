@@ -1,4 +1,4 @@
-package com.prodev.muslimq.presentation.view.quran
+package com.prodev.muslimq.presentation.view.others.bookmark
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -13,15 +13,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
-import com.prodev.muslimq.databinding.FragmentQuranBookmarkBinding
+import com.prodev.muslimq.databinding.FragmentBookmarkBinding
 import com.prodev.muslimq.presentation.adapter.QuranBookmarkAdapter
+import com.prodev.muslimq.presentation.view.quran.QuranDetailFragment
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class QuranBookmarkFragment : Fragment() {
+class BookmarkFragment : Fragment() {
 
-    private var _binding: FragmentQuranBookmarkBinding? = null
+    private var _binding: FragmentBookmarkBinding? = null
     private val binding get() = _binding!!
     private val quranBookmarkAdapter = QuranBookmarkAdapter()
     private val quranBookmarkViewModel: QuranViewModel by viewModels()
@@ -31,7 +32,7 @@ class QuranBookmarkFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentQuranBookmarkBinding.inflate(inflater, container, false)
+        _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
         return binding.root
     }
 

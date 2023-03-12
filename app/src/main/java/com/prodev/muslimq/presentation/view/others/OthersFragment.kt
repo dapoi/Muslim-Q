@@ -74,7 +74,7 @@ class OthersFragment : Fragment() {
                     Toast.makeText(context, "Segera Datang", Toast.LENGTH_SHORT).show()
                 }
                 3 -> {
-                    Toast.makeText(context, "Tentang", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                 }
             }
         }

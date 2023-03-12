@@ -29,14 +29,19 @@ class BaseActivity : AppCompatActivity() {
         val navHosFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHosFragment.navController
+        val destinationToHideBottomnav = setOf(
+            R.id.splashScreenFragment,
+            R.id.quranDetailFragment,
+            R.id.shalatProvinceFragment,
+            R.id.shalatCityFragment,
+            R.id.bookmarkFragment,
+            R.id.aboutAppFragment
+        )
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNav.visibility = when (destination.id) {
-                R.id.splashScreenFragment -> View.GONE
-                R.id.quranDetailFragment -> View.GONE
-                R.id.shalatProvinceFragment -> View.GONE
-                R.id.shalatCityFragment -> View.GONE
-                R.id.quranBookmarkFragment -> View.GONE
-                else -> View.VISIBLE
+            binding.bottomNav.visibility = if (destination.id in destinationToHideBottomnav) {
+                View.GONE
+            } else {
+                View.VISIBLE
             }
         }
         binding.bottomNav.setupWithNavController(navController)
@@ -80,7 +85,7 @@ class BaseActivity : AppCompatActivity() {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 setAction(goToBookmark) {
                     if (toBookmark) {
-                        findNavController(R.id.nav_host_fragment).navigate(R.id.quranBookmarkFragment)
+                        findNavController(R.id.nav_host_fragment).navigate(R.id.bookmarkFragment)
                     } else {
                         val intent = Intent()
                         intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
@@ -93,6 +98,7 @@ class BaseActivity : AppCompatActivity() {
                 }
             }
         }
+
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.setMargins(60, 0, 60, 50)
         snackbar.view.layoutParams = layoutParams

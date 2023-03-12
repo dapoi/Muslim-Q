@@ -11,9 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.Switch
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
+import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
@@ -40,7 +40,7 @@ import java.util.*
 class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
-    private lateinit var listOfSwitch: List<Switch>
+    private lateinit var listOfSwitch: List<SwitchCompat>
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -66,7 +66,7 @@ class ShalatFragment : Fragment() {
     private var isFirstLoad = false
     private var stateAdzanName = ""
 
-    val requestPermissionPostNotification = registerForActivityResult(
+    private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
@@ -228,7 +228,7 @@ class ShalatFragment : Fragment() {
 
         with(binding.shalatLayout) {
             listOfSwitch = listOf(
-                switchShubuh, switchDzuhur, switchAshar, switchMaghrib, switchIsya
+                swShubuh, swDzuhur, swAshar, swMaghrib, swIsya
             )
 
             listOfSwitch.withIndex().forEach { (index, switch) ->
@@ -242,6 +242,53 @@ class ShalatFragment : Fragment() {
                         switch.isChecked = false
                     } else {
                         switch.isChecked = state
+                        when (adzanName) {
+                            "Adzan Shubuh" -> {
+                                if (switch.isChecked) {
+                                    tvSwShubuhOn.visibility = View.VISIBLE
+                                    tvSwShubuhOff.visibility = View.GONE
+                                } else {
+                                    tvSwShubuhOn.visibility = View.GONE
+                                    tvSwShubuhOff.visibility = View.VISIBLE
+                                }
+                            }
+                            "Adzan Dzuhur" -> {
+                                if (switch.isChecked) {
+                                    tvSwDzuhurOn.visibility = View.VISIBLE
+                                    tvSwDzuhurOff.visibility = View.GONE
+                                } else {
+                                    tvSwDzuhurOn.visibility = View.GONE
+                                    tvSwDzuhurOff.visibility = View.VISIBLE
+                                }
+                            }
+                            "Adzan Ashar" -> {
+                                if (switch.isChecked) {
+                                    tvSwAsharOn.visibility = View.VISIBLE
+                                    tvSwAsharOff.visibility = View.GONE
+                                } else {
+                                    tvSwAsharOn.visibility = View.GONE
+                                    tvSwAsharOff.visibility = View.VISIBLE
+                                }
+                            }
+                            "Adzan Maghrib" -> {
+                                if (switch.isChecked) {
+                                    tvSwMaghribOn.visibility = View.VISIBLE
+                                    tvSwMaghribOff.visibility = View.GONE
+                                } else {
+                                    tvSwMaghribOn.visibility = View.GONE
+                                    tvSwMaghribOff.visibility = View.VISIBLE
+                                }
+                            }
+                            "Adzan Isya" -> {
+                                if (switch.isChecked) {
+                                    tvSwIsyaOn.visibility = View.VISIBLE
+                                    tvSwIsyaOff.visibility = View.GONE
+                                } else {
+                                    tvSwIsyaOn.visibility = View.GONE
+                                    tvSwIsyaOff.visibility = View.VISIBLE
+                                }
+                            }
+                        }
                     }
                 }
 

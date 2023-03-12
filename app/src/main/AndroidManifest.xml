@@ -25,7 +25,9 @@
 
         <activity
             android:name=".presentation.view.splashscreen.OpeningActivity"
-            android:exported="true">
+            android:configChanges="orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="locked">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,8 +40,10 @@
         </activity>
         <activity
             android:name="com.prodev.muslimq.presentation.BaseActivity"
+            android:configChanges="orientation|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
+            android:screenOrientation="locked"
             android:windowSoftInputMode="adjustPan" />
 
         <receiver

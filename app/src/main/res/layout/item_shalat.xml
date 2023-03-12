@@ -38,13 +38,42 @@
             app:layout_constraintStart_toEndOf="@id/iv_shubuh"
             app:layout_constraintTop_toTopOf="@id/iv_shubuh" />
 
-        <Switch
-            android:id="@+id/switch_shubuh"
-            android:layout_width="50dp"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_shubuh"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintEnd_toStartOf="@id/tv_shubuh_time"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/tv_sw_shubuh_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_shubuh"
+            app:layout_constraintStart_toStartOf="@id/sw_shubuh"
+            app:layout_constraintTop_toTopOf="@id/sw_shubuh" />
+
+        <TextView
+            android:id="@+id/tv_sw_shubuh_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/off"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_shubuh"
+            app:layout_constraintEnd_toEndOf="@id/sw_shubuh"
+            app:layout_constraintTop_toTopOf="@id/sw_shubuh" />
 
         <TextView
             android:id="@+id/tv_shubuh_time"
@@ -92,13 +121,42 @@
             app:layout_constraintStart_toEndOf="@id/iv_dzuhur"
             app:layout_constraintTop_toTopOf="@id/iv_dzuhur" />
 
-        <Switch
-            android:id="@+id/switch_dzuhur"
-            android:layout_width="50dp"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_dzuhur"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintEnd_toStartOf="@id/tv_dzuhur_time"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/tv_sw_dzuhur_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_dzuhur"
+            app:layout_constraintStart_toStartOf="@id/sw_dzuhur"
+            app:layout_constraintTop_toTopOf="@id/sw_dzuhur" />
+
+        <TextView
+            android:id="@+id/tv_sw_dzuhur_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/off"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_dzuhur"
+            app:layout_constraintEnd_toEndOf="@id/sw_dzuhur"
+            app:layout_constraintTop_toTopOf="@id/sw_dzuhur" />
 
         <TextView
             android:id="@+id/tv_dzuhur_time"
@@ -146,13 +204,42 @@
             app:layout_constraintStart_toEndOf="@id/iv_ashar"
             app:layout_constraintTop_toTopOf="@id/iv_ashar" />
 
-        <Switch
-            android:id="@+id/switch_ashar"
-            android:layout_width="50dp"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_ashar"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintEnd_toStartOf="@id/tv_ashar_time"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/tv_sw_ashar_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_ashar"
+            app:layout_constraintStart_toStartOf="@id/sw_ashar"
+            app:layout_constraintTop_toTopOf="@id/sw_ashar" />
+
+        <TextView
+            android:id="@+id/tv_sw_ashar_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/off"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_ashar"
+            app:layout_constraintEnd_toEndOf="@id/sw_ashar"
+            app:layout_constraintTop_toTopOf="@id/sw_ashar" />
 
         <TextView
             android:id="@+id/tv_ashar_time"
@@ -200,13 +287,42 @@
             app:layout_constraintStart_toEndOf="@id/iv_maghrib"
             app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
 
-        <Switch
-            android:id="@+id/switch_maghrib"
-            android:layout_width="50dp"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_maghrib"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintEnd_toStartOf="@id/tv_maghrib_time"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/tv_sw_maghrib_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_maghrib"
+            app:layout_constraintStart_toStartOf="@id/sw_maghrib"
+            app:layout_constraintTop_toTopOf="@id/sw_maghrib" />
+
+        <TextView
+            android:id="@+id/tv_sw_maghrib_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/off"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_maghrib"
+            app:layout_constraintEnd_toEndOf="@id/sw_maghrib"
+            app:layout_constraintTop_toTopOf="@id/sw_maghrib" />
 
         <TextView
             android:id="@+id/tv_maghrib_time"
@@ -254,13 +370,42 @@
             app:layout_constraintStart_toEndOf="@id/iv_isya"
             app:layout_constraintTop_toTopOf="@id/iv_isya" />
 
-        <Switch
-            android:id="@+id/switch_isya"
-            android:layout_width="50dp"
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/sw_isya"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="16dp"
+            android:thumb="@drawable/custom_thumb"
             app:layout_constraintEnd_toStartOf="@id/tv_isya_time"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            app:track="@drawable/custom_track" />
+
+        <TextView
+            android:id="@+id/tv_sw_isya_on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/on"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_isya"
+            app:layout_constraintStart_toStartOf="@id/sw_isya"
+            app:layout_constraintTop_toTopOf="@id/sw_isya" />
+
+        <TextView
+            android:id="@+id/tv_sw_isya_off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:fontFamily="@font/poppins_medium"
+            android:paddingTop="2dp"
+            android:text="@string/off"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/sw_isya"
+            app:layout_constraintEnd_toEndOf="@id/sw_isya"
+            app:layout_constraintTop_toTopOf="@id/sw_isya" />
 
         <TextView
             android:id="@+id/tv_isya_time"

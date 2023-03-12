@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.view.quran.QuranBookmarkFragment">
+    tools:context=".presentation.view.others.bookmark.BookmarkFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

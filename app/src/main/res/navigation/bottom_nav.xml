@@ -40,7 +40,10 @@
         tools:layout="@layout/fragment_others" >
         <action
             android:id="@+id/action_othersFragment_to_quranBookmarkFragment"
-            app:destination="@id/quranBookmarkFragment" />
+            app:destination="@id/bookmarkFragment" />
+        <action
+            android:id="@+id/action_othersFragment_to_aboutAppFragment"
+            app:destination="@id/aboutAppFragment" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
@@ -68,12 +71,17 @@
             app:destination="@id/shalatCityFragment" />
     </fragment>
     <fragment
-        android:id="@+id/quranBookmarkFragment"
-        android:name="com.prodev.muslimq.presentation.view.quran.QuranBookmarkFragment"
+        android:id="@+id/bookmarkFragment"
+        android:name="com.prodev.muslimq.presentation.view.others.bookmark.BookmarkFragment"
         android:label="fragment_quran_bookmark"
-        tools:layout="@layout/fragment_quran_bookmark" >
+        tools:layout="@layout/fragment_bookmark" >
         <action
             android:id="@+id/action_quranBookmarkFragment_to_quranDetailFragment"
             app:destination="@id/quranDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/aboutAppFragment"
+        android:name="com.prodev.muslimq.presentation.view.others.about.AboutAppFragment"
+        android:label="fragment_about_app"
+        tools:layout="@layout/fragment_about_app" />
 </navigation>

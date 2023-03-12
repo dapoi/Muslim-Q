@@ -34,7 +34,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins"
-            android:text="Lokasi Anda"
+            android:text="@string/your_location"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="12sp"
@@ -149,12 +149,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
+            android:text="@string/not_found_location"
             android:textColor="@color/white"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_next_shalat"
-            app:layout_constraintTop_toBottomOf="@+id/tv_next_shalat"
-            tools:text="Shubuh" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_next_shalat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
