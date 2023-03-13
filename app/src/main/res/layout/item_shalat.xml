@@ -48,37 +48,10 @@
             app:track="@drawable/custom_track" />
 
         <TextView
-            android:id="@+id/tv_sw_shubuh_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/on"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_shubuh"
-            app:layout_constraintStart_toStartOf="@id/sw_shubuh"
-            app:layout_constraintTop_toTopOf="@id/sw_shubuh" />
-
-        <TextView
-            android:id="@+id/tv_sw_shubuh_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/off"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_shubuh"
-            app:layout_constraintEnd_toEndOf="@id/sw_shubuh"
-            app:layout_constraintTop_toTopOf="@id/sw_shubuh" />
-
-        <TextView
             android:id="@+id/tv_shubuh_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -131,37 +104,10 @@
             app:track="@drawable/custom_track" />
 
         <TextView
-            android:id="@+id/tv_sw_dzuhur_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/on"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_dzuhur"
-            app:layout_constraintStart_toStartOf="@id/sw_dzuhur"
-            app:layout_constraintTop_toTopOf="@id/sw_dzuhur" />
-
-        <TextView
-            android:id="@+id/tv_sw_dzuhur_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/off"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_dzuhur"
-            app:layout_constraintEnd_toEndOf="@id/sw_dzuhur"
-            app:layout_constraintTop_toTopOf="@id/sw_dzuhur" />
-
-        <TextView
             android:id="@+id/tv_dzuhur_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -214,37 +160,10 @@
             app:track="@drawable/custom_track" />
 
         <TextView
-            android:id="@+id/tv_sw_ashar_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/on"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_ashar"
-            app:layout_constraintStart_toStartOf="@id/sw_ashar"
-            app:layout_constraintTop_toTopOf="@id/sw_ashar" />
-
-        <TextView
-            android:id="@+id/tv_sw_ashar_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/off"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_ashar"
-            app:layout_constraintEnd_toEndOf="@id/sw_ashar"
-            app:layout_constraintTop_toTopOf="@id/sw_ashar" />
-
-        <TextView
             android:id="@+id/tv_ashar_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -297,37 +216,10 @@
             app:track="@drawable/custom_track" />
 
         <TextView
-            android:id="@+id/tv_sw_maghrib_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/on"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_maghrib"
-            app:layout_constraintStart_toStartOf="@id/sw_maghrib"
-            app:layout_constraintTop_toTopOf="@id/sw_maghrib" />
-
-        <TextView
-            android:id="@+id/tv_sw_maghrib_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/off"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_maghrib"
-            app:layout_constraintEnd_toEndOf="@id/sw_maghrib"
-            app:layout_constraintTop_toTopOf="@id/sw_maghrib" />
-
-        <TextView
             android:id="@+id/tv_maghrib_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -380,37 +272,10 @@
             app:track="@drawable/custom_track" />
 
         <TextView
-            android:id="@+id/tv_sw_isya_on"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="9dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/on"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_isya"
-            app:layout_constraintStart_toStartOf="@id/sw_isya"
-            app:layout_constraintTop_toTopOf="@id/sw_isya" />
-
-        <TextView
-            android:id="@+id/tv_sw_isya_off"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:fontFamily="@font/poppins_medium"
-            android:paddingTop="2dp"
-            android:text="@string/off"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="@id/sw_isya"
-            app:layout_constraintEnd_toEndOf="@id/sw_isya"
-            app:layout_constraintTop_toTopOf="@id/sw_isya" />
-
-        <TextView
             android:id="@+id/tv_isya_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="2dp"
             android:textColor="@color/gray"
             android:textSize="16sp"
             android:textStyle="bold"

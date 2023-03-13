@@ -242,53 +242,6 @@ class ShalatFragment : Fragment() {
                         switch.isChecked = false
                     } else {
                         switch.isChecked = state
-                        when (adzanName) {
-                            "Adzan Shubuh" -> {
-                                if (switch.isChecked) {
-                                    tvSwShubuhOn.visibility = View.VISIBLE
-                                    tvSwShubuhOff.visibility = View.GONE
-                                } else {
-                                    tvSwShubuhOn.visibility = View.GONE
-                                    tvSwShubuhOff.visibility = View.VISIBLE
-                                }
-                            }
-                            "Adzan Dzuhur" -> {
-                                if (switch.isChecked) {
-                                    tvSwDzuhurOn.visibility = View.VISIBLE
-                                    tvSwDzuhurOff.visibility = View.GONE
-                                } else {
-                                    tvSwDzuhurOn.visibility = View.GONE
-                                    tvSwDzuhurOff.visibility = View.VISIBLE
-                                }
-                            }
-                            "Adzan Ashar" -> {
-                                if (switch.isChecked) {
-                                    tvSwAsharOn.visibility = View.VISIBLE
-                                    tvSwAsharOff.visibility = View.GONE
-                                } else {
-                                    tvSwAsharOn.visibility = View.GONE
-                                    tvSwAsharOff.visibility = View.VISIBLE
-                                }
-                            }
-                            "Adzan Maghrib" -> {
-                                if (switch.isChecked) {
-                                    tvSwMaghribOn.visibility = View.VISIBLE
-                                    tvSwMaghribOff.visibility = View.GONE
-                                } else {
-                                    tvSwMaghribOn.visibility = View.GONE
-                                    tvSwMaghribOff.visibility = View.VISIBLE
-                                }
-                            }
-                            "Adzan Isya" -> {
-                                if (switch.isChecked) {
-                                    tvSwIsyaOn.visibility = View.VISIBLE
-                                    tvSwIsyaOff.visibility = View.GONE
-                                } else {
-                                    tvSwIsyaOn.visibility = View.GONE
-                                    tvSwIsyaOff.visibility = View.VISIBLE
-                                }
-                            }
-                        }
                     }
                 }
 
