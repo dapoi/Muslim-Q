@@ -16,7 +16,6 @@ private val PROVINCE_ID = stringPreferencesKey("province_id")
 private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
-private val SHALAT_STATE = booleanPreferencesKey("shalat_state")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -95,22 +94,9 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         preferences[CITY_NAME] ?: ""
     }
 
-//    /**
-//     * Save shalat state
-//     */
-//    suspend fun saveNotifState(state: Boolean) {
-//        dataStore.edit { preferences ->
-//            preferences[SHALAT_STATE] = state
-//        }
-//    }
-
-//    /**
-//     * Get shalat state
-//     */
-//    val getNotifState = dataStore.data.map { preferences ->
-//        preferences[SHALAT_STATE] ?: false
-//    }
-
+    /**
+     * Save shalat switch state to data store
+     */
     suspend fun saveSwitchState(switchName: String, switchState: Boolean) {
         dataStore.edit { preferences ->
             preferences[SWITCH_NAME_KEY] = switchName
@@ -118,6 +104,9 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         }
     }
 
+    /**
+     * Get shalat switch state from data store
+     */
     fun getSwitchState(switchName: String): Flow<Boolean> {
         return dataStore.data.map { preferences ->
             preferences[booleanPreferencesKey(switchName)] ?: false

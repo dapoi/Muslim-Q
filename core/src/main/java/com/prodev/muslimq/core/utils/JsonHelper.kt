@@ -1,7 +1,6 @@
 package com.prodev.muslimq.core.utils
 
 import android.content.Context
-import android.util.Log
 import com.prodev.muslimq.core.R
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,12 +13,12 @@ class JsonHelper @Inject constructor(@ApplicationContext private val context: Co
 
     private fun getJsonDataFromAsset(): String? {
         val jsonString: String
+
         try {
-            jsonString =
-                context.resources.openRawResource(R.raw.doa).bufferedReader().use { it.readText() }
-            Log.d("JsonHelper", "getJsonDataFromAsset: $jsonString")
+            jsonString = context.resources.openRawResource(R.raw.doa).bufferedReader().use {
+                it.readText()
+            }
         } catch (e: Exception) {
-            Log.e("JsonHelper", "getJsonDataFromAsset: ${e.message}")
             return null
         }
         return jsonString
