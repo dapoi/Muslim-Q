@@ -12,5 +12,5 @@ interface ShalatRepository {
 
     fun getAllCity(id: String): Flow<Resource<List<CityResponse>>>
 
-    fun getShalatDaily(city: String): Flow<Resource<ShalatEntity>>
+    fun getShalatDaily(city: String, country: String): Flow<Resource<ShalatEntity>>
 }

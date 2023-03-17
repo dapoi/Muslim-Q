@@ -4,11 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -37,13 +38,13 @@ class QuranFragment : Fragment() {
 
     private lateinit var binding: FragmentQuranBinding
     private lateinit var bottomNav: BottomNavigationView
+    private lateinit var quranAdapter: QuranAdapter
 
-    private val quranAdapter = QuranAdapter()
     private val quranViewModel: QuranViewModel by viewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
-    private var isFirstLoad = false
     private var isOnline = false
+    private var isFirstLoad = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -64,6 +65,73 @@ class QuranFragment : Fragment() {
         bottomNav = requireActivity().findViewById(R.id.bottom_nav)
         isOnline = isOnline(requireActivity())
 
+        binding.apply {
+            getLastReadSurah(tvSurahName, tvSurahMeaning)
+
+            fabBackToTop.setOnClickListener {
+                // scroll to parent
+                rvSurah.smoothScrollToPosition(0)
+                appBar.setExpanded(true, true)
+            }
+
+            tilSurah.setEndIconOnClickListener {
+                etSurah.text?.clear()
+                hideKeyboard(requireActivity())
+                etSurah.clearFocus()
+            }
+
+            etSurah.apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {}
+
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        quranAdapter.filter.filter(s)
+                    }
+                })
+
+                setOnEditorActionListener { _, _, _ ->
+                    hideKeyboard(requireActivity())
+                    etSurah.clearFocus()
+                    true
+                }
+            }
+        }
+
+        if (isFirstLoad) {
+            setAdapter()
+            setViewModel()
+        }
+    }
+
+    private fun getLastReadSurah(tvSurahName: TextView, tvSurahMeaning: TextView) {
+        dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
+            if (data.first != "" || data.second != "") {
+                tvSurahName.text = data.first
+
+                tvSurahMeaning.visibility = View.VISIBLE
+                tvSurahMeaning.text = data.second
+            } else {
+                tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
+                tvSurahMeaning.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setAdapter() {
+        quranAdapter = QuranAdapter()
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
@@ -84,46 +152,29 @@ class QuranFragment : Fragment() {
             }
         })
 
+        binding.rvSurah.apply {
+            layoutManager = LinearLayoutManager(requireActivity())
+            adapter = quranAdapter
+            setHasFixedSize(true)
 
-        binding.apply {
-            getLastReadSurah(tvSurahName, tvSurahMeaning)
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    binding.apply {
+                        if (dy > 50 && !fabBackToTop.isShown) {
+                            fabBackToTop.show()
+                        }
 
-            fabBackToTop.setOnClickListener {
-                // scroll to parent
-                rvSurah.smoothScrollToPosition(0)
-                appBar.setExpanded(true, true)
-            }
+                        if (dy < -50 && fabBackToTop.isShown) {
+                            fabBackToTop.hide()
+                        }
 
-            svSurah.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    hideKeyboard(requireActivity())
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    newText?.let { quranAdapter.filter.filter(it) }
-                    return false
+                        if (!canScrollVertically(-1)) {
+                            fabBackToTop.hide()
+                        }
+                    }
                 }
             })
-        }
-
-        if (isFirstLoad) {
-            setViewModel()
-            setAdapter()
-        }
-    }
-
-    private fun getLastReadSurah(tvSurahName: TextView, tvSurahMeaning: TextView) {
-        dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
-            if (data.first != "" || data.second != "") {
-                tvSurahName.text = data.first
-
-                tvSurahMeaning.visibility = View.VISIBLE
-                tvSurahMeaning.text = data.second
-            } else {
-                tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
-                tvSurahMeaning.visibility = View.GONE
-            }
         }
     }
 
@@ -177,33 +228,6 @@ class QuranFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    private fun setAdapter() {
-        binding.rvSurah.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = quranAdapter
-            setHasFixedSize(true)
-
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    binding.apply {
-                        if (dy > 50 && !fabBackToTop.isShown) {
-                            fabBackToTop.show()
-                        }
-
-                        if (dy < -50 && fabBackToTop.isShown) {
-                            fabBackToTop.hide()
-                        }
-
-                        if (!canScrollVertically(-1)) {
-                            fabBackToTop.hide()
-                        }
-                    }
-                }
-            })
         }
     }
 

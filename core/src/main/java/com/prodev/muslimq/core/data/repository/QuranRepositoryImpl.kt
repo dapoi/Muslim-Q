@@ -20,37 +20,43 @@ class QuranRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource
 ) : QuranRepository {
 
-    override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(query = {
-        localDataSource.getQuran()
-    }, fetch = {
-        delay(2000)
-        remoteDataSource.getQuran()
-    }, saveFetchResult = { quran ->
-        val local = ArrayList<QuranEntity>()
-        quran.map {
-            val data = QuranEntity(
-                it.nomor,
-                it.nama,
-                it.nama_latin,
-                it.jumlah_ayat,
-                it.tempat_turun,
-                it.arti,
-                it.deskripsi,
-                it.audio
-            )
-            local.add(data)
-        }
-        localDataSource.deleteQuran()
-        localDataSource.insertQuran(local)
-    })
+    override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
+        query = {
+            localDataSource.getQuran()
+        },
+        fetch = {
+            delay(2000)
+            remoteDataSource.getQuran()
+        },
+        saveFetchResult = { quran ->
+            val local = ArrayList<QuranEntity>()
+            quran.map {
+                val data = QuranEntity(
+                    it.nomor,
+                    it.nama,
+                    it.nama_latin,
+                    it.jumlah_ayat,
+                    it.tempat_turun,
+                    it.arti,
+                    it.deskripsi,
+                    it.audio
+                )
+                local.add(data)
+            }
+            localDataSource.deleteQuran()
+            localDataSource.insertQuran(local)
+        },
+    )
 
-    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> =
-        networkBoundResource(query = {
+    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> = networkBoundResource(
+        query = {
             localDataSource.getQuranDetail(id)
-        }, fetch = {
+        },
+        fetch = {
             delay(2000)
             remoteDataSource.getQuranDetail(id)
-        }, saveFetchResult = { quran ->
+        },
+        saveFetchResult = { quran ->
             val local = QuranDetailEntity(
                 quran.nomor,
                 id,
@@ -71,7 +77,8 @@ class QuranRepositoryImpl @Inject constructor(
             localDataSource.insertQuranDetail(local)
         }, shouldFetch = {
             it == null || it.ayat.isEmpty()
-        })
+        }
+    )
 
     override fun getBookmark(): Flow<List<QuranDetailEntity>> {
         return localDataSource.getBookmark()

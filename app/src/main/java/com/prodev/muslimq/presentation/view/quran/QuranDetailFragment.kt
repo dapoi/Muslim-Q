@@ -36,8 +36,8 @@ class QuranDetailFragment : Fragment() {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrent: SeekBar
-    private lateinit var mediaPlayer: MediaPlayer
 
+    private var mediaPlayer: MediaPlayer? = null
     private var fontSize: Int? = null
 
     private var _binding: FragmentQuranDetailBinding? = null
@@ -66,7 +66,7 @@ class QuranDetailFragment : Fragment() {
         binding.apply {
             toolbar.title = surahName
             toolbar.setNavigationOnClickListener {
-                findNavController().navigateUp()
+                findNavController().popBackStack()
             }
 
             ivDescSurah.setOnClickListener {
@@ -177,8 +177,6 @@ class QuranDetailFragment : Fragment() {
                                             context = requireContext(),
                                             view = binding.root,
                                             message = "Berhasil ditambahkan ke \"Baca Nanti\"",
-                                            action = true,
-                                            toBookmark = true
                                         )
                                     } else {
                                         (activity as BaseActivity).customSnackbar(
@@ -206,35 +204,39 @@ class QuranDetailFragment : Fragment() {
 
     private fun setUpMediaPlayer(audio: String) {
         mediaPlayer = MediaPlayer()
-        mediaPlayer.apply {
+        mediaPlayer?.apply {
             setDataSource(audio)
             prepareAsync()
             with(binding) {
-                setOnPreparedListener {
-                    sbSound.max = mediaPlayer.duration
+                setOnCompletionListener {
+                    ivSound.setImageResource(R.drawable.ic_play)
+                }
 
-                    ivSound.setOnClickListener {
-                        if (isPlaying) {
-                            audioIsPlaying = false
-                            pause()
-                            ivSound.setImageResource(R.drawable.ic_play)
-                        } else {
-                            audioIsPlaying = true
-                            start()
-                            ivSound.setImageResource(R.drawable.ic_pause)
-                            val handler = Handler(Looper.getMainLooper())
-                            handler.postDelayed(object : Runnable {
-                                override fun run() {
-                                    try {
-                                        sbSound.progress = mediaPlayer.currentPosition
-                                        handler.postDelayed(this, 1000)
-                                    } catch (e: Exception) {
-                                        sbSound.progress = 0
-                                    }
+                ivSound.setOnClickListener {
+                    if (isPlaying) {
+                        audioIsPlaying = false
+                        pause()
+                        ivSound.setImageResource(R.drawable.ic_play)
+                    } else {
+                        audioIsPlaying = true
+                        start()
+                        ivSound.setImageResource(R.drawable.ic_pause)
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed(object : Runnable {
+                            override fun run() {
+                                try {
+                                    sbSound.progress = currentPosition
+                                    handler.postDelayed(this, 1000)
+                                } catch (e: Exception) {
+                                    sbSound.progress = 0
                                 }
-                            }, 0)
-                        }
+                            }
+                        }, 0)
                     }
+                }
+
+                setOnPreparedListener {
+                    sbSound.max = duration
 
                     var currentProgress = currentPosition
                     val audioDuration = duration
@@ -260,10 +262,6 @@ class QuranDetailFragment : Fragment() {
                         override fun onStopTrackingTouch(seekBar: SeekBar?) {
                         }
                     })
-                }
-
-                setOnCompletionListener {
-                    ivSound.setImageResource(R.drawable.ic_play)
                 }
             }
         }
@@ -368,16 +366,17 @@ class QuranDetailFragment : Fragment() {
         super.onPause()
 
         fontSize?.let { size -> dataStoreViewModel.saveAyahSize(size) }
+
+        if (audioIsPlaying) {
+            mediaPlayer?.apply {
+                stop()
+                release()
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        if (audioIsPlaying) {
-            mediaPlayer.stop()
-            mediaPlayer.release()
-        }
-
         _binding = null
     }
 

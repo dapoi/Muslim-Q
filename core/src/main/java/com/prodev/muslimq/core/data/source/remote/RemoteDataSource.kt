@@ -18,5 +18,7 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getAllCity(id: String) = areaApi.getAllCity(id)
 
-    suspend fun getShalatDaily(city: String) = shalatApi.getShalatDaily(city)
+    suspend fun getShalatDaily(
+        city: String, country: String
+    ) = shalatApi.getShalatDaily(city, country)
 }

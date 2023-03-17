@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_quran">
         <action
             android:id="@+id/action_quranFragment_to_quranDetailFragment"
-            app:destination="@id/quranDetailFragment" />
+            app:destination="@id/quranDetailFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/shalatFragment"
@@ -21,7 +25,11 @@
         tools:layout="@layout/fragment_shalat">
         <action
             android:id="@+id/action_shalatFragment_to_shalatProvinceFragment"
-            app:destination="@id/shalatProvinceFragment" />
+            app:destination="@id/shalatProvinceFragment"
+            app:enterAnim="@anim/from_bottom_anim"
+            app:exitAnim="@anim/no_anim"
+            app:popEnterAnim="@anim/no_anim"
+            app:popExitAnim="@anim/to_bottom_anim" />
     </fragment>
     <fragment
         android:id="@+id/qiblaFragment"
@@ -37,13 +45,21 @@
         android:id="@+id/othersFragment"
         android:name="com.prodev.muslimq.presentation.view.others.OthersFragment"
         android:label="fragment_others"
-        tools:layout="@layout/fragment_others" >
+        tools:layout="@layout/fragment_others">
         <action
             android:id="@+id/action_othersFragment_to_quranBookmarkFragment"
-            app:destination="@id/bookmarkFragment" />
+            app:destination="@id/bookmarkFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
         <action
             android:id="@+id/action_othersFragment_to_aboutAppFragment"
-            app:destination="@id/aboutAppFragment" />
+            app:destination="@id/aboutAppFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
@@ -58,6 +74,8 @@
         <action
             android:id="@+id/action_shalatCityFragment_to_shalatFragment"
             app:destination="@id/shalatFragment"
+            app:popEnterAnim="@anim/no_anim"
+            app:popExitAnim="@anim/to_bottom_anim"
             app:popUpTo="@id/shalatProvinceFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -68,16 +86,24 @@
         tools:layout="@layout/fragment_shalat_province">
         <action
             android:id="@+id/action_shalatProvinceFragment_to_shalatCityFragment"
-            app:destination="@id/shalatCityFragment" />
+            app:destination="@id/shalatCityFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/bookmarkFragment"
         android:name="com.prodev.muslimq.presentation.view.others.bookmark.BookmarkFragment"
         android:label="fragment_quran_bookmark"
-        tools:layout="@layout/fragment_bookmark" >
+        tools:layout="@layout/fragment_bookmark">
         <action
             android:id="@+id/action_quranBookmarkFragment_to_quranDetailFragment"
-            app:destination="@id/quranDetailFragment" />
+            app:destination="@id/quranDetailFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/aboutAppFragment"

@@ -47,4 +47,5 @@
     <string name="desc_about_app">MuslimQ merupakan sebuah aplikasi untuk kebutuhan ibadah umat Muslim yang berstatus <i>open-source</i>. \n\n Aplikasi ini memberikan akses terbuka pada sumber kode, sehingga dapat disesuaikan dan dimodifikasi sesuai kebutuhan oleh pengembang lainnya. Kami mengajak pengguna yang tertarik untuk ikut berpartisipasi dalam pengembangan MuslimQ. \n\n Anda dapat bergabung dengan tim pengembang kami dan memberikan masukan serta saran melalui fitur \n “Kirim Masukan” \n untuk meningkatkan kualitas dan fungsionalitas aplikasi.</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
+    <string name="search_surah">Cari Surah</string>
 </resources>

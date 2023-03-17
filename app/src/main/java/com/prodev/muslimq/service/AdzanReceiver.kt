@@ -55,10 +55,10 @@ class AdzanReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
-            .setContentText("Waktunya Shalat")
+            .setContentText("Waktunya Menunaikan Ibadah Shalat")
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

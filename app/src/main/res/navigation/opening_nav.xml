@@ -13,8 +13,8 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_baseActivity"
             app:destination="@id/baseActivity"
-            app:enterAnim="@anim/to_up"
-            app:exitAnim="@anim/to_down"
+            app:enterAnim="@anim/from_bottom_anim"
+            app:exitAnim="@anim/to_up_anim"
             app:launchSingleTop="true"
             app:popUpTo="@id/splashScreenFragment"
             app:popUpToInclusive="true" />

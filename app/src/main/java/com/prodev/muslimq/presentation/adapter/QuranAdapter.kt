@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.ItemListSurahBinding
+import java.util.*
 
-class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filterable {
+class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private var surahList: ArrayList<QuranEntity> = ArrayList()
-    private var surahListFiltered: ArrayList<QuranEntity> = ArrayList()
+    private var surahList = ArrayList<QuranEntity>()
+    private var surahListFiltered = ArrayList<QuranEntity>()
 
     private lateinit var onItemClickCallback: OnItemClickCallback
 
@@ -26,18 +26,15 @@ class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filte
     }
 
     fun setList(list: List<QuranEntity>) {
-        val diffResult = DiffUtil.calculateDiff(QuranDiffCallback(surahList, list))
-        surahList.clear()
-        surahList.addAll(list)
-        surahListFiltered.clear()
-        surahListFiltered.addAll(list)
-        diffResult.dispatchUpdatesTo(this)
+        surahList = list as ArrayList<QuranEntity>
+        surahListFiltered = list
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = surahListFiltered.size
 
-    override fun onBindViewHolder(holder: QuranViewHolder, position: Int) =
-        holder.bind(surahListFiltered[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
+        (holder as QuranViewHolder).bind(surahListFiltered[position])
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuranViewHolder {
         return QuranViewHolder(
@@ -70,50 +67,32 @@ class QuranAdapter : RecyclerView.Adapter<QuranAdapter.QuranViewHolder>(), Filte
         }
     }
 
-    inner class QuranDiffCallback(
-        private val oldList: List<QuranEntity>,
-        private val newList: List<QuranEntity>
-    ) : DiffUtil.Callback() {
-        override fun getOldListSize(): Int = oldList.size
-
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            oldList[oldItemPosition].nomor == newList[newItemPosition].nomor
-
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-            oldList[oldItemPosition] == newList[newItemPosition]
-    }
-
-    @Suppress("UNCHECKED_CAST")
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val charString = constraint?.toString() ?: ""
-                surahListFiltered = if (charString.isEmpty()) {
+                val charSearch = constraint.toString()
+                surahListFiltered = if (charSearch.isEmpty()) {
                     surahList
                 } else {
-                    val filteredList = ArrayList<QuranEntity>()
-                    surahList.filter {
-                        (it.namaLatin.lowercase().contains(charString.lowercase()))
-                    }.forEach { filteredList.add(it) }
-                    filteredList
+                    val resultList = ArrayList<QuranEntity>()
+                    for (row in surahList) {
+                        if (row.namaLatin.lowercase(Locale.getDefault())
+                                .contains(charSearch.lowercase(Locale.getDefault()))
+                        ) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
                 }
-                return FilterResults().apply {
-                    values = surahListFiltered
-                }
+                val filterResults = FilterResults()
+                filterResults.values = surahListFiltered
+                return filterResults
             }
 
-            @SuppressLint("NotifyDataSetChanged")
-            override fun publishResults(constraints: CharSequence?, result: FilterResults?) {
-                surahListFiltered = if (result?.values == null) {
-                    ArrayList()
-                } else {
-                    result.values as ArrayList<QuranEntity>
-                }
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                surahListFiltered = results?.values as ArrayList<QuranEntity>
                 notifyDataSetChanged()
             }
-
         }
     }
 }

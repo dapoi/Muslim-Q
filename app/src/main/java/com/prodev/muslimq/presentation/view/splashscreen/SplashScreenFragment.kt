@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.FragmentSplashScreenBinding
+import kotlinx.coroutines.launch
 
 class SplashScreenFragment : Fragment() {
 
-    private val binding: FragmentSplashScreenBinding by lazy(LazyThreadSafetyMode.NONE) {
-        FragmentSplashScreenBinding.inflate(layoutInflater)
-    }
+    private var _binding: FragmentSplashScreenBinding? = null
+    private val binding get() = _binding!!
 
     private val duration = 3000L
 
@@ -24,17 +25,25 @@ class SplashScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            findNavController().navigate(
-                R.id.action_splashScreenFragment_to_baseActivity
-            )
-            requireActivity().finish()
-        }, duration)
+        viewLifecycleOwner.lifecycleScope.launch {
+            Handler(Looper.getMainLooper()).postDelayed({
+                findNavController().navigate(
+                    R.id.action_splashScreenFragment_to_baseActivity
+                )
+                requireActivity().finish()
+            }, duration)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

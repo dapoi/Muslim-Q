@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 data class ShalatEntity(
 
     @PrimaryKey val city: String,
+    val country: String,
     val shubuh: String,
     val dzuhur: String,
     val ashar: String,

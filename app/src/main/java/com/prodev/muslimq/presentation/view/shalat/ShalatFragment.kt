@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
@@ -70,6 +71,14 @@ class ShalatFragment : Fragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
+        if (isGranted) {
+            (activity as BaseActivity).customSnackbar(
+                true,
+                requireContext(),
+                binding.root,
+                "${adzanLowerCase(stateAdzanName)} diaktifkan",
+            )
+        }
     }
 
     override fun onCreateView(
@@ -98,8 +107,17 @@ class ShalatFragment : Fragment() {
             setViewModel()
         }
 
+        refreshDataWhenCityChange()
         swipeRefresh()
         dateGregorianAndHijri()
+    }
+
+    private fun refreshDataWhenCityChange() {
+        setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
+            if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY)) {
+                setViewModel()
+            }
+        }
     }
 
     private fun swipeRefresh() {
@@ -145,39 +163,45 @@ class ShalatFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        dataStoreViewModel.getCityData.observe(viewLifecycleOwner) { cityData ->
-            with(binding) {
-                if (cityData.isEmpty()) {
-                    clInfoLocation.visibility = View.GONE
-                    tvChooseLocation.text = resources.getString(R.string.choose_your_location)
-                } else {
-                    clInfoLocation.visibility = View.VISIBLE
-                    tvYourLocation.text = cityData
-                    tvChooseLocation.visibility = View.GONE
-                }
-            }
-
-            shalatViewModel.getShalatDaily(cityData).observe(viewLifecycleOwner) {
+        dataStoreViewModel.apply {
+            getAreaData.observe(viewLifecycleOwner) { area ->
                 with(binding) {
-                    when {
-                        it is Resource.Loading && it.data == null -> {
-                            progressBar.visibility = View.VISIBLE
-                            clNegativeCase.visibility = View.GONE
-                            shalatLayout.root.visibility = View.GONE
+                    if (area.first.isEmpty() && area.second.isEmpty()) {
+                        clInfoLocation.visibility = View.GONE
+                        tvChooseLocation.text = resources.getString(R.string.choose_your_location)
+                    } else {
+                        clInfoLocation.visibility = View.VISIBLE
+                        tvYourLocation.text = area.first
+                        tvChooseLocation.visibility = View.GONE
+                    }
+                }
+
+                getShalatDaily(area.first, area.second)
+            }
+        }
+    }
+
+    private fun getShalatDaily(city: String, country: String) {
+        shalatViewModel.getShalatDaily(city, country).observe(viewLifecycleOwner) { result ->
+            with(binding) {
+                when {
+                    result is Resource.Loading && result.data == null -> {
+                        progressBar.visibility = View.VISIBLE
+                        clNegativeCase.visibility = View.GONE
+                        shalatLayout.root.visibility = View.GONE
+                    }
+                    result is Resource.Error && result.data == null -> {
+                        progressBar.visibility = View.GONE
+                        if (!isOnline) {
+                            negativeCase(true)
+                        } else {
+                            negativeCase(false)
                         }
-                        it is Resource.Error && it.data == null -> {
-                            progressBar.visibility = View.GONE
-                            if (!isOnline) {
-                                negativeCase(true)
-                            } else {
-                                negativeCase(false)
-                            }
-                            shalatLayout.root.visibility = View.GONE
-                        }
-                        else -> {
-                            it.data?.let { data -> getAllShalatData(data) }
-                            setReminderAdzanTime()
-                        }
+                        shalatLayout.root.visibility = View.GONE
+                    }
+                    else -> {
+                        result.data?.let { data -> getAllShalatData(data) }
+                        setReminderAdzanTime()
                     }
                 }
             }
@@ -212,7 +236,6 @@ class ShalatFragment : Fragment() {
             clNegativeCase.visibility = View.GONE
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun setReminderAdzanTime() {
@@ -252,7 +275,6 @@ class ShalatFragment : Fragment() {
                         stateNotifIcon(adzanName, isChecked)
                     }
                 }
-
 
                 if (switch.isChecked) {
                     listAdzanTime[adzanName]?.let { adzanTime ->
@@ -326,8 +348,7 @@ class ShalatFragment : Fragment() {
     }
 
     private fun stateNotifIcon(adzanName: String, isChecked: Boolean) {
-        val lowerCaseAdzanName =
-            adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
+        val lowerCaseAdzanName = adzanLowerCase(adzanName)
         if (isChecked) {
             dataStoreViewModel.saveSwitchState(adzanName, true)
             (activity as BaseActivity).customSnackbar(
@@ -399,5 +420,9 @@ class ShalatFragment : Fragment() {
 
     private fun ConstraintSet.topToBottom(v1: View, v2: View, @Px margin: Int = 0) {
         connect(v1.id, TOP, v2.id, BOTTOM, margin)
+    }
+
+    private fun adzanLowerCase(adzanName: String): String {
+        return adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
     }
 }

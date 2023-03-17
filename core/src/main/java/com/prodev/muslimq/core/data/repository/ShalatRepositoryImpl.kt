@@ -42,9 +42,11 @@ class ShalatRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun getShalatDaily(city: String): Flow<Resource<ShalatEntity>> = networkBoundResource(
-        query = { localDataSource.getShalatDailyByCity(city) },
-        fetch = { remoteDataSource.getShalatDaily(city) },
+    override fun getShalatDaily(
+        city: String, country: String
+    ): Flow<Resource<ShalatEntity>> = networkBoundResource(
+        query = { localDataSource.getShalatDailyByCity(city, country) },
+        fetch = { remoteDataSource.getShalatDaily(city, country) },
         saveFetchResult = { shalat ->
             val simpleDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             shalat.data.filter {
@@ -52,6 +54,7 @@ class ShalatRepositoryImpl @Inject constructor(
             }.map { pray ->
                 val local = ShalatEntity(
                     city = city,
+                    country = country,
                     shubuh = pray.timings.Fajr,
                     dzuhur = pray.timings.Dhuhr,
                     ashar = pray.timings.Asr,

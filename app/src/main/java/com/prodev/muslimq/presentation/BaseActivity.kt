@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
@@ -38,10 +37,15 @@ class BaseActivity : AppCompatActivity() {
             R.id.aboutAppFragment
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNav.visibility = if (destination.id in destinationToHideBottomnav) {
-                View.GONE
-            } else {
-                View.VISIBLE
+            binding.bottomNav.apply {
+                // give animation when hide/show bottom nav
+                if (destination.id in destinationToHideBottomnav) {
+                    animate().translationY(height.toFloat()).duration = 300
+                    visibility = View.GONE
+                } else {
+                    animate().translationY(0f).duration = 300
+                    visibility = View.VISIBLE
+                }
             }
         }
         binding.bottomNav.setupWithNavController(navController)
@@ -59,7 +63,6 @@ class BaseActivity : AppCompatActivity() {
         view: View,
         message: String,
         action: Boolean = false,
-        toBookmark: Boolean = false
     ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
@@ -80,21 +83,16 @@ class BaseActivity : AppCompatActivity() {
             }
 
             setTextColor(ContextCompat.getColor(context, R.color.white))
-            val goToBookmark = if (toBookmark) "LIHAT" else "IZINKAN"
             if (action) {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
-                setAction(goToBookmark) {
-                    if (toBookmark) {
-                        findNavController(R.id.nav_host_fragment).navigate(R.id.bookmarkFragment)
-                    } else {
-                        val intent = Intent()
-                        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                        intent.putExtra(
-                            "android.provider.extra.APP_PACKAGE",
-                            context.packageName
-                        )
-                        startActivity(intent)
-                    }
+                setAction("IZINKAN") {
+                    val intent = Intent()
+                    intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                    intent.putExtra(
+                        "android.provider.extra.APP_PACKAGE",
+                        context.packageName
+                    )
+                    startActivity(intent)
                 }
             }
         }

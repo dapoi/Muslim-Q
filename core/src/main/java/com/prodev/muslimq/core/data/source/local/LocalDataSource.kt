@@ -28,7 +28,10 @@ class LocalDataSource @Inject constructor(
         quranDao.updateBookmark(quran)
     }
 
-    fun getShalatDailyByCity(city: String) = shalatDao.getShalatDailyByCity(city)
+    fun getShalatDailyByCity(
+        city: String, country: String
+    ) = shalatDao.getShalatDailyByCity(city, country)
+
     suspend fun insertShalatDaily(shalat: ShalatEntity) = shalatDao.insertShalat(shalat)
     suspend fun deleteShalatDaily() = shalatDao.deleteShalat()
     suspend fun deleteAllBookmark() = quranDao.deleteAllBookmark()

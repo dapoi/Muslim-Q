@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -105,9 +107,13 @@ class ShalatCityFragment : Fragment() {
 
             cityAdapter.onCLick = { city ->
                 viewLifecycleOwner.lifecycleScope.launch {
-                    dataStoreViewModel.saveCityData(city.name)
+                    dataStoreViewModel.apply {
+                        saveAreaData(city.name, "Indonesia")
+                    }
                 }
-                findNavController().navigate(R.id.action_shalatCityFragment_to_shalatFragment)
+
+                setFragmentResult(REQUEST_CITY_KEY, bundleOf(BUNDLE_CITY to true))
+                findNavController().popBackStack(R.id.shalatFragment, false)
             }
         }
     }
@@ -117,18 +123,21 @@ class ShalatCityFragment : Fragment() {
             shalatViewModel.getAllCity(dataProv.first).observe(viewLifecycleOwner) {
                 with(binding) {
                     when (it) {
-                        is Resource.Loading -> stateLoading(true)
+                        is Resource.Loading -> {
+                            stateNoInternetView(false)
+                            stateLoading(true)
+                        }
                         is Resource.Success -> {
                             Handler(Looper.getMainLooper()).postDelayed({
+                                stateNoInternetView(false)
                                 stateLoading(false)
                                 cityAdapter.setList(it.data!!)
-                                clNoInternet.visibility = View.GONE
-                            }, 1000)
+                            }, 500)
                         }
                         is Resource.Error -> {
+                            stateNoInternetView(true)
                             stateLoading(false)
                             rvCity.visibility = View.GONE
-                            clNoInternet.visibility = View.VISIBLE
                         }
                     }
                 }
@@ -148,8 +157,17 @@ class ShalatCityFragment : Fragment() {
         }
     }
 
+    private fun stateNoInternetView(state: Boolean) {
+        binding.clNoInternet.visibility = if (state) View.VISIBLE else View.GONE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        const val REQUEST_CITY_KEY = "request_city_key"
+        const val BUNDLE_CITY = "bundle_city"
     }
 }

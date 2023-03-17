@@ -16,6 +16,7 @@ private val PROVINCE_ID = stringPreferencesKey("province_id")
 private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
+private val COUNTRY_NAME = stringPreferencesKey("country_name")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -79,20 +80,55 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     }
 
     /**
-     * Save city name to data store
+     * Save city and country name to data store
      */
-    suspend fun saveCityData(cityName: String) {
+    suspend fun saveCityAndCountryData(cityName: String, countryName: String) {
         dataStore.edit { preferences ->
             preferences[CITY_NAME] = cityName
+            preferences[COUNTRY_NAME] = countryName
         }
     }
 
     /**
-     * Get city name from data store
+     * Get city and country name from data store
      */
-    val getCityData = dataStore.data.map { preferences ->
-        preferences[CITY_NAME] ?: ""
+    val getCityAndCountryData = dataStore.data.map { preferences ->
+        val cityName = preferences[CITY_NAME] ?: ""
+        val countryName = preferences[COUNTRY_NAME] ?: ""
+        Pair(cityName, countryName)
     }
+
+//    /**
+//     * Save city name to data store
+//     */
+//    suspend fun saveCityData(cityName: String) {
+//        dataStore.edit { preferences ->
+//            preferences[CITY_NAME] = cityName
+//        }
+//    }
+//
+//    /**
+//     * Get city name from data store
+//     */
+//    val getCityData = dataStore.data.map { preferences ->
+//        preferences[CITY_NAME] ?: ""
+//    }
+//
+//    /**
+//     * Save country name to data store
+//     */
+//    suspend fun saveCountryData(countryName: String) {
+//        dataStore.edit { preferences ->
+//            preferences[COUNTRY_NAME] = countryName
+//        }
+//    }
+//
+//    /**
+//     * Get country name from data store
+//     */
+//    val getCountryData = dataStore.data.map { preferences ->
+//        preferences[COUNTRY_NAME] ?: ""
+//    }
 
     /**
      * Save shalat switch state to data store

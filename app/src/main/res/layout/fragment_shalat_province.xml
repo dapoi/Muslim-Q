@@ -38,7 +38,7 @@
         app:layout_constraintBottom_toTopOf="@+id/srl_province"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Cari kota/daerah"
+        app:queryHint="Cari Provinsi"
         app:searchIcon="@drawable/ic_search"
         tools:ignore="ContentDescription" />
 

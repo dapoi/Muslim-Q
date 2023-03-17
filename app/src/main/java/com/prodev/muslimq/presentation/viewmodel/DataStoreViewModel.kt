@@ -27,9 +27,9 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveCityData(cityName: String) {
+    fun saveAreaData(cityName: String, countryName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveCityData(cityName)
+            dataStorePreference.saveCityAndCountryData(cityName, countryName)
         }
     }
 
@@ -38,12 +38,6 @@ class DataStoreViewModel @Inject constructor(
             dataStorePreference.saveAyahSize(ayahSize)
         }
     }
-
-//    fun saveNotifState(shalatState: Boolean) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            dataStorePreference.saveNotifState(shalatState)
-//        }
-//    }
 
     fun saveSwitchState(switchName: String, isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -55,12 +49,10 @@ class DataStoreViewModel @Inject constructor(
 
     val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
 
-    val getCityData = dataStorePreference.getCityData.asLiveData()
+    val getAreaData = dataStorePreference.getCityAndCountryData.asLiveData()
 
     val getAyahSize = dataStorePreference.getAyahSize.asLiveData()
 
     fun getSwitchState(switchName: String): LiveData<Boolean> =
         dataStorePreference.getSwitchState(switchName).asLiveData()
-
-//    val getNotifState = dataStorePreference.getNotifState.asLiveData()
 }

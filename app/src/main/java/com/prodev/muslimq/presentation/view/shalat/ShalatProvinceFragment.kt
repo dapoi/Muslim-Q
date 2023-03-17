@@ -1,8 +1,6 @@
 package com.prodev.muslimq.presentation.view.shalat
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,11 +107,9 @@ class ShalatProvinceFragment : Fragment() {
                 when (it) {
                     is Resource.Loading -> stateLoading(true)
                     is Resource.Success -> {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            stateLoading(false)
-                            provinceAdapter.setList(it.data!!)
-                            clNoInternet.visibility = View.GONE
-                        }, 1500)
+                        stateLoading(false)
+                        provinceAdapter.setList(it.data!!)
+                        clNoInternet.visibility = View.GONE
                     }
                     is Resource.Error -> {
                         stateLoading(false)

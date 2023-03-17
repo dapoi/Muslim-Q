@@ -127,22 +127,40 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/sv_surah"
+                <androidx.cardview.widget.CardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="24dp"
-                    android:background="@drawable/bg_search"
-                    android:elevation="1.5dp"
-                    android:inputType="text"
-                    app:iconifiedByDefault="false"
+                    app:cardCornerRadius="10dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/cl_surah"
                     app:layout_constraintStart_toStartOf="@id/cl_surah"
-                    app:layout_constraintTop_toBottomOf="@+id/cl_surah"
-                    app:queryBackground="@android:color/transparent"
-                    app:queryHint="Cari surah"
-                    tools:ignore="Autofill" />
+                    app:layout_constraintTop_toBottomOf="@+id/cl_surah">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_surah"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:endIconDrawable="@drawable/ic_close"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_search">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_surah"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="@string/search_surah"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:paddingVertical="5dp"
+                            tools:ignore="Autofill,TextFields" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.cardview.widget.CardView>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
                     android:id="@+id/progress_header"
