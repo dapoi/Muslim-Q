@@ -74,6 +74,7 @@ class QuranFragment : Fragment() {
                 appBar.setExpanded(true, true)
             }
 
+
             tilSurah.setEndIconOnClickListener {
                 etSurah.text?.clear()
                 hideKeyboard(requireActivity())

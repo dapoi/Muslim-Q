@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.view.splashscreen
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,6 +14,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.FragmentSplashScreenBinding
 import kotlinx.coroutines.launch
 
+@SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : Fragment() {
 
     private var _binding: FragmentSplashScreenBinding? = null

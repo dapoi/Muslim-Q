@@ -1,18 +1,28 @@
 package com.prodev.muslimq.presentation.view.quran
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DownloadManager
+import android.app.ProgressDialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.net.Uri
+import android.os.*
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.SeekBar
+import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -29,29 +39,37 @@ import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 import java.util.*
+
 
 @AndroidEntryPoint
 class QuranDetailFragment : Fragment() {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrent: SeekBar
-
-    private var mediaPlayer: MediaPlayer? = null
-    private var fontSize: Int? = null
-
-    private var _binding: FragmentQuranDetailBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var binding: FragmentQuranDetailBinding
 
     private val detailViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private var audioIsPlaying = false
+    private var playOnline = false
+    private var fontSize: Int? = null
+
+    private val requestPermissionStorageTiramisu = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
+        binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -69,13 +87,68 @@ class QuranDetailFragment : Fragment() {
                 findNavController().popBackStack()
             }
 
-            ivDescSurah.setOnClickListener {
-                showDescSurah()
-            }
-
             ivFontSetting.setOnClickListener {
                 showFontSettingDialog()
             }
+
+            ivMore.setOnClickListener {
+                showMenuOption()
+            }
+        }
+    }
+
+    private fun showMenuOption() {
+        val mp3File = getString(
+            R.string.fileName, Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS
+            ), binding.tvSurahName.text
+        )
+        val file = File(mp3File)
+        val deleteOptionEnabled =
+            file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)
+
+        PopupMenu(requireContext(), binding.ivMore).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                setForceShowIcon(true)
+            }
+            menuInflater.inflate(R.menu.menu_detail_quran, menu)
+            menu.findItem(R.id.action_delete_audio).isEnabled = deleteOptionEnabled
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_info -> {
+                        showDescSurah()
+                        true
+                    }
+                    R.id.action_delete_audio -> {
+                        val builder =
+                            androidx.appcompat.app.AlertDialog.Builder(requireActivity()).create()
+                        val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
+                        val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
+                        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                        with(builder) {
+                            setView(dialogLayout)
+                            tvConfirm.setOnClickListener {
+                                if (file.exists()) {
+                                    file.delete()
+                                    (activity as BaseActivity).customSnackbar(
+                                        state = false,
+                                        context = requireContext(),
+                                        view = binding.root,
+                                        message = "${binding.tvSurahName.text} berhasil dihapus."
+                                    )
+                                }
+                                dismiss()
+                            }
+                            tvCancel.setOnClickListener { dismiss() }
+                            setCanceledOnTouchOutside(false)
+                            show()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+            show()
         }
     }
 
@@ -203,45 +276,274 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun setUpMediaPlayer(audio: String) {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.apply {
-            setDataSource(audio)
-            prepareAsync()
-            with(binding) {
-                setOnCompletionListener {
-                    ivSound.setImageResource(R.drawable.ic_play)
-                }
-
-                ivSound.setOnClickListener {
-                    if (isPlaying) {
-                        audioIsPlaying = false
-                        pause()
-                        ivSound.setImageResource(R.drawable.ic_play)
-                    } else {
-                        audioIsPlaying = true
-                        start()
-                        ivSound.setImageResource(R.drawable.ic_pause)
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.postDelayed(object : Runnable {
-                            override fun run() {
-                                try {
-                                    sbSound.progress = currentPosition
-                                    handler.postDelayed(this, 1000)
-                                } catch (e: Exception) {
-                                    sbSound.progress = 0
-                                }
-                            }
-                        }, 0)
+        with(binding) {
+            ivSound.setOnClickListener {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                        checkPermissionStorageAndroidTiramisu(audio)
+                    }
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                        checkPermissionStorageR(audio)
+                    }
+                    else -> {
+                        checkPermissionStorage(audio)
                     }
                 }
+            }
+        }
+    }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun checkPermissionStorageAndroidTiramisu(audio: String) {
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(), Manifest.permission.READ_MEDIA_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED -> {
+                checkAudioState(audio)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
+                (activity as BaseActivity).customSnackbar(
+                    true,
+                    requireContext(),
+                    binding.root,
+                    "Izinkan untuk mengakses penyimpanan",
+                    true,
+                    isDownload = true
+                )
+            }
+            else -> {
+                requestPermissionStorageTiramisu.launch(Manifest.permission.READ_MEDIA_AUDIO)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.R)
+    private fun checkPermissionStorageR(audio: String) {
+        if (Environment.isExternalStorageManager()) {
+            checkAudioState(audio)
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "Izinkan untuk mengakses penyimpanan",
+                Toast.LENGTH_SHORT
+            ).show()
+            try {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                val uri = Uri.fromParts("package", requireActivity().packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            } catch (e: Exception) {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun checkPermissionStorage(audio: String) {
+        val permissions = arrayOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        val permissionReadGranted = ContextCompat.checkSelfPermission(
+            requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val permissionWriteGranted = ContextCompat.checkSelfPermission(
+            requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        when {
+            permissionReadGranted && permissionWriteGranted -> {
+                checkAudioState(audio)
+            }
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) || ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) -> {
+                (activity as BaseActivity).customSnackbar(
+                    true,
+                    requireContext(),
+                    binding.root,
+                    "Izinkan untuk mengakses penyimpanan",
+                    true,
+                    isDownload = true
+                )
+            }
+            else -> {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    permissions,
+                    1
+                )
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1) {
+            val write = grantResults[0] == PackageManager.PERMISSION_GRANTED
+            val read = grantResults[1] == PackageManager.PERMISSION_GRANTED
+            if (write && read) {
+                Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkAudioState(audio: String) {
+        val mp3File = getString(
+            R.string.fileName, Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS
+            ), binding.tvSurahName.text
+        )
+
+        when {
+            this@QuranDetailFragment::mediaPlayer.isInitialized && mediaPlayer.isPlaying -> {
+                playPauseAudio(binding.ivSound, true)
+            }
+            File(mp3File).exists() -> {
+                playPauseAudio(binding.ivSound, false, mp3File)
+            }
+            playOnline -> {
+                playPauseAudio(binding.ivSound, false, audio)
+            }
+            else -> {
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle(getString(R.string.ask_audio_title, binding.tvSurahName.text))
+                    setMessage(getString(R.string.ask_audio_desc, binding.tvSurahName.text))
+                    setPositiveButton(getString(R.string.download)) { _, _ ->
+                        downloadAudio(audio, mp3File)
+                    }
+                    setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    setNeutralButton(getString(R.string.play_online)) { _, _ ->
+                        playOnline = true
+                        playPauseAudio(binding.ivSound, false, audio)
+                    }
+                    show()
+                }
+            }
+        }
+    }
+
+    private fun playPauseAudio(
+        buttonInteract: ImageView,
+        isPlay: Boolean,
+        audio: String = ""
+    ) {
+        if (isPlay) {
+            audioIsPlaying = false
+            mediaPlayer.pause()
+            buttonInteract.setImageResource(R.drawable.ic_play)
+        } else {
+            if (!this::mediaPlayer.isInitialized) {
+                initializeMediaPlayer(audio)
+            }
+            audioIsPlaying = true
+            mediaPlayer.start()
+            buttonInteract.setImageResource(R.drawable.ic_pause)
+            updateSeekbar()
+        }
+    }
+
+    private fun downloadAudio(audio: String, mp3FileLocation: String) {
+        val progressDialog = ProgressDialog(requireContext())
+        progressDialog.setTitle(getString(R.string.download_surah, binding.tvSurahName.text))
+        progressDialog.setMessage(getString(R.string.wait_download))
+        progressDialog.setCancelable(false)
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog.show()
+
+        val request = DownloadManager.Request(Uri.parse(audio))
+            .setTitle(getString(R.string.download_surah_notif, binding.tvSurahName.text))
+            .setDescription(getString(R.string.download_surah, binding.tvSurahName.text))
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setAllowedOverMetered(true)
+            .setAllowedOverRoaming(true)
+            .setDestinationInExternalPublicDir(
+                Environment.DIRECTORY_DOWNLOADS,
+                "MuslimQ/${binding.tvSurahName.text}.mp3"
+            )
+
+        val downloadManager =
+            context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = downloadManager.enqueue(request)
+
+        val downloadCompleteReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
+                    val query = DownloadManager.Query().setFilterById(downloadId)
+                    val cursor = downloadManager.query(query)
+                    if (cursor.moveToFirst()) {
+                        val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                        if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
+                            progressDialog.dismiss()
+                            playPauseAudio(binding.ivSound, false, mp3FileLocation)
+                        }
+                    }
+                    cursor.close()
+                }
+            }
+        }
+
+        requireActivity().registerReceiver(
+            downloadCompleteReceiver,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
+
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val progressHandler = Handler(Looper.getMainLooper())
+        progressHandler.post(object : Runnable {
+            override fun run() {
+                val cursor = downloadManager.query(query)
+                if (cursor.moveToFirst()) {
+                    val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                    if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
+                        progressDialog.dismiss()
+                    } else {
+                        val progressIndex =
+                            cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
+                        val totalIndex =
+                            cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES)
+                        val progress = cursor.getLong(progressIndex)
+                        val total = cursor.getLong(totalIndex)
+                        if (total >= 0) {
+                            progressDialog.max = (total / (1024 * 1024)).toInt()
+                            progressDialog.progress = (progress / (1024 * 1024)).toInt()
+                        }
+                    }
+                }
+                cursor.close()
+                progressHandler.postDelayed(this, 100)
+            }
+        })
+    }
+
+    private fun initializeMediaPlayer(mp3File: String) {
+        mediaPlayer = MediaPlayer()
+        mediaPlayer.apply {
+            setDataSource(mp3File)
+            prepare()
+
+            with(binding) {
                 setOnPreparedListener {
                     sbSound.max = duration
 
                     var currentProgress = currentPosition
                     val audioDuration = duration
                     durationText(tvSoundDuration, currentProgress, audioDuration)
-
                     sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                         override fun onProgressChanged(
                             seekBar: SeekBar?,
@@ -256,15 +558,32 @@ class QuranDetailFragment : Fragment() {
                             durationText(tvSoundDuration, currentProgress, audioDuration)
                         }
 
-                        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                        }
+                        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-                        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                        }
+                        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
                     })
+                }
+
+                setOnCompletionListener {
+                    playOnline = false
+                    ivSound.setImageResource(R.drawable.ic_play)
                 }
             }
         }
+    }
+
+    private fun updateSeekbar() {
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                try {
+                    binding.sbSound.progress = mediaPlayer.currentPosition
+                    handler.postDelayed(this, 1000)
+                } catch (e: Exception) {
+                    binding.sbSound.progress = 0
+                }
+            }
+        }, 0)
     }
 
     private fun durationText(tvDuration: TextView, progress: Int, duration: Int) {
@@ -368,16 +687,9 @@ class QuranDetailFragment : Fragment() {
         fontSize?.let { size -> dataStoreViewModel.saveAyahSize(size) }
 
         if (audioIsPlaying) {
-            mediaPlayer?.apply {
-                stop()
-                release()
-            }
+            mediaPlayer.stop()
+            mediaPlayer.release()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

@@ -2,7 +2,10 @@ package com.prodev.muslimq.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +18,7 @@ import com.prodev.muslimq.databinding.ActivityBaseBinding
 import com.prodev.muslimq.service.AdzanReceiver.Companion.FROM_NOTIFICATION
 import com.prodev.muslimq.service.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class BaseActivity : AppCompatActivity() {
@@ -63,21 +67,20 @@ class BaseActivity : AppCompatActivity() {
         view: View,
         message: String,
         action: Boolean = false,
+        isDownload: Boolean = false
     ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
             if (state) {
                 setBackgroundTint(
                     ContextCompat.getColor(
-                        context,
-                        R.color.green_base
+                        context, R.color.green_base
                     )
                 )
             } else {
                 setBackgroundTint(
                     ContextCompat.getColor(
-                        context,
-                        R.color.red
+                        context, R.color.red
                     )
                 )
             }
@@ -86,13 +89,29 @@ class BaseActivity : AppCompatActivity() {
             if (action) {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 setAction("IZINKAN") {
-                    val intent = Intent()
-                    intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                    intent.putExtra(
-                        "android.provider.extra.APP_PACKAGE",
-                        context.packageName
-                    )
-                    startActivity(intent)
+                    if (isDownload) {
+                        // intent to media setting
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri = Uri.fromParts("package", context.packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        } else {
+                            // intent to app setting (for android version below 10)
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts("package", context.packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
+                    } else {
+                        val intent = Intent()
+                        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                        intent.putExtra(
+                            "android.provider.extra.APP_PACKAGE", context.packageName
+                        )
+                        startActivity(intent)
+                    }
                 }
             }
         }
