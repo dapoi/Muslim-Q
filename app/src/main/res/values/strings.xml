@@ -41,11 +41,21 @@
     <string name="are_you_sure">Apakah Anda yakin ingin menghapus?</string>
     <string name="delete">Hapus</string>
     <string name="cancel">Batal</string>
-    <string name="are_you_sure_desc">Jika memilih hapus, maka seluruh data surah yang sudah Anda simpan sebelumnya akan terhapus.</string>
+    <string name="are_you_sure_desc">Jika memilih hapus, maka data surah yang sudah Anda simpan sebelumnya akan terhapus.</string>
     <string name="your_location">Lokasi Anda</string>
     <string name="not_found_location">Anda belum memilih lokasi</string>
     <string name="desc_about_app">MuslimQ merupakan sebuah aplikasi untuk kebutuhan ibadah umat Muslim yang berstatus <i>open-source</i>. \n\n Aplikasi ini memberikan akses terbuka pada sumber kode, sehingga dapat disesuaikan dan dimodifikasi sesuai kebutuhan oleh pengembang lainnya. Kami mengajak pengguna yang tertarik untuk ikut berpartisipasi dalam pengembangan MuslimQ. \n\n Anda dapat bergabung dengan tim pengembang kami dan memberikan masukan serta saran melalui fitur \n “Kirim Masukan” \n untuk meningkatkan kualitas dan fungsionalitas aplikasi.</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="search_surah">Cari Surah</string>
+    <string name="fileName">%s/MuslimQ/%s.mp3</string>
+    <string name="ask_audio_title">Surah %s</string>
+    <string name="ask_audio_desc">"Audio surah %s belum diunduh, audio ini membutuhkan koneksi internet untuk mengunduhnya. Apakah anda ingin mengunduhnya sekarang?"</string>
+    <string name="download">Unduh</string>
+    <string name="play_online">Putar Online</string>
+    <string name="download_surah_notif">MuslimQ - Surah %s</string>
+    <string name="download_surah">Mengunduh Audio Surah %s</string>
+    <string name="wait_download">"Mohon tunggu selama proses unduh berlangsung…"</string>
+    <string name="about_surah">Tentang Surah</string>
+    <string name="delete_audio">Hapus Audio</string>
 </resources>

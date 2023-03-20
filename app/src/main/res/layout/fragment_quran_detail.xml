@@ -221,12 +221,12 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <ImageView
-                    android:id="@+id/iv_desc_surah"
+                    android:id="@+id/iv_more"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
                     android:layout_marginHorizontal="20dp"
-                    android:src="@drawable/ic_info"
+                    android:src="@drawable/ic_more"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
 

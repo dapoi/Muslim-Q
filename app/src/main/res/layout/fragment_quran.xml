@@ -75,7 +75,7 @@
 
                     <TextView
                         android:id="@+id/tv_last_read"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppins_medium"
@@ -83,6 +83,7 @@
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_last_read"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
                         app:layout_constraintStart_toEndOf="@+id/iv_last_read"
                         app:layout_constraintTop_toTopOf="@+id/iv_last_read" />
 
@@ -117,9 +118,10 @@
 
                     <ImageView
                         android:id="@+id/iv_quran"
-                        android:layout_width="197dp"
-                        android:layout_height="121dp"
+                        android:layout_width="170dp"
+                        android:layout_height="100dp"
                         android:layout_marginBottom="-9dp"
+                        android:alpha="0.5"
                         android:src="@drawable/ic_quran_home"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -131,7 +133,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="24dp"
+                    android:focusableInTouchMode="true"
                     app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/cl_surah"
                     app:layout_constraintStart_toStartOf="@id/cl_surah"
