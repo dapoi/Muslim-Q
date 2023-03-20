@@ -1,0 +1,1 @@
+MuslimQ merupakan sebuah aplikasi kebutuhan umat muslim yang bersifat open-source. Aplikasi ini memiliki beberapa fitur yang bermanfaat seperti Qur'an, Shalat, dll. Aplikasi ini sedang dalam tahap pengembangan, jadi untuk penjelasan lebih lanjut akan segera datang
