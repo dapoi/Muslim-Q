@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
@@ -31,16 +32,13 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
 
     override fun onBindViewHolder(holder: DoaViewHolder, position: Int) {
         val doa = listDoaFilter[position]
+        val doaBodyAdapter = DoaBodyAdapter()
         holder.apply {
             doaName.text = doa.title
-            doaArabic.text = doa.arab
-            doaLatin.text = doa.latin
-            doaTranslation.text = doa.translate
-
             itemView.setOnClickListener {
-                val transition = TransitionInflater.from(itemView.context)
-                    .inflateTransition(android.R.transition.fade)
-                TransitionManager.beginDelayedTransition(itemView as ViewGroup, transition)
+//                val transition = TransitionInflater.from(itemView.context)
+//                    .inflateTransition(android.R.transition.fade)
+//                TransitionManager.beginDelayedTransition(itemView as ViewGroup, transition)
                 if (isExpanded) {
                     clDoa.visibility = View.GONE
                     arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
@@ -58,6 +56,13 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
                         R.drawable.ic_arrow_up,
                         0
                     )
+                    // set data body
+                    clDoa.setHasFixedSize(true)
+                    doaBodyAdapter.setDoa(doa.body)
+                    clDoa.layoutManager =
+                        LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
+                    clDoa.adapter = doaBodyAdapter
+                    //
                     isExpanded = true
                 }
                 notifyItemChanged(position)
@@ -102,10 +107,7 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
     inner class DoaViewHolder(binding: ItemListDoaBinding) : RecyclerView.ViewHolder(binding.root) {
         var doaName = binding.tvDoaName
         var arrowDown = binding.tvArrow
-        var clDoa = binding.clDoa
-        var doaArabic = binding.tvDoaArabic
-        var doaLatin = binding.tvDoaLatin
-        var doaTranslation = binding.tvDoaMeaning
+        var clDoa = binding.itemDoaBody
         var isExpanded = false
     }
 }

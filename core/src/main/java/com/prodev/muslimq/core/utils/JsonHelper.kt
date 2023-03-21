@@ -2,6 +2,7 @@ package com.prodev.muslimq.core.utils
 
 import android.content.Context
 import com.prodev.muslimq.core.R
+import com.prodev.muslimq.core.data.source.local.model.DoaBodyEntity
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
@@ -33,10 +34,17 @@ class JsonHelper @Inject constructor(@ApplicationContext private val context: Co
             val jsonObject = jsonArray.getJSONObject(i)
             val id = jsonObject["id"].toString().toInt()
             val title = jsonObject["title"].toString()
-            val arab = jsonObject["arabic"].toString()
-            val latin = jsonObject["latin"].toString()
-            val translation = jsonObject["translation"].toString()
-            val doa = DoaEntity(id.toString(), title, arab, latin, translation)
+            val bodyData = jsonObject.getJSONArray("body")
+            val bodyList = mutableListOf<DoaBodyEntity>()
+            for (j in 0 until bodyData.length()) {
+                val bodyObject = bodyData.getJSONObject(j)
+                val arab = bodyObject["arabic"].toString()
+                val latin = bodyObject["latin"].toString()
+                val translation = bodyObject["translation"].toString()
+                val body = DoaBodyEntity(arab, latin, translation)
+                bodyList.add(body)
+            }
+            val doa = DoaEntity(id.toString(), title, bodyList)
             list.add(doa)
         }
         return list

@@ -9,7 +9,7 @@ apply from: '../shared_dependencies.gradle'
 android {
     signingConfigs {
         release {
-            storeFile file('D:\\Projek\\Key\\muslimkey.jks')
+            storeFile file('/Users/bimabagaskhoro/Documents/Clone/muslimkey.jks')
             storePassword 'Lutpi220201'
             keyAlias 'muslimq'
             keyPassword 'Lutpi220201'
