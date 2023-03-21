@@ -18,6 +18,7 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
 
     private var listDoa = ArrayList<DoaEntity>()
     private var listDoaFilter = ArrayList<DoaEntity>()
+    private var isExpanded = true
 
     fun setDoa(doa: List<DoaEntity>) {
         listDoa = doa as ArrayList<DoaEntity>
@@ -35,20 +36,20 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
         val doaBodyAdapter = DoaBodyAdapter()
         holder.apply {
             doaName.text = doa.title
-            itemView.setOnClickListener {
-//                val transition = TransitionInflater.from(itemView.context)
-//                    .inflateTransition(android.R.transition.fade)
-//                TransitionManager.beginDelayedTransition(itemView as ViewGroup, transition)
+
+            if (isExpanded) {
+                clDoa.visibility = View.GONE
+            } else {
+                clDoa.visibility = View.VISIBLE
+
+            }
+
+            cvDoa.setOnClickListener {
+                val transition = TransitionInflater.from(itemView.context)
+                    .inflateTransition(android.R.transition.fade)
+                TransitionManager.beginDelayedTransition(itemView as ViewGroup, transition)
+                isExpanded = !isExpanded
                 if (isExpanded) {
-                    clDoa.visibility = View.GONE
-                    arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.ic_arrow_down,
-                        0
-                    )
-                    isExpanded = false
-                } else {
                     clDoa.visibility = View.VISIBLE
                     arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         0,
@@ -56,17 +57,26 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
                         R.drawable.ic_arrow_up,
                         0
                     )
-                    // set data body
-                    clDoa.setHasFixedSize(true)
-                    doaBodyAdapter.setDoa(doa.body)
-                    clDoa.layoutManager =
-                        LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
-                    clDoa.adapter = doaBodyAdapter
-                    //
-                    isExpanded = true
+                } else {
+                    clDoa.visibility = View.GONE
+                    arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_arrow_down,
+                        0
+                    )
                 }
-                notifyItemChanged(position)
+
+//                notifyDataSetChanged()
             }
+
+            // set data body
+            clDoa.setHasFixedSize(true)
+            doaBodyAdapter.setDoa(doa.body)
+            clDoa.layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.VERTICAL, false)
+            clDoa.adapter = doaBodyAdapter
+            //
         }
     }
 
@@ -108,6 +118,6 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
         var doaName = binding.tvDoaName
         var arrowDown = binding.tvArrow
         var clDoa = binding.itemDoaBody
-        var isExpanded = false
+        var cvDoa = binding.cvDoa
     }
 }
