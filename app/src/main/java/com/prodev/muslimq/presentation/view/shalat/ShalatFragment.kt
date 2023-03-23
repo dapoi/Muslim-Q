@@ -115,7 +115,10 @@ class ShalatFragment : Fragment() {
     private fun refreshDataWhenCityChange() {
         setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY)) {
-                setViewModel()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.clNegativeCase.visibility = View.GONE
+                    setViewModel()
+                }, 800)
             }
         }
     }
@@ -322,8 +325,8 @@ class ShalatFragment : Fragment() {
         isChecked: Boolean,
         adzanSwitch: CompoundButton
     ) {
+        stateAdzanName = adzanName
         if (Build.VERSION.SDK_INT >= 33) {
-            stateAdzanName = adzanName
             when {
                 ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.POST_NOTIFICATIONS
@@ -341,6 +344,7 @@ class ShalatFragment : Fragment() {
                     )
                 }
                 else -> {
+                    adzanSwitch.isChecked = false
                     requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
