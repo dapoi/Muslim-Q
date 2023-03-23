@@ -145,6 +145,7 @@ class QuranFragment : Fragment() {
             if (ayahNumber != 0) {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
+                        putString(QuranDetailFragment.SURAH_NAME, tvSurahName.text.toString())
                         putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
                         putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
                         putString(QuranDetailFragment.SURAH_DESC, surahDesc)
@@ -167,6 +168,7 @@ class QuranFragment : Fragment() {
             override fun onItemClick(surah: QuranEntity) {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
+                        putString(QuranDetailFragment.SURAH_NAME, surah.namaLatin)
                         putInt(QuranDetailFragment.SURAH_NUMBER, surah.nomor)
                         putString(QuranDetailFragment.SURAH_DESC, surah.deskripsi)
                     })

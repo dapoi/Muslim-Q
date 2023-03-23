@@ -168,7 +168,8 @@ class QuranDetailFragment : Fragment() {
 
     private fun setAdapter() {
         detailAdapter = QuranDetailAdapter(
-            requireActivity()
+            requireActivity(),
+            arguments?.getString(SURAH_NAME) ?: "",
         ) {
             dataStoreViewModel.saveSurah(surahId!!, surahName, surahMeaning, surahDesc, it.ayatId)
         }
@@ -744,6 +745,7 @@ class QuranDetailFragment : Fragment() {
     }
 
     companion object {
+        const val SURAH_NAME = "surahName"
         const val SURAH_NUMBER = "surahNumber"
         const val SURAH_DESC = "surahDesc"
         const val AYAH_NUMBER = "ayahNumber"
