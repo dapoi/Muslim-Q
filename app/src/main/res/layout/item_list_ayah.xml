@@ -2,6 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_ayah"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -39,11 +40,24 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ImageView
+            android:id="@+id/iv_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_more"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/cl_child"
+            app:layout_constraintTop_toTopOf="@id/cl_child"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
         <TextView
             android:id="@+id/tv_ayah_arabic"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/amiri_bold"
             android:letterSpacing="0.05"
             android:lineSpacingExtra="14dp"
@@ -51,7 +65,7 @@
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cl_child"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_more"
             tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ" />
 
         <TextView

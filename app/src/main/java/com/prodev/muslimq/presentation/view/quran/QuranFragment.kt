@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.view.quran
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,10 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,6 @@ import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuranFragment : Fragment() {
@@ -45,6 +45,10 @@ class QuranFragment : Fragment() {
 
     private var isOnline = false
     private var isFirstLoad = false
+
+    private var surahId: Int? = null
+    private var ayahNumber: Int? = null
+    private var surahDesc: String? = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -117,16 +121,42 @@ class QuranFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getLastReadSurah(tvSurahName: TextView, tvSurahMeaning: TextView) {
+        dataStorePreference.getDetailSurahAyah.observe(viewLifecycleOwner) { data ->
+            surahId = data.first
+            ayahNumber = data.second
+        }
+
         dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
             if (data.first != "" || data.second != "") {
-                tvSurahName.text = data.first
-
-                tvSurahMeaning.visibility = View.VISIBLE
+                tvSurahName.text = "${data.first} Ayat $ayahNumber"
                 tvSurahMeaning.text = data.second
+                tvSurahMeaning.visibility = View.VISIBLE
             } else {
                 tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
                 tvSurahMeaning.visibility = View.GONE
+            }
+
+            surahDesc = data.third
+        }
+
+        binding.clSurah.setOnClickListener {
+            if (ayahNumber != 0) {
+                findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
+                    Bundle().apply {
+                        putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
+                        putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
+                        putString(QuranDetailFragment.SURAH_DESC, surahDesc)
+                        putBoolean(QuranDetailFragment.IS_FROM_LAST_READ, true)
+                    }
+                )
+            } else {
+                Toast.makeText(
+                    requireActivity(),
+                    "Belum ada surah terakhir dibaca",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -138,14 +168,9 @@ class QuranFragment : Fragment() {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
                         putInt(QuranDetailFragment.SURAH_NUMBER, surah.nomor)
-                        putString(QuranDetailFragment.SURAH_NAME, surah.namaLatin)
                         putString(QuranDetailFragment.SURAH_DESC, surah.deskripsi)
                     })
                 hideKeyboard(requireActivity())
-
-                viewLifecycleOwner.lifecycleScope.launch {
-                    dataStorePreference.saveSurah(surah.namaLatin, surah.arti)
-                }
 
                 binding.apply {
                     getLastReadSurah(tvSurahName, tvSurahMeaning)

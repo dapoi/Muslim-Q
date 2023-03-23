@@ -57,6 +57,13 @@ class QuranDetailFragment : Fragment() {
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
+    private var isFirstLoad = false
+    private var isResume = false
+
+    private var surahId: Int? = null
+    private var surahName: String = ""
+    private var surahMeaning: String = ""
+    private var surahDesc: String = ""
 
     private val requestPermissionStorageTiramisu = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -69,20 +76,25 @@ class QuranDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
+        if (this::binding.isInitialized) {
+            binding
+            isFirstLoad = false
+        } else {
+            binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
+            isFirstLoad = true
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setAdapter()
-        setViewModel()
-
-        val surahName = arguments?.getString(SURAH_NAME)
+        if (isFirstLoad) {
+            setAdapter()
+            setViewModel()
+        }
 
         binding.apply {
-            toolbar.title = surahName
             toolbar.setNavigationOnClickListener {
                 findNavController().popBackStack()
             }
@@ -95,6 +107,8 @@ class QuranDetailFragment : Fragment() {
                 showMenuOption()
             }
         }
+
+        surahDesc = arguments?.getString(SURAH_DESC) ?: ""
     }
 
     private fun showMenuOption() {
@@ -153,7 +167,11 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        detailAdapter = QuranDetailAdapter()
+        detailAdapter = QuranDetailAdapter(
+            requireActivity()
+        ) {
+            dataStoreViewModel.saveSurah(surahId!!, surahName, surahMeaning, surahDesc, it.ayatId)
+        }
         binding.rvAyah.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = detailAdapter
@@ -165,6 +183,7 @@ class QuranDetailFragment : Fragment() {
     private fun setViewModel() {
         val id = arguments?.getInt(SURAH_NUMBER)
         id?.let { idSurah ->
+            surahId = idSurah
             detailViewModel.getQuranDetail(idSurah).observe(viewLifecycleOwner) { result ->
                 with(binding) {
                     srlSurah.apply {
@@ -215,6 +234,10 @@ class QuranDetailFragment : Fragment() {
                         }
                         else -> {
                             stateLoading(false)
+                            toolbar.title = result.data?.namaLatin
+
+                            surahName = result.data!!.namaLatin
+                            surahMeaning = result.data!!.artiQuran
 
                             clNoInternet.visibility = View.GONE
                             tvSurahName.text = result.data?.namaLatin
@@ -227,13 +250,38 @@ class QuranDetailFragment : Fragment() {
                                 }
                             } • ${result.data?.jumlahAyat} ayat"
 
+                            val ayahNumber = arguments?.getInt(AYAH_NUMBER)
+                            val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
+
                             val ayahs = ArrayList<Ayat>()
                             result.data?.ayat?.let { ayahs.addAll(it) }
                             if (ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")) {
                                 ayahs.removeAt(0)
                                 detailAdapter.setList(ayahs)
+                                if (ayahNumber != null && isFromLastRead == true && !isResume) {
+                                    appBar.setExpanded(false, true)
+                                    rvAyah.scrollToPosition(ayahNumber.minus(2))
+                                    detailAdapter.setTagging(true, ayahNumber.minus(2))
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Melanjutkan dari ayat $ayahNumber",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    isResume = true
+                                }
                             } else {
                                 detailAdapter.setList(ayahs)
+                                if (ayahNumber != null && isFromLastRead == true && !isResume) {
+                                    appBar.setExpanded(false, true)
+                                    rvAyah.scrollToPosition(ayahNumber.minus(1))
+                                    detailAdapter.setTagging(true, ayahNumber.minus(1))
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Melanjutkan dari ayat $ayahNumber",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    isResume = true
+                                }
                             }
                             rvAyah.visibility = View.VISIBLE
 
@@ -627,7 +675,6 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun showDescSurah() {
-        val surahDesc = arguments?.getString(SURAH_DESC)
         val htmlFormat = HtmlCompat.fromHtml(surahDesc.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         val builder = AlertDialog.Builder(requireActivity())
         builder.setTitle("Deskripsi Surah")
@@ -685,6 +732,10 @@ class QuranDetailFragment : Fragment() {
         super.onPause()
 
         fontSize?.let { size -> dataStoreViewModel.saveAyahSize(size) }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
 
         if (audioIsPlaying) {
             mediaPlayer.stop()
@@ -694,7 +745,8 @@ class QuranDetailFragment : Fragment() {
 
     companion object {
         const val SURAH_NUMBER = "surahNumber"
-        const val SURAH_NAME = "surahName"
         const val SURAH_DESC = "surahDesc"
+        const val AYAH_NUMBER = "ayahNumber"
+        const val IS_FROM_LAST_READ = "isFromLastRead"
     }
 }

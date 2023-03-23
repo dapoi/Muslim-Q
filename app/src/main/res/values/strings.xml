@@ -18,7 +18,7 @@
     <string name="city_choose">Pilih Kota di %s</string>
     <string name="choose_your_location">Pilih Lokasi Anda</string>
     <string name="location_not_found">Lokasi tidak ditemukan, cari lokasi lain</string>
-    <string name="last_read_surah_empty">"Belum ada surah yang dibaca"</string>
+    <string name="last_read_surah_empty">"Belum ada surah"</string>
     <string name="shubuh">Shubuh</string>
     <string name="dzuhur">Dzuhur</string>
     <string name="ashar">Ashar</string>
@@ -58,4 +58,5 @@
     <string name="wait_download">"Mohon tunggu selama proses unduh berlangsung…"</string>
     <string name="about_surah">Tentang Surah</string>
     <string name="delete_audio">Hapus Audio</string>
+    <string name="tag">Tandai</string>
 </resources>

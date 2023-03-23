@@ -15,9 +15,15 @@ class DataStoreViewModel @Inject constructor(
     private val dataStorePreference: DataStorePreference
 ) : ViewModel() {
 
-    fun saveSurah(surahName: String, surahMeaning: String) {
+    fun saveSurah(
+        surahId: Int,
+        surahName: String,
+        surahMeaning: String,
+        surahDesc: String,
+        ayahNumber: Int
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveSurah(surahName, surahMeaning)
+            dataStorePreference.saveSurah(surahId, surahName, surahMeaning, surahDesc, ayahNumber)
         }
     }
 
@@ -46,6 +52,8 @@ class DataStoreViewModel @Inject constructor(
     }
 
     val getSurah = dataStorePreference.getSurah.asLiveData()
+
+    val getDetailSurahAyah = dataStorePreference.getDetailSurahAyah.asLiveData()
 
     val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
 

@@ -6,10 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.simform.refresh.SSPullToRefreshLayout
@@ -72,6 +75,22 @@ fun swipeRefresh(
                 }
             }
         })
+    }
+}
+
+fun popUpMenu(
+    context: Context,
+    image: ImageView,
+    typeMenu: Int,
+    iconDelete: Int = 0,
+    isEnabled: Boolean = false
+): PopupMenu {
+    return PopupMenu(context, image).apply {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            setForceShowIcon(true)
+        }
+        menuInflater.inflate(typeMenu, menu)
+        menu.findItem(iconDelete).isEnabled = isEnabled
     }
 }
 

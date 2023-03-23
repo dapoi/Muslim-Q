@@ -10,8 +10,11 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private var SURAH_ID = intPreferencesKey("surah_id")
 private val SURAH_NAME = stringPreferencesKey("surah_name")
 private val SURAH_MEANING = stringPreferencesKey("surah_meaning")
+private val SURAH_DESC = stringPreferencesKey("surah_desc")
+private val AYAH_NUMBER = intPreferencesKey("ayah_number")
 private val PROVINCE_ID = stringPreferencesKey("province_id")
 private val AYAH_SIZE = intPreferencesKey("ayah_size")
 private val PROVINCE_NAME = stringPreferencesKey("province_name")
@@ -28,10 +31,19 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     /**
      * Save surah name  & meaning to data store
      */
-    suspend fun saveSurah(surahName: String, surahMeaning: String) {
+    suspend fun saveSurah(
+        surahId: Int,
+        surahName: String,
+        surahMeaning: String,
+        surahDesc: String,
+        ayahNumber: Int
+    ) {
         dataStore.edit { preferences ->
+            preferences[SURAH_ID] = surahId
             preferences[SURAH_NAME] = surahName
             preferences[SURAH_MEANING] = surahMeaning
+            preferences[SURAH_DESC] = surahDesc
+            preferences[AYAH_NUMBER] = ayahNumber
         }
     }
 
@@ -41,8 +53,19 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     val getSurah = dataStore.data.map { preferences ->
         val surahName = preferences[SURAH_NAME] ?: ""
         val surahMeaning = preferences[SURAH_MEANING] ?: ""
-        Pair(surahName, surahMeaning)
+        val surahDesc = preferences[SURAH_DESC] ?: ""
+        Triple(surahName, surahMeaning, surahDesc)
     }
+
+    /**
+     * Get ayah number from data store
+     */
+    val getDetailSurahAyah = dataStore.data.map { preferences ->
+        val surahId = preferences[SURAH_ID] ?: 0
+        val ayahNumber = preferences[AYAH_NUMBER] ?: 0
+        Pair(surahId, ayahNumber)
+    }
+
 
     /**
      * Save province id & nameto data store

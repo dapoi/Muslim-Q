@@ -18,7 +18,9 @@ class AdzanService : Service() {
 
             mediaPlayer = MediaPlayer.create(this, audio).apply {
                 start()
-                setOnCompletionListener { stopSelf() }
+                setOnCompletionListener {
+                    stopSelf()
+                }
             }
         }
 
@@ -27,10 +29,5 @@ class AdzanService : Service() {
 
     override fun onBind(p0: Intent?): IBinder? {
         return null
-    }
-
-    override fun onDestroy() {
-        mediaPlayer?.release()
-        super.onDestroy()
     }
 }

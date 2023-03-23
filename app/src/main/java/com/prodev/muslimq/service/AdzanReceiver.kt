@@ -44,7 +44,7 @@ class AdzanReceiver : BroadcastReceiver() {
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            0,
+            adzanName.hashCode(),
             Intent(context, BaseActivity::class.java).apply {
                 putExtra(FROM_NOTIFICATION, true)
             },
@@ -55,7 +55,7 @@ class AdzanReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
-            .setContentText("Waktunya Menunaikan Ibadah Shalat")
+            .setContentText("Waktunya Menunaikan Shalat ${adzanName.substring(1)}")
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
