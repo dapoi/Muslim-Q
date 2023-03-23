@@ -1,5 +1,6 @@
 package com.prodev.muslimq.service
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -37,6 +38,7 @@ class AdzanReceiver : BroadcastReceiver() {
         context.startService(serviceIntent)
     }
 
+    @SuppressLint("LaunchActivityFromNotification")
     private fun createNotification(context: Context, adzanName: String) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
@@ -55,7 +57,7 @@ class AdzanReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
-            .setContentText("Waktunya Menunaikan Shalat ${adzanName.substring(1)}")
+            .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -55,10 +55,7 @@ class BaseActivity : AppCompatActivity() {
         binding.bottomNav.setupWithNavController(navController)
 
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
-        if (fromNotif) {
-            val serviceIntent = Intent(this, AdzanService::class.java)
-            stopService(serviceIntent)
-        }
+        if (fromNotif) stopService(Intent(this, AdzanService::class.java))
     }
 
     fun customSnackbar(

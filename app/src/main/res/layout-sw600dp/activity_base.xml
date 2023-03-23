@@ -26,9 +26,11 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
+        app:itemTextAppearanceActive="@style/BottomTextNavActive"
+        app:itemTextAppearanceInactive="@style/BottomTextNavInactive"
         android:background="@color/white"
-        app:itemIconSize="26dp"
+        app:itemIconSize="30dp"
         app:itemIconTint="@color/icon_selector"
         app:itemRippleColor="@null"
         app:itemTextColor="@color/icon_selector"

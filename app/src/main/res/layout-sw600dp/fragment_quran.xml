@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".presentation.view.quran.QuranFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/ctl_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:collapsedTitleGravity="center"
+            app:collapsedTitleTextAppearance="@style/collapsedTitleStyle"
+            app:collapsedTitleTextColor="@color/green_base"
+            app:contentScrim="@color/white"
+            app:expandedTitleGravity="center_horizontal|bottom"
+            app:expandedTitleTextAppearance="@style/expandedTitleStyle"
+            app:expandedTitleTextColor="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:scrimAnimationDuration="200"
+            app:scrimVisibleHeightTrigger="300dp"
+            app:title="Daftar Surah"
+            app:titleCollapseMode="fade">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginTop="50dp"
+                    android:fontFamily="@font/poppins_bold"
+                    android:text="@string/app_name"
+                    android:textColor="@color/green_base"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_surah"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/bg_gradient_round"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title">
+
+                    <ImageView
+                        android:id="@+id/iv_last_read"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:src="@drawable/ic_book"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/tv_last_read"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="@string/last_read"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_last_read"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
+                        app:layout_constraintStart_toEndOf="@+id/iv_last_read"
+                        app:layout_constraintTop_toTopOf="@+id/iv_last_read" />
+
+                    <TextView
+                        android:id="@+id/tv_surah_name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
+                        app:layout_constraintStart_toStartOf="@+id/iv_last_read"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_last_read"
+                        tools:text="Al-Fatihah" />
+
+                    <TextView
+                        android:id="@+id/tv_surah_meaning"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginBottom="20dp"
+                        android:fontFamily="@font/poppins"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
+                        app:layout_constraintStart_toStartOf="@+id/tv_surah_name"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_surah_name"
+                        tools:text="Pembukaan" />
+
+                    <ImageView
+                        android:id="@+id/iv_quran"
+                        android:layout_width="250dp"
+                        android:layout_height="140dp"
+                        android:layout_marginEnd="-10dp"
+                        android:layout_marginBottom="-9dp"
+                        android:alpha="0.5"
+                        android:src="@drawable/ic_quran_home"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        tools:ignore="ContentDescription" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="24dp"
+                    android:focusableInTouchMode="true"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/cl_surah"
+                    app:layout_constraintStart_toStartOf="@id/cl_surah"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_surah">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_surah"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:endIconDrawable="@drawable/ic_close"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="false"
+                        app:startIconDrawable="@drawable/ic_search">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/et_surah"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:hint="@string/search_surah"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:paddingVertical="24dp"
+                            android:textSize="18sp"
+                            tools:ignore="Autofill,TextFields" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/progress_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <include layout="@layout/item_header_quran" />
+
+                    </LinearLayout>
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@android:color/transparent"
+                android:fitsSystemWindows="true"
+                android:theme="@style/Theme.MuslimQ.Toolbar"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:titleTextColor="@color/white" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_anchor="@id/app_bar"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <com.simform.refresh.SSPullToRefreshLayout
+            android:id="@+id/srl_surah"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="20dp"
+            tools:layout_editor_absoluteX="20dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_surah"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never"
+                android:paddingBottom="70dp"
+                tools:listitem="@layout/item_list_surah" />
+
+        </com.simform.refresh.SSPullToRefreshLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="20dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_back_to_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:src="@drawable/ic_up"
+        android:visibility="gone"
+        app:backgroundTint="@color/green_base"
+        app:layout_anchor="@id/cl_content"
+        app:layout_anchorGravity="bottom|end"
+        app:maxImageSize="40dp"
+        app:tint="@color/white"
+        tools:ignore="ContentDescription" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_empty"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="no_internet.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1" />
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/no_internet"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
