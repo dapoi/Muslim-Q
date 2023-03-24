@@ -10,9 +10,9 @@ import javax.inject.Singleton
 class RemoteDataSource @Inject constructor(
     private val quranApi: QuranApi, private val areaApi: AreaApi, private val shalatApi: ShalatApi
 ) {
-    suspend fun getQuran() = quranApi.getQuran()
+    suspend fun getQuran() = quranApi.getQuran().data
 
-    suspend fun getQuranDetail(id: Int) = quranApi.getQuranDetail(id)
+    suspend fun getQuranDetail(id: Int) = quranApi.getQuranDetail(id).data
 
     suspend fun getAllProvince() = areaApi.getAllProvince()
 

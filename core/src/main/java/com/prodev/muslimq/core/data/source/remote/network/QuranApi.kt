@@ -7,9 +7,11 @@ import retrofit2.http.Path
 
 interface QuranApi {
 
-    @GET("surat")
-    suspend fun getQuran(): List<QuranResponse>
+    @GET("api/v2/surat")
+    suspend fun getQuran(): QuranResponse
 
-    @GET("surat/{nomor}")
+    @GET("api/v2/surat/{nomor}")
     suspend fun getQuranDetail(@Path("nomor") number: Int): QuranDetailResponse
+
+
 }

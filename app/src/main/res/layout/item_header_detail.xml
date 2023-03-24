@@ -113,20 +113,8 @@
             android:progressTint="@color/light_gray"
             android:thumbTint="@color/light_gray"
             app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
-            app:layout_constraintEnd_toStartOf="@id/tv_sound_duration"
-            app:layout_constraintStart_toEndOf="@id/iv_sound"
-            app:layout_constraintTop_toTopOf="@id/iv_sound" />
-
-        <TextView
-            android:id="@+id/tv_sound_duration"
-            android:layout_width="91dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:background="@color/light_gray"
-            android:fontFamily="@font/poppins_medium"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_sound"
             app:layout_constraintTop_toTopOf="@id/iv_sound" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

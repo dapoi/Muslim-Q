@@ -11,6 +11,5 @@ data class QuranEntity(
     val jumlahAyat: Int,
     val tempatTurun: String,
     val arti: String,
-    val deskripsi: String,
-    val audio: String
+    val deskripsi: String
 )

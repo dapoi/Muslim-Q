@@ -87,7 +87,7 @@ class BookmarkFragment : Fragment() {
             findNavController().navigate(R.id.action_quranBookmarkFragment_to_quranDetailFragment,
                 Bundle().apply {
                     putString(QuranDetailFragment.SURAH_NAME, surah.nama)
-                    putInt(QuranDetailFragment.SURAH_NUMBER, surah.nomor)
+                    putInt(QuranDetailFragment.SURAH_NUMBER, surah.surahId)
                     putString(QuranDetailFragment.SURAH_DESC, surah.deskripsi)
                 }
             )

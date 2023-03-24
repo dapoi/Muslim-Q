@@ -4,6 +4,8 @@ import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.prodev.muslimq.core.BuildConfig
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,10 +21,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkBuilder {
-
-    @Singleton
-    @Provides
-    fun provideMoshi(): MoshiConverterFactory = MoshiConverterFactory.create()
 
     @Singleton
     @Provides
@@ -53,26 +51,38 @@ object NetworkBuilder {
     @Quran
     fun provideQuranApi(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://equran.id/api/")
-        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
-        .build()
+    ): Retrofit {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        return Retrofit.Builder().baseUrl("https://equran.id/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(provideOkHttpClient(context))
+            .build()
+    }
 
     @Singleton
     @Provides
     @Area
     fun provideArea(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
-        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
-        .build()
+    ): Retrofit {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        return Retrofit.Builder().baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(provideOkHttpClient(context))
+            .build()
+    }
 
     @Singleton
     @Provides
     @Shalat
     fun provideShalatApi(
         @ApplicationContext context: Context,
-    ): Retrofit = Retrofit.Builder().baseUrl("https://api.aladhan.com/")
-        .addConverterFactory(MoshiConverterFactory.create()).client(provideOkHttpClient(context))
-        .build()
+    ): Retrofit {
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+        return Retrofit.Builder().baseUrl("https://api.aladhan.com/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(provideOkHttpClient(context))
+            .build()
+    }
 
 }

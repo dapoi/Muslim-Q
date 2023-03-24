@@ -2,38 +2,30 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_ayah"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="#ECECEC">
+    app:cardBackgroundColor="#ECECEC"
+    app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_parent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_child"
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:layout_marginStart="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/bg_circle"
-            app:layout_constraintStart_toEndOf="@id/v_accent"
+            android:background="@drawable/bg_header_gray"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="5dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/tv_ayah_number"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_circle"
-                android:backgroundTint="@color/light_gray"
-                android:fontFamily="@font/poppins_medium"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -41,48 +33,45 @@
             android:id="@+id/tv_ayah_arabic"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:background="@color/light_gray"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_header_gray"
             android:fontFamily="@font/amiri_bold"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/cl_child"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:letterSpacing="0.05"
+            android:lineSpacingExtra="14dp"
+            android:textColor="@android:color/transparent"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="@id/cl_child"
+            app:layout_constraintStart_toStartOf="@+id/cl_child"
+            app:layout_constraintTop_toBottomOf="@id/cl_child"
+            tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ" />
 
         <TextView
             android:id="@+id/tv_ayah_latin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@color/light_gray"
+            android:background="@drawable/bg_header_gray"
             android:fontFamily="@font/poppins"
-            android:textColor="@color/black"
+            android:textColor="@android:color/transparent"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@id/tv_ayah_arabic"
             app:layout_constraintStart_toStartOf="@id/cl_child"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_arabic" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_arabic"
+            tools:text="al-ḥamdu lillāhi rabbil-‘ālamīn(a)" />
 
         <TextView
             android:id="@+id/tv_ayah_meaning"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:background="@color/light_gray"
+            android:background="@drawable/bg_header_gray"
             android:fontFamily="@font/poppins_medium"
-            android:textColor="@color/black"
+            android:textColor="@android:color/transparent"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/tv_ayah_latin"
             app:layout_constraintStart_toStartOf="@+id/tv_ayah_latin"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin" />
-
-        <View
-            android:id="@+id/v_accent"
-            android:layout_width="5dp"
-            android:layout_height="0dp"
-            android:background="@color/light_gray"
-            app:layout_constraintBottom_toBottomOf="@id/tv_ayah_meaning"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin"
+            tools:text="Segala puji bagi Allah, Tuhan seluruh alam" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

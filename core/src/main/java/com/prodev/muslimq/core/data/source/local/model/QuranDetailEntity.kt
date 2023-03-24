@@ -5,10 +5,11 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 @Entity(tableName = "quran_detail")
 data class QuranDetailEntity(
-    @PrimaryKey(autoGenerate = true) val nomor: Int,
+    @PrimaryKey
     val surahId: Int,
     val nama: String,
     val namaLatin: String,
@@ -23,7 +24,8 @@ data class QuranDetailEntity(
 
 @Entity(tableName = "ayat")
 data class Ayat(
-    val ayatId: Int,
+    @PrimaryKey
+    val ayatNumber: Int,
     val ayatArab: String,
     val ayatLatin: String,
     val ayatTerjemahan: String,
@@ -33,7 +35,7 @@ class Converter {
 
     @TypeConverter
     fun fromAyat(value: List<Ayat>): String {
-        val moshi = Moshi.Builder().build()
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val type = Types.newParameterizedType(List::class.java, Ayat::class.java)
         val adapter = moshi.adapter<List<Ayat>>(type)
         return adapter.toJson(value)
@@ -41,7 +43,7 @@ class Converter {
 
     @TypeConverter
     fun toAyat(value: String): List<Ayat> {
-        val moshi = Moshi.Builder().build()
+        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val type = Types.newParameterizedType(List::class.java, Ayat::class.java)
         val adapter = moshi.adapter<List<Ayat>>(type)
         return adapter.fromJson(value) ?: emptyList()

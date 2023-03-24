@@ -64,7 +64,9 @@ class QuranDetailAdapter(
                     .setPositiveButton("Ya") { dialog, _ ->
                         taggingQuran(ayahs[position])
                         Toast.makeText(
-                            context, "Ayat ${ayahs[position].ayatId} ditandai", Toast.LENGTH_SHORT
+                            context,
+                            "Ayat ${ayahs[position].ayatNumber} ditandai",
+                            Toast.LENGTH_SHORT
                         ).show()
                         dialog.dismiss()
                     }.setNegativeButton("Tidak") { dialog, _ ->
@@ -96,7 +98,8 @@ class QuranDetailAdapter(
         shareIntent.type = "text/plain"
         shareIntent.putExtra(
             Intent.EXTRA_TEXT,
-            "Q.S. $surahName Ayat ${ayat.ayatId} \n\n${ayat.ayatArab} \nArtinya: \n\"${ayat.ayatTerjemahan}\""
+            "Q.S. $surahName Ayat ${ayat.ayatNumber} \n\n${ayat.ayatArab} \nArtinya: " +
+                    "\n\"${ayat.ayatTerjemahan}\" \n\n Diambil dari aplikasi Muslim Q"
         )
         context.startActivity(
             Intent.createChooser(
@@ -113,7 +116,7 @@ class QuranDetailAdapter(
                 tvAyahArabic.text = ayah.ayatArab
                 tvAyahLatin.text = ayah.ayatLatin
                 tvAyahMeaning.text = ayah.ayatTerjemahan
-                tvAyahNumber.text = ayah.ayatId.toString()
+                tvAyahNumber.text = ayah.ayatNumber.toString()
 
                 tvAyahArabic.textSize = textSize.toFloat()
             }

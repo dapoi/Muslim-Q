@@ -118,15 +118,15 @@ class QuranDetailFragment : Fragment() {
             ), binding.tvSurahName.text
         )
         val file = File(mp3File)
-        val deleteOptionEnabled =
-            file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)
+        val optionDeleteEnabled = (file.exists() && (this::mediaPlayer.isInitialized &&
+                !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
 
         PopupMenu(requireContext(), binding.ivMore).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 setForceShowIcon(true)
             }
             menuInflater.inflate(R.menu.menu_detail_quran, menu)
-            menu.findItem(R.id.action_delete_audio).isEnabled = deleteOptionEnabled
+            menu.findItem(R.id.action_delete_audio).isEnabled = optionDeleteEnabled
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_info -> {
@@ -171,7 +171,13 @@ class QuranDetailFragment : Fragment() {
             requireActivity(),
             arguments?.getString(SURAH_NAME) ?: "",
         ) {
-            dataStoreViewModel.saveSurah(surahId!!, surahName, surahMeaning, surahDesc, it.ayatId)
+            dataStoreViewModel.saveSurah(
+                surahId!!,
+                surahName,
+                surahMeaning,
+                surahDesc,
+                it.ayatNumber
+            )
         }
         binding.rvAyah.apply {
             layoutManager = LinearLayoutManager(context)
@@ -697,7 +703,7 @@ class QuranDetailFragment : Fragment() {
         with(builder) {
             setView(dialogLayout)
             sbCurrent.max = 38
-            sbCurrent.min = 18
+            sbCurrent.min = 20
             sbCurrent.progress = fontSize ?: 24
             sbCurrent.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(

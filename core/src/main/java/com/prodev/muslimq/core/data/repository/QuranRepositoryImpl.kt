@@ -30,16 +30,15 @@ class QuranRepositoryImpl @Inject constructor(
         },
         saveFetchResult = { quran ->
             val local = ArrayList<QuranEntity>()
-            quran.map {
+            quran.map { response ->
                 val data = QuranEntity(
-                    it.nomor,
-                    it.nama,
-                    it.nama_latin,
-                    it.jumlah_ayat,
-                    it.tempat_turun,
-                    it.arti,
-                    it.deskripsi,
-                    it.audio
+                    response.nomor,
+                    response.nama,
+                    response.namaLatin,
+                    response.jumlahAyat,
+                    response.tempatTurun,
+                    response.arti,
+                    response.deskripsi
                 )
                 local.add(data)
             }
@@ -58,25 +57,28 @@ class QuranRepositoryImpl @Inject constructor(
         },
         saveFetchResult = { quran ->
             val local = QuranDetailEntity(
-                quran.nomor,
                 id,
                 quran.nama,
-                quran.nama_latin,
-                quran.jumlah_ayat,
-                quran.tempat_turun,
+                quran.namaLatin,
+                quran.jumlahAyat,
+                quran.tempatTurun,
                 quran.arti,
                 quran.deskripsi,
-                quran.audio,
+                quran.audioFull.audio!!,
                 quran.ayat.map { ayat ->
                     Ayat(
-                        ayat.nomor, ayat.ar, ayat.tr, ayat.idn
+                        ayatNumber = ayat.nomorAyat,
+                        ayatArab = ayat.teksArab,
+                        ayatLatin = ayat.teksLatin,
+                        ayatTerjemahan = ayat.teksIndonesia
                     )
                 },
                 isBookmarked = false
             )
             localDataSource.insertQuranDetail(local)
-        }, shouldFetch = {
-            it == null || it.ayat.isEmpty()
+        }, shouldFetch = { listAyah ->
+            @Suppress("SENSELESS_COMPARISON")
+            listAyah == null || listAyah.ayat.isEmpty()
         }
     )
 

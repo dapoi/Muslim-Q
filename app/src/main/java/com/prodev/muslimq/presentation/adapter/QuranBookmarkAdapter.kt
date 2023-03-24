@@ -41,7 +41,7 @@ class QuranBookmarkAdapter : RecyclerView.Adapter<QuranBookmarkAdapter.QuranBook
         @SuppressLint("SetTextI18n")
         fun bind(surah: QuranDetailEntity) {
             binding.apply {
-                tvSurahNumber.text = surah.nomor.toString()
+                tvSurahNumber.text = surah.surahId.toString()
                 tvSurahName.text = surah.namaLatin
                 tvMeaningAndAyah.text = "${surah.artiQuran} • ${surah.jumlahAyat} Ayat"
                 tvSurahNameArabic.text = surah.nama

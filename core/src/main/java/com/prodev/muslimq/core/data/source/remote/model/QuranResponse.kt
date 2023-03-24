@@ -4,27 +4,35 @@ import com.squareup.moshi.Json
 
 data class QuranResponse(
 
+    @Json(name = "code")
+    val code: Int,
+
+    @Json(name = "message")
+    val message: String,
+
+    @Json(name = "data")
+    val data: List<QuranItem>
+)
+
+data class QuranItem(
     @Json(name = "nomor")
     val nomor: Int,
 
-	@Json(name = "nama")
+    @Json(name = "nama")
     val nama: String,
 
-	@Json(name = "nama_latin")
-    val nama_latin: String,
+    @Json(name = "namaLatin")
+    val namaLatin: String,
 
-	@Json(name = "jumlah_ayat")
-    val jumlah_ayat: Int,
+    @Json(name = "jumlahAyat")
+    val jumlahAyat: Int,
 
-	@Json(name = "tempat_turun")
-    val tempat_turun: String,
+    @Json(name = "tempatTurun")
+    val tempatTurun: String,
 
-	@Json(name = "arti")
+    @Json(name = "arti")
     val arti: String,
 
-	@Json(name = "deskripsi")
-    val deskripsi: String,
-
-	@Json(name = "audio")
-    val audio: String
+    @Json(name = "deskripsi")
+    val deskripsi: String
 )

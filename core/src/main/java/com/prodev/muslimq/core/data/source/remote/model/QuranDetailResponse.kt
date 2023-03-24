@@ -3,21 +3,32 @@ package com.prodev.muslimq.core.data.source.remote.model
 import com.squareup.moshi.Json
 
 data class QuranDetailResponse(
+    @Json(name = "code")
+    val code: Int,
+
+    @Json(name = "message")
+    val message: String,
+
+    @Json(name = "data")
+    val data: QuranDetailItem
+)
+
+data class QuranDetailItem(
+
+    @Json(name = "nomor")
+    val nomor: Int,
 
     @Json(name = "nama")
     val nama: String,
 
-    @Json(name = "ayat")
-    val ayat: List<AyatItem>,
+    @Json(name = "namaLatin")
+    val namaLatin: String,
 
-    @Json(name = "nama_latin")
-    val nama_latin: String,
+    @Json(name = "jumlahAyat")
+    val jumlahAyat: Int,
 
-    @Json(name = "jumlah_ayat")
-    val jumlah_ayat: Int,
-
-    @Json(name = "tempat_turun")
-    val tempat_turun: String,
+    @Json(name = "tempatTurun")
+    val tempatTurun: String,
 
     @Json(name = "arti")
     val arti: String,
@@ -25,33 +36,30 @@ data class QuranDetailResponse(
     @Json(name = "deskripsi")
     val deskripsi: String,
 
-    @Json(name = "audio")
-    val audio: String,
+    @Json(name = "audioFull")
+    val audioFull: AudioFull,
 
-    @Json(name = "nomor")
-    val nomor: Int,
+    @Json(name = "ayat")
+    val ayat: List<AyatItem>
+)
 
-    @Json(name = "status")
-    val status: Boolean
+data class AudioFull(
+
+    @Json(name = "05")
+    val audio: String? = "",
 )
 
 data class AyatItem(
 
-    @Json(name = "ar")
-    val ar: String,
+    @Json(name = "nomorAyat")
+    val nomorAyat: Int,
 
-    @Json(name = "idn")
-    val idn: String,
+    @Json(name = "teksArab")
+    val teksArab: String,
 
-    @Json(name = "id")
-    val id: Int,
+    @Json(name = "teksLatin")
+    val teksLatin: String,
 
-    @Json(name = "surah")
-    val surah: Int,
-
-    @Json(name = "nomor")
-    val nomor: Int,
-
-    @Json(name = "tr")
-    val tr: String
+    @Json(name = "teksIndonesia")
+    val teksIndonesia: String,
 )
