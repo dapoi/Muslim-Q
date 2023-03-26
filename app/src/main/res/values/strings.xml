@@ -25,6 +25,7 @@
     <string name="maghrib">Maghrib</string>
     <string name="isya">Isya</string>
     <string name="small">Kecil</string>
+    <string name="medium">Sedang</string>
     <string name="big">Besar</string>
     <string name="find_qibla">Temukan arah kiblat di sekitar Anda</string>
     <string name="north">U</string>

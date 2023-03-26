@@ -14,6 +14,8 @@ class RemoteDataSource @Inject constructor(
 
     suspend fun getQuranDetail(id: Int) = quranApi.getQuranDetail(id).data
 
+    suspend fun getQuranTafsir(id: Int) = quranApi.getQuranTafsir(id).data
+
     suspend fun getAllProvince() = areaApi.getAllProvince()
 
     suspend fun getAllCity(id: String) = areaApi.getAllCity(id)

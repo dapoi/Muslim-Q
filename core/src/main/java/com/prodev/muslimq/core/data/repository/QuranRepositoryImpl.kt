@@ -5,12 +5,15 @@ import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.data.source.remote.RemoteDataSource
+import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -81,6 +84,22 @@ class QuranRepositoryImpl @Inject constructor(
             listAyah == null || listAyah.ayat.isEmpty()
         }
     )
+
+    override fun getQuranTafsir(surahId: Int, ayahNumber: Int): Flow<Resource<TafsirDetailItem>> {
+        return flow<Resource<TafsirDetailItem>> {
+            emit(Resource.Loading())
+            try {
+                val response = remoteDataSource.getQuranTafsir(surahId)
+                response.tafsir.filter {
+                    it.ayat == ayahNumber
+                }.map {
+                    emit(Resource.Success(it))
+                }
+            } catch (e: Exception) {
+                emit(Resource.Error(e))
+            }
+        }.flowOn(Dispatchers.IO)
+    }
 
     override fun getBookmark(): Flow<List<QuranDetailEntity>> {
         return localDataSource.getBookmark()

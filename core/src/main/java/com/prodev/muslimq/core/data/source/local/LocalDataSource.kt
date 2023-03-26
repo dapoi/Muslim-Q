@@ -15,14 +15,7 @@ class LocalDataSource @Inject constructor(
 ) {
     fun getQuran() = quranDao.getQuran()
 
-    suspend fun insertQuran(quran: List<QuranEntity>) = quranDao.insertQuran(quran)
-
-    suspend fun deleteQuran() = quranDao.deleteQuran()
-
     fun getQuranDetail(id: Int) = quranDao.getQuranDetail(id)
-
-    suspend fun insertQuranDetail(quran: QuranDetailEntity) =
-        quranDao.insertQuranDetail(quran)
 
     fun getBookmark() = quranDao.getBookmark()
 
@@ -34,6 +27,13 @@ class LocalDataSource @Inject constructor(
     fun getShalatDailyByCity(
         city: String, country: String
     ) = shalatDao.getShalatDailyByCity(city, country)
+
+    suspend fun insertQuran(quran: List<QuranEntity>) = quranDao.insertQuran(quran)
+
+    suspend fun deleteQuran() = quranDao.deleteQuran()
+
+    suspend fun insertQuranDetail(quran: QuranDetailEntity) =
+        quranDao.insertQuranDetail(quran)
 
     suspend fun insertShalatDaily(shalat: ShalatEntity) = shalatDao.insertShalat(shalat)
 

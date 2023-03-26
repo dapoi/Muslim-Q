@@ -14,6 +14,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,7 +48,7 @@ import java.util.*
 class QuranDetailFragment : Fragment() {
 
     private lateinit var detailAdapter: QuranDetailAdapter
-    private lateinit var sbCurrent: SeekBar
+    private lateinit var sbCurrentFontSize: SeekBar
     private lateinit var mediaPlayer: MediaPlayer
     private lateinit var binding: FragmentQuranDetailBinding
 
@@ -100,7 +101,11 @@ class QuranDetailFragment : Fragment() {
             }
 
             ivFontSetting.setOnClickListener {
-                showFontSettingDialog()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    showFontSettingDialog()
+                } else {
+                    showFontSettingDialogLower()
+                }
             }
 
             ivMore.setOnClickListener {
@@ -130,7 +135,7 @@ class QuranDetailFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_info -> {
-                        showDescSurah()
+                        showDescSurah("Deskripsi Surah", surahDesc, false)
                         true
                     }
                     R.id.action_delete_audio -> {
@@ -191,7 +196,7 @@ class QuranDetailFragment : Fragment() {
         val id = arguments?.getInt(SURAH_NUMBER)
         id?.let { idSurah ->
             surahId = idSurah
-            detailViewModel.getQuranDetail(idSurah).observe(viewLifecycleOwner) { result ->
+            detailViewModel.getQuranDetail(surahId!!).observe(viewLifecycleOwner) { result ->
                 with(binding) {
                     srlSurah.apply {
                         setLottieAnimation("loading.json")
@@ -326,6 +331,36 @@ class QuranDetailFragment : Fragment() {
                         }
                     }
                 }
+            }
+
+            detailAdapter.tafsirQuran = {
+                val progressDialog = ProgressDialog(requireContext())
+                progressDialog.setMessage("Memuat...")
+                detailViewModel.getQuranTafsir(surahId!!, it.ayatNumber)
+                    .observe(viewLifecycleOwner) { result ->
+                        when (result) {
+                            is Resource.Loading -> {
+                                progressDialog.show()
+                            }
+                            is Resource.Success -> {
+                                progressDialog.dismiss()
+                                showDescSurah(
+                                    "Tafsir Ayat ${it.ayatNumber}",
+                                    result.data!!.teks,
+                                    true
+                                )
+                            }
+                            is Resource.Error -> {
+                                progressDialog.dismiss()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Gagal menampilkan tafsir",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.e("Gagal Kenapa", result.error.toString())
+                            }
+                        }
+                    }
             }
         }
     }
@@ -681,10 +716,15 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
-    private fun showDescSurah() {
-        val htmlFormat = HtmlCompat.fromHtml(surahDesc.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+    private fun showDescSurah(title: String, tafsir: String, isTafsir: Boolean) {
+        val htmlTeksParse = if (isTafsir) {
+            tafsir
+        } else {
+            surahDesc
+        }
+        val htmlFormat = HtmlCompat.fromHtml(htmlTeksParse, HtmlCompat.FROM_HTML_MODE_LEGACY)
         val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle("Deskripsi Surah")
+        builder.setTitle(title)
         builder.setMessage(htmlFormat)
         builder.setCancelable(false)
         builder.setPositiveButton("Tutup") { dialog, _ ->
@@ -699,25 +739,67 @@ class QuranDetailFragment : Fragment() {
         val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
         val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
         val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
-        sbCurrent = seekBar!!
+        seekBar?.let { sbCurrentFontSize = it }
         with(builder) {
             setView(dialogLayout)
-            sbCurrent.max = 38
-            sbCurrent.min = 20
-            sbCurrent.progress = fontSize ?: 24
-            sbCurrent.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+            sbCurrentFontSize.max = 38
+            sbCurrentFontSize.min = 20
+            sbCurrentFontSize.progress = fontSize ?: 26
+            sbCurrentFontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?, progress: Int, fromUser: Boolean
                 ) {
-                    fontSize = progress
-                    sbCurrent.progress = fontSize!!
-                    detailAdapter.setFontSize(fontSize!!)
+                    if (fromUser) {
+                        fontSize = progress
+                        sbCurrentFontSize.progress = fontSize!!
+                        detailAdapter.setFontSize(fontSize!!)
+                    }
                 }
 
                 override fun onStartTrackingTouch(p0: SeekBar?) {}
 
                 override fun onStopTrackingTouch(p0: SeekBar?) {}
             })
+            buttonSave.setOnClickListener {
+                dismiss()
+            }
+            setCanceledOnTouchOutside(false)
+            show()
+        }
+    }
+
+    private fun showFontSettingDialogLower() {
+        val builder = AlertDialog.Builder(requireActivity()).create()
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting_radio, null)
+        val radioSmall = dialogLayout.findViewById<RadioButton>(R.id.rb_small)
+        val radioMedium = dialogLayout.findViewById<RadioButton>(R.id.rb_medium)
+        val radioBig = dialogLayout.findViewById<RadioButton>(R.id.rb_big)
+        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
+        with(builder) {
+            setView(dialogLayout)
+            when (fontSize) {
+                20 -> radioSmall.isChecked = true
+                26 -> radioMedium.isChecked = true
+                32 -> radioBig.isChecked = true
+            }
+            radioSmall.setOnClickListener {
+                fontSize = 20
+                detailAdapter.setFontSize(fontSize!!)
+                radioMedium.isChecked = false
+                radioBig.isChecked = false
+            }
+            radioMedium.setOnClickListener {
+                fontSize = 26
+                detailAdapter.setFontSize(fontSize!!)
+                radioSmall.isChecked = false
+                radioBig.isChecked = false
+            }
+            radioBig.setOnClickListener {
+                fontSize = 32
+                detailAdapter.setFontSize(fontSize!!)
+                radioSmall.isChecked = false
+                radioMedium.isChecked = false
+            }
             buttonSave.setOnClickListener {
                 dismiss()
             }

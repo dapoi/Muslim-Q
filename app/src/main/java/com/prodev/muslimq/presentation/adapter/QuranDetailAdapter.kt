@@ -19,7 +19,7 @@ class QuranDetailAdapter(
 ) : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {
 
     private var ayahs = ArrayList<Ayat>()
-    private var textSize: Int = 24
+    private var textSize: Int = 26
     private var isTagging: Boolean = false
     private var ayahPosition: Int = 0
 
@@ -40,6 +40,8 @@ class QuranDetailAdapter(
         notifyDataSetChanged()
     }
 
+    var tafsirQuran: ((Ayat) -> Unit?)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
         return DetailViewHolder(
             ItemListAyahBinding.inflate(
@@ -52,30 +54,31 @@ class QuranDetailAdapter(
 
     override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
         holder.apply {
-            bind(ayahs[position])
-            val ivTag = binding.ivTag
-            val ivTafsir = binding.ivTafsir
-            val ivShare = binding.ivShare
-            val cvAyah = binding.cvAyah
+            val ayah = ayahs[position]
+            tvAyahArabic.text = ayah.ayatArab
+            tvAyahLatin.text = ayah.ayatLatin
+            tvAyahMeaning.text = ayah.ayatTerjemahan
+            tvAyahNumber.text = ayah.ayatNumber.toString()
+            tvAyahArabic.textSize = textSize.toFloat()
 
             ivTag.setOnClickListener {
                 AlertDialog.Builder(context).setTitle("Tandai ayat?")
                     .setMessage("Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?")
                     .setPositiveButton("Ya") { dialog, _ ->
-                        taggingQuran(ayahs[position])
+                        taggingQuran.invoke(ayah)
+                        dialog.dismiss()
                         Toast.makeText(
                             context,
-                            "Ayat ${ayahs[position].ayatNumber} ditandai",
+                            "Ayat ${ayahs[position].ayatNumber} berhasil ditandai",
                             Toast.LENGTH_SHORT
                         ).show()
-                        dialog.dismiss()
                     }.setNegativeButton("Tidak") { dialog, _ ->
                         dialog.dismiss()
                     }.show()
             }
 
             ivTafsir.setOnClickListener {
-                Toast.makeText(context, "Tafsir", Toast.LENGTH_SHORT).show()
+                tafsirQuran?.invoke(ayahs[position])
             }
 
             ivShare.setOnClickListener {
@@ -110,16 +113,13 @@ class QuranDetailAdapter(
 
     inner class DetailViewHolder(val binding: ItemListAyahBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(ayah: Ayat) {
-            with(binding) {
-                tvAyahArabic.text = ayah.ayatArab
-                tvAyahLatin.text = ayah.ayatLatin
-                tvAyahMeaning.text = ayah.ayatTerjemahan
-                tvAyahNumber.text = ayah.ayatNumber.toString()
-
-                tvAyahArabic.textSize = textSize.toFloat()
-            }
-        }
+        val ivTag = binding.ivTag
+        val ivTafsir = binding.ivTafsir
+        val ivShare = binding.ivShare
+        val cvAyah = binding.cvAyah
+        val tvAyahArabic = binding.tvAyahArabic
+        val tvAyahLatin = binding.tvAyahLatin
+        val tvAyahMeaning = binding.tvAyahMeaning
+        val tvAyahNumber = binding.tvAyahNumber
     }
 }

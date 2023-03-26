@@ -16,7 +16,12 @@ class QuranViewModel @Inject constructor(
 ) : ViewModel() {
     fun getSurah(): LiveData<Resource<List<QuranEntity>>> = repositoryImpl.getQuran().asLiveData()
 
-    fun getQuranDetail(surahNumber: Int) = repositoryImpl.getQuranDetail(surahNumber).asLiveData()
+    fun getQuranDetail(surahId: Int) = repositoryImpl.getQuranDetail(surahId).asLiveData()
+
+    fun getQuranTafsir(
+        surahId: Int,
+        ayahNumber: Int
+    ) = repositoryImpl.getQuranTafsir(surahId, ayahNumber).asLiveData()
 
     fun getBookmark(): LiveData<List<QuranDetailEntity>> = repositoryImpl.getBookmark().asLiveData()
 

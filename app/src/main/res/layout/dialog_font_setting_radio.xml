@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -17,57 +16,54 @@
         android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
-        android:id="@+id/seekbar_font_size"
-        style="@android:style/Widget.DeviceDefault.SeekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:progressTint="@color/green_base"
-        android:thumbTint="@color/green_base"
-        app:layout_constraintTop_toBottomOf="@id/tv_big"
-        tools:layout_editor_absoluteX="20dp" />
-
-    <TextView
-        android:id="@+id/tv_small"
+    <RadioButton
+        android:id="@+id/rb_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/small"
-        android:textColor="@color/green_base"
+        android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@+id/seekbar_font_size"
-        app:layout_constraintTop_toBottomOf="@+id/tv_setting_font_title" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_setting_font_title" />
 
-    <TextView
-        android:id="@+id/tv_big"
+    <RadioButton
+        android:id="@+id/rb_medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/poppins_medium"
+        android:text="@string/medium"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="@+id/rb_small"
+        app:layout_constraintTop_toBottomOf="@+id/rb_small" />
+
+    <RadioButton
+        android:id="@+id/rb_big"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:fontFamily="@font/poppins_medium"
         android:text="@string/big"
-        android:textColor="@color/green_base"
+        android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@id/seekbar_font_size"
-        app:layout_constraintTop_toBottomOf="@id/tv_setting_font_title" />
+        app:layout_constraintStart_toStartOf="@+id/rb_small"
+        app:layout_constraintTop_toBottomOf="@+id/rb_medium" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_save"
         android:layout_width="0dp"
-        android:layout_marginHorizontal="8dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="16dp"
         android:backgroundTint="@color/green_base"
         android:text="@string/save"
         android:textColor="@color/white"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/seekbar_font_size"
-        app:layout_constraintStart_toStartOf="@+id/seekbar_font_size"
-        app:layout_constraintTop_toBottomOf="@id/seekbar_font_size" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rb_big" />
 </androidx.constraintlayout.widget.ConstraintLayout>
