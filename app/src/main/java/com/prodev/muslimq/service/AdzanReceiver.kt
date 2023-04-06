@@ -11,7 +11,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
-import com.prodev.muslimq.presentation.BaseActivity
+import com.prodev.muslimq.presentation.MainActivity
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -47,7 +47,7 @@ class AdzanReceiver : BroadcastReceiver() {
         val pendingIntent = PendingIntent.getActivity(
             context,
             adzanName.hashCode(),
-            Intent(context, BaseActivity::class.java).apply {
+            Intent(context, MainActivity::class.java).apply {
                 putExtra(FROM_NOTIFICATION, true)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE

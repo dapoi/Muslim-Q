@@ -4,14 +4,14 @@
         <shape android:shape="rectangle">
             <solid android:color="@color/light_gray" />
             <corners android:radius="20dp" />
-            <size android:width="60dp" android:height="16dp" />
+            <size android:width="50dp" android:height="20dp" />
         </shape>
     </item>
     <item android:state_checked="true">
         <shape android:shape="rectangle">
             <gradient android:endColor="@color/green_base" android:startColor="@color/green_light" />
             <corners android:radius="20dp" />
-            <size android:width="60dp" android:height="16dp" />
+            <size android:width="50dp" android:height="20dp" />
         </shape>
     </item>
 </selector>

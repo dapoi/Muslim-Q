@@ -18,9 +18,9 @@
 
         <ImageView
             android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginHorizontal="20dp"
             android:src="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="@string/city_choose"
             android:textColor="@color/green_base"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -43,20 +43,20 @@
         android:id="@+id/sv_city"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginHorizontal="20dp"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/srl_city"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:queryHint="Cari Daerah"
-        app:searchIcon="@drawable/ic_search"
+        app:searchIcon="@drawable/ic_search_tablet"
         tools:ignore="ContentDescription" />
 
     <com.simform.refresh.SSPullToRefreshLayout
         android:id="@+id/srl_city"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="16dp"
+        android:layout_marginHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

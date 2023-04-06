@@ -28,7 +28,7 @@ import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentShalatBinding
-import com.prodev.muslimq.presentation.BaseActivity
+import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.service.AdzanReceiver
@@ -72,7 +72,7 @@ class ShalatFragment : Fragment() {
     ) { isGranted ->
         dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
         if (isGranted) {
-            (activity as BaseActivity).customSnackbar(
+            (activity as MainActivity).customSnackbar(
                 true,
                 requireContext(),
                 binding.root,
@@ -131,6 +131,7 @@ class ShalatFragment : Fragment() {
                 setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
                 setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
                     override fun onRefresh() {
+                        isOnline = isOnline(requireContext())
                         val handlerData = Handler(Looper.getMainLooper())
                         if (isOnline) {
                             handlerData.postDelayed({
@@ -335,7 +336,7 @@ class ShalatFragment : Fragment() {
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     adzanSwitch.isChecked = false
-                    (activity as BaseActivity).customSnackbar(
+                    (activity as MainActivity).customSnackbar(
                         true,
                         requireContext(),
                         binding.root,
@@ -355,7 +356,7 @@ class ShalatFragment : Fragment() {
         val lowerCaseAdzanName = adzanLowerCase(adzanName)
         if (isChecked) {
             dataStoreViewModel.saveSwitchState(adzanName, true)
-            (activity as BaseActivity).customSnackbar(
+            (activity as MainActivity).customSnackbar(
                 true,
                 requireContext(),
                 binding.root,
@@ -363,7 +364,7 @@ class ShalatFragment : Fragment() {
             )
         } else {
             dataStoreViewModel.saveSwitchState(adzanName, false)
-            (activity as BaseActivity).customSnackbar(
+            (activity as MainActivity).customSnackbar(
                 false,
                 requireContext(),
                 binding.root,

@@ -55,14 +55,14 @@
 
             <ImageView
                 android:id="@+id/iv_kaaba"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="50dp"
-                android:layout_marginBottom="130dp"
+                android:layout_marginBottom="70dp"
                 android:rotation="-67"
                 android:src="@drawable/ic_kaaba"
                 app:layout_constraintBottom_toBottomOf="@+id/cl_direction_child"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/cl_direction_child"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 

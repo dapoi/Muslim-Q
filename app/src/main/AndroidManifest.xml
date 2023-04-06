@@ -19,7 +19,7 @@
 
     <application
         android:name=".Application"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -48,7 +48,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name="com.prodev.muslimq.presentation.BaseActivity"
+            android:name="com.prodev.muslimq.presentation.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
@@ -61,8 +61,8 @@
 
         <service
             android:name=".service.AdzanService"
-            android:exported="false"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.prodev.muslimq.service.AdzanService" />
             </intent-filter>

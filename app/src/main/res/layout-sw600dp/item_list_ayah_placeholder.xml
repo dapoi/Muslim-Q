@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_ayah"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    app:cardBackgroundColor="#ECECEC"
+    app:cardCornerRadius="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_child"
+            android:layout_width="match_parent"
+            android:layout_height="39dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_header_gray"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_ayah_arabic"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_header_gray"
+            android:fontFamily="@font/amiri_bold"
+            android:letterSpacing="0.05"
+            android:lineSpacingExtra="14dp"
+            android:textColor="@android:color/transparent"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="@id/cl_child"
+            app:layout_constraintStart_toStartOf="@+id/cl_child"
+            app:layout_constraintTop_toBottomOf="@id/cl_child"
+            tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ" />
+
+        <TextView
+            android:id="@+id/tv_ayah_latin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_header_gray"
+            android:fontFamily="@font/poppins"
+            android:textColor="@android:color/transparent"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@id/tv_ayah_arabic"
+            app:layout_constraintStart_toStartOf="@id/cl_child"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_arabic"
+            tools:text="al-ḥamdu lillāhi rabbil-‘ālamīn(a)" />
+
+        <TextView
+            android:id="@+id/tv_ayah_meaning"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_header_gray"
+            android:fontFamily="@font/poppins_medium"
+            android:textColor="@android:color/transparent"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_ayah_latin"
+            app:layout_constraintStart_toStartOf="@+id/tv_ayah_latin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin"
+            tools:text="Segala puji bagi Allah, Tuhan seluruh alam" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

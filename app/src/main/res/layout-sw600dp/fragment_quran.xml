@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:paddingHorizontal="10dp"
     tools:context=".presentation.view.quran.QuranFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:collapsedTitleGravity="center"
-            app:collapsedTitleTextAppearance="@style/collapsedTitleStyle"
+            app:collapsedTitleTextAppearance="@style/collapsedTabletTitleStyle"
             app:collapsedTitleTextColor="@color/green_base"
             app:contentScrim="@color/white"
             app:expandedTitleGravity="center_horizontal|bottom"
@@ -161,7 +162,7 @@
                             android:hint="@string/search_surah"
                             android:imeOptions="actionSearch"
                             android:inputType="text"
-                            android:paddingVertical="24dp"
+                            android:paddingVertical="18dp"
                             android:textSize="18sp"
                             tools:ignore="Autofill,TextFields" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -262,14 +263,15 @@
         android:id="@+id/fab_back_to_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="22dp"
         android:src="@drawable/ic_up"
         android:visibility="gone"
         app:backgroundTint="@color/green_base"
+        app:fabCustomSize="70dp"
         app:layout_anchor="@id/cl_content"
         app:layout_anchorGravity="bottom|end"
-        app:maxImageSize="40dp"
+        app:maxImageSize="50dp"
         app:tint="@color/white"
         tools:ignore="ContentDescription" />
 
@@ -281,8 +283,8 @@
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_empty"
-            android:layout_width="210dp"
-            android:layout_height="210dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -300,7 +302,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/no_internet"
             android:textAlignment="center"
-            android:textSize="14sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:padding="20dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_shubuh"
@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/iv_shubuh"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="@string/shubuh"
             android:src="@drawable/ic_shalat_shubuh"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -33,7 +33,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/shubuh"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_shubuh"
             app:layout_constraintStart_toEndOf="@id/iv_shubuh"
             app:layout_constraintTop_toTopOf="@id/iv_shubuh" />
@@ -42,10 +42,10 @@
             android:id="@+id/sw_shubuh"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:thumb="@drawable/custom_thumb"
+            android:layout_marginEnd="24dp"
+            android:thumb="@drawable/custom_thumb_600"
             app:layout_constraintEnd_toStartOf="@id/tv_shubuh_time"
-            app:track="@drawable/custom_track" />
+            app:track="@drawable/custom_track_600" />
 
         <TextView
             android:id="@+id/tv_shubuh_time"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:textColor="@color/gray"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_shubuh"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,8 +72,8 @@
 
         <ImageView
             android:id="@+id/iv_dzuhur"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="@string/dzuhur"
             android:src="@drawable/ic_shalat_dzuhur"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -89,7 +89,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/dzuhur"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_dzuhur"
             app:layout_constraintStart_toEndOf="@id/iv_dzuhur"
             app:layout_constraintTop_toTopOf="@id/iv_dzuhur" />
@@ -98,10 +98,10 @@
             android:id="@+id/sw_dzuhur"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:thumb="@drawable/custom_thumb"
+            android:layout_marginEnd="24dp"
+            android:thumb="@drawable/custom_thumb_600"
             app:layout_constraintEnd_toStartOf="@id/tv_dzuhur_time"
-            app:track="@drawable/custom_track" />
+            app:track="@drawable/custom_track_600" />
 
         <TextView
             android:id="@+id/tv_dzuhur_time"
@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:textColor="@color/gray"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_dzuhur"
             app:layout_constraintEnd_toEndOf="parent"
@@ -128,8 +128,8 @@
 
         <ImageView
             android:id="@+id/iv_ashar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="@string/ashar"
             android:src="@drawable/ic_shalat_ashar"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -145,7 +145,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/ashar"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_ashar"
             app:layout_constraintStart_toEndOf="@id/iv_ashar"
             app:layout_constraintTop_toTopOf="@id/iv_ashar" />
@@ -154,10 +154,10 @@
             android:id="@+id/sw_ashar"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:thumb="@drawable/custom_thumb"
+            android:layout_marginEnd="24dp"
+            android:thumb="@drawable/custom_thumb_600"
             app:layout_constraintEnd_toStartOf="@id/tv_ashar_time"
-            app:track="@drawable/custom_track" />
+            app:track="@drawable/custom_track_600" />
 
         <TextView
             android:id="@+id/tv_ashar_time"
@@ -165,7 +165,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:textColor="@color/gray"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ashar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -184,8 +184,8 @@
 
         <ImageView
             android:id="@+id/iv_maghrib"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="@string/maghrib"
             android:src="@drawable/ic_shalat_maghrib"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -201,7 +201,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/maghrib"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_maghrib"
             app:layout_constraintStart_toEndOf="@id/iv_maghrib"
             app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
@@ -210,10 +210,10 @@
             android:id="@+id/sw_maghrib"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:thumb="@drawable/custom_thumb"
+            android:layout_marginEnd="24dp"
+            android:thumb="@drawable/custom_thumb_600"
             app:layout_constraintEnd_toStartOf="@id/tv_maghrib_time"
-            app:track="@drawable/custom_track" />
+            app:track="@drawable/custom_track_600" />
 
         <TextView
             android:id="@+id/tv_maghrib_time"
@@ -221,7 +221,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:textColor="@color/gray"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_maghrib"
             app:layout_constraintEnd_toEndOf="parent"
@@ -240,8 +240,8 @@
 
         <ImageView
             android:id="@+id/iv_isya"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:contentDescription="@string/isya"
             android:src="@drawable/ic_shalat_isya"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -257,7 +257,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/isya"
             android:textColor="@color/black"
-            android:textSize="14sp"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_isya"
             app:layout_constraintStart_toEndOf="@id/iv_isya"
             app:layout_constraintTop_toTopOf="@id/iv_isya" />
@@ -266,10 +266,10 @@
             android:id="@+id/sw_isya"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:thumb="@drawable/custom_thumb"
+            android:layout_marginEnd="24dp"
+            android:thumb="@drawable/custom_thumb_600"
             app:layout_constraintEnd_toStartOf="@id/tv_isya_time"
-            app:track="@drawable/custom_track" />
+            app:track="@drawable/custom_track_600" />
 
         <TextView
             android:id="@+id/tv_isya_time"
@@ -277,7 +277,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="2dp"
             android:textColor="@color/gray"
-            android:textSize="14sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_isya"
             app:layout_constraintEnd_toEndOf="parent"

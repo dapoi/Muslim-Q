@@ -50,7 +50,7 @@ class ShalatProvinceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+            ivBack.setOnClickListener { findNavController().popBackStack() }
 
             svProvince.setOnSearchClickListener {
                 tvTitleProvince.visibility = View.GONE

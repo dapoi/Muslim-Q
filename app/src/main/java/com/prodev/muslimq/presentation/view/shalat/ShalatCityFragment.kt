@@ -51,7 +51,7 @@ class ShalatCityFragment : Fragment() {
         setViewModel()
 
         binding.apply {
-            toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+            ivBack.setOnClickListener { findNavController().popBackStack() }
             dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { province ->
                 val provinceName = when (province.second) {
                     "DKI JAKARTA" -> {

@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_splash_screen">
         <action
             android:id="@+id/action_splashScreenFragment_to_baseActivity"
-            app:destination="@id/baseActivity"
+            app:destination="@id/mainActivity"
             app:enterAnim="@anim/from_bottom_anim"
             app:exitAnim="@anim/to_up_anim"
             app:launchSingleTop="true"
@@ -20,8 +20,8 @@
             app:popUpToInclusive="true" />
     </fragment>
     <activity
-        android:id="@+id/baseActivity"
-        android:name="com.prodev.muslimq.presentation.BaseActivity"
+        android:id="@+id/mainActivity"
+        android:name="com.prodev.muslimq.presentation.MainActivity"
         android:label="activity_base"
-        tools:layout="@layout/activity_base" />
+        tools:layout="@layout/activity_main" />
 </navigation>

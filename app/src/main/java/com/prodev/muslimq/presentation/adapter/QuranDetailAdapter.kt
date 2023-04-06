@@ -1,12 +1,11 @@
 package com.prodev.muslimq.presentation.adapter
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.Ayat
@@ -15,7 +14,6 @@ import com.prodev.muslimq.databinding.ItemListAyahBinding
 class QuranDetailAdapter(
     private val context: Context,
     private val surahName: String,
-    private val taggingQuran: (Ayat) -> Unit,
 ) : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {
 
     private var ayahs = ArrayList<Ayat>()
@@ -40,6 +38,7 @@ class QuranDetailAdapter(
         notifyDataSetChanged()
     }
 
+    var taggingQuran: ((Ayat) -> AlertDialog.Builder?)? = null
     var tafsirQuran: ((Ayat) -> Unit?)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
@@ -62,19 +61,7 @@ class QuranDetailAdapter(
             tvAyahArabic.textSize = textSize.toFloat()
 
             ivTag.setOnClickListener {
-                AlertDialog.Builder(context).setTitle("Tandai ayat?")
-                    .setMessage("Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?")
-                    .setPositiveButton("Ya") { dialog, _ ->
-                        taggingQuran.invoke(ayah)
-                        dialog.dismiss()
-                        Toast.makeText(
-                            context,
-                            "Ayat ${ayahs[position].ayatNumber} berhasil ditandai",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }.setNegativeButton("Tidak") { dialog, _ ->
-                        dialog.dismiss()
-                    }.show()
+                taggingQuran?.invoke(ayahs[position])
             }
 
             ivTafsir.setOnClickListener {

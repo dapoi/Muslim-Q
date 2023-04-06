@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            app:collapsedTitleTextAppearance="@style/collapsedTitleStyle"
+            app:collapsedTitleTextAppearance="@style/collapsedTabletTitleStyle"
             app:collapsedTitleTextColor="@color/green_base"
             app:contentScrim="@color/white"
             app:expandedTitleTextColor="@android:color/transparent"
@@ -38,7 +38,7 @@
                     android:id="@+id/cl_surah"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="70dp"
                     android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_gradient_round"
@@ -48,8 +48,8 @@
 
                     <ImageView
                         android:id="@+id/iv_left_kaligrafi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="40dp"
+                        android:layout_height="70dp"
                         android:src="@drawable/ic_kaligrafi"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -58,8 +58,8 @@
 
                     <ImageView
                         android:id="@+id/iv_right_kaligrafi"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="40dp"
+                        android:layout_height="70dp"
                         android:rotationY="180"
                         android:src="@drawable/ic_kaligrafi"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -74,7 +74,7 @@
                         android:layout_marginTop="18dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textSize="28sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -88,7 +88,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="@+id/tv_surah_name"
                         app:layout_constraintStart_toStartOf="@+id/tv_surah_name"
                         app:layout_constraintTop_toBottomOf="@+id/tv_surah_name"
@@ -101,7 +101,7 @@
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="@+id/tv_ayah_meaning"
                         app:layout_constraintStart_toStartOf="@+id/tv_ayah_meaning"
                         app:layout_constraintTop_toBottomOf="@+id/tv_ayah_meaning"
@@ -109,8 +109,8 @@
 
                     <View
                         android:id="@+id/v_divider"
-                        android:layout_width="250dp"
-                        android:layout_height="1dp"
+                        android:layout_width="320dp"
+                        android:layout_height="2dp"
                         android:layout_marginTop="5dp"
                         android:background="@color/white_low_opp"
                         app:layout_constraintEnd_toEndOf="@+id/tv_surah_name"
@@ -127,16 +127,16 @@
                         android:text="@string/bismillah"
                         android:textAlignment="center"
                         android:textColor="@color/white"
-                        android:textSize="26sp"
+                        android:textSize="35sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/v_divider" />
 
                     <ImageView
                         android:id="@+id/iv_quran"
-                        android:layout_width="197dp"
-                        android:layout_height="121dp"
+                        android:layout_width="220dp"
+                        android:layout_height="130dp"
                         android:layout_marginBottom="-20dp"
-                        android:alpha="0.12"
+                        android:alpha="0.15"
                         android:src="@drawable/ic_quran_home"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -148,14 +148,14 @@
                     android:id="@+id/cl_sound"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginHorizontal="20dp"
                     android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/cl_surah">
 
                     <ImageView
                         android:id="@+id/iv_sound"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/bg_circle"
                         android:src="@drawable/ic_play"
@@ -168,8 +168,10 @@
                         android:id="@+id/sb_sound"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:progressTint="@color/green_base"
-                        android:thumbTint="@color/green_base"
+                        android:layout_marginHorizontal="10dp"
+                        android:progressDrawable="@drawable/custom_seekbar_track"
+                        android:splitTrack="false"
+                        android:thumb="@drawable/custom_seekbar_thumb"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
                         app:layout_constraintEnd_toStartOf="@id/tv_sound_duration"
                         app:layout_constraintStart_toEndOf="@id/iv_sound"
@@ -182,7 +184,7 @@
                         android:layout_marginEnd="10dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="@color/green_base"
-                        android:textSize="14sp"
+                        android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/iv_sound"
@@ -221,8 +223,8 @@
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="start"
                     android:layout_marginHorizontal="20dp"
                     android:src="@drawable/ic_back"
@@ -231,29 +233,30 @@
 
                 <ImageView
                     android:id="@+id/iv_more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="end"
-                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginEnd="20dp"
                     android:src="@drawable/ic_more"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/iv_font_setting"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="end"
-                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="24dp"
                     android:src="@drawable/ic_font_size"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
                     android:id="@+id/iv_bookmark"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_gravity="end"
+                    android:layout_marginEnd="24dp"
                     android:src="@drawable/ic_bookmark_false"
                     app:tint="@color/black"
                     tools:ignore="ContentDescription" />
@@ -275,8 +278,8 @@
             android:id="@+id/srl_surah"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="-205dp">
+            tools:layout_editor_absoluteX="-48dp"
+            tools:layout_editor_absoluteY="110dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_ayah"

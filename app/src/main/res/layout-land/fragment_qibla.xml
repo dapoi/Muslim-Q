@@ -12,14 +12,14 @@
 
         <TextView
             android:id="@+id/tv_qibla"
-            android:layout_width="250dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="5dp"
             android:fontFamily="@font/poppins_semibold"
             android:text="@string/find_qibla"
             android:textAlignment="center"
             android:textColor="@color/green_base"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,6 @@
             android:id="@+id/cl_direction_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/tv_qibla">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,12 +56,12 @@
                 android:id="@+id/iv_kaaba"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="50dp"
                 android:layout_marginBottom="130dp"
                 android:rotation="-67"
+                android:layout_marginStart="50dp"
                 android:src="@drawable/ic_kaaba"
                 app:layout_constraintBottom_toBottomOf="@+id/cl_direction_child"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/cl_direction_child"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="ContentDescription" />
 

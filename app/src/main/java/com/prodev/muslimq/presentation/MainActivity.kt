@@ -14,19 +14,19 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
-import com.prodev.muslimq.databinding.ActivityBaseBinding
+import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.service.AdzanReceiver.Companion.FROM_NOTIFICATION
 import com.prodev.muslimq.service.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class BaseActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityBaseBinding
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityBaseBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navHosFragment =

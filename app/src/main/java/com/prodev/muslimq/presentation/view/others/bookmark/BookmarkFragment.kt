@@ -43,7 +43,7 @@ class BookmarkFragment : Fragment() {
         initViewModel()
 
         binding.apply {
-            toolbar.setNavigationOnClickListener { findNavController().navigateUp() }
+            ivBack.setOnClickListener { findNavController().navigateUp() }
 
             ivMore.setOnClickListener { showMenuOption() }
         }
