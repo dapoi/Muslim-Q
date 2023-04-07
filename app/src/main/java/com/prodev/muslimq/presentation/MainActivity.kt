@@ -3,7 +3,6 @@ package com.prodev.muslimq.presentation
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -87,20 +86,11 @@ class MainActivity : AppCompatActivity() {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white))
                 setAction("IZINKAN") {
                     if (isDownload) {
-                        // intent to media setting
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri = Uri.fromParts("package", context.packageName, null)
-                            intent.data = uri
-                            startActivity(intent)
-                        } else {
-                            // intent to app setting (for android version below 10)
-                            val intent = Intent()
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            val uri = Uri.fromParts("package", context.packageName, null)
-                            intent.data = uri
-                            startActivity(intent)
-                        }
+                        val intent = Intent()
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        val uri = Uri.fromParts("package", context.packageName, null)
+                        intent.data = uri
+                        startActivity(intent)
                     } else {
                         val intent = Intent()
                         intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"

@@ -5,16 +5,13 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.app.ProgressDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.pm.PackageManager
+import android.content.*
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
-import android.provider.Settings
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +39,14 @@ import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.BufferedInputStream
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 import java.util.*
 
 
@@ -69,8 +73,9 @@ class QuranDetailFragment : Fragment() {
     private var surahDesc: String = ""
     private var config: Configuration = Configuration()
     private var is600dp: Boolean = false
+    private var progressDialog: ProgressDialog? = null
 
-    private val requestPermissionStorageTiramisu = registerForActivityResult(
+    private val requestPermissionStorage = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
@@ -121,17 +126,30 @@ class QuranDetailFragment : Fragment() {
         }
 
         surahDesc = arguments?.getString(SURAH_DESC) ?: ""
+
+        initProgressDialog()
+    }
+
+    private fun initProgressDialog() {
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog?.apply {
+            setTitle(getString(R.string.download_surah, binding.tvSurahName.text))
+            setMessage(getString(R.string.wait_download))
+            setCancelable(false)
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        }
     }
 
     private fun showMenuOption() {
         val mp3File = getString(
-            R.string.fileName, Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS
-            ), binding.tvSurahName.text
+            R.string.fileName,
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            binding.tvSurahName.text
         )
+
         val file = File(mp3File)
-        val optionDeleteEnabled = (file.exists() && (this::mediaPlayer.isInitialized &&
-                !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
+        val optionDeleteEnabled =
+            (file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
 
         PopupMenu(requireContext(), binding.ivMore).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -165,6 +183,7 @@ class QuranDetailFragment : Fragment() {
                                         message = "${binding.tvSurahName.text} berhasil dihapus."
                                     )
                                 }
+
                                 dismiss()
                             }
                             tvCancel.setOnClickListener { dismiss() }
@@ -182,8 +201,7 @@ class QuranDetailFragment : Fragment() {
 
     private fun setAdapter() {
         detailAdapter = QuranDetailAdapter(
-            context = requireActivity(),
-            surahName = arguments?.getString(SURAH_NAME) ?: ""
+            context = requireActivity(), surahName = arguments?.getString(SURAH_NAME) ?: ""
         )
 
         binding.rvAyah.apply {
@@ -341,11 +359,7 @@ class QuranDetailFragment : Fragment() {
                     setMessage("Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?")
                     setPositiveButton("Ya") { dialog, _ ->
                         dataStoreViewModel.saveSurah(
-                            surahId!!,
-                            surahName,
-                            surahMeaning,
-                            surahDesc,
-                            it.ayatNumber
+                            surahId!!, surahName, surahMeaning, surahDesc, it.ayatNumber
                         )
 
                         Toast.makeText(
@@ -386,17 +400,13 @@ class QuranDetailFragment : Fragment() {
                         is Resource.Success -> {
                             progressDialog.dismiss()
                             showDescSurah(
-                                "Tafsir Ayat ${it.ayatNumber}",
-                                result.data!!.teks,
-                                true
+                                "Tafsir Ayat ${it.ayatNumber}", result.data!!.teks, true
                             )
                         }
                         is Resource.Error -> {
                             progressDialog.dismiss()
                             Toast.makeText(
-                                requireContext(),
-                                "Gagal menampilkan tafsir",
-                                Toast.LENGTH_SHORT
+                                requireContext(), "Gagal menampilkan tafsir", Toast.LENGTH_SHORT
                             ).show()
                             Log.e("Gagal Kenapa", result.error.toString())
                         }
@@ -417,7 +427,7 @@ class QuranDetailFragment : Fragment() {
                         checkPermissionStorageAndroidR(audio)
                     }
                     else -> {
-                        checkPermissionStorage(audio)
+                        checkPermissionStorageLower(audio)
                     }
                 }
             }
@@ -429,7 +439,7 @@ class QuranDetailFragment : Fragment() {
         when {
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_MEDIA_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            ) == PERMISSION_GRANTED -> {
                 checkAudioState(audio)
             }
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
@@ -443,59 +453,56 @@ class QuranDetailFragment : Fragment() {
                 )
             }
             else -> {
-                requestPermissionStorageTiramisu.launch(Manifest.permission.READ_MEDIA_AUDIO)
+                requestPermissionStorage.launch(Manifest.permission.READ_MEDIA_AUDIO)
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.R)
     private fun checkPermissionStorageAndroidR(audio: String) {
-        if (Environment.isExternalStorageManager()) {
-            checkAudioState(audio)
-        } else {
-            Toast.makeText(
-                requireContext(),
-                "Izinkan untuk mengakses penyimpanan",
-                Toast.LENGTH_SHORT
-            ).show()
-            try {
-                val intent = Intent()
-                intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
-                val uri = Uri.fromParts("package", requireActivity().packageName, null)
-                intent.data = uri
-                startActivity(intent)
-            } catch (e: Exception) {
-                val intent = Intent()
-                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
-                startActivity(intent)
+        when {
+            ContextCompat.checkSelfPermission(
+                requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PERMISSION_GRANTED -> {
+                checkAudioState(audio)
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                (activity as MainActivity).customSnackbar(
+                    true,
+                    requireContext(),
+                    binding.root,
+                    "Perizinan > File dan Media > Izinkan akses ke media saja",
+                    true,
+                    isDownload = true
+                )
+            }
+            else -> {
+                requestPermissionStorage.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
         }
     }
 
-    private fun checkPermissionStorage(audio: String) {
+    private fun checkPermissionStorageLower(audio: String) {
         val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
         val permissionReadGranted = ContextCompat.checkSelfPermission(
             requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PERMISSION_GRANTED
 
         val permissionWriteGranted = ContextCompat.checkSelfPermission(
             requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
+        ) == PERMISSION_GRANTED
 
         when {
             permissionReadGranted && permissionWriteGranted -> {
                 checkAudioState(audio)
             }
             ActivityCompat.shouldShowRequestPermissionRationale(
-                requireActivity(),
-                Manifest.permission.READ_EXTERNAL_STORAGE
+                requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
             ) || ActivityCompat.shouldShowRequestPermissionRationale(
-                requireActivity(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) -> {
                 (activity as MainActivity).customSnackbar(
                     true,
@@ -508,9 +515,7 @@ class QuranDetailFragment : Fragment() {
             }
             else -> {
                 ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    permissions,
-                    1
+                    requireActivity(), permissions, 1
                 )
             }
         }
@@ -518,14 +523,12 @@ class QuranDetailFragment : Fragment() {
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1) {
-            val write = grantResults[0] == PackageManager.PERMISSION_GRANTED
-            val read = grantResults[1] == PackageManager.PERMISSION_GRANTED
+            val write = grantResults[0] == PERMISSION_GRANTED
+            val read = grantResults[1] == PERMISSION_GRANTED
             if (write && read) {
                 Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT).show()
             }
@@ -534,16 +537,17 @@ class QuranDetailFragment : Fragment() {
 
     private fun checkAudioState(audio: String) {
         val mp3File = getString(
-            R.string.fileName, Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS
-            ), binding.tvSurahName.text
+            R.string.fileName,
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            binding.tvSurahName.text
         )
+        val file = File(mp3File)
 
         when {
             this@QuranDetailFragment::mediaPlayer.isInitialized && mediaPlayer.isPlaying -> {
                 playPauseAudio(binding.ivSound, true)
             }
-            File(mp3File).exists() -> {
+            file.exists() -> {
                 playPauseAudio(binding.ivSound, false, mp3File)
             }
             playOnline -> {
@@ -554,7 +558,11 @@ class QuranDetailFragment : Fragment() {
                     setTitle(getString(R.string.ask_audio_title, binding.tvSurahName.text))
                     setMessage(getString(R.string.ask_audio_desc, binding.tvSurahName.text))
                     setPositiveButton(getString(R.string.download)) { _, _ ->
-                        downloadAudio(audio, mp3File)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                            saveToMediaStore(audio)
+                        } else {
+                            downloadAudio(audio, mp3File)
+                        }
                     }
                     setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                         dialog.dismiss()
@@ -579,10 +587,72 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    private fun saveToMediaStore(audioUrl: String) {
+        val relativeLocation = "${Environment.DIRECTORY_DOWNLOADS}/MuslimQ"
+        progressDialog?.show()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val connection = URL(audioUrl).openConnection() as HttpURLConnection
+                    connection.connect()
+
+
+                    val fileSize = connection.contentLength
+                    val inputStream = BufferedInputStream(connection.inputStream)
+
+                    val values = ContentValues().apply {
+                        put(MediaStore.Downloads.DISPLAY_NAME, "${binding.tvSurahName.text}.mp3")
+                        put(MediaStore.Downloads.MIME_TYPE, "audio/mpeg")
+                        put(MediaStore.Downloads.RELATIVE_PATH, relativeLocation)
+                    }
+
+                    val resolver = requireContext().contentResolver
+                    val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                    uri?.let {
+                        val outputStream = resolver.openOutputStream(uri)
+                        outputStream?.let {
+                            val buffer = ByteArray(1024)
+                            var len = inputStream.read(buffer)
+                            var downloadedBytes = 0
+
+                            while (len != -1) {
+                                outputStream.write(buffer, 0, len)
+                                downloadedBytes += len
+                                len = inputStream.read(buffer)
+                                progressDialog?.progress = (downloadedBytes * 100 / fileSize)
+                            }
+
+                            outputStream.flush()
+                            outputStream.close()
+                            inputStream.close()
+                        }
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    progressDialog?.dismiss()
+                    Toast.makeText(requireContext(), "Audio saved successfully", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    progressDialog?.dismiss()
+                    Toast.makeText(
+                        requireContext(),
+                        "Error saving audio: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e("Error saving audio", e.localizedMessage.toString())
+                }
+            }
+        }
+    }
+
+
     private fun playPauseAudio(
-        buttonInteract: ImageView,
-        isPlay: Boolean,
-        audio: String = ""
+        buttonInteract: ImageView, isPlay: Boolean, audio: String = ""
     ) {
         if (isPlay) {
             audioIsPlaying = false
@@ -600,26 +670,18 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun downloadAudio(audio: String, mp3FileLocation: String) {
-        val progressDialog = ProgressDialog(requireContext())
-        progressDialog.setTitle(getString(R.string.download_surah, binding.tvSurahName.text))
-        progressDialog.setMessage(getString(R.string.wait_download))
-        progressDialog.setCancelable(false)
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog.show()
+        progressDialog?.show()
 
         val request = DownloadManager.Request(Uri.parse(audio))
             .setTitle(getString(R.string.download_surah_notif, binding.tvSurahName.text))
             .setDescription(getString(R.string.download_surah, binding.tvSurahName.text))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setAllowedOverMetered(true)
-            .setAllowedOverRoaming(true)
+            .setAllowedOverMetered(true).setAllowedOverRoaming(true)
             .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS,
-                "MuslimQ/${binding.tvSurahName.text}.mp3"
+                Environment.DIRECTORY_DOWNLOADS, "MuslimQ/${binding.tvSurahName.text}.mp3"
             )
 
-        val downloadManager =
-            context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = downloadManager.enqueue(request)
 
         val downloadCompleteReceiver = object : BroadcastReceiver() {
@@ -630,7 +692,7 @@ class QuranDetailFragment : Fragment() {
                     if (cursor.moveToFirst()) {
                         val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                         if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-                            progressDialog.dismiss()
+                            progressDialog?.dismiss()
                             playPauseAudio(binding.ivSound, false, mp3FileLocation)
                         }
                     }
@@ -640,8 +702,7 @@ class QuranDetailFragment : Fragment() {
         }
 
         requireActivity().registerReceiver(
-            downloadCompleteReceiver,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            downloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         )
 
         val query = DownloadManager.Query().setFilterById(downloadId)
@@ -652,7 +713,7 @@ class QuranDetailFragment : Fragment() {
                 if (cursor.moveToFirst()) {
                     val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                     if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-                        progressDialog.dismiss()
+                        progressDialog?.dismiss()
                     } else {
                         val progressIndex =
                             cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
@@ -661,8 +722,8 @@ class QuranDetailFragment : Fragment() {
                         val progress = cursor.getLong(progressIndex)
                         val total = cursor.getLong(totalIndex)
                         if (total >= 0) {
-                            progressDialog.max = (total / (1024 * 1024)).toInt()
-                            progressDialog.progress = (progress / (1024 * 1024)).toInt()
+                            progressDialog?.max = (total / (1024 * 1024)).toInt()
+                            progressDialog?.progress = (progress / (1024 * 1024)).toInt()
                         }
                     }
                 }
@@ -687,9 +748,7 @@ class QuranDetailFragment : Fragment() {
                     durationText(tvSoundDuration, currentProgress, audioDuration)
                     sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                         override fun onProgressChanged(
-                            seekBar: SeekBar?,
-                            progress: Int,
-                            fromUser: Boolean
+                            seekBar: SeekBar?, progress: Int, fromUser: Boolean
                         ) {
                             if (fromUser) {
                                 seekTo(progress)
