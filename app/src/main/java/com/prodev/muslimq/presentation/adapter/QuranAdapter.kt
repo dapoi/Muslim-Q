@@ -2,18 +2,22 @@ package com.prodev.muslimq.presentation.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.ItemListSurahBinding
 import java.util.*
 
-class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
+class QuranAdapter(
+    private val emptyState: LinearLayout
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
-    private var surahList = ArrayList<QuranEntity>()
-    private var surahListFiltered = ArrayList<QuranEntity>()
+    private var listSurah = ArrayList<QuranEntity>()
+    private var listSurahFilter = ArrayList<QuranEntity>()
 
     private lateinit var onItemClickCallback: OnItemClickCallback
 
@@ -26,15 +30,15 @@ class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable
     }
 
     fun setList(list: List<QuranEntity>) {
-        surahList = list as ArrayList<QuranEntity>
-        surahListFiltered = list
+        listSurah = list as ArrayList<QuranEntity>
+        listSurahFilter = list
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int = surahListFiltered.size
+    override fun getItemCount(): Int = listSurahFilter.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
-        (holder as QuranViewHolder).bind(surahListFiltered[position])
+        (holder as QuranViewHolder).bind(listSurahFilter[position])
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuranViewHolder {
         return QuranViewHolder(
@@ -58,7 +62,7 @@ class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable
                 tvSurahNameArabic.text = surah.nama
 
                 vDivider.visibility =
-                    if (adapterPosition == surahList.size - 1) ViewGroup.GONE else ViewGroup.VISIBLE
+                    if (adapterPosition == listSurah.size - 1) ViewGroup.GONE else ViewGroup.VISIBLE
 
                 root.setOnClickListener {
                     onItemClickCallback.onItemClick(surah)
@@ -71,11 +75,11 @@ class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
-                surahListFiltered = if (charSearch.isEmpty()) {
-                    surahList
+                listSurahFilter = if (charSearch.isEmpty()) {
+                    listSurah
                 } else {
                     val resultList = ArrayList<QuranEntity>()
-                    for (row in surahList) {
+                    for (row in listSurah) {
                         if (row.namaLatin.lowercase(Locale.getDefault())
                                 .contains(charSearch.lowercase(Locale.getDefault()))
                         ) {
@@ -85,12 +89,13 @@ class QuranAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable
                     resultList
                 }
                 val filterResults = FilterResults()
-                filterResults.values = surahListFiltered
+                filterResults.values = listSurahFilter
                 return filterResults
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                surahListFiltered = results?.values as ArrayList<QuranEntity>
+                listSurahFilter = results?.values as ArrayList<QuranEntity>
+                emptyState.visibility = if (listSurahFilter.isEmpty()) View.VISIBLE else View.GONE
                 notifyDataSetChanged()
             }
         }

@@ -1,26 +1,28 @@
 package com.prodev.muslimq.presentation.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.databinding.ItemListAreaBinding
 
-class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterable {
+class CityAdapter(
+    private val emptyState: LinearLayout
+) : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterable {
 
     private var listCity = ArrayList<CityResponse>()
-    private var listCityFiltered = ArrayList<CityResponse>()
+    private var listCityFilter = ArrayList<CityResponse>()
 
     var onCLick: ((CityResponse) -> Unit)? = null
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setList(list: List<CityResponse>) {
         listCity = list as ArrayList<CityResponse>
-        listCityFiltered = listCity
+        listCityFilter = listCity
         notifyDataSetChanged()
     }
 
@@ -33,10 +35,10 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterab
     }
 
     override fun onBindViewHolder(holder: CityViewHolder, position: Int) {
-        holder.bind(listCityFiltered[position])
+        holder.bind(listCityFilter[position])
     }
 
-    override fun getItemCount(): Int = listCityFiltered.size
+    override fun getItemCount(): Int = listCityFilter.size
 
     inner class CityViewHolder(
         private val binding: ItemListAreaBinding
@@ -47,17 +49,16 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterab
 
         init {
             binding.root.setOnClickListener {
-                onCLick?.invoke(listCityFiltered[adapterPosition])
+                onCLick?.invoke(listCityFilter[adapterPosition])
             }
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
-                listCityFiltered = if (charSearch.isEmpty()) {
+                listCityFilter = if (charSearch.isEmpty()) {
                     listCity
                 } else {
                     val resultList = ArrayList<CityResponse>()
@@ -69,13 +70,13 @@ class CityAdapter : RecyclerView.Adapter<CityAdapter.CityViewHolder>(), Filterab
                     resultList
                 }
                 val filterResults = FilterResults()
-                filterResults.values = listCityFiltered
+                filterResults.values = listCityFilter
                 return filterResults
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                listCityFiltered = results?.values as ArrayList<CityResponse>
+                listCityFilter = results?.values as ArrayList<CityResponse>
+                emptyState.visibility = if (listCityFilter.isEmpty()) View.VISIBLE else View.GONE
                 notifyDataSetChanged()
             }
         }

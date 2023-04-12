@@ -1,26 +1,28 @@
 package com.prodev.muslimq.presentation.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.databinding.ItemListAreaBinding
 
-class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>(), Filterable {
+class ProvinceAdapter(
+    private val emptyState: LinearLayout
+) : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>(), Filterable {
 
     private var listProvince = ArrayList<ProvinceResponse>()
-    private var listProvinceFiltered = ArrayList<ProvinceResponse>()
+    private var listProvinceFilter = ArrayList<ProvinceResponse>()
 
     var onClick: ((ProvinceResponse) -> Unit)? = null
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setList(province: List<ProvinceResponse>) {
         listProvince = province as ArrayList<ProvinceResponse>
-        listProvinceFiltered = listProvince
+        listProvinceFilter = listProvince
         notifyDataSetChanged()
     }
 
@@ -35,10 +37,10 @@ class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>
     }
 
     override fun onBindViewHolder(holder: ProvinceViewHolder, position: Int) {
-        holder.bind(listProvinceFiltered[position])
+        holder.bind(listProvinceFilter[position])
     }
 
-    override fun getItemCount(): Int = listProvinceFiltered.size
+    override fun getItemCount(): Int = listProvinceFilter.size
 
     inner class ProvinceViewHolder(
         private val binding: ItemListAreaBinding
@@ -59,7 +61,7 @@ class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>
 
         init {
             binding.root.setOnClickListener {
-                onClick?.invoke(listProvinceFiltered[adapterPosition])
+                onClick?.invoke(listProvinceFilter[adapterPosition])
             }
         }
     }
@@ -69,7 +71,7 @@ class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val charSearch = constraint.toString()
-                listProvinceFiltered = if (charSearch.isEmpty()) {
+                listProvinceFilter = if (charSearch.isEmpty()) {
                     listProvince
                 } else {
                     val resultList = ArrayList<ProvinceResponse>()
@@ -81,13 +83,14 @@ class ProvinceAdapter : RecyclerView.Adapter<ProvinceAdapter.ProvinceViewHolder>
                     resultList
                 }
                 val filterResults = FilterResults()
-                filterResults.values = listProvinceFiltered
+                filterResults.values = listProvinceFilter
                 return filterResults
             }
 
-            @SuppressLint("NotifyDataSetChanged")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                listProvinceFiltered = results?.values as ArrayList<ProvinceResponse>
+                listProvinceFilter = results?.values as ArrayList<ProvinceResponse>
+                emptyState.visibility =
+                    if (listProvinceFilter.isEmpty()) View.VISIBLE else View.GONE
                 notifyDataSetChanged()
             }
         }

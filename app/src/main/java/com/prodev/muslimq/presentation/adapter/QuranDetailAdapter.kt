@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.adapter
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -38,7 +37,7 @@ class QuranDetailAdapter(
         notifyDataSetChanged()
     }
 
-    var taggingQuran: ((Ayat) -> AlertDialog.Builder?)? = null
+    var taggingQuran: ((Ayat) -> Unit?)? = null
     var tafsirQuran: ((Ayat) -> Unit?)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {

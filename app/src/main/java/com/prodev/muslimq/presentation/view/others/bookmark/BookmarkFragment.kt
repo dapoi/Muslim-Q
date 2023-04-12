@@ -1,6 +1,7 @@
 package com.prodev.muslimq.presentation.view.others.bookmark
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,11 +53,17 @@ class BookmarkFragment : Fragment() {
     @SuppressLint("InflateParams")
     private fun showMenuOption() {
         val popupMenu = PopupMenu(requireContext(), binding.ivMore)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            popupMenu.setForceShowIcon(true)
+        }
         popupMenu.menuInflater.inflate(R.menu.menu_bookmark, popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_delete_all -> {
-                    val builder = AlertDialog.Builder(requireActivity()).create()
+                    val builder =AlertDialog.Builder(
+                        requireContext(),
+                        R.style.CurvedDialog,
+                    ).create()
                     val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
                     val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
                     val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)

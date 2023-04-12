@@ -1,7 +1,6 @@
 package com.prodev.muslimq.presentation.view.doa
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,27 +35,27 @@ class DoaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setAdapter()
-        setViewModel()
-
         binding.svDoa.setOnQueryTextListener(object :
             androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 val imm =
                     requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
                 imm.hideSoftInputFromWindow(view.windowToken, 0)
-                return false
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 doaAdapter.filter.filter(newText)
-                return false
+                return true
             }
         })
+
+        setAdapter()
+        setViewModel()
     }
 
     private fun setAdapter() {
-        doaAdapter = DoaAdapter()
+        doaAdapter = DoaAdapter(binding.emptyState.root)
         binding.rvDoa.apply {
             adapter = doaAdapter
             layoutManager = LinearLayoutManager(context)

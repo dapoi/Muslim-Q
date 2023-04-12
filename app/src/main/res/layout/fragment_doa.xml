@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/bg_gradient_round"
+        android:background="@drawable/bg_round_green"
         android:paddingHorizontal="20dp"
         android:paddingVertical="10dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -45,7 +45,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="30dp"
             android:layout_marginTop="5dp"
-            android:background="@drawable/bg_search"
+            android:background="@drawable/bg_round_white"
             android:elevation="1.5dp"
             android:inputType="text"
             app:iconifiedByDefault="false"
@@ -87,6 +87,15 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_header" />
+
+    <include
+        android:id="@+id/empty_state"
+        layout="@layout/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

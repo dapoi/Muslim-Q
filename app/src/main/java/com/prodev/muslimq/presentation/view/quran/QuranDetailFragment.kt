@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.app.ProgressDialog
 import android.content.*
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.content.res.Configuration
@@ -12,11 +11,9 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,6 +58,16 @@ class QuranDetailFragment : Fragment() {
     private val detailViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
+    private val curvedDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
+    }
+    private val transparentDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
+    }
+    private var dialog: AlertDialog? = null
+    private var progressDialog: ProgressBar? = null
+    private var tvProgress: TextView? = null
+
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
@@ -73,7 +80,6 @@ class QuranDetailFragment : Fragment() {
     private var surahDesc: String = ""
     private var config: Configuration = Configuration()
     private var is600dp: Boolean = false
-    private var progressDialog: ProgressDialog? = null
 
     private val requestPermissionStorage = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -131,12 +137,14 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun initProgressDialog() {
-        progressDialog = ProgressDialog(requireContext())
-        progressDialog?.apply {
-            setTitle(getString(R.string.download_surah, binding.tvSurahName.text))
-            setMessage(getString(R.string.wait_download))
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_download, null)
+        val tvTitle = dialogLayout.findViewById<TextView>(R.id.tv_title_download)
+        tvTitle.text = getString(R.string.download_surah, binding.tvSurahName.text)
+        progressDialog = dialogLayout.findViewById(R.id.progress_bar)
+        tvProgress = dialogLayout.findViewById(R.id.tv_progress)
+        dialog = curvedDialog.create().apply {
+            setView(dialogLayout)
             setCancelable(false)
-            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
         }
     }
 
@@ -166,12 +174,10 @@ class QuranDetailFragment : Fragment() {
                         true
                     }
                     R.id.action_delete_audio -> {
-                        val builder =
-                            androidx.appcompat.app.AlertDialog.Builder(requireActivity()).create()
                         val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
                         val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
                         val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
-                        with(builder) {
+                        with(curvedDialog.create()) {
                             setView(dialogLayout)
                             tvConfirm.setOnClickListener {
                                 if (file.exists()) {
@@ -180,10 +186,9 @@ class QuranDetailFragment : Fragment() {
                                         state = false,
                                         context = requireContext(),
                                         view = binding.root,
-                                        message = "${binding.tvSurahName.text} berhasil dihapus."
+                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}."
                                     )
                                 }
-
                                 dismiss()
                             }
                             tvCancel.setOnClickListener { dismiss() }
@@ -353,62 +358,53 @@ class QuranDetailFragment : Fragment() {
                 }
             }
 
-            detailAdapter.taggingQuran = {
-                AlertDialog.Builder(requireContext()).apply {
-                    setTitle("Tandai ayat?")
-                    setMessage("Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?")
-                    setPositiveButton("Ya") { dialog, _ ->
+            detailAdapter.taggingQuran = { data ->
+                val dialogLayout = layoutInflater.inflate(R.layout.dialog_tagging_ayah, null)
+                val tvTagging = dialogLayout.findViewById<TextView>(R.id.tv_tagging)
+                val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                with(curvedDialog.create()) {
+                    setView(dialogLayout)
+                    show()
+                    tvTagging.setOnClickListener {
                         dataStoreViewModel.saveSurah(
-                            surahId!!, surahName, surahMeaning, surahDesc, it.ayatNumber
+                            surahId!!, surahName, surahMeaning, surahDesc, data.ayatNumber
                         )
 
                         Toast.makeText(
                             requireContext(),
-                            "Ayat ${it.ayatNumber} berhasil ditandai",
+                            "Ayat ${data.ayatNumber} berhasil ditandai",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                        dialog.dismiss()
+                        dismiss()
                     }
-                    setNegativeButton("Tidak") { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    val alertDialog = create()
-                    alertDialog.show()
-                    if (is600dp) {
-                        val lp = WindowManager.LayoutParams()
-                        alertDialog.window?.let { window ->
-                            lp.copyFrom(window.attributes)
-                            lp.width = 600
-                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-                            window.attributes = lp
-                        }
+                    tvCancel.setOnClickListener {
+                        dismiss()
                     }
                 }
             }
 
             detailAdapter.tafsirQuran = {
-                val progressDialog = ProgressDialog(requireContext())
-                progressDialog.setMessage("Memuat...")
+                val dialogLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+                transparentDialog.setView(dialogLayout)
+
                 detailViewModel.getQuranTafsir(
                     surahId!!, it.ayatNumber
                 ).observe(viewLifecycleOwner) { result ->
                     when (result) {
                         is Resource.Loading -> {
-                            progressDialog.show()
+                            transparentDialog.show()
                         }
                         is Resource.Success -> {
-                            progressDialog.dismiss()
+                            transparentDialog.dismiss()
                             showDescSurah(
                                 "Tafsir Ayat ${it.ayatNumber}", result.data!!.teks, true
                             )
                         }
                         is Resource.Error -> {
-                            progressDialog.dismiss()
+                            transparentDialog.dismiss()
                             Toast.makeText(
                                 requireContext(), "Gagal menampilkan tafsir", Toast.LENGTH_SHORT
                             ).show()
-                            Log.e("Gagal Kenapa", result.error.toString())
                         }
                     }
                 }
@@ -554,50 +550,47 @@ class QuranDetailFragment : Fragment() {
                 playPauseAudio(binding.ivSound, false, audio)
             }
             else -> {
-                AlertDialog.Builder(requireContext()).apply {
-                    setTitle(getString(R.string.ask_audio_title, binding.tvSurahName.text))
-                    setMessage(getString(R.string.ask_audio_desc, binding.tvSurahName.text))
-                    setPositiveButton(getString(R.string.download)) { _, _ ->
+                val dialogLayout = layoutInflater.inflate(R.layout.dialog_player_action, null)
+                val tvTitle = dialogLayout.findViewById<TextView>(R.id.tv_player_title)
+                val tvMessage = dialogLayout.findViewById<TextView>(R.id.tv_player_message)
+                val tvDownload = dialogLayout.findViewById<TextView>(R.id.tv_download)
+                val tvStreaming = dialogLayout.findViewById<TextView>(R.id.tv_streaming)
+                val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                tvTitle.text = getString(R.string.ask_audio_title, binding.tvSurahName.text)
+                tvMessage.text = getString(R.string.ask_audio_desc, binding.tvSurahName.text)
+                with(curvedDialog.create()) {
+                    setView(dialogLayout)
+                    show()
+                    tvDownload.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                             saveToMediaStore(audio)
                         } else {
-                            downloadAudio(audio, mp3File)
+                            downloadAudio(audio)
                         }
+                        dismiss()
                     }
-                    setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    setNeutralButton(getString(R.string.play_online)) { _, _ ->
+                    tvStreaming.setOnClickListener {
                         playOnline = true
                         playPauseAudio(binding.ivSound, false, audio)
+                        dismiss()
                     }
-                    val alertDialog = create()
-                    alertDialog.show()
-                    if (is600dp) {
-                        val lp = WindowManager.LayoutParams()
-                        alertDialog.window?.let { window ->
-                            lp.copyFrom(window.attributes)
-                            lp.width = 600
-                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-                            window.attributes = lp
-                        }
-                    }
+                    tvCancel.setOnClickListener { dismiss() }
                 }
             }
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.R)
     private fun saveToMediaStore(audioUrl: String) {
         val relativeLocation = "${Environment.DIRECTORY_DOWNLOADS}/MuslimQ"
-        progressDialog?.show()
+        dialog?.show()
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.IO) {
                     val connection = URL(audioUrl).openConnection() as HttpURLConnection
                     connection.connect()
-
 
                     val fileSize = connection.contentLength
                     val inputStream = BufferedInputStream(connection.inputStream)
@@ -622,6 +615,7 @@ class QuranDetailFragment : Fragment() {
                                 downloadedBytes += len
                                 len = inputStream.read(buffer)
                                 progressDialog?.progress = (downloadedBytes * 100 / fileSize)
+                                tvProgress?.text = "${progressDialog?.progress}%"
                             }
 
                             outputStream.flush()
@@ -632,24 +626,27 @@ class QuranDetailFragment : Fragment() {
                 }
 
                 withContext(Dispatchers.Main) {
-                    progressDialog?.dismiss()
-                    Toast.makeText(requireContext(), "Audio saved successfully", Toast.LENGTH_SHORT)
-                        .show()
+                    dialog?.dismiss()
+                    (activity as MainActivity).customSnackbar(
+                        state = true,
+                        context = requireContext(),
+                        view = binding.root,
+                        message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}."
+                    )
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    progressDialog?.dismiss()
-                    Toast.makeText(
-                        requireContext(),
-                        "Error saving audio: ${e.localizedMessage}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    Log.e("Error saving audio", e.localizedMessage.toString())
+                    dialog?.dismiss()
+                    (activity as MainActivity).customSnackbar(
+                        state = false,
+                        context = requireContext(),
+                        view = binding.root,
+                        message = "Gagal mengunduh Surah ${binding.tvSurahName.text}."
+                    )
                 }
             }
         }
     }
-
 
     private fun playPauseAudio(
         buttonInteract: ImageView, isPlay: Boolean, audio: String = ""
@@ -669,13 +666,13 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
-    private fun downloadAudio(audio: String, mp3FileLocation: String) {
-        progressDialog?.show()
+    private fun downloadAudio(audio: String) {
+        dialog?.show()
 
         val request = DownloadManager.Request(Uri.parse(audio))
             .setTitle(getString(R.string.download_surah_notif, binding.tvSurahName.text))
             .setDescription(getString(R.string.download_surah, binding.tvSurahName.text))
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
             .setAllowedOverMetered(true).setAllowedOverRoaming(true)
             .setDestinationInExternalPublicDir(
                 Environment.DIRECTORY_DOWNLOADS, "MuslimQ/${binding.tvSurahName.text}.mp3"
@@ -686,34 +683,52 @@ class QuranDetailFragment : Fragment() {
 
         val downloadCompleteReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
+                val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if (id == downloadId) {
                     val query = DownloadManager.Query().setFilterById(downloadId)
                     val cursor = downloadManager.query(query)
                     if (cursor.moveToFirst()) {
                         val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
-                        if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-                            progressDialog?.dismiss()
-                            playPauseAudio(binding.ivSound, false, mp3FileLocation)
+                        val status = cursor.getInt(columnIndex)
+                        if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                            dialog?.dismiss()
+                            (activity as MainActivity).customSnackbar(
+                                state = true,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}."
+                            )
+                        } else {
+                            dialog?.dismiss()
+                            (activity as MainActivity).customSnackbar(
+                                state = false,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = "Gagal mengunduh Surah ${binding.tvSurahName.text}."
+                            )
                         }
                     }
+
                     cursor.close()
+                    requireContext().unregisterReceiver(this)
                 }
             }
         }
 
-        requireActivity().registerReceiver(
+        requireContext().registerReceiver(
             downloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         )
 
         val query = DownloadManager.Query().setFilterById(downloadId)
         val progressHandler = Handler(Looper.getMainLooper())
         progressHandler.post(object : Runnable {
+            @SuppressLint("SetTextI18n")
             override fun run() {
                 val cursor = downloadManager.query(query)
                 if (cursor.moveToFirst()) {
                     val columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
                     if (cursor.getInt(columnIndex) == DownloadManager.STATUS_SUCCESSFUL) {
-                        progressDialog?.dismiss()
+                        dialog?.dismiss()
                     } else {
                         val progressIndex =
                             cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR)
@@ -722,8 +737,8 @@ class QuranDetailFragment : Fragment() {
                         val progress = cursor.getLong(progressIndex)
                         val total = cursor.getLong(totalIndex)
                         if (total >= 0) {
-                            progressDialog?.max = (total / (1024 * 1024)).toInt()
-                            progressDialog?.progress = (progress / (1024 * 1024)).toInt()
+                            progressDialog?.progress = (progress * 100 / total).toInt()
+                            tvProgress?.text = "${progressDialog?.progress}%"
                         }
                     }
                 }
@@ -833,34 +848,27 @@ class QuranDetailFragment : Fragment() {
             surahDesc
         }
         val htmlFormat = HtmlCompat.fromHtml(htmlTeksParse, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val builder = AlertDialog.Builder(requireActivity())
-        builder.setTitle(title)
-        builder.setMessage(htmlFormat)
-        builder.setCancelable(false)
-        builder.setPositiveButton("Tutup") { dialog, _ ->
-            dialog.dismiss()
-        }
-        val alertDialog = builder.create()
-        alertDialog.show()
-        if (is600dp) {
-            val lp = WindowManager.LayoutParams()
-            alertDialog.window?.let { window ->
-                lp.copyFrom(window.attributes)
-                lp.width = 600
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-                window.attributes = lp
-            }
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_info_surah, null)
+        val tvInfoTitle = dialogLayout.findViewById<TextView>(R.id.tv_info_title)
+        val tvInfoMessage = dialogLayout.findViewById<TextView>(R.id.tv_info_message)
+        val tvInfoClose = dialogLayout.findViewById<TextView>(R.id.tv_info_close)
+        tvInfoTitle.text = title
+        tvInfoMessage.text = htmlFormat
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            setCanceledOnTouchOutside(false)
+            show()
+            tvInfoClose.setOnClickListener { dismiss() }
         }
     }
 
-    @SuppressLint("NewApi", "InflateParams")
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showFontSettingDialog() {
-        val builder = AlertDialog.Builder(requireActivity()).create()
         val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
         val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
         val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
         seekBar?.let { sbCurrentFontSize = it }
-        with(builder) {
+        with(curvedDialog.create()) {
             setView(dialogLayout)
             sbCurrentFontSize.max = 38
             sbCurrentFontSize.min = 20
@@ -889,13 +897,12 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun showFontSettingDialogLower() {
-        val builder = AlertDialog.Builder(requireActivity()).create()
         val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting_radio, null)
         val radioSmall = dialogLayout.findViewById<RadioButton>(R.id.rb_small)
         val radioMedium = dialogLayout.findViewById<RadioButton>(R.id.rb_medium)
         val radioBig = dialogLayout.findViewById<RadioButton>(R.id.rb_big)
         val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
-        with(builder) {
+        with(curvedDialog.create()) {
             setView(dialogLayout)
             when (fontSize) {
                 20 -> radioSmall.isChecked = true

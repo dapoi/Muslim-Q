@@ -30,9 +30,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.view.others.admob.AdmobActivity"
-            android:exported="false" />
-        <activity
             android:name=".presentation.view.splashscreen.OnboardingActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
@@ -74,7 +71,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="@string/app_id" />
     </application>
 
 </manifest>

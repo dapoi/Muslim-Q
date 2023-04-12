@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:padding="8dp">
+    android:layout_margin="16dp"
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/tv_setting_font_title"
@@ -65,7 +65,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/green_base"
+        android:background="@drawable/bg_round_green"
         android:paddingVertical="24dp"
         android:text="@string/save"
         android:textColor="@color/white"

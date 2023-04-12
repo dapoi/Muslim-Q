@@ -7,19 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import com.prodev.muslimq.databinding.ItemListDoaBinding
 import java.util.*
 
-class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable {
+class DoaAdapter(
+    private val emptyState: LinearLayout
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
 
     private var listDoa = ArrayList<DoaEntity>()
     private var listDoaFilter = ArrayList<DoaEntity>()
 
     fun setDoa(doa: List<DoaEntity>) {
-        listDoa = doa as ArrayList<DoaEntity>
+        listDoa.clear()
+        listDoa.addAll(doa)
         listDoaFilter = listDoa
         notifyDataSetChanged()
     }
@@ -29,39 +33,50 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
         return DoaViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: DoaViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val doa = listDoaFilter[position]
-        holder.apply {
+        (holder as DoaViewHolder).apply {
             doaName.text = doa.title
             doaArabic.text = doa.arab
             doaLatin.text = doa.latin
             doaTranslation.text = doa.translate
 
+            val isExpanded = doa.isExpanded
+            if (isExpanded) {
+                clDoa.visibility = View.VISIBLE
+                arrowDown.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_arrow_up,
+                    0
+                )
+            } else {
+                clDoa.visibility = View.GONE
+                arrowDown.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_arrow_down,
+                    0
+                )
+            }
+
             itemView.setOnClickListener {
                 val transition = TransitionInflater.from(itemView.context)
                     .inflateTransition(android.R.transition.fade)
                 TransitionManager.beginDelayedTransition(itemView as ViewGroup, transition)
-                if (isExpanded) {
-                    clDoa.visibility = View.GONE
-                    arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.ic_arrow_down,
-                        0
-                    )
-                    isExpanded = false
-                } else {
-                    clDoa.visibility = View.VISIBLE
-                    arrowDown.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.ic_arrow_up,
-                        0
-                    )
-                    isExpanded = true
-                }
+
+                isAnyItemExpanded(position)
+                doa.isExpanded = !doa.isExpanded
                 notifyItemChanged(position)
             }
+        }
+    }
+
+    private fun isAnyItemExpanded(position: Int) {
+        val temp = listDoaFilter.indexOfFirst { it.isExpanded }
+        if (temp >= 0 && temp != position) {
+            listDoaFilter[temp].isExpanded = false
+            notifyItemChanged(temp)
         }
     }
 
@@ -94,6 +109,7 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 listDoaFilter = results?.values as ArrayList<DoaEntity>
+                emptyState.visibility = if (listDoaFilter.isEmpty()) View.VISIBLE else View.GONE
                 notifyDataSetChanged()
             }
         }
@@ -106,6 +122,5 @@ class DoaAdapter : RecyclerView.Adapter<DoaAdapter.DoaViewHolder>(), Filterable 
         var doaArabic = binding.tvDoaArabic
         var doaLatin = binding.tvDoaLatin
         var doaTranslation = binding.tvDoaMeaning
-        var isExpanded = false
     }
 }

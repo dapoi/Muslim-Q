@@ -3,8 +3,9 @@ package com.prodev.muslimq.core.data.repository
 import androidx.lifecycle.LiveData
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import com.prodev.muslimq.core.utils.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface DoaRepository {
 
-    fun getDoa(): LiveData<Resource<List<DoaEntity>>>
+    fun getDoa(): Flow<Resource<List<DoaEntity>>>
 }

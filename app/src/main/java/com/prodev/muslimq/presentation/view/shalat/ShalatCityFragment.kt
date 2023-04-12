@@ -99,7 +99,7 @@ class ShalatCityFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        cityAdapter = CityAdapter()
+        cityAdapter = CityAdapter(binding.emptyState.root)
         binding.rvCity.apply {
             adapter = cityAdapter
             layoutManager = LinearLayoutManager(requireContext())

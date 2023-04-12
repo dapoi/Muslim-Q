@@ -42,8 +42,8 @@
 
                 <ImageView
                     android:id="@+id/iv_direction"
-                    android:layout_width="400dp"
-                    android:layout_height="400dp"
+                    android:layout_width="450dp"
+                    android:layout_height="450dp"
                     android:src="@drawable/ic_direction"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -121,8 +121,8 @@
 
         <ImageView
             android:id="@+id/iv_qibla"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:src="@drawable/ic_qibla"
             app:layout_constraintBottom_toBottomOf="@+id/cl_direction_parent"
             app:layout_constraintEnd_toEndOf="@id/cl_direction_parent"

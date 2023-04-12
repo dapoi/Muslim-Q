@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="12dp"
-    android:padding="8dp">
+    android:layout_margin="16dp"
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/tv_title"
@@ -24,7 +24,7 @@
         android:fontFamily="@font/poppins_medium"
         android:text="@string/are_you_sure_desc"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
@@ -41,7 +41,7 @@
         android:text="@string/delete"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@id/tv_desc"
         app:layout_constraintTop_toBottomOf="@+id/tv_desc" />
 
@@ -57,7 +57,7 @@
         android:text="@string/cancel"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toStartOf="@id/tv_confirm"
         app:layout_constraintTop_toBottomOf="@+id/tv_desc" />
 

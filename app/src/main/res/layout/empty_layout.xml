@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:ignore="UseCompoundDrawables">
+
+    <ImageView
+        android:id="@+id/iv_search_not_found"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:src="@drawable/ic_search"
+        app:tint="@color/light_gray"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/tv_search_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/not_found"
+        android:textSize="18sp" />
+</LinearLayout>

@@ -1,20 +1,18 @@
-package com.prodev.muslimq.core.utils
+package com.prodev.muslimq.presentation.view.others
 
-import com.prodev.muslimq.core.R
+import com.prodev.muslimq.R
 
 object OthersObject {
 
     private val menuImage = intArrayOf(
         R.drawable.ic_collection,
         R.drawable.ic_support,
-        R.drawable.ic_ads,
         R.drawable.ic_about
     )
 
     private val menuTitle = arrayOf(
         "Baca Nanti",
         "Kirim Masukan",
-        "Dukung Kami",
         "Tentang Aplikasi"
     )
 

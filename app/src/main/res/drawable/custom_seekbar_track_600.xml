@@ -6,8 +6,8 @@
         <shape
             android:shape="rectangle"
             android:tint="@color/white_low_opp">
-            <corners android:radius="5dp" />
-            <size android:height="5dp" />
+            <corners android:radius="12dp" />
+            <size android:height="12dp" />
             <solid android:color="@color/white_low_opp" />
         </shape>
     </item>
@@ -22,8 +22,8 @@
                 <item>
                     <shape
                         android:shape="rectangle">
-                        <corners android:radius="5dp" />
-                        <size android:height="5dp" />
+                        <corners android:radius="12dp" />
+                        <size android:height="12dp" />
                         <gradient
                             android:angle="135"
                             android:endColor="@color/green_base"

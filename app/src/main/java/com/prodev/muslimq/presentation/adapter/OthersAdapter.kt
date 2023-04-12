@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.core.utils.Others
+import com.prodev.muslimq.presentation.view.others.Others
 import com.prodev.muslimq.databinding.ItemListOtherBinding
 
 class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {

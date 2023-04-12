@@ -5,5 +5,6 @@ data class DoaEntity(
     val title: String,
     val arab: String,
     val latin: String,
-    val translate: String
+    val translate: String,
+    var isExpanded: Boolean = false
 )

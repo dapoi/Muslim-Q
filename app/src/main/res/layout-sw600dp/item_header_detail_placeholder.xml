@@ -110,7 +110,7 @@
             android:id="@+id/sb_sound"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/custom_seekbar_track"
+            android:progressDrawable="@drawable/custom_seekbar_track_600"
             android:thumb="@color/light_gray"
             android:layout_marginHorizontal="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_sound"

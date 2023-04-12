@@ -24,7 +24,7 @@ class JsonHelper @Inject constructor(@ApplicationContext private val context: Co
         return jsonString
     }
 
-    fun getDoa(): List<DoaEntity> {
+    suspend fun getDoa(): List<DoaEntity> {
         val list = ArrayList<DoaEntity>()
         val jsonString = getJsonDataFromAsset()
         val responseObject = JSONObject(jsonString.toString())

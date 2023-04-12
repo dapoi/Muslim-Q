@@ -163,7 +163,7 @@ class QuranFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        quranAdapter = QuranAdapter()
+        quranAdapter = QuranAdapter(binding.emptyState.root)
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,

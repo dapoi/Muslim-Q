@@ -7,19 +7,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.BuildConfig
 import com.prodev.muslimq.R
-import com.prodev.muslimq.core.utils.OthersObject
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
 
 class OthersFragment : Fragment() {
 
-    private val binding: FragmentOthersBinding by lazy(LazyThreadSafetyMode.NONE) {
+    private val binding: FragmentOthersBinding by lazy {
         FragmentOthersBinding.inflate(layoutInflater)
     }
 
@@ -49,8 +47,8 @@ class OthersFragment : Fragment() {
             setHasFixedSize(true)
         }
         othersAdapter.setList(OthersObject.listData)
-        othersAdapter.onClick = {
-            when (it) {
+        othersAdapter.onClick = { position ->
+            when (position) {
                 0 -> {
                     findNavController().navigate(
                         R.id.action_othersFragment_to_quranBookmarkFragment
@@ -71,9 +69,6 @@ class OthersFragment : Fragment() {
                     startActivity(intent)
                 }
                 2 -> {
-                    Toast.makeText(context, "Segera Datang", Toast.LENGTH_SHORT).show()
-                }
-                3 -> {
                     findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                 }
             }

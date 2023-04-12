@@ -84,7 +84,7 @@ class ShalatProvinceFragment : Fragment() {
     }
 
     private fun setAdapter() {
-        provinceAdapter = ProvinceAdapter()
+        provinceAdapter = ProvinceAdapter(binding.emptyState.root)
         binding.rvProvince.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = provinceAdapter

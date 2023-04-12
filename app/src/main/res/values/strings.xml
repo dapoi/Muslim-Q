@@ -51,7 +51,7 @@
     <string name="search_surah">Cari Surah</string>
     <string name="fileName">%s/MuslimQ/%s.mp3</string>
     <string name="ask_audio_title">Surah %s</string>
-    <string name="ask_audio_desc">"Audio surah %s belum diunduh, audio ini membutuhkan koneksi internet untuk mengunduhnya. Apakah anda ingin mengunduhnya sekarang?"</string>
+    <string name="ask_audio_desc">Audio surah %s belum diunduh, audio ini membutuhkan koneksi internet untuk mengunduhnya. Apakah anda ingin mengunduhnya sekarang?</string>
     <string name="download">Unduh</string>
     <string name="play_online">Putar Online</string>
     <string name="download_surah_notif">MuslimQ - Surah %s</string>
@@ -60,4 +60,12 @@
     <string name="about_surah">Tentang Surah</string>
     <string name="delete_audio">Hapus Audio</string>
     <string name="tag">Tandai</string>
+    <string name="app_id">ca-app-pub-5351128060428013~4196500302</string>
+    <string name="banner_id">ca-app-pub-5351128060428013/8076907702</string>
+    <string name="interstitial_id">ca-app-pub-5351128060428013/9948941311</string>
+    <string name="not_found">Pencarian tidak ditemukan</string>
+    <string name="close">Tutup</string>
+    <string name="tagging">Tandai</string>
+    <string name="ask_tagging_desc">Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?</string>
+    <string name="ask_tagging_title">Tandai Ayat?</string>
 </resources>
