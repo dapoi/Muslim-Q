@@ -68,6 +68,7 @@ class QuranDetailFragment : Fragment() {
     private var progressDialog: ProgressBar? = null
     private var tvProgress: TextView? = null
 
+    private var ayahs = ArrayList<Ayat>()
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
@@ -169,6 +170,10 @@ class QuranDetailFragment : Fragment() {
 
             setOnMenuItemClickListener {
                 when (it.itemId) {
+                    R.id.action_search -> {
+                        showSearchDialog()
+                        true
+                    }
                     R.id.action_info -> {
                         showDescSurah("Deskripsi Surah", surahDesc, false)
                         true
@@ -204,9 +209,40 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
+    private fun showSearchDialog() {
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_search_ayah, null)
+        val etSearch = dialogLayout.findViewById<EditText>(R.id.et_ayah)
+        val btnSearch = dialogLayout.findViewById<Button>(R.id.btn_search)
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            btnSearch.setOnClickListener {
+                val query = etSearch.text.toString()
+                val position = detailAdapter.getAyahs().indexOfFirst {
+                    it.ayatNumber.toString() == query
+                }
+                if (position != -1) {
+                    detailAdapter.setAnimItem(true, position)
+                    binding.apply {
+                        appBar.setExpanded(position < 1, true)
+                        rvAyah.scrollToPosition(position)
+                    }
+                    dismiss()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ayat tidak ditemukan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            show()
+        }
+    }
+
     private fun setAdapter() {
         detailAdapter = QuranDetailAdapter(
-            context = requireActivity(), surahName = arguments?.getString(SURAH_NAME) ?: ""
+            context = requireActivity(),
+            surahName = arguments?.getString(SURAH_NAME) ?: ""
         )
 
         binding.rvAyah.apply {
@@ -290,15 +326,17 @@ class QuranDetailFragment : Fragment() {
                             val ayahNumber = arguments?.getInt(AYAH_NUMBER)
                             val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
 
-                            val ayahs = ArrayList<Ayat>()
+                            ayahs = ArrayList<Ayat>()
                             result.data?.ayat?.let { ayahs.addAll(it) }
-                            if (ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")) {
+
+                            val isBismillah = checkFirstAyahIsBismillah(ayahs)
+                            if (isBismillah) {
                                 ayahs.removeAt(0)
                                 detailAdapter.setList(ayahs)
                                 if (ayahNumber != null && isFromLastRead == true && !isResume) {
                                     appBar.setExpanded(false, true)
                                     rvAyah.scrollToPosition(ayahNumber.minus(2))
-                                    detailAdapter.setTagging(true, ayahNumber.minus(2))
+                                    detailAdapter.setAnimItem(true, ayahNumber.minus(2))
                                     Toast.makeText(
                                         requireContext(),
                                         "Melanjutkan dari ayat $ayahNumber",
@@ -311,7 +349,7 @@ class QuranDetailFragment : Fragment() {
                                 if (ayahNumber != null && isFromLastRead == true && !isResume) {
                                     appBar.setExpanded(false, true)
                                     rvAyah.scrollToPosition(ayahNumber.minus(1))
-                                    detailAdapter.setTagging(true, ayahNumber.minus(1))
+                                    detailAdapter.setAnimItem(true, ayahNumber.minus(1))
                                     Toast.makeText(
                                         requireContext(),
                                         "Melanjutkan dari ayat $ayahNumber",
@@ -409,7 +447,66 @@ class QuranDetailFragment : Fragment() {
                     }
                 }
             }
+
+            detailAdapter.audioAyah = {
+                if (audioIsPlaying) {
+                    mediaPlayer.pause()
+                    binding.ivSound.setImageResource(R.drawable.ic_play)
+                }
+                val dialogLayout = layoutInflater.inflate(R.layout.dialog_audio_ayah, null)
+                val tvAyahArabic = dialogLayout.findViewById<TextView>(R.id.tv_ayah_arabic)
+                val tvAyahLatin = dialogLayout.findViewById<TextView>(R.id.tv_ayah_latin)
+                val tvAudioClose = dialogLayout.findViewById<TextView>(R.id.tv_audio_close)
+
+                if (isOnline(requireContext())) {
+                    with(curvedDialog.create()) {
+                        setView(dialogLayout)
+                        val mpAyah = MediaPlayer.create(requireContext(), Uri.parse(it.ayatAudio))
+                        mpAyah.apply {
+                            setOnPreparedListener {
+                                isLooping = false
+                                start()
+                            }
+                            setOnCompletionListener {
+                                mpAyah.stop()
+                            }
+                            setOnErrorListener { _, _, _ ->
+                                mpAyah.stop()
+                                mpAyah.release()
+                                dismiss()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Gagal memutar audio",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                false
+                            }
+                        }
+
+                        tvAyahArabic.text = it.ayatArab
+                        tvAyahLatin.text = it.ayatLatin
+                        tvAudioClose.setOnClickListener {
+                            dismiss()
+                        }
+
+                        setOnDismissListener { mpAyah.release() }
+
+                        setCanceledOnTouchOutside(false)
+                        show()
+                    }
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Tidak ada koneksi internet",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }
+    }
+
+    private fun checkFirstAyahIsBismillah(ayahs: List<Ayat>): Boolean {
+        return ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")
     }
 
     private fun setUpMediaPlayer(audio: String) {
@@ -480,7 +577,8 @@ class QuranDetailFragment : Fragment() {
 
     private fun checkPermissionStorageLower(audio: String) {
         val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
         val permissionReadGranted = ContextCompat.checkSelfPermission(
@@ -526,7 +624,8 @@ class QuranDetailFragment : Fragment() {
             val write = grantResults[0] == PERMISSION_GRANTED
             val read = grantResults[1] == PERMISSION_GRANTED
             if (write && read) {
-                Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -596,7 +695,10 @@ class QuranDetailFragment : Fragment() {
                     val inputStream = BufferedInputStream(connection.inputStream)
 
                     val values = ContentValues().apply {
-                        put(MediaStore.Downloads.DISPLAY_NAME, "${binding.tvSurahName.text}.mp3")
+                        put(
+                            MediaStore.Downloads.DISPLAY_NAME,
+                            "${binding.tvSurahName.text}.mp3"
+                        )
                         put(MediaStore.Downloads.MIME_TYPE, "audio/mpeg")
                         put(MediaStore.Downloads.RELATIVE_PATH, relativeLocation)
                     }
@@ -678,7 +780,8 @@ class QuranDetailFragment : Fragment() {
                 Environment.DIRECTORY_DOWNLOADS, "MuslimQ/${binding.tvSurahName.text}.mp3"
             )
 
-        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager =
+            context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = downloadManager.enqueue(request)
 
         val downloadCompleteReceiver = object : BroadcastReceiver() {

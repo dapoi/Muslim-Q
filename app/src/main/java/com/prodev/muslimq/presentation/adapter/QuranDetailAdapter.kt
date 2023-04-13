@@ -12,10 +12,11 @@ import com.prodev.muslimq.databinding.ItemListAyahBinding
 
 class QuranDetailAdapter(
     private val context: Context,
-    private val surahName: String,
+    private val surahName: String
 ) : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {
 
     private var ayahs = ArrayList<Ayat>()
+
     private var textSize: Int = 26
     private var isTagging: Boolean = false
     private var ayahPosition: Int = 0
@@ -26,12 +27,14 @@ class QuranDetailAdapter(
         notifyDataSetChanged()
     }
 
+    fun getAyahs(): List<Ayat> = ayahs
+
     fun setFontSize(textSize: Int) {
         this.textSize = textSize
         notifyDataSetChanged()
     }
 
-    fun setTagging(isTagging: Boolean, position: Int) {
+    fun setAnimItem(isTagging: Boolean, position: Int) {
         this.isTagging = isTagging
         this.ayahPosition = position
         notifyDataSetChanged()
@@ -39,6 +42,7 @@ class QuranDetailAdapter(
 
     var taggingQuran: ((Ayat) -> Unit?)? = null
     var tafsirQuran: ((Ayat) -> Unit?)? = null
+    var audioAyah: ((Ayat) -> Unit?)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
         return DetailViewHolder(
@@ -51,33 +55,48 @@ class QuranDetailAdapter(
     override fun getItemCount(): Int = ayahs.size
 
     override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
-        holder.apply {
-            val ayah = ayahs[position]
-            tvAyahArabic.text = ayah.ayatArab
-            tvAyahLatin.text = ayah.ayatLatin
-            tvAyahMeaning.text = ayah.ayatTerjemahan
-            tvAyahNumber.text = ayah.ayatNumber.toString()
-            tvAyahArabic.textSize = textSize.toFloat()
+        holder.bind(ayahs[position])
+    }
 
-            ivTag.setOnClickListener {
-                taggingQuran?.invoke(ayahs[position])
-            }
+    inner class DetailViewHolder(val binding: ItemListAyahBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-            ivTafsir.setOnClickListener {
-                tafsirQuran?.invoke(ayahs[position])
-            }
+        fun bind(ayat: Ayat) {
+            with(binding) {
+                tvAyahArabic.text = ayat.ayatArab
+                tvAyahLatin.text = ayat.ayatLatin
+                tvAyahMeaning.text = ayat.ayatTerjemahan
+                tvAyahNumber.text = ayat.ayatNumber.toString()
+                tvAyahArabic.textSize = textSize.toFloat()
 
-            ivShare.setOnClickListener {
-                shareIntent(ayahs[position])
-            }
-
-            if (isTagging && ayahPosition == position) {
-                cvAyah.startAnimation(
-                    AnimationUtils.loadAnimation(
-                        context, R.anim.anim_tagging
+                if (isTagging && ayahPosition == adapterPosition) {
+                    cvAyah.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            context, R.anim.anim_tagging
+                        )
                     )
-                )
-                isTagging = false
+                    isTagging = false
+                }
+            }
+        }
+
+        init {
+            with(binding) {
+                ivTag.setOnClickListener {
+                    taggingQuran?.invoke(ayahs[adapterPosition])
+                }
+
+                ivTafsir.setOnClickListener {
+                    tafsirQuran?.invoke(ayahs[adapterPosition])
+                }
+
+                ivShare.setOnClickListener {
+                    shareIntent(ayahs[adapterPosition])
+                }
+
+                ivPlayAyah.setOnClickListener {
+                    audioAyah?.invoke(ayahs[adapterPosition])
+                }
             }
         }
     }
@@ -95,17 +114,5 @@ class QuranDetailAdapter(
                 shareIntent, "Bagikan ayat ini"
             )
         )
-    }
-
-    inner class DetailViewHolder(val binding: ItemListAyahBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        val ivTag = binding.ivTag
-        val ivTafsir = binding.ivTafsir
-        val ivShare = binding.ivShare
-        val cvAyah = binding.cvAyah
-        val tvAyahArabic = binding.tvAyahArabic
-        val tvAyahLatin = binding.tvAyahLatin
-        val tvAyahMeaning = binding.tvAyahMeaning
-        val tvAyahNumber = binding.tvAyahNumber
     }
 }

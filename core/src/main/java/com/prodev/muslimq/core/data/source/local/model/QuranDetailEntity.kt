@@ -29,6 +29,7 @@ data class Ayat(
     val ayatArab: String,
     val ayatLatin: String,
     val ayatTerjemahan: String,
+    val ayatAudio: String,
 )
 
 class Converter {

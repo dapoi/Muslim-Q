@@ -62,4 +62,13 @@ data class AyatItem(
 
     @Json(name = "teksIndonesia")
     val teksIndonesia: String,
+
+    @Json(name = "audio")
+    val audio: AyahAudio,
+)
+
+data class AyahAudio(
+
+    @Json(name = "05")
+    val ayahAudio: String? = "",
 )

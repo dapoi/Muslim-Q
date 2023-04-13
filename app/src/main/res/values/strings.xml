@@ -49,6 +49,7 @@
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="search_surah">Cari Surah</string>
+    <string name="search_ayah">Cari Ayat</string>
     <string name="fileName">%s/MuslimQ/%s.mp3</string>
     <string name="ask_audio_title">Surah %s</string>
     <string name="ask_audio_desc">Audio surah %s belum diunduh, audio ini membutuhkan koneksi internet untuk mengunduhnya. Apakah anda ingin mengunduhnya sekarang?</string>
@@ -68,4 +69,6 @@
     <string name="tagging">Tandai</string>
     <string name="ask_tagging_desc">Apakah Anda ingin menandai ayat ini sebagai ayat yang terakhir dibaca?</string>
     <string name="ask_tagging_title">Tandai Ayat?</string>
+    <string name="show">Tampilkan</string>
+    <string name="input_number">Masukkan Nomor Ayat</string>
 </resources>

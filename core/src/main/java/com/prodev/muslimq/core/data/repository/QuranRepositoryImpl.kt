@@ -73,7 +73,8 @@ class QuranRepositoryImpl @Inject constructor(
                         ayatNumber = ayat.nomorAyat,
                         ayatArab = ayat.teksArab,
                         ayatLatin = ayat.teksLatin,
-                        ayatTerjemahan = ayat.teksIndonesia
+                        ayatTerjemahan = ayat.teksIndonesia,
+                        ayatAudio = ayat.audio.ayahAudio!!
                     )
                 },
                 isBookmarked = false
