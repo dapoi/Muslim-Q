@@ -55,7 +55,7 @@ class OthersFragment : Fragment() {
                     )
                 }
                 1 -> {
-                    val email = "luthfidaffa2202@gmail.com"
+                    val email = "luthfidaffaprabowo@gmail.com"
                     val subject = "Feedback Aplikasi MuslimQ"
                     val body = "Silahkan tulis pesan Anda di sini"
 
