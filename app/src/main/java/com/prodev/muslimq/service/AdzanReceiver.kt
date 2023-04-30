@@ -1,6 +1,5 @@
 package com.prodev.muslimq.service
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -19,18 +18,11 @@ class AdzanReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        val adzanData = intent.getIntExtra(ADZAN_CODE, 0)
+        val adzanName = intent.getStringExtra(ADZAN_NAME)
+        val adzanCode = intent.getIntExtra(ADZAN_CODE, 0)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
-        val adzanName = when (adzanData) {
-            "Adzan Shubuh".hashCode() -> "Adzan Shubuh"
-            "Adzan Dzuhur".hashCode() -> "Adzan Dzuhur"
-            "Adzan Ashar".hashCode() -> "Adzan Ashar"
-            "Adzan Maghrib".hashCode() -> "Adzan Maghrib"
-            "Adzan Isya".hashCode() -> "Adzan Isya"
-            else -> ""
-        }
-        createNotification(context, adzanName)
+        createNotification(context, adzanName!!, adzanCode)
 
         val serviceIntent = Intent(context, AdzanService::class.java).apply {
             putExtra(IS_SHUBUH, isShubuh)
@@ -38,15 +30,14 @@ class AdzanReceiver : BroadcastReceiver() {
         context.startService(serviceIntent)
     }
 
-    @SuppressLint("LaunchActivityFromNotification")
-    private fun createNotification(context: Context, adzanName: String) {
+    private fun createNotification(context: Context, adzanName: String, adzanCode: Int) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
 
         val pendingIntent = PendingIntent.getActivity(
             context,
-            adzanName.hashCode(),
+            adzanCode,
             Intent(context, MainActivity::class.java).apply {
                 putExtra(FROM_NOTIFICATION, true)
             },
@@ -73,19 +64,21 @@ class AdzanReceiver : BroadcastReceiver() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(adzanName.hashCode(), notification.build())
+        notificationManager.notify(adzanCode, notification.build())
     }
 
     fun setAdzanReminder(
         context: Context,
         adzanTime: String,
         adzanName: String,
+        adzanCode: Int,
         isShubuh: Boolean
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AdzanReceiver::class.java).apply {
-            putExtra(ADZAN_CODE, adzanName.hashCode())
+            putExtra(ADZAN_NAME, adzanName)
+            putExtra(ADZAN_CODE, adzanCode)
             putExtra(IS_SHUBUH, isShubuh)
         }
         val pendingIntent = PendingIntent.getBroadcast(
@@ -117,15 +110,15 @@ class AdzanReceiver : BroadcastReceiver() {
         )
     }
 
-    fun cancelAdzanReminder(context: Context, adzanName: String) {
+    fun cancelAdzanReminder(context: Context, adzanCode: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(context, AdzanReceiver::class.java).apply {
-            putExtra(ADZAN_CODE, adzanName.hashCode())
+            putExtra(ADZAN_CODE, adzanCode)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            adzanName.hashCode(),
+            adzanCode,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -135,7 +128,9 @@ class AdzanReceiver : BroadcastReceiver() {
 
     companion object {
         const val ADZAN_CODE = "adzan_code"
+        const val ADZAN_NAME = "adzan_name"
         const val IS_SHUBUH = "is_shubuh"
+
         const val FROM_NOTIFICATION = "from_notification"
         private const val CHANNEL_ID = "prayer_time_channel"
     }

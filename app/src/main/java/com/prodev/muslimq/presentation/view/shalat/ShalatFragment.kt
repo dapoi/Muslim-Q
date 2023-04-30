@@ -280,17 +280,22 @@ class ShalatFragment : Fragment() {
                     }
                 }
 
-                if (switch.isChecked) {
-                    listAdzanTime[adzanName]?.let { adzanTime ->
+                listAdzanTime[adzanName]?.let { adzanTime ->
+                    val adzanCode = adzanTime.hashCode()
+                    if (switch.isChecked) {
                         adzanReceiver.setAdzanReminder(
-                            requireActivity(),
-                            adzanTime,
-                            adzanName,
-                            adzanName == "Adzan Shubuh"
+                            context = requireContext(),
+                            adzanName = adzanName,
+                            adzanTime = adzanTime,
+                            adzanCode = adzanCode,
+                            isShubuh = adzanName == "Adzan Shubuh"
+                        )
+                    } else {
+                        adzanReceiver.cancelAdzanReminder(
+                            context = requireContext(),
+                            adzanCode = adzanCode
                         )
                     }
-                } else {
-                    adzanReceiver.cancelAdzanReminder(requireActivity(), adzanName)
                 }
             }
         }
