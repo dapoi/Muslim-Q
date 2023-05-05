@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/iv_menu_other"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:contentDescription="@string/other"
@@ -25,11 +25,23 @@
         android:layout_marginStart="16dp"
         android:fontFamily="@font/poppins_medium"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_menu_other"
         app:layout_constraintStart_toEndOf="@+id/iv_menu_other"
         app:layout_constraintTop_toTopOf="@+id/iv_menu_other"
         tools:text="Tersimpan" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/sw_dark_mode"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="10dp"
+        android:thumb="@drawable/custom_thumb_600"
+        app:layout_constraintBottom_toBottomOf="@id/tv_menu_other"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_menu_other"
+        app:track="@drawable/custom_track_600" />
 
     <View
         android:id="@+id/v_divider"

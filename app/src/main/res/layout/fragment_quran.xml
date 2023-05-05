@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/white_base"
     tools:context=".presentation.view.quran.QuranFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,11 +18,11 @@
             android:id="@+id/ctl_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/white_base"
             app:collapsedTitleGravity="center"
             app:collapsedTitleTextAppearance="@style/collapsedTitleStyle"
             app:collapsedTitleTextColor="@color/green_base"
-            app:contentScrim="@color/white"
+            app:contentScrim="@color/white_base"
             app:expandedTitleGravity="center_horizontal|bottom"
             app:expandedTitleTextAppearance="@style/expandedTitleStyle"
             app:expandedTitleTextColor="@android:color/transparent"
@@ -80,7 +80,7 @@
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppins_medium"
                         android:text="@string/last_read"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_last_read"
                         app:layout_constraintEnd_toStartOf="@+id/iv_quran"
@@ -93,7 +93,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/iv_quran"
@@ -108,7 +108,7 @@
                         android:layout_marginTop="7dp"
                         android:layout_marginBottom="20dp"
                         android:fontFamily="@font/poppins"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/iv_quran"
@@ -121,7 +121,7 @@
                         android:layout_width="170dp"
                         android:layout_height="100dp"
                         android:layout_marginBottom="-9dp"
-                        android:alpha="0.5"
+                        android:alpha="0.3"
                         android:src="@drawable/ic_quran_home"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -135,7 +135,7 @@
                     android:layout_marginVertical="24dp"
                     android:focusableInTouchMode="true"
                     app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
+                    app:cardElevation="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/cl_surah"
                     app:layout_constraintStart_toStartOf="@id/cl_surah"
@@ -156,7 +156,7 @@
                             android:id="@+id/et_surah"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/white"
+                            android:background="@color/white_second"
                             android:hint="@string/search_surah"
                             android:imeOptions="actionSearch"
                             android:inputType="text"
@@ -193,7 +193,7 @@
                 android:theme="@style/Theme.MuslimQ.Toolbar"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="@color/white" />
+                app:titleTextColor="@color/white_base" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -273,11 +273,11 @@
         android:layout_marginBottom="20dp"
         android:src="@drawable/ic_up"
         android:visibility="gone"
-        app:backgroundTint="@color/green_base"
+        app:backgroundTint="#289672"
         app:layout_anchor="@id/cl_content"
         app:layout_anchorGravity="bottom|end"
-        app:maxImageSize="40dp"
-        app:tint="@color/white"
+        app:maxImageSize="35dp"
+        app:tint="@color/white_header"
         tools:ignore="ContentDescription" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

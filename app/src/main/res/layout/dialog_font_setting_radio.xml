@@ -60,7 +60,7 @@
         android:layout_margin="16dp"
         android:background="@drawable/bg_round_green"
         android:text="@string/save"
-        android:textColor="@color/white"
+        android:textColor="@color/white_header"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/white_base"
     tools:context=".presentation.view.quran.QuranDetailFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,10 +18,10 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/white_base"
             app:collapsedTitleTextAppearance="@style/collapsedTabletTitleStyle"
             app:collapsedTitleTextColor="@color/green_base"
-            app:contentScrim="@color/white"
+            app:contentScrim="@color/white_base"
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:scrimAnimationDuration="200"
@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="18dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="28sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +87,7 @@
                         android:layout_marginTop="3dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="@+id/tv_surah_name"
                         app:layout_constraintStart_toStartOf="@+id/tv_surah_name"
@@ -100,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:fontFamily="@font/poppins_medium"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="20sp"
                         app:layout_constraintEnd_toEndOf="@+id/tv_ayah_meaning"
                         app:layout_constraintStart_toStartOf="@+id/tv_ayah_meaning"
@@ -112,7 +112,7 @@
                         android:layout_width="320dp"
                         android:layout_height="2dp"
                         android:layout_marginTop="5dp"
-                        android:background="@color/white_low_opp"
+                        android:background="@color/white_header"
                         app:layout_constraintEnd_toEndOf="@+id/tv_surah_name"
                         app:layout_constraintStart_toStartOf="@+id/tv_surah_name"
                         app:layout_constraintTop_toBottomOf="@id/tv_city_and_total_ayah" />
@@ -126,10 +126,11 @@
                         android:fontFamily="@font/amiri_bold"
                         android:text="@string/bismillah"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="35sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/v_divider" />
+                        app:layout_constraintTop_toBottomOf="@+id/v_divider"
+                        tools:layout_editor_absoluteX="20dp" />
 
                     <ImageView
                         android:id="@+id/iv_quran"
@@ -161,7 +162,7 @@
                         android:src="@drawable/ic_play"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/white"
+                        app:tint="@color/white_header"
                         tools:ignore="ContentDescription" />
 
                     <SeekBar

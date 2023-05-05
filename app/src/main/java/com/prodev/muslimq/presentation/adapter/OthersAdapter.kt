@@ -4,18 +4,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.presentation.view.others.Others
+import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ItemListOtherBinding
+import com.prodev.muslimq.presentation.view.others.Others
 
 class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
 
-    var onClick: ((Int) -> Unit)? = null
+    var onClick: ((Others) -> Unit)? = null
+    var onSwitch: ((Boolean) -> Unit)? = null
 
     private var listOthers = ArrayList<Others>()
+    private var switchState = false
 
     fun setList(list: List<Others>) {
         listOthers.clear()
         listOthers.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setSwitchState(uiTheme: UITheme) {
+        switchState = uiTheme == UITheme.DARK
         notifyDataSetChanged()
     }
 
@@ -48,10 +56,28 @@ class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
                 } else {
                     View.VISIBLE
                 }
+
+                swDarkMode.apply {
+
+                    // Set visibility of switch
+                    visibility = if (others.title == "Mode Gelap") {
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
+
+                    // Set switch state
+                    isChecked = switchState
+
+                    // Set switch listener
+                    setOnCheckedChangeListener { _, isChecked ->
+                        onSwitch?.invoke(isChecked)
+                    }
+                }
             }
 
             itemView.setOnClickListener {
-                onClick?.invoke(adapterPosition)
+                onClick?.invoke(listOthers[adapterPosition])
             }
         }
     }

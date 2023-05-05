@@ -270,6 +270,7 @@ class QuranFragment : Fragment() {
             } else {
                 progressBar.visibility = View.GONE
                 progressHeader.visibility = View.GONE
+                emptyState.root.visibility = View.GONE
                 tvTitle.visibility = View.VISIBLE
                 clSurah.visibility = View.VISIBLE
             }

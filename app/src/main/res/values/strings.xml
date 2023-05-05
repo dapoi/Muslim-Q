@@ -71,4 +71,5 @@
     <string name="ask_tagging_title">Tandai Ayat?</string>
     <string name="show">Tampilkan</string>
     <string name="input_number">Masukkan Nomor Ayat</string>
+    <string name="app_version">Versi %s</string>
 </resources>

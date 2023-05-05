@@ -1,10 +1,10 @@
 package com.prodev.muslimq.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
+import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DataStoreViewModel @Inject constructor(
-    private val dataStorePreference: DataStorePreference
+    private val dataStorePref: DataStorePreference
 ) : ViewModel() {
 
     fun saveSurah(
@@ -23,44 +23,51 @@ class DataStoreViewModel @Inject constructor(
         ayahNumber: Int
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveSurah(surahId, surahName, surahMeaning, surahDesc, ayahNumber)
+            dataStorePref.saveSurah(surahId, surahName, surahMeaning, surahDesc, ayahNumber)
         }
     }
 
     fun saveProvinceData(provinceId: String, provinceName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveProvinceData(provinceId, provinceName)
+            dataStorePref.saveProvinceData(provinceId, provinceName)
         }
     }
 
     fun saveAreaData(cityName: String, countryName: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveCityAndCountryData(cityName, countryName)
+            dataStorePref.saveCityAndCountryData(cityName, countryName)
         }
     }
 
     fun saveAyahSize(ayahSize: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveAyahSize(ayahSize)
+            dataStorePref.saveAyahSize(ayahSize)
+        }
+    }
+
+    fun saveSwitchDarkMode(uiTheme: UITheme) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveSwitchDarkModeState(uiTheme)
         }
     }
 
     fun saveSwitchState(switchName: String, isChecked: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePreference.saveSwitchState(switchName, isChecked)
+            dataStorePref.saveSwitchState(switchName, isChecked)
         }
     }
 
-    val getSurah = dataStorePreference.getSurah.asLiveData()
+    val getSurah = dataStorePref.getSurah.asLiveData()
 
-    val getDetailSurahAyah = dataStorePreference.getDetailSurahAyah.asLiveData()
+    val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
 
-    val getProvinceData = dataStorePreference.getProvinceData.asLiveData()
+    val getProvinceData = dataStorePref.getProvinceData.asLiveData()
 
-    val getAreaData = dataStorePreference.getCityAndCountryData.asLiveData()
+    val getAreaData = dataStorePref.getCityAndCountryData.asLiveData()
 
-    val getAyahSize = dataStorePreference.getAyahSize.asLiveData()
+    val getAyahSize = dataStorePref.getAyahSize.asLiveData()
 
-    fun getSwitchState(switchName: String): LiveData<Boolean> =
-        dataStorePreference.getSwitchState(switchName).asLiveData()
+    val getSwitchDarkMode = dataStorePref.getSwitchDarkMode.asLiveData()
+
+    fun getSwitchState(switchName: String) = dataStorePref.getSwitchState(switchName).asLiveData()
 }

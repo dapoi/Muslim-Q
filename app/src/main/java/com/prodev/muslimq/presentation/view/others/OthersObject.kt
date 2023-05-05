@@ -7,12 +7,14 @@ object OthersObject {
     private val menuImage = intArrayOf(
         R.drawable.ic_collection,
         R.drawable.ic_support,
+        R.drawable.ic_dark_mode,
         R.drawable.ic_about
     )
 
-    private val menuTitle = arrayOf(
+    private val menuTitle = listOf(
         "Baca Nanti",
         "Kirim Masukan",
+        "Mode Gelap",
         "Tentang Aplikasi"
     )
 
@@ -30,6 +32,6 @@ object OthersObject {
 }
 
 data class Others(
-    var title: String? = null,
+    var title: String = "",
     var image: Int = 0
 )

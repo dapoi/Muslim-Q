@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
+    app:cardBackgroundColor="@color/white_second"
     app:cardCornerRadius="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +41,7 @@
                     android:background="@drawable/bg_circle"
                     android:gravity="center"
                     android:paddingHorizontal="14dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/white_header"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

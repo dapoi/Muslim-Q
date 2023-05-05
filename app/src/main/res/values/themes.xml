@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MuslimQ" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.MuslimQ" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/green_base</item>
         <item name="colorPrimaryVariant">@color/green_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/white_base</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/green_base</item>
         <item name="colorSecondaryVariant">@color/green_dark</item>
@@ -12,14 +12,13 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/white</item>
         <!-- Customize your theme here. -->
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white_second</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 
     <style name="Theme.MuslimQ.Toolbar">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/white_base</item>
         <item name="android:fontFamily">@font/poppins_semibold</item>
         <item name="android:textSize">20sp</item>
     </style>
@@ -70,5 +69,12 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
+    </style>
+
+    <style name="Theme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white_base</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
     </style>
 </resources>

@@ -7,13 +7,17 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
+import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
+import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.service.AdzanReceiver.Companion.FROM_NOTIFICATION
 import com.prodev.muslimq.service.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -32,7 +38,6 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHosFragment.navController
         val destinationToHideBottomnav = setOf(
-            R.id.splashScreenFragment,
             R.id.quranDetailFragment,
             R.id.shalatProvinceFragment,
             R.id.shalatCityFragment,
@@ -53,8 +58,23 @@ class MainActivity : AppCompatActivity() {
         }
         binding.bottomNav.setupWithNavController(navController)
 
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                when (uiTheme) {
+                    UITheme.LIGHT -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                    UITheme.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+            }
+        }
+
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
-        if (fromNotif) stopService(Intent(this, AdzanService::class.java))
+        if (fromNotif) {
+            stopService(Intent(this, AdzanService::class.java))
+        }
     }
 
     fun customSnackbar(
@@ -81,9 +101,9 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            setTextColor(ContextCompat.getColor(context, R.color.white))
+            setTextColor(ContextCompat.getColor(context, R.color.white_base))
             if (action) {
-                setActionTextColor(ContextCompat.getColor(context, R.color.white))
+                setActionTextColor(ContextCompat.getColor(context, R.color.white_base))
                 setAction("IZINKAN") {
                     if (isDownload) {
                         val intent = Intent()

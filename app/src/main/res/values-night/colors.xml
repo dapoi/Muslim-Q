@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="green_base">#55A488</color>
+    <color name="green_dark">#7FBFA2</color>
+    <color name="green_light">#4C7D66</color>
+    <color name="green_header_start">#1E6F5C</color>
+    <color name="green_header_end">#1E6F5C</color>
+    <color name="teal_200">#10FFFFFF</color>
+    <color name="teal_700">#108B8B8B</color>
+    <color name="black">#EAEAEA</color>
+    <color name="yellow">#FFD34C</color>
+    <color name="white_base">#1E1E1E</color>
+    <color name="white_second">#272727</color>
+    <color name="white_low_opp">#3E3F41</color>
+    <color name="white_header">#EAEAEA</color>
+    <color name="white_card">#3E3F41</color>
+    <color name="gray">#8F8F91</color>
+    <color name="light_gray">#809A9A9A</color>
+    <color name="red">#FF8080</color>
+    <color name="white_5_percent">#0DFFFFFF</color>
+</resources>

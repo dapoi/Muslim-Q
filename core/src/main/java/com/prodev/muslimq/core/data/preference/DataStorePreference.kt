@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
+import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +24,7 @@ private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
 private val COUNTRY_NAME = stringPreferencesKey("country_name")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
+private val SWITCH_DARK_MODE = booleanPreferencesKey("switch_dark_mode")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -121,37 +125,36 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         Pair(cityName, countryName)
     }
 
-//    /**
-//     * Save city name to data store
-//     */
-//    suspend fun saveCityData(cityName: String) {
-//        dataStore.edit { preferences ->
-//            preferences[CITY_NAME] = cityName
-//        }
-//    }
-//
-//    /**
-//     * Get city name from data store
-//     */
-//    val getCityData = dataStore.data.map { preferences ->
-//        preferences[CITY_NAME] ?: ""
-//    }
-//
-//    /**
-//     * Save country name to data store
-//     */
-//    suspend fun saveCountryData(countryName: String) {
-//        dataStore.edit { preferences ->
-//            preferences[COUNTRY_NAME] = countryName
-//        }
-//    }
-//
-//    /**
-//     * Get country name from data store
-//     */
-//    val getCountryData = dataStore.data.map { preferences ->
-//        preferences[COUNTRY_NAME] ?: ""
-//    }
+    /**
+     * Save dark mode switch state to data store
+     */
+    suspend fun saveSwitchDarkModeState(uiTheme: UITheme) {
+        dataStore.edit { preferences ->
+            preferences[SWITCH_DARK_MODE] = when (uiTheme) {
+                UITheme.LIGHT -> false
+                UITheme.DARK -> true
+            }
+        }
+    }
+
+    /**
+     * Get dark mode switch state from data store
+     */
+    val getSwitchDarkMode: Flow<UITheme> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+                exception.printStackTrace()
+            } else {
+                throw exception
+            }
+        }
+        .map { preferences ->
+            when (preferences[SWITCH_DARK_MODE] ?: false) {
+                true -> UITheme.DARK
+                false -> UITheme.LIGHT
+            }
+        }
 
     /**
      * Save shalat switch state to data store

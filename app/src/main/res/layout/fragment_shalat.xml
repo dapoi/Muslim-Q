@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_base"
     tools:context=".presentation.view.shalat.ShalatFragment">
 
     <com.simform.refresh.SSPullToRefreshLayout
@@ -109,12 +110,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="-40dp"
-                        android:alpha="0.27"
+                        android:alpha="0.2"
                         android:contentDescription="@string/icon_mosque"
                         android:src="@drawable/ic_mosque"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:tint="@color/green_dark" />
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                     <TextView
                         android:id="@+id/tv_gregorian_date"
@@ -124,7 +124,7 @@
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -136,7 +136,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
                         android:textAlignment="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_gregorian_date"
                         app:layout_constraintTop_toBottomOf="@id/tv_gregorian_date"
@@ -149,7 +149,7 @@
                         android:layout_marginTop="16dp"
                         android:fontFamily="@font/poppins_semibold"
                         android:text="@string/next_prayer"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_islamic_date"
                         app:layout_constraintTop_toBottomOf="@+id/tv_islamic_date" />
@@ -160,7 +160,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
                         android:text="@string/not_found_location"
-                        android:textColor="@color/white"
+                        android:textColor="@color/white_header"
                         android:textSize="14sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tv_next_shalat"

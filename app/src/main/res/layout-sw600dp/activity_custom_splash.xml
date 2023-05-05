@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white_base"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".presentation.view.splashscreen.SplashScreenFragment"
+    tools:context=".presentation.view.splashscreen.CustomSplashActivity"
     tools:ignore="UseCompoundDrawables">
 
     <ImageView
         android:id="@+id/iv_spash_screen"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:src="@drawable/ic_muslim"
         tools:ignore="ContentDescription" />
 
@@ -22,6 +23,6 @@
         android:fontFamily="@font/poppins_semibold"
         android:text="@string/app_name"
         android:textColor="@color/green_base"
-        android:textSize="22sp" />
+        android:textSize="26sp" />
 
 </LinearLayout>

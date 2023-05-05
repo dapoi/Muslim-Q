@@ -221,10 +221,10 @@ class QuranDetailFragment : Fragment() {
                     it.ayatNumber.toString() == query
                 }
                 if (position != -1) {
-                    detailAdapter.setAnimItem(true, position)
                     binding.apply {
                         appBar.setExpanded(position < 1, true)
                         rvAyah.scrollToPosition(position)
+                        detailAdapter.setAnimItem(true, position)
                     }
                     dismiss()
                 } else {

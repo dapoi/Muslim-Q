@@ -68,7 +68,7 @@
         android:background="@drawable/bg_round_green"
         android:paddingVertical="24dp"
         android:text="@string/save"
-        android:textColor="@color/white"
+        android:textColor="@color/white_header"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
