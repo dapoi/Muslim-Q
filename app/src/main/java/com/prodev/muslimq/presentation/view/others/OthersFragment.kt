@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.view.others
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -64,6 +63,7 @@ class OthersFragment : Fragment() {
                     true -> {
                         dataStoreViewModel.saveSwitchDarkMode(UITheme.DARK)
                     }
+
                     false -> {
                         dataStoreViewModel.saveSwitchDarkMode(UITheme.LIGHT)
                     }
@@ -84,6 +84,7 @@ class OthersFragment : Fragment() {
                             R.id.action_othersFragment_to_quranBookmarkFragment
                         )
                     }
+
                     "Kirim Masukan" -> {
                         val email = "luthfidaffaprabowo@gmail.com"
                         val subject = "Feedback Aplikasi MuslimQ"
@@ -98,6 +99,7 @@ class OthersFragment : Fragment() {
                         }
                         startActivity(intent)
                     }
+
                     "Tentang Aplikasi" -> {
                         findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                     }

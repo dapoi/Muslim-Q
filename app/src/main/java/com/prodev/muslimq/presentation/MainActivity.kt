@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
@@ -45,15 +46,11 @@ class MainActivity : AppCompatActivity() {
             R.id.aboutAppFragment
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.bottomNav.apply {
-                // give animation when hide/show bottom nav
-                if (destination.id in destinationToHideBottomnav) {
-                    animate().translationY(height.toFloat()).duration = 300
-                    visibility = View.GONE
-                } else {
-                    animate().translationY(0f).duration = 300
-                    visibility = View.VISIBLE
-                }
+            // give animation when hide/show bottom nav
+            if (destination.id in destinationToHideBottomnav) {
+                animateVisibleHide(false, binding.bottomNav, binding.vDivider)
+            } else {
+                animateVisibleHide(true, binding.bottomNav, binding.vDivider)
             }
         }
         binding.bottomNav.setupWithNavController(navController)
@@ -64,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                     UITheme.LIGHT -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     }
+
                     UITheme.DARK -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     }
@@ -74,6 +72,20 @@ class MainActivity : AppCompatActivity() {
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
         if (fromNotif) {
             stopService(Intent(this, AdzanService::class.java))
+        }
+    }
+
+    private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView, view: View) {
+        if (state) {
+            view.clearAnimation()
+            bottomNav.clearAnimation()
+            view.animate().translationY(0f).duration = 300
+            bottomNav.animate().translationY(0f).duration = 300
+        } else {
+            view.clearAnimation()
+            bottomNav.clearAnimation()
+            view.animate().translationY(100f).duration = 300
+            bottomNav.animate().translationY(100f).duration = 300
         }
     }
 

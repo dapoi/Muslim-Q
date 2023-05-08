@@ -106,30 +106,16 @@ class QuranDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         if (isFirstLoad) {
             setAdapter()
             setViewModel()
 
             config = resources.configuration
             is600dp = config.smallestScreenWidthDp >= 600
-        }
-
-        binding.apply {
-            ivBack.setOnClickListener {
-                findNavController().popBackStack()
-            }
-
-            ivFontSetting.setOnClickListener {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    showFontSettingDialog()
-                } else {
-                    showFontSettingDialogLower()
-                }
-            }
-
-            ivMore.setOnClickListener {
-                showMenuOption()
-            }
         }
 
         surahDesc = arguments?.getString(SURAH_DESC) ?: ""
@@ -146,96 +132,6 @@ class QuranDetailFragment : Fragment() {
         dialog = curvedDialog.create().apply {
             setView(dialogLayout)
             setCancelable(false)
-        }
-    }
-
-    private fun showMenuOption() {
-        val mp3File = getString(
-            R.string.fileName,
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            binding.tvSurahName.text
-        )
-
-        val file = File(mp3File)
-        val optionDeleteEnabled =
-            (file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
-
-        PopupMenu(requireContext(), binding.ivMore).apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                setForceShowIcon(true)
-            }
-
-            menuInflater.inflate(R.menu.menu_detail_quran, menu)
-            menu.findItem(R.id.action_delete_audio).isEnabled = optionDeleteEnabled
-
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.action_search -> {
-                        showSearchDialog()
-                        true
-                    }
-                    R.id.action_info -> {
-                        showDescSurah("Deskripsi Surah", surahDesc, false)
-                        true
-                    }
-                    R.id.action_delete_audio -> {
-                        val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
-                        val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
-                        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
-                        with(curvedDialog.create()) {
-                            setView(dialogLayout)
-                            tvConfirm.setOnClickListener {
-                                if (file.exists()) {
-                                    file.delete()
-                                    (activity as MainActivity).customSnackbar(
-                                        state = false,
-                                        context = requireContext(),
-                                        view = binding.root,
-                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}."
-                                    )
-                                }
-                                dismiss()
-                            }
-                            tvCancel.setOnClickListener { dismiss() }
-                            setCanceledOnTouchOutside(false)
-                            show()
-                        }
-                        true
-                    }
-                    else -> false
-                }
-            }
-            show()
-        }
-    }
-
-    private fun showSearchDialog() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_search_ayah, null)
-        val etSearch = dialogLayout.findViewById<EditText>(R.id.et_ayah)
-        val btnSearch = dialogLayout.findViewById<Button>(R.id.btn_search)
-        with(curvedDialog.create()) {
-            setView(dialogLayout)
-            btnSearch.setOnClickListener {
-                val query = etSearch.text.toString()
-                val position = detailAdapter.getAyahs().indexOfFirst {
-                    it.ayatNumber.toString() == query
-                }
-                if (position != -1) {
-                    binding.apply {
-                        appBar.setExpanded(position < 1, true)
-                        rvAyah.scrollToPosition(position)
-                        detailAdapter.setAnimItem(true, position)
-                    }
-                    dismiss()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Ayat tidak ditemukan",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-            show()
         }
     }
 
@@ -299,14 +195,17 @@ class QuranDetailFragment : Fragment() {
                         result is Resource.Loading && result.data == null -> {
                             stateLoading(true)
                         }
+
                         result is Resource.Error && result.data == null -> {
                             stateLoading(false)
                             clNoInternet.visibility = View.VISIBLE
                             clSurah.visibility = View.GONE
                             clSound.visibility = View.GONE
                         }
+
                         else -> {
                             stateLoading(false)
+                            enableActionBarFunctionality()
                             toolbar.title = result.data?.namaLatin
 
                             surahName = result.data!!.namaLatin
@@ -432,12 +331,14 @@ class QuranDetailFragment : Fragment() {
                         is Resource.Loading -> {
                             transparentDialog.show()
                         }
+
                         is Resource.Success -> {
                             transparentDialog.dismiss()
                             showDescSurah(
                                 "Tafsir Ayat ${it.ayatNumber}", result.data!!.teks, true
                             )
                         }
+
                         is Resource.Error -> {
                             transparentDialog.dismiss()
                             Toast.makeText(
@@ -505,6 +406,188 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
+    private fun enableActionBarFunctionality() {
+        binding.apply {
+            ivFontSetting.setOnClickListener {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    showFontSettingDialog()
+                } else {
+                    showFontSettingDialogLower()
+                }
+            }
+
+            ivMore.setOnClickListener {
+                showMenuOption()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun showFontSettingDialog() {
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
+        val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
+        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
+        seekBar?.let { sbCurrentFontSize = it }
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            sbCurrentFontSize.max = 38
+            sbCurrentFontSize.min = 20
+            sbCurrentFontSize.progress = fontSize ?: 26
+            sbCurrentFontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?, progress: Int, fromUser: Boolean
+                ) {
+                    if (fromUser) {
+                        fontSize = progress
+                        sbCurrentFontSize.progress = fontSize!!
+                        detailAdapter.setFontSize(fontSize!!)
+                    }
+                }
+
+                override fun onStartTrackingTouch(p0: SeekBar?) {}
+
+                override fun onStopTrackingTouch(p0: SeekBar?) {}
+            })
+            buttonSave.setOnClickListener {
+                dismiss()
+            }
+            setCanceledOnTouchOutside(false)
+            show()
+        }
+    }
+
+    private fun showFontSettingDialogLower() {
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting_radio, null)
+        val radioSmall = dialogLayout.findViewById<RadioButton>(R.id.rb_small)
+        val radioMedium = dialogLayout.findViewById<RadioButton>(R.id.rb_medium)
+        val radioBig = dialogLayout.findViewById<RadioButton>(R.id.rb_big)
+        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            when (fontSize) {
+                20 -> radioSmall.isChecked = true
+                26 -> radioMedium.isChecked = true
+                32 -> radioBig.isChecked = true
+            }
+            radioSmall.setOnClickListener {
+                fontSize = 20
+                detailAdapter.setFontSize(fontSize!!)
+                radioMedium.isChecked = false
+                radioBig.isChecked = false
+            }
+            radioMedium.setOnClickListener {
+                fontSize = 26
+                detailAdapter.setFontSize(fontSize!!)
+                radioSmall.isChecked = false
+                radioBig.isChecked = false
+            }
+            radioBig.setOnClickListener {
+                fontSize = 32
+                detailAdapter.setFontSize(fontSize!!)
+                radioSmall.isChecked = false
+                radioMedium.isChecked = false
+            }
+            buttonSave.setOnClickListener {
+                dismiss()
+            }
+            setCanceledOnTouchOutside(false)
+            show()
+        }
+    }
+
+    private fun showMenuOption() {
+        val mp3File = getString(
+            R.string.fileName,
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            binding.tvSurahName.text
+        )
+
+        val file = File(mp3File)
+        val optionDeleteEnabled =
+            (file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
+
+        PopupMenu(requireContext(), binding.ivMore).apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                setForceShowIcon(true)
+            }
+
+            menuInflater.inflate(R.menu.menu_detail_quran, menu)
+            menu.findItem(R.id.action_delete_audio).isEnabled = optionDeleteEnabled
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_search -> {
+                        showSearchDialog()
+                        true
+                    }
+
+                    R.id.action_info -> {
+                        showDescSurah("Deskripsi Surah", surahDesc, false)
+                        true
+                    }
+
+                    R.id.action_delete_audio -> {
+                        val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
+                        val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
+                        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                        with(curvedDialog.create()) {
+                            setView(dialogLayout)
+                            tvConfirm.setOnClickListener {
+                                if (file.exists()) {
+                                    file.delete()
+                                    (activity as MainActivity).customSnackbar(
+                                        state = false,
+                                        context = requireContext(),
+                                        view = binding.root,
+                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}."
+                                    )
+                                }
+                                dismiss()
+                            }
+                            tvCancel.setOnClickListener { dismiss() }
+                            setCanceledOnTouchOutside(false)
+                            show()
+                        }
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+            show()
+        }
+    }
+
+    private fun showSearchDialog() {
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_search_ayah, null)
+        val etSearch = dialogLayout.findViewById<EditText>(R.id.et_ayah)
+        val btnSearch = dialogLayout.findViewById<Button>(R.id.btn_search)
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            btnSearch.setOnClickListener {
+                val query = etSearch.text.toString()
+                val position = detailAdapter.getAyahs().indexOfFirst {
+                    it.ayatNumber.toString() == query
+                }
+                if (position != -1) {
+                    binding.apply {
+                        appBar.setExpanded(position < 1, true)
+                        rvAyah.scrollToPosition(position)
+                        detailAdapter.setAnimItem(true, position)
+                    }
+                    dismiss()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Ayat tidak ditemukan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            show()
+        }
+    }
+
     private fun checkFirstAyahIsBismillah(ayahs: List<Ayat>): Boolean {
         return ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")
     }
@@ -516,9 +599,11 @@ class QuranDetailFragment : Fragment() {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                         checkPermissionStorageAndroidT(audio)
                     }
+
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
                         checkPermissionStorageAndroidR(audio)
                     }
+
                     else -> {
                         checkPermissionStorageLower(audio)
                     }
@@ -535,6 +620,7 @@ class QuranDetailFragment : Fragment() {
             ) == PERMISSION_GRANTED -> {
                 checkAudioState(audio)
             }
+
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
                 (activity as MainActivity).customSnackbar(
                     true,
@@ -545,6 +631,7 @@ class QuranDetailFragment : Fragment() {
                     isDownload = true
                 )
             }
+
             else -> {
                 requestPermissionStorage.launch(Manifest.permission.READ_MEDIA_AUDIO)
             }
@@ -559,6 +646,7 @@ class QuranDetailFragment : Fragment() {
             ) == PERMISSION_GRANTED -> {
                 checkAudioState(audio)
             }
+
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
                 (activity as MainActivity).customSnackbar(
                     true,
@@ -569,6 +657,7 @@ class QuranDetailFragment : Fragment() {
                     isDownload = true
                 )
             }
+
             else -> {
                 requestPermissionStorage.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             }
@@ -593,6 +682,7 @@ class QuranDetailFragment : Fragment() {
             permissionReadGranted && permissionWriteGranted -> {
                 checkAudioState(audio)
             }
+
             ActivityCompat.shouldShowRequestPermissionRationale(
                 requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
             ) || ActivityCompat.shouldShowRequestPermissionRationale(
@@ -607,6 +697,7 @@ class QuranDetailFragment : Fragment() {
                     isDownload = true
                 )
             }
+
             else -> {
                 ActivityCompat.requestPermissions(
                     requireActivity(), permissions, 1
@@ -642,12 +733,15 @@ class QuranDetailFragment : Fragment() {
             this@QuranDetailFragment::mediaPlayer.isInitialized && mediaPlayer.isPlaying -> {
                 playPauseAudio(binding.ivSound, true)
             }
+
             file.exists() -> {
                 playPauseAudio(binding.ivSound, false, mp3File)
             }
+
             playOnline -> {
                 playPauseAudio(binding.ivSound, false, audio)
             }
+
             else -> {
                 val dialogLayout = layoutInflater.inflate(R.layout.dialog_player_action, null)
                 val tvTitle = dialogLayout.findViewById<TextView>(R.id.tv_player_title)
@@ -962,79 +1056,6 @@ class QuranDetailFragment : Fragment() {
             setCanceledOnTouchOutside(false)
             show()
             tvInfoClose.setOnClickListener { dismiss() }
-        }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun showFontSettingDialog() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
-        val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
-        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
-        seekBar?.let { sbCurrentFontSize = it }
-        with(curvedDialog.create()) {
-            setView(dialogLayout)
-            sbCurrentFontSize.max = 38
-            sbCurrentFontSize.min = 20
-            sbCurrentFontSize.progress = fontSize ?: 26
-            sbCurrentFontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?, progress: Int, fromUser: Boolean
-                ) {
-                    if (fromUser) {
-                        fontSize = progress
-                        sbCurrentFontSize.progress = fontSize!!
-                        detailAdapter.setFontSize(fontSize!!)
-                    }
-                }
-
-                override fun onStartTrackingTouch(p0: SeekBar?) {}
-
-                override fun onStopTrackingTouch(p0: SeekBar?) {}
-            })
-            buttonSave.setOnClickListener {
-                dismiss()
-            }
-            setCanceledOnTouchOutside(false)
-            show()
-        }
-    }
-
-    private fun showFontSettingDialogLower() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting_radio, null)
-        val radioSmall = dialogLayout.findViewById<RadioButton>(R.id.rb_small)
-        val radioMedium = dialogLayout.findViewById<RadioButton>(R.id.rb_medium)
-        val radioBig = dialogLayout.findViewById<RadioButton>(R.id.rb_big)
-        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
-        with(curvedDialog.create()) {
-            setView(dialogLayout)
-            when (fontSize) {
-                20 -> radioSmall.isChecked = true
-                26 -> radioMedium.isChecked = true
-                32 -> radioBig.isChecked = true
-            }
-            radioSmall.setOnClickListener {
-                fontSize = 20
-                detailAdapter.setFontSize(fontSize!!)
-                radioMedium.isChecked = false
-                radioBig.isChecked = false
-            }
-            radioMedium.setOnClickListener {
-                fontSize = 26
-                detailAdapter.setFontSize(fontSize!!)
-                radioSmall.isChecked = false
-                radioBig.isChecked = false
-            }
-            radioBig.setOnClickListener {
-                fontSize = 32
-                detailAdapter.setFontSize(fontSize!!)
-                radioSmall.isChecked = false
-                radioMedium.isChecked = false
-            }
-            buttonSave.setOnClickListener {
-                dismiss()
-            }
-            setCanceledOnTouchOutside(false)
-            show()
         }
     }
 
