@@ -2,7 +2,6 @@ package com.prodev.muslimq.presentation.view.others
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -70,12 +69,7 @@ class OthersFragment : Fragment() {
                 }
             }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                setList(othersItem)
-            } else {
-                othersItem.removeAt(2)
-                setList(othersItem)
-            }
+            setList(othersItem)
 
             onClick = { item ->
                 when (item.title) {

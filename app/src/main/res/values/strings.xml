@@ -52,9 +52,13 @@
     <string name="search_ayah">Cari Ayat</string>
     <string name="fileName">%s/MuslimQ/%s.mp3</string>
     <string name="ask_audio_title">Surah %s</string>
+    <string name="ask_gps_title">Cari Lokasi</string>
     <string name="ask_audio_desc">Audio surah %s belum diunduh, audio ini membutuhkan koneksi internet untuk mengunduhnya. Apakah anda ingin mengunduhnya sekarang?</string>
+    <string name="ask_gps_desc">Untuk melihat/memperbarui waktu shalat, aplikasi ini membutuhkan akses lokasi. Anda dapat melakukannya melalui GPS atau memilih lokasi secara manual.</string>
     <string name="download">Unduh</string>
+    <string name="gps">GPS</string>
     <string name="play_online">Putar Online</string>
+    <string name="choose_manually">Pilih Manual</string>
     <string name="download_surah_notif">MuslimQ - Surah %s</string>
     <string name="download_surah">Mengunduh Audio Surah %s</string>
     <string name="wait_download">"Mohon tunggu selama proses unduh berlangsung…"</string>

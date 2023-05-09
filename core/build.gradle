@@ -63,4 +63,7 @@ dependencies {
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleScopeVersion"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleScopeVersion"
+
+    // Location
+    api "com.google.android.gms:play-services-location:21.0.1"
 }

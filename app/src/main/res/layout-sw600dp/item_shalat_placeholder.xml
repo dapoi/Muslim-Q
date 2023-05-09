@@ -20,11 +20,9 @@
             android:layout_height="30dp"
             android:background="@color/light_gray"
             android:contentDescription="@string/shubuh"
-            android:src="@drawable/ic_shalat_shubuh"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/light_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_shubuh"
@@ -33,7 +31,6 @@
             android:layout_marginStart="10dp"
             android:background="@color/light_gray"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/shubuh"
             android:textColor="@color/light_gray"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_shubuh"
@@ -70,11 +67,9 @@
             android:layout_height="30dp"
             android:background="@color/light_gray"
             android:contentDescription="@string/dzuhur"
-            android:src="@drawable/ic_shalat_dzuhur"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/light_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_dzuhur"
@@ -83,7 +78,6 @@
             android:layout_marginStart="10dp"
             android:background="@color/light_gray"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/dzuhur"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_dzuhur"
@@ -120,11 +114,9 @@
             android:layout_height="30dp"
             android:background="@color/light_gray"
             android:contentDescription="@string/ashar"
-            android:src="@drawable/ic_shalat_ashar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/light_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_ashar"
@@ -133,7 +125,6 @@
             android:layout_marginStart="10dp"
             android:background="@color/light_gray"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/ashar"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_ashar"
@@ -171,11 +162,9 @@
             android:layout_height="30dp"
             android:background="@color/light_gray"
             android:contentDescription="@string/maghrib"
-            android:src="@drawable/ic_shalat_maghrib"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/light_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_maghrib"
@@ -184,7 +173,6 @@
             android:layout_marginStart="10dp"
             android:background="@color/light_gray"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/maghrib"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_maghrib"
@@ -222,11 +210,9 @@
             android:layout_height="30dp"
             android:background="@color/light_gray"
             android:contentDescription="@string/isya"
-            android:src="@drawable/ic_shalat_isya"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/light_gray" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_isya"
@@ -235,7 +221,6 @@
             android:layout_marginStart="10dp"
             android:background="@color/light_gray"
             android:fontFamily="@font/poppins_semibold"
-            android:text="@string/isya"
             android:textColor="@color/light_gray"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_isya"

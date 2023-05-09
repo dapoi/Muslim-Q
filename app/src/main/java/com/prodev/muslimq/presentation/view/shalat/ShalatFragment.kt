@@ -2,7 +2,11 @@ package com.prodev.muslimq.presentation.view.shalat
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +15,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
 import androidx.appcompat.widget.SwitchCompat
@@ -23,6 +29,12 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
@@ -31,9 +43,12 @@ import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.prodev.muslimq.service.AdzanReceiver
+import com.prodev.muslimq.service.location.GPSStatusListener
+import com.prodev.muslimq.service.location.TurnOnGps
+import com.prodev.muslimq.service.notification.AdzanReceiver
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,10 +57,20 @@ class ShalatFragment : Fragment() {
 
     private lateinit var binding: FragmentShalatBinding
     private lateinit var listOfSwitch: List<SwitchCompat>
+    private lateinit var gpsStatusListener: GPSStatusListener
+    private lateinit var turnOnGps: TurnOnGps
+    private lateinit var fusedLocation: FusedLocationProviderClient
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val adzanReceiver = AdzanReceiver()
+
+    private val curvedDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
+    }
+    private val transparentDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
+    }
 
     private var timeNow = ""
 
@@ -66,6 +91,8 @@ class ShalatFragment : Fragment() {
     private var isOnline = false
     private var isFirstLoad = false
     private var stateAdzanName = ""
+    private var lat = 0.0
+    private var lon = 0.0
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -79,6 +106,63 @@ class ShalatFragment : Fragment() {
                 "${adzanLowerCase(stateAdzanName)} diaktifkan",
             )
         }
+    }
+
+    private val requestGPSPermission = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            Toast.makeText(
+                requireContext(),
+                "GPS diaktifkan",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            Toast.makeText(
+                requireContext(),
+                "GPS tidak aktif",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private val requestLocationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Izin lokasi diberikan",
+                    Toast.LENGTH_SHORT
+                ).show()
+                showDialog()
+            }
+
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Izin lokasi diberikan",
+                    Toast.LENGTH_SHORT
+                ).show()
+                showDialog()
+            }
+
+            else -> {
+                Toast.makeText(
+                    requireContext(),
+                    "Izin lokasi ditolak",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private fun checkLocationPermission(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(
+            requireActivity(),
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onCreateView(
@@ -98,9 +182,12 @@ class ShalatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         isOnline = isOnline(requireContext())
+        gpsStatusListener = GPSStatusListener(requireContext())
+        turnOnGps = TurnOnGps(requireContext())
+        fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         binding.ivIconChoose.setOnClickListener {
-            findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
+            checkStateLocationPermission()
         }
 
         if (isFirstLoad) {
@@ -110,6 +197,173 @@ class ShalatFragment : Fragment() {
         refreshDataWhenCityChange()
         swipeRefresh()
         dateGregorianAndHijri()
+
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
+        transparentDialog.setView(dialogLayout)
+    }
+
+    private fun showDialog() {
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_get_location, null)
+        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+        val tvChooseManual = dialogLayout.findViewById<TextView>(R.id.tv_choose_manual)
+        val tvTurnOnGPS = dialogLayout.findViewById<TextView>(R.id.tv_turn_on_gps)
+        with(curvedDialog.create()) {
+            setView(dialogLayout)
+            show()
+            tvTurnOnGPS.setOnClickListener {
+                dismiss()
+                var isGPSStatusChanged: Boolean? = null
+                gpsStatusListener.observe(viewLifecycleOwner) { isGPSOn ->
+                    if (isGPSStatusChanged == null) {
+                        if (!isGPSOn) {
+                            turnOnGps.startGps(requestGPSPermission)
+                        } else {
+                            transparentDialog.show()
+                            getLiveLocation()
+                        }
+                        isGPSStatusChanged = isGPSOn
+                    } else {
+                        if (isGPSStatusChanged != isGPSOn) {
+                            if (!isGPSOn) {
+                                turnOnGps.startGps(requestGPSPermission)
+                            } else {
+                                transparentDialog.show()
+                                getLiveLocation()
+                            }
+                            isGPSStatusChanged = isGPSOn
+                        }
+                    }
+                }
+            }
+            tvChooseManual.setOnClickListener {
+                dismiss()
+                findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
+            }
+            tvCancel.setOnClickListener {
+                dismiss()
+            }
+        }
+    }
+
+    private fun checkStateLocationPermission() {
+        when {
+            checkLocationPermission(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) && checkLocationPermission(
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) -> {
+                showDialog()
+            }
+
+            shouldShowRequestPermissionRationale(
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) && shouldShowRequestPermissionRationale(
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) -> {
+                (activity as MainActivity).customSnackbar(
+                    state = false,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izinkan akses lokasi untuk mengaktifkan fitur ini",
+                    action = true,
+                    toSettings = true
+                )
+            }
+
+            else -> {
+                requestLocationPermission.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getLiveLocation() {
+        if (checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocation.lastLocation.addOnCompleteListener(requireActivity()) { task ->
+                val location = task.result
+                if (location != null) {
+                    lat = location.latitude
+                    lon = location.longitude
+
+                    getAddressGeocoder(lat, lon)
+                } else {
+                    requestNewLiveLocation()
+                }
+            }
+        }
+    }
+
+    private fun requestNewLiveLocation() {
+        val locRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            3000,
+        ).apply {
+            setWaitForAccurateLocation(false)
+            setMinUpdateIntervalMillis(100)
+            setMaxUpdateDelayMillis(5000)
+        }.build()
+
+        fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
+            checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+        ) {
+            fusedLocation.requestLocationUpdates(
+                locRequest,
+                locationCallback,
+                Looper.getMainLooper()
+            )
+        }
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            val location = result.lastLocation!!
+            lat = location.latitude
+            lon = location.longitude
+
+            getAddressGeocoder(lat, lon)
+        }
+    }
+
+    private fun getAddressGeocoder(lat: Double, lon: Double) {
+        val geocoder = Geocoder(requireContext(), Locale.getDefault())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            geocoder.getFromLocation(lat, lon, 1, object : Geocoder.GeocodeListener {
+                override fun onGeocode(addresses: MutableList<Address>) {
+                    if (addresses.isNotEmpty()) {
+                        val city = addresses[0].locality
+                        val country = addresses[0].countryName
+                        transparentDialog.dismiss()
+                        dataStoreViewModel.saveAreaData(city, country)
+                    }
+                }
+
+                override fun onError(error: String?) {
+                    super.onError(error)
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            try {
+                val addresses = geocoder.getFromLocation(
+                    lat, lon, 1
+                ) as List<Address>
+                if (addresses.isNotEmpty()) {
+                    val city = addresses[0].locality
+                    val country = addresses[0].countryName
+                    transparentDialog.dismiss()
+                    dataStoreViewModel.saveAreaData(city, country)
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun refreshDataWhenCityChange() {
@@ -172,10 +426,11 @@ class ShalatFragment : Fragment() {
                 with(binding) {
                     if (area.first.isEmpty() && area.second.isEmpty()) {
                         clInfoLocation.visibility = View.GONE
-                        tvChooseLocation.text = resources.getString(R.string.choose_your_location)
+                        tvChooseLocation.text =
+                            resources.getString(R.string.choose_your_location)
                     } else {
                         clInfoLocation.visibility = View.VISIBLE
-                        tvYourLocation.text = area.first
+                        tvYourLocation.text = area.first.uppercase()
                         tvChooseLocation.visibility = View.GONE
                     }
                 }
@@ -194,16 +449,20 @@ class ShalatFragment : Fragment() {
                         clNegativeCase.visibility = View.GONE
                         shalatLayout.root.visibility = View.GONE
                     }
+
                     result is Resource.Error && result.data == null -> {
                         progressBar.visibility = View.GONE
-                        if (!isOnline) {
-                            negativeCase(true)
-                        } else {
+                        isOnline = isOnline(requireContext())
+                        if (isOnline) {
                             negativeCase(false)
+                        } else {
+                            negativeCase(true)
                         }
                         shalatLayout.root.visibility = View.GONE
                     }
+
                     else -> {
+                        clNegativeCase.visibility = View.GONE
                         result.data?.let { data -> getAllShalatData(data) }
                         setReminderAdzanTime()
                     }
@@ -261,16 +520,17 @@ class ShalatFragment : Fragment() {
             listOfSwitch.withIndex().forEach { (index, switch) ->
                 val adzanName = listAdzanTime.keys.toList()[index]
 
-                dataStoreViewModel.getSwitchState(adzanName).observe(viewLifecycleOwner) { state ->
-                    if (ContextCompat.checkSelfPermission(
-                            requireContext(), Manifest.permission.POST_NOTIFICATIONS
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        switch.isChecked = false
-                    } else {
-                        switch.isChecked = state
+                dataStoreViewModel.getSwitchState(adzanName)
+                    .observe(viewLifecycleOwner) { state ->
+                        if (ContextCompat.checkSelfPermission(
+                                requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            switch.isChecked = false
+                        } else {
+                            switch.isChecked = state
+                        }
                     }
-                }
 
                 switch.setOnCheckedChangeListener { adzanSwitch, isChecked ->
                     if (Build.VERSION.SDK_INT >= 33) {
@@ -306,18 +566,22 @@ class ShalatFragment : Fragment() {
                     tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
                     setNextPrayShalatBackground(shalatLayout.clDzuhur)
                 }
+
                 timeNow <= ashar && timeNow > dzuhur -> {
                     tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     setNextPrayShalatBackground(shalatLayout.clAshar)
                 }
+
                 timeNow <= maghrib && timeNow > ashar -> {
                     tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     setNextPrayShalatBackground(shalatLayout.clMaghrib)
                 }
+
                 timeNow <= isya && timeNow > maghrib -> {
                     tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     setNextPrayShalatBackground(shalatLayout.clIsya)
                 }
+
                 else -> {
                     tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
                     setNextPrayShalatBackground(shalatLayout.clShubuh)
@@ -339,6 +603,7 @@ class ShalatFragment : Fragment() {
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     stateNotifIcon(adzanName, isChecked)
                 }
+
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     adzanSwitch.isChecked = false
                     (activity as MainActivity).customSnackbar(
@@ -349,6 +614,7 @@ class ShalatFragment : Fragment() {
                         true
                     )
                 }
+
                 else -> {
                     adzanSwitch.isChecked = false
                     requestPermissionPostNotification.launch(Manifest.permission.POST_NOTIFICATIONS)

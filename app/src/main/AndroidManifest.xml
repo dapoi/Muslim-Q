@@ -4,6 +4,8 @@
     package="com.prodev.muslimq">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -56,11 +58,11 @@
             android:windowSoftInputMode="adjustPan" />
 
         <receiver
-            android:name=".service.AdzanReceiver"
+            android:name=".service.notification.AdzanReceiver"
             android:exported="false" />
 
         <service
-            android:name=".service.AdzanService"
+            android:name=".service.notification.AdzanService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -73,8 +75,8 @@
             android:resource="@array/preloaded_fonts" />
 
         <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/app_id" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBREB-8OXi0FGrzkRM7yy36q2KoZG1udMY" />
     </application>
 
 </manifest>

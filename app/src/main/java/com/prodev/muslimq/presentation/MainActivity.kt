@@ -19,8 +19,8 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.service.AdzanReceiver.Companion.FROM_NOTIFICATION
-import com.prodev.muslimq.service.AdzanService
+import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.FROM_NOTIFICATION
+import com.prodev.muslimq.service.notification.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -84,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             view.clearAnimation()
             bottomNav.clearAnimation()
-            view.animate().translationY(100f).duration = 300
-            bottomNav.animate().translationY(100f).duration = 300
+            view.animate().translationY(300f).duration = 300
+            bottomNav.animate().translationY(300f).duration = 300
         }
     }
 
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         view: View,
         message: String,
         action: Boolean = false,
-        isDownload: Boolean = false
+        toSettings: Boolean = false
     ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             if (action) {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white_base))
                 setAction("IZINKAN") {
-                    if (isDownload) {
+                    if (toSettings) {
                         val intent = Intent()
                         intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                         val uri = Uri.fromParts("package", context.packageName, null)
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(60, 0, 60, 50)
+        layoutParams.setMargins(60, 0, 60, 150)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
     }

@@ -628,7 +628,7 @@ class QuranDetailFragment : Fragment() {
                     binding.root,
                     "Izinkan untuk mengakses penyimpanan",
                     true,
-                    isDownload = true
+                    toSettings = true
                 )
             }
 
@@ -654,7 +654,7 @@ class QuranDetailFragment : Fragment() {
                     binding.root,
                     "Perizinan > File dan Media > Izinkan akses ke media saja",
                     true,
-                    isDownload = true
+                    toSettings = true
                 )
             }
 
@@ -694,7 +694,7 @@ class QuranDetailFragment : Fragment() {
                     binding.root,
                     "Izinkan untuk mengakses penyimpanan",
                     true,
-                    isDownload = true
+                    toSettings = true
                 )
             }
 
