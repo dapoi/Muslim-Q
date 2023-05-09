@@ -38,6 +38,7 @@
     <string name="alarm">alarm</string>
     <string name="bookmark">Baca Nanti</string>
     <string name="bookmark_empty">Tidak ada surah yang disimpan</string>
+    <string name="tv_city_and_total_ayah">%1$s • %2$d ayat</string>
     <string name="delete_all">Hapus Semua</string>
     <string name="are_you_sure">Apakah Anda yakin ingin menghapus?</string>
     <string name="delete">Hapus</string>

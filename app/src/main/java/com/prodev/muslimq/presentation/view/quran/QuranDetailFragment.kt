@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.*
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.content.res.Configuration
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
@@ -23,8 +22,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.utils.Resource
@@ -38,6 +42,7 @@ import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
@@ -79,14 +84,63 @@ class QuranDetailFragment : Fragment() {
     private var surahName: String = ""
     private var surahMeaning: String = ""
     private var surahDesc: String = ""
-    private var config: Configuration = Configuration()
-    private var is600dp: Boolean = false
+    private var currentPage = 1
 
     private val requestPermissionStorage = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT).show()
+            (activity as MainActivity).customSnackbar(
+                state = true,
+                context = requireContext(),
+                view = binding.root,
+                message = "Izin penyimpanan diberikan",
+                isDetailScreen = true
+            )
+        } else {
+            (activity as MainActivity).customSnackbar(
+                state = false,
+                context = requireContext(),
+                view = binding.root,
+                message = "Izin penyimpanan ditolak",
+                isDetailScreen = true
+            )
+        }
+    }
+
+    private val requestPermissionStorageLower = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permission ->
+        when {
+            permission[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false -> {
+                (activity as MainActivity).customSnackbar(
+                    state = true,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin penyimpanan diberikan",
+                    isDetailScreen = true
+                )
+            }
+
+            permission[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false -> {
+                (activity as MainActivity).customSnackbar(
+                    state = true,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin penyimpanan diberikan",
+                    isDetailScreen = true
+                )
+            }
+
+            else -> {
+                (activity as MainActivity).customSnackbar(
+                    state = false,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin penyimpanan ditolak",
+                    isDetailScreen = true
+                )
+            }
         }
     }
 
@@ -113,9 +167,6 @@ class QuranDetailFragment : Fragment() {
         if (isFirstLoad) {
             setAdapter()
             setViewModel()
-
-            config = resources.configuration
-            is600dp = config.smallestScreenWidthDp >= 600
         }
 
         surahDesc = arguments?.getString(SURAH_DESC) ?: ""
@@ -137,8 +188,7 @@ class QuranDetailFragment : Fragment() {
 
     private fun setAdapter() {
         detailAdapter = QuranDetailAdapter(
-            context = requireActivity(),
-            surahName = arguments?.getString(SURAH_NAME) ?: ""
+            context = requireActivity(), surahName = arguments?.getString(SURAH_NAME) ?: ""
         )
 
         binding.rvAyah.apply {
@@ -148,7 +198,6 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun setViewModel() {
         val id = arguments?.getInt(SURAH_NUMBER)
         id?.let { idSurah ->
@@ -205,22 +254,19 @@ class QuranDetailFragment : Fragment() {
 
                         else -> {
                             stateLoading(false)
-                            enableActionBarFunctionality()
-                            toolbar.title = result.data?.namaLatin
+                            clNoInternet.visibility = View.GONE
 
+                            val revealed =
+                                result.data!!.tempatTurun.replaceFirstChar { it.uppercase() }
+                            val totalAyah = result.data!!.jumlahAyat
+
+                            toolbar.title = result.data?.namaLatin
                             surahName = result.data!!.namaLatin
                             surahMeaning = result.data!!.artiQuran
-
-                            clNoInternet.visibility = View.GONE
                             tvSurahName.text = result.data?.namaLatin
                             tvAyahMeaning.text = result.data?.artiQuran
-                            tvCityAndTotalAyah.text = "${
-                                result.data?.tempatTurun?.replaceFirstChar {
-                                    if (it.isLowerCase()) it.titlecase(
-                                        Locale.getDefault()
-                                    ) else it.toString()
-                                }
-                            } • ${result.data?.jumlahAyat} ayat"
+                            tvCityAndTotalAyah.text =
+                                getString(R.string.tv_city_and_total_ayah, revealed, totalAyah)
 
                             val ayahNumber = arguments?.getInt(AYAH_NUMBER)
                             val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
@@ -228,34 +274,14 @@ class QuranDetailFragment : Fragment() {
                             ayahs = ArrayList<Ayat>()
                             result.data?.ayat?.let { ayahs.addAll(it) }
 
+                            enableActionBarFunctionality(ayahs)
+
                             val isBismillah = checkFirstAyahIsBismillah(ayahs)
                             if (isBismillah) {
                                 ayahs.removeAt(0)
-                                detailAdapter.setList(ayahs)
-                                if (ayahNumber != null && isFromLastRead == true && !isResume) {
-                                    appBar.setExpanded(false, true)
-                                    rvAyah.scrollToPosition(ayahNumber.minus(2))
-                                    detailAdapter.setAnimItem(true, ayahNumber.minus(2))
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Melanjutkan dari ayat $ayahNumber",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    isResume = true
-                                }
+                                showListAyah(ayahs, 2, appBar, rvAyah, ayahNumber, isFromLastRead)
                             } else {
-                                detailAdapter.setList(ayahs)
-                                if (ayahNumber != null && isFromLastRead == true && !isResume) {
-                                    appBar.setExpanded(false, true)
-                                    rvAyah.scrollToPosition(ayahNumber.minus(1))
-                                    detailAdapter.setAnimItem(true, ayahNumber.minus(1))
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Melanjutkan dari ayat $ayahNumber",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    isResume = true
-                                }
+                                showListAyah(ayahs, 1, appBar, rvAyah, ayahNumber, isFromLastRead)
                             }
                             rvAyah.visibility = View.VISIBLE
 
@@ -265,13 +291,16 @@ class QuranDetailFragment : Fragment() {
                                 ivBookmark.setOnClickListener {
                                     bookmarked = !bookmarked
                                     setBookmark(bookmarked)
-                                    detailViewModel.insertToBookmark(quranDetailEntity, bookmarked)
+                                    detailViewModel.insertToBookmark(
+                                        quranDetailEntity, bookmarked
+                                    )
                                     if (bookmarked) {
                                         (activity as MainActivity).customSnackbar(
                                             state = true,
                                             context = requireContext(),
                                             view = binding.root,
                                             message = "Berhasil ditambahkan ke \"Baca Nanti\"",
+                                            isDetailScreen = true
                                         )
                                     } else {
                                         (activity as MainActivity).customSnackbar(
@@ -279,6 +308,7 @@ class QuranDetailFragment : Fragment() {
                                             context = requireContext(),
                                             view = binding.root,
                                             message = "Berhasil dihapus dari \"Baca Nanti\"",
+                                            isDetailScreen = true
                                         )
                                     }
                                 }
@@ -376,9 +406,7 @@ class QuranDetailFragment : Fragment() {
                                 mpAyah.release()
                                 dismiss()
                                 Toast.makeText(
-                                    requireContext(),
-                                    "Gagal memutar audio",
-                                    Toast.LENGTH_SHORT
+                                    requireContext(), "Gagal memutar audio", Toast.LENGTH_SHORT
                                 ).show()
                                 false
                             }
@@ -397,16 +425,77 @@ class QuranDetailFragment : Fragment() {
                     }
                 } else {
                     Toast.makeText(
-                        requireContext(),
-                        "Tidak ada koneksi internet",
-                        Toast.LENGTH_SHORT
+                        requireContext(), "Tidak ada koneksi internet", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
         }
     }
 
-    private fun enableActionBarFunctionality() {
+    private fun showListAyah(
+        ayahs: ArrayList<Ayat>,
+        index: Int,
+        appBar: AppBarLayout,
+        rvAyah: RecyclerView,
+        ayahNumber: Int?,
+        isFromLastRead: Boolean?
+    ) {
+        detailAdapter.setList(ayahs.subList(0, 3))
+        showPagination(ayahs, rvAyah)
+        if (ayahNumber != null && isFromLastRead == true && !isResume) {
+            detailAdapter.setList(ayahs, true)
+            appBar.setExpanded(false, true)
+            rvAyah.scrollToPosition(ayahNumber.minus(index))
+            detailAdapter.setAnimItem(true, ayahNumber.minus(index))
+            Toast.makeText(
+                requireContext(), "Melanjutkan dari ayat $ayahNumber", Toast.LENGTH_SHORT
+            ).show()
+            isResume = true
+        }
+    }
+
+    private fun showPagination(ayahs: ArrayList<Ayat>, rvAyah: RecyclerView) {
+        val dataSize = ayahs.size
+        with(rvAyah) {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    val layoutManager = (layoutManager as LinearLayoutManager)
+                    val visibleItemCount = layoutManager.childCount
+                    val totalItemCount = layoutManager.itemCount
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                    if (!detailAdapter.getLoading() && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                        // Show the progress bar and load more data
+                        if (totalItemCount != dataSize && dataSize != 3) {
+                            detailAdapter.showLoading()
+                            loadMoreData(ayahs.subList(3, dataSize))
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    private fun loadMoreData(ayahs: List<Ayat>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                delay(500)
+                val newData = generateNewData(ayahs, currentPage)
+                detailAdapter.setList(newData)
+                detailAdapter.hideLoading()
+                currentPage++
+            }
+        }
+    }
+
+    private fun generateNewData(ayahs: List<Ayat>, currentPage: Int): List<Ayat> {
+        return ((currentPage - 1) * 3 until currentPage * 3).filter { it < ayahs.size }
+            .map { ayahs[it] }
+    }
+
+    private fun enableActionBarFunctionality(ayahs: ArrayList<Ayat>) {
         binding.apply {
             ivFontSetting.setOnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -417,7 +506,7 @@ class QuranDetailFragment : Fragment() {
             }
 
             ivMore.setOnClickListener {
-                showMenuOption()
+                showMenuOption(ayahs)
             }
         }
     }
@@ -495,7 +584,7 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
-    private fun showMenuOption() {
+    private fun showMenuOption(ayahs: ArrayList<Ayat>) {
         val mp3File = getString(
             R.string.fileName,
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
@@ -517,7 +606,7 @@ class QuranDetailFragment : Fragment() {
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_search -> {
-                        showSearchDialog()
+                        showSearchDialog(ayahs)
                         true
                     }
 
@@ -539,7 +628,8 @@ class QuranDetailFragment : Fragment() {
                                         state = false,
                                         context = requireContext(),
                                         view = binding.root,
-                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}."
+                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}",
+                                        isDetailScreen = true
                                     )
                                 }
                                 dismiss()
@@ -558,13 +648,14 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
-    private fun showSearchDialog() {
+    private fun showSearchDialog(ayahs: ArrayList<Ayat>) {
         val dialogLayout = layoutInflater.inflate(R.layout.dialog_search_ayah, null)
         val etSearch = dialogLayout.findViewById<EditText>(R.id.et_ayah)
         val btnSearch = dialogLayout.findViewById<Button>(R.id.btn_search)
         with(curvedDialog.create()) {
             setView(dialogLayout)
             btnSearch.setOnClickListener {
+                detailAdapter.setList(ayahs, true)
                 val query = etSearch.text.toString()
                 val position = detailAdapter.getAyahs().indexOfFirst {
                     it.ayatNumber.toString() == query
@@ -578,9 +669,7 @@ class QuranDetailFragment : Fragment() {
                     dismiss()
                 } else {
                     Toast.makeText(
-                        requireContext(),
-                        "Ayat tidak ditemukan",
-                        Toast.LENGTH_SHORT
+                        requireContext(), "Ayat tidak ditemukan", Toast.LENGTH_SHORT
                     ).show()
                 }
             }
@@ -628,7 +717,8 @@ class QuranDetailFragment : Fragment() {
                     binding.root,
                     "Izinkan untuk mengakses penyimpanan",
                     true,
-                    toSettings = true
+                    toSettings = true,
+                    isDetailScreen = true
                 )
             }
 
@@ -649,12 +739,13 @@ class QuranDetailFragment : Fragment() {
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
                 (activity as MainActivity).customSnackbar(
-                    true,
-                    requireContext(),
-                    binding.root,
-                    "Perizinan > File dan Media > Izinkan akses ke media saja",
-                    true,
-                    toSettings = true
+                    state = false,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izinkan penyimpanan untuk mengakses fitur ini",
+                    action = true,
+                    toSettings = true,
+                    isDetailScreen = true
                 )
             }
 
@@ -666,20 +757,17 @@ class QuranDetailFragment : Fragment() {
 
     private fun checkPermissionStorageLower(audio: String) {
         val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
 
-        val permissionReadGranted = ContextCompat.checkSelfPermission(
+        val permissionStorageGranted = ContextCompat.checkSelfPermission(
             requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
-        ) == PERMISSION_GRANTED
-
-        val permissionWriteGranted = ContextCompat.checkSelfPermission(
+        ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
             requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PERMISSION_GRANTED
 
         when {
-            permissionReadGranted && permissionWriteGranted -> {
+            permissionStorageGranted -> {
                 checkAudioState(audio)
             }
 
@@ -689,34 +777,18 @@ class QuranDetailFragment : Fragment() {
                 requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE
             ) -> {
                 (activity as MainActivity).customSnackbar(
-                    true,
-                    requireContext(),
-                    binding.root,
-                    "Izinkan untuk mengakses penyimpanan",
-                    true,
-                    toSettings = true
+                    state = false,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izinkan penyimpanan untuk mengakses fitur ini",
+                    action = true,
+                    toSettings = true,
+                    isDetailScreen = true
                 )
             }
 
             else -> {
-                ActivityCompat.requestPermissions(
-                    requireActivity(), permissions, 1
-                )
-            }
-        }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            val write = grantResults[0] == PERMISSION_GRANTED
-            val read = grantResults[1] == PERMISSION_GRANTED
-            if (write && read) {
-                Toast.makeText(requireContext(), "Perizinan diberikan", Toast.LENGTH_SHORT)
-                    .show()
+                requestPermissionStorageLower.launch(permissions)
             }
         }
     }
@@ -790,8 +862,7 @@ class QuranDetailFragment : Fragment() {
 
                     val values = ContentValues().apply {
                         put(
-                            MediaStore.Downloads.DISPLAY_NAME,
-                            "${binding.tvSurahName.text}.mp3"
+                            MediaStore.Downloads.DISPLAY_NAME, "${binding.tvSurahName.text}.mp3"
                         )
                         put(MediaStore.Downloads.MIME_TYPE, "audio/mpeg")
                         put(MediaStore.Downloads.RELATIVE_PATH, relativeLocation)
@@ -827,7 +898,8 @@ class QuranDetailFragment : Fragment() {
                         state = true,
                         context = requireContext(),
                         view = binding.root,
-                        message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}."
+                        message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
+                        isDetailScreen = true
                     )
                 }
             } catch (e: Exception) {
@@ -837,7 +909,8 @@ class QuranDetailFragment : Fragment() {
                         state = false,
                         context = requireContext(),
                         view = binding.root,
-                        message = "Gagal mengunduh Surah ${binding.tvSurahName.text}."
+                        message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
+                        isDetailScreen = true
                     )
                 }
             }
@@ -874,8 +947,7 @@ class QuranDetailFragment : Fragment() {
                 Environment.DIRECTORY_DOWNLOADS, "MuslimQ/${binding.tvSurahName.text}.mp3"
             )
 
-        val downloadManager =
-            context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = downloadManager.enqueue(request)
 
         val downloadCompleteReceiver = object : BroadcastReceiver() {
@@ -893,7 +965,8 @@ class QuranDetailFragment : Fragment() {
                                 state = true,
                                 context = requireContext(),
                                 view = binding.root,
-                                message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}."
+                                message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
+                                isDetailScreen = true
                             )
                         } else {
                             dialog?.dismiss()
@@ -901,7 +974,8 @@ class QuranDetailFragment : Fragment() {
                                 state = false,
                                 context = requireContext(),
                                 view = binding.root,
-                                message = "Gagal mengunduh Surah ${binding.tvSurahName.text}."
+                                message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
+                                isDetailScreen = true
                             )
                         }
                     }
@@ -1072,6 +1146,12 @@ class QuranDetailFragment : Fragment() {
         super.onPause()
 
         fontSize?.let { size -> dataStoreViewModel.saveAyahSize(size) }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        detailViewModel.getQuranDetail(surahId!!).removeObservers(viewLifecycleOwner)
     }
 
     override fun onDestroy() {

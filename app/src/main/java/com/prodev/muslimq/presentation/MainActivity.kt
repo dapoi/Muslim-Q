@@ -95,7 +95,8 @@ class MainActivity : AppCompatActivity() {
         view: View,
         message: String,
         action: Boolean = false,
-        toSettings: Boolean = false
+        toSettings: Boolean = false,
+        isDetailScreen: Boolean = false
     ) {
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
@@ -136,7 +137,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(60, 0, 60, 150)
+        layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 50)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
     }

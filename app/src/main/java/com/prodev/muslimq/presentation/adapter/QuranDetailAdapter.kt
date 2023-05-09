@@ -9,22 +9,40 @@ import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.databinding.ItemListAyahBinding
+import com.prodev.muslimq.databinding.ItemLoadingBinding
 
 class QuranDetailAdapter(
     private val context: Context,
     private val surahName: String
-) : RecyclerView.Adapter<QuranDetailAdapter.DetailViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var ayahs = ArrayList<Ayat>()
 
     private var textSize: Int = 26
+    private var isLoading: Boolean = false
     private var isTagging: Boolean = false
     private var ayahPosition: Int = 0
 
-    fun setList(ayahs: List<Ayat>) {
-        this.ayahs.clear()
+    var taggingQuran: ((Ayat) -> Unit?)? = null
+    var tafsirQuran: ((Ayat) -> Unit?)? = null
+    var audioAyah: ((Ayat) -> Unit?)? = null
+
+    fun setList(ayahs: List<Ayat>, clearData: Boolean = false) {
+        if (clearData) {
+            this.ayahs.clear()
+        }
         this.ayahs.addAll(ayahs)
         notifyDataSetChanged()
+    }
+
+    fun showLoading() {
+        isLoading = true
+        notifyItemInserted(ayahs.size)
+    }
+
+    fun hideLoading() {
+        isLoading = false
+        notifyItemRemoved(ayahs.size)
     }
 
     fun getAyahs(): List<Ayat> = ayahs
@@ -40,22 +58,55 @@ class QuranDetailAdapter(
         notifyDataSetChanged()
     }
 
-    var taggingQuran: ((Ayat) -> Unit?)? = null
-    var tafsirQuran: ((Ayat) -> Unit?)? = null
-    var audioAyah: ((Ayat) -> Unit?)? = null
+    fun getLoading(): Boolean = isLoading
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DetailViewHolder {
-        return DetailViewHolder(
-            ItemListAyahBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_ITEM -> DetailViewHolder(
+                ItemListAyahBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
             )
-        )
+
+            VIEW_TYPE_LOADING -> LoadingViewHolder(
+                ItemLoadingBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
     }
 
-    override fun getItemCount(): Int = ayahs.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        return when (holder.itemViewType) {
+            VIEW_TYPE_ITEM -> {
+                val ayat = ayahs[position]
+                (holder as DetailViewHolder).bind(ayat)
+            }
 
-    override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
-        holder.bind(ayahs[position])
+            VIEW_TYPE_LOADING -> {
+                (holder as LoadingViewHolder).pbPaging.isIndeterminate = true
+            }
+
+            else -> throw IllegalArgumentException("Invalid view type")
+        }
+    }
+
+    override fun getItemCount(): Int = ayahs.size + if (isLoading) 1 else 0
+
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading && position == ayahs.size) VIEW_TYPE_LOADING else VIEW_TYPE_ITEM
+    }
+
+    inner class LoadingViewHolder(
+        val binding: ItemLoadingBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        var pbPaging = binding.progressBar
     }
 
     inner class DetailViewHolder(val binding: ItemListAyahBinding) :
@@ -114,5 +165,10 @@ class QuranDetailAdapter(
                 shareIntent, "Bagikan ayat ini"
             )
         )
+    }
+
+    companion object {
+        private const val VIEW_TYPE_ITEM = 0
+        private const val VIEW_TYPE_LOADING = 1
     }
 }
