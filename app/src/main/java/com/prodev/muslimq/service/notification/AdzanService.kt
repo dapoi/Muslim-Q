@@ -15,10 +15,19 @@ class AdzanService : Service() {
 
         intent?.getBooleanExtra(IS_SHUBUH, false)?.let { isShubuh ->
             val audio = if (isShubuh) R.raw.adzan_shubuh else R.raw.adzan_regular
+            val stopAdzan = intent.getBooleanExtra(AdzanReceiver.STOP_ADZAN, false)
 
             mediaPlayer = MediaPlayer.create(this, audio).apply {
                 start()
                 setOnCompletionListener {
+                    stop()
+                    release()
+                    stopSelf()
+                }
+
+                if (stopAdzan) {
+                    stop()
+                    release()
                     stopSelf()
                 }
             }

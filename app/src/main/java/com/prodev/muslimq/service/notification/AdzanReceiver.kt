@@ -27,6 +27,7 @@ class AdzanReceiver : BroadcastReceiver() {
         val serviceIntent = Intent(context, AdzanService::class.java).apply {
             putExtra(IS_SHUBUH, isShubuh)
         }
+
         context.startService(serviceIntent)
     }
 
@@ -45,9 +46,10 @@ class AdzanReceiver : BroadcastReceiver() {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_notif_circle)
+            .setContentIntent(pendingIntent)
             .setContentTitle(adzanName)
+            .setWhen(System.currentTimeMillis())
             .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
@@ -130,6 +132,7 @@ class AdzanReceiver : BroadcastReceiver() {
         const val ADZAN_CODE = "adzan_code"
         const val ADZAN_NAME = "adzan_name"
         const val IS_SHUBUH = "is_shubuh"
+        const val STOP_ADZAN = "stop_adzan"
 
         const val FROM_NOTIFICATION = "from_notification"
         private const val CHANNEL_ID = "prayer_time_channel"

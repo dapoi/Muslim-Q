@@ -100,10 +100,10 @@ class ShalatFragment : Fragment() {
         dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
         if (isGranted) {
             (activity as MainActivity).customSnackbar(
-                true,
-                requireContext(),
-                binding.root,
-                "${adzanLowerCase(stateAdzanName)} diaktifkan",
+                state = true,
+                context = requireContext(),
+                view = binding.root,
+                message = "${adzanLowerCase(stateAdzanName)} diaktifkan",
             )
         }
     }
@@ -112,17 +112,19 @@ class ShalatFragment : Fragment() {
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
-            Toast.makeText(
-                requireContext(),
-                "GPS diaktifkan",
-                Toast.LENGTH_SHORT
-            ).show()
+            (activity as MainActivity).customSnackbar(
+                state = true,
+                context = requireContext(),
+                view = binding.root,
+                message = "GPS diaktifkan"
+            )
         } else {
-            Toast.makeText(
-                requireContext(),
-                "GPS tidak aktif",
-                Toast.LENGTH_SHORT
-            ).show()
+            (activity as MainActivity).customSnackbar(
+                state = false,
+                context = requireContext(),
+                view = binding.root,
+                message = "GPS tidak diaktifkan",
+            )
         }
     }
 
@@ -131,29 +133,32 @@ class ShalatFragment : Fragment() {
     ) { permissions ->
         when {
             permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-                Toast.makeText(
-                    requireContext(),
-                    "Izin lokasi diberikan",
-                    Toast.LENGTH_SHORT
-                ).show()
+                (activity as MainActivity).customSnackbar(
+                    state = true,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin lokasi diberikan",
+                )
                 showDialog()
             }
 
             permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-                Toast.makeText(
-                    requireContext(),
-                    "Izin lokasi diberikan",
-                    Toast.LENGTH_SHORT
-                ).show()
+                (activity as MainActivity).customSnackbar(
+                    state = true,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin lokasi diberikan",
+                )
                 showDialog()
             }
 
             else -> {
-                Toast.makeText(
-                    requireContext(),
-                    "Izin lokasi ditolak",
-                    Toast.LENGTH_SHORT
-                ).show()
+                (activity as MainActivity).customSnackbar(
+                    state = false,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "Izin lokasi ditolak",
+                )
             }
         }
     }
@@ -264,7 +269,7 @@ class ShalatFragment : Fragment() {
                     state = false,
                     context = requireContext(),
                     view = binding.root,
-                    message = "Izinkan akses lokasi untuk mengaktifkan fitur ini",
+                    message = "Izinkan lokasi untuk mengakses fitur ini",
                     action = true,
                     toSettings = true
                 )
@@ -545,13 +550,13 @@ class ShalatFragment : Fragment() {
                             context = requireContext(),
                             adzanName = adzanName,
                             adzanTime = adzanTime,
-                            adzanCode = index,
+                            adzanCode = index + 1,
                             isShubuh = adzanName == "Adzan Shubuh"
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
                             context = requireContext(),
-                            adzanCode = index
+                            adzanCode = index + 1
                         )
                     }
                 }
@@ -605,11 +610,11 @@ class ShalatFragment : Fragment() {
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     adzanSwitch.isChecked = false
                     (activity as MainActivity).customSnackbar(
-                        true,
-                        requireContext(),
-                        binding.root,
-                        "Izinkan notifikasi untuk mengaktifkan adzan",
-                        true
+                        state = false,
+                        context = requireContext(),
+                        view = binding.root,
+                        message = "Izinkan notifikasi untuk mengaktifkan adzan",
+                        action = true
                     )
                 }
 

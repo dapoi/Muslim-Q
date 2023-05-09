@@ -20,6 +20,7 @@ import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.FROM_NOTIFICATION
+import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.STOP_ADZAN
 import com.prodev.muslimq.service.notification.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,7 +72,9 @@ class MainActivity : AppCompatActivity() {
 
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
         if (fromNotif) {
-            stopService(Intent(this, AdzanService::class.java))
+            val intent = Intent(this, AdzanService::class.java)
+            intent.putExtra(STOP_ADZAN, true)
+            stopService(intent)
         }
     }
 
