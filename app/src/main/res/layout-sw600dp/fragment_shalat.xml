@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="10dp"
     android:background="@color/white_base"
+    android:paddingHorizontal="10dp"
     tools:context=".presentation.view.shalat.ShalatFragment">
 
     <com.simform.refresh.SSPullToRefreshLayout
@@ -173,6 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/cl_info_shalat" />
 
                 <com.facebook.shimmer.ShimmerFrameLayout

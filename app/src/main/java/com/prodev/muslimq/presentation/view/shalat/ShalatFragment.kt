@@ -496,7 +496,6 @@ class ShalatFragment : Fragment() {
                 tvMaghribTime.text = maghribWithZone
                 tvIsyaTime.text = isyaWithZone
             }
-            clNegativeCase.visibility = View.GONE
         }
     }
 
@@ -541,19 +540,18 @@ class ShalatFragment : Fragment() {
                 }
 
                 listAdzanTime[adzanName]?.let { adzanTime ->
-                    val adzanCode = adzanTime.hashCode()
                     if (switch.isChecked) {
                         adzanReceiver.setAdzanReminder(
                             context = requireContext(),
                             adzanName = adzanName,
                             adzanTime = adzanTime,
-                            adzanCode = adzanCode,
+                            adzanCode = index,
                             isShubuh = adzanName == "Adzan Shubuh"
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
                             context = requireContext(),
-                            adzanCode = adzanCode
+                            adzanCode = index
                         )
                     }
                 }
@@ -593,7 +591,7 @@ class ShalatFragment : Fragment() {
     private fun checkNotificationPermissionWhenLaunch(
         adzanName: String,
         isChecked: Boolean,
-        adzanSwitch: CompoundButton
+        adzanSwitch: CompoundButton,
     ) {
         stateAdzanName = adzanName
         if (Build.VERSION.SDK_INT >= 33) {
@@ -639,7 +637,7 @@ class ShalatFragment : Fragment() {
                 false,
                 requireContext(),
                 binding.root,
-                "$lowerCaseAdzanName dinonaktifkan",
+                "$lowerCaseAdzanName dimatikan",
             )
         }
     }
