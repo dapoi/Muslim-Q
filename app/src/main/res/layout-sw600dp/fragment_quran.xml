@@ -223,7 +223,7 @@
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
                 android:overScrollMode="never"
-                android:paddingBottom="110dp"
+                android:paddingBottom="120dp"
                 tools:listitem="@layout/item_list_surah" />
 
         </com.simform.refresh.SSPullToRefreshLayout>

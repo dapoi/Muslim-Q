@@ -73,8 +73,11 @@
         android:id="@+id/rv_doa"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:overScrollMode="never"
-        android:padding="10dp"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="120dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_header"
         tools:listitem="@layout/item_list_doa" />

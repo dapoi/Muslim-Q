@@ -132,7 +132,7 @@ class ShalatCityFragment : Fragment() {
                                 stateNoInternetView(false)
                                 stateLoading(false)
                                 cityAdapter.setList(it.data!!)
-                            }, 500)
+                            }, 700)
                         }
                         is Resource.Error -> {
                             stateNoInternetView(true)

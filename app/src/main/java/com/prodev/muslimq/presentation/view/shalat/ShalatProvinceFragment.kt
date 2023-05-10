@@ -1,6 +1,8 @@
 package com.prodev.muslimq.presentation.view.shalat
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -105,16 +107,23 @@ class ShalatProvinceFragment : Fragment() {
         shalatViewModel.getAllProvince().observe(viewLifecycleOwner) {
             with(binding) {
                 when (it) {
-                    is Resource.Loading -> stateLoading(true)
-                    is Resource.Success -> {
-                        stateLoading(false)
-                        provinceAdapter.setList(it.data!!)
-                        clNoInternet.visibility = View.GONE
+                    is Resource.Loading -> {
+                        stateNoInternetView(false)
+                        stateLoading(true)
                     }
+
+                    is Resource.Success -> {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            stateNoInternetView(false)
+                            stateLoading(false)
+                            provinceAdapter.setList(it.data!!)
+                        }, 800)
+                    }
+
                     is Resource.Error -> {
+                        stateNoInternetView(true)
                         stateLoading(false)
                         rvProvince.visibility = View.GONE
-                        clNoInternet.visibility = View.VISIBLE
                     }
                 }
             }
@@ -131,5 +140,9 @@ class ShalatProvinceFragment : Fragment() {
                 rvProvince.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun stateNoInternetView(state: Boolean) {
+        binding.clNoInternet.visibility = if (state) View.VISIBLE else View.GONE
     }
 }

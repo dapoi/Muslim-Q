@@ -1,12 +1,10 @@
 package com.prodev.muslimq.presentation.view.others.bookmark
 
-import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
@@ -14,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
+import com.prodev.muslimq.databinding.DialogDeleteAllBinding
 import com.prodev.muslimq.databinding.FragmentBookmarkBinding
 import com.prodev.muslimq.presentation.adapter.QuranBookmarkAdapter
 import com.prodev.muslimq.presentation.view.quran.QuranDetailFragment
@@ -50,7 +49,6 @@ class BookmarkFragment : Fragment() {
         }
     }
 
-    @SuppressLint("InflateParams")
     private fun showMenuOption() {
         val popupMenu = PopupMenu(requireContext(), binding.ivMore)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -60,15 +58,15 @@ class BookmarkFragment : Fragment() {
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.action_delete_all -> {
-                    val builder =AlertDialog.Builder(
+                    val builder = AlertDialog.Builder(
                         requireContext(),
                         R.style.CurvedDialog,
                     ).create()
-                    val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
-                    val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
-                    val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                    val dialogLayout = DialogDeleteAllBinding.inflate(layoutInflater)
+                    val tvConfirm = dialogLayout.tvConfirm
+                    val tvCancel = dialogLayout.tvCancel
                     with(builder) {
-                        setView(dialogLayout)
+                        setView(dialogLayout.root)
                         tvConfirm.setOnClickListener {
                             quranBookmarkViewModel.deleteAllBookmark()
                             dismiss()
@@ -79,6 +77,7 @@ class BookmarkFragment : Fragment() {
                     }
                     true
                 }
+
                 else -> false
             }
         }

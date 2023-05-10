@@ -33,6 +33,16 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.databinding.DialogAudioAyahBinding
+import com.prodev.muslimq.databinding.DialogDeleteAllBinding
+import com.prodev.muslimq.databinding.DialogDownloadBinding
+import com.prodev.muslimq.databinding.DialogFontSettingBinding
+import com.prodev.muslimq.databinding.DialogFontSettingRadioBinding
+import com.prodev.muslimq.databinding.DialogInfoSurahBinding
+import com.prodev.muslimq.databinding.DialogLoadingBinding
+import com.prodev.muslimq.databinding.DialogPlayerActionBinding
+import com.prodev.muslimq.databinding.DialogSearchAyahBinding
+import com.prodev.muslimq.databinding.DialogTaggingAyahBinding
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
@@ -73,12 +83,12 @@ class QuranDetailFragment : Fragment() {
     private var progressDialog: ProgressBar? = null
     private var tvProgress: TextView? = null
 
-    private var ayahs = ArrayList<Ayat>()
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
     private var isFirstLoad = false
     private var isResume = false
+    private var sizeHasDone = false
 
     private var surahId: Int? = null
     private var surahName: String = ""
@@ -175,13 +185,13 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun initProgressDialog() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_download, null)
-        val tvTitle = dialogLayout.findViewById<TextView>(R.id.tv_title_download)
+        val dialogLayout = DialogDownloadBinding.inflate(layoutInflater)
+        val tvTitle = dialogLayout.tvTitleDownload
         tvTitle.text = getString(R.string.download_surah, binding.tvSurahName.text)
-        progressDialog = dialogLayout.findViewById(R.id.progress_bar)
-        tvProgress = dialogLayout.findViewById(R.id.tv_progress)
+        progressDialog = dialogLayout.progressBar
+        tvProgress = dialogLayout.tvProgress
         dialog = curvedDialog.create().apply {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             setCancelable(false)
         }
     }
@@ -240,98 +250,95 @@ class QuranDetailFragment : Fragment() {
                         })
                     }
 
-                    when {
-                        result is Resource.Loading && result.data == null -> {
-                            stateLoading(true)
-                        }
+                    val isLoading = result is Resource.Loading && result.data == null
+                    val isError = result is Resource.Error && result.data == null
 
-                        result is Resource.Error && result.data == null -> {
-                            stateLoading(false)
-                            clNoInternet.visibility = View.VISIBLE
-                            clSurah.visibility = View.GONE
-                            clSound.visibility = View.GONE
-                        }
+                    if (isLoading) {
+                        stateLoading(true)
+                    } else if (isError) {
+                        stateLoading(false)
+                        clNoInternet.visibility = View.VISIBLE
+                        clSurah.visibility = View.GONE
+                        clSound.visibility = View.GONE
+                    } else {
+                        stateLoading(false)
+                        clNoInternet.visibility = View.GONE
 
-                        else -> {
-                            stateLoading(false)
-                            clNoInternet.visibility = View.GONE
+                        val dataSurah = result.data!!
 
-                            val revealed =
-                                result.data!!.tempatTurun.replaceFirstChar { it.uppercase() }
-                            val totalAyah = result.data!!.jumlahAyat
+                        // set data
+                        val ayahs = ArrayList<Ayat>().apply { addAll(dataSurah.ayat) }
+                        enableActionBarFunctionality(ayahs)
 
-                            toolbar.title = result.data?.namaLatin
-                            surahName = result.data!!.namaLatin
-                            surahMeaning = result.data!!.artiQuran
-                            tvSurahName.text = result.data?.namaLatin
-                            tvAyahMeaning.text = result.data?.artiQuran
-                            tvCityAndTotalAyah.text =
-                                getString(R.string.tv_city_and_total_ayah, revealed, totalAyah)
+                        // set view data
+                        val place = dataSurah.tempatTurun.replaceFirstChar { it.uppercase() }
+                        val totalAyah = dataSurah.jumlahAyat
+                        val toolbarTitle = dataSurah.namaLatin
+                        surahName = dataSurah.namaLatin
+                        surahMeaning = dataSurah.artiQuran
 
-                            val ayahNumber = arguments?.getInt(AYAH_NUMBER)
-                            val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
+                        toolbar.title = toolbarTitle
+                        tvSurahName.text = surahName
+                        tvAyahMeaning.text = surahMeaning
+                        tvCityAndTotalAyah.text =
+                            getString(R.string.tv_city_and_total_ayah, place, totalAyah)
 
-                            ayahs = ArrayList<Ayat>()
-                            result.data?.ayat?.let { ayahs.addAll(it) }
+                        // set list
+                        val ayahNumber = arguments?.getInt(AYAH_NUMBER)
+                        val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
+                        val isBismillah = checkFirstAyahIsBismillah(ayahs)
+                        if (isBismillah) ayahs.removeAt(0)
 
-                            enableActionBarFunctionality(ayahs)
+                        showListAyah(
+                            ayahs,
+                            if (isBismillah) 2 else 1,
+                            appBar,
+                            rvAyah,
+                            ayahNumber,
+                            isFromLastRead
+                        )
 
-                            val isBismillah = checkFirstAyahIsBismillah(ayahs)
-                            if (isBismillah) {
-                                ayahs.removeAt(0)
-                                showListAyah(ayahs, 2, appBar, rvAyah, ayahNumber, isFromLastRead)
+                        // setup bookmark
+                        var bookmarked = dataSurah.isBookmarked
+                        setBookmark(bookmarked)
+
+                        ivBookmark.setOnClickListener {
+                            bookmarked = !bookmarked
+                            setBookmark(bookmarked)
+                            detailViewModel.insertToBookmark(dataSurah, bookmarked)
+
+                            val snackbarMessage = if (bookmarked) {
+                                "Berhasil ditambahkan ke \"Baca Nanti\""
                             } else {
-                                showListAyah(ayahs, 1, appBar, rvAyah, ayahNumber, isFromLastRead)
+                                "Berhasil dihapus dari \"Baca Nanti\""
                             }
-                            rvAyah.visibility = View.VISIBLE
 
-                            result.data?.let { quranDetailEntity ->
-                                var bookmarked = quranDetailEntity.isBookmarked
-                                setBookmark(bookmarked)
-                                ivBookmark.setOnClickListener {
-                                    bookmarked = !bookmarked
-                                    setBookmark(bookmarked)
-                                    detailViewModel.insertToBookmark(
-                                        quranDetailEntity, bookmarked
-                                    )
-                                    if (bookmarked) {
-                                        (activity as MainActivity).customSnackbar(
-                                            state = true,
-                                            context = requireContext(),
-                                            view = binding.root,
-                                            message = "Berhasil ditambahkan ke \"Baca Nanti\"",
-                                            isDetailScreen = true
-                                        )
-                                    } else {
-                                        (activity as MainActivity).customSnackbar(
-                                            state = false,
-                                            context = requireContext(),
-                                            view = binding.root,
-                                            message = "Berhasil dihapus dari \"Baca Nanti\"",
-                                            isDetailScreen = true
-                                        )
-                                    }
-                                }
+                            (activity as MainActivity).customSnackbar(
+                                state = bookmarked,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = snackbarMessage,
+                                isDetailScreen = true
+                            )
+                        }
 
-                                if (isOnline(requireContext())) {
-                                    clSound.visibility = View.VISIBLE
-                                    setUpMediaPlayer(quranDetailEntity.audio)
-                                } else {
-                                    clSound.visibility = View.GONE
-                                }
-                            }
+                        // setup sound
+                        val isOnline = isOnline(requireContext())
+                        clSound.visibility = if (isOnline) View.VISIBLE else View.GONE
+                        if (isOnline) {
+                            setUpMediaPlayer(dataSurah.audio)
                         }
                     }
                 }
             }
 
+            // tagging
             detailAdapter.taggingQuran = { data ->
-                val dialogLayout = layoutInflater.inflate(R.layout.dialog_tagging_ayah, null)
-                val tvTagging = dialogLayout.findViewById<TextView>(R.id.tv_tagging)
-                val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                val dialogLayout = DialogTaggingAyahBinding.inflate(layoutInflater)
+                val tvTagging = dialogLayout.tvTagging
+                val tvCancel = dialogLayout.tvCancel
                 with(curvedDialog.create()) {
-                    setView(dialogLayout)
-                    show()
+                    setView(dialogLayout.root)
                     tvTagging.setOnClickListener {
                         dataStoreViewModel.saveSurah(
                             surahId!!, surahName, surahMeaning, surahDesc, data.ayatNumber
@@ -347,12 +354,14 @@ class QuranDetailFragment : Fragment() {
                     tvCancel.setOnClickListener {
                         dismiss()
                     }
+                    show()
                 }
             }
 
+            // tafsir
             detailAdapter.tafsirQuran = {
-                val dialogLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-                transparentDialog.setView(dialogLayout)
+                val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
+                transparentDialog.setView(dialogLayout.root)
 
                 detailViewModel.getQuranTafsir(
                     surahId!!, it.ayatNumber
@@ -379,28 +388,28 @@ class QuranDetailFragment : Fragment() {
                 }
             }
 
+            // play audio per ayah
             detailAdapter.audioAyah = {
                 if (audioIsPlaying) {
                     mediaPlayer.pause()
                     binding.ivSound.setImageResource(R.drawable.ic_play)
                 }
-                val dialogLayout = layoutInflater.inflate(R.layout.dialog_audio_ayah, null)
-                val tvAyahArabic = dialogLayout.findViewById<TextView>(R.id.tv_ayah_arabic)
-                val tvAyahLatin = dialogLayout.findViewById<TextView>(R.id.tv_ayah_latin)
-                val tvAudioClose = dialogLayout.findViewById<TextView>(R.id.tv_audio_close)
+                val dialogLayout = DialogAudioAyahBinding.inflate(layoutInflater)
+                val tvAyahArabic = dialogLayout.tvAyahArabic
+                val tvAyahLatin = dialogLayout.tvAyahLatin
+                val tvAudioClose = dialogLayout.tvAudioClose
 
                 if (isOnline(requireContext())) {
                     with(curvedDialog.create()) {
-                        setView(dialogLayout)
+                        tvAyahArabic.text = it.ayatArab
+                        tvAyahLatin.text = it.ayatLatin
                         val mpAyah = MediaPlayer.create(requireContext(), Uri.parse(it.ayatAudio))
                         mpAyah.apply {
                             setOnPreparedListener {
                                 isLooping = false
                                 start()
                             }
-                            setOnCompletionListener {
-                                mpAyah.stop()
-                            }
+                            setOnCompletionListener { mpAyah.stop() }
                             setOnErrorListener { _, _, _ ->
                                 mpAyah.stop()
                                 mpAyah.release()
@@ -411,15 +420,9 @@ class QuranDetailFragment : Fragment() {
                                 false
                             }
                         }
-
-                        tvAyahArabic.text = it.ayatArab
-                        tvAyahLatin.text = it.ayatLatin
-                        tvAudioClose.setOnClickListener {
-                            dismiss()
-                        }
-
+                        tvAudioClose.setOnClickListener { dismiss() }
                         setOnDismissListener { mpAyah.release() }
-
+                        setView(dialogLayout.root)
                         setCanceledOnTouchOutside(false)
                         show()
                     }
@@ -432,6 +435,32 @@ class QuranDetailFragment : Fragment() {
         }
     }
 
+    private fun setBookmark(bookmarkStatus: Boolean) {
+        binding.apply {
+            if (bookmarkStatus) {
+                ivBookmark.setImageResource(R.drawable.ic_bookmark_true)
+            } else {
+                ivBookmark.setImageResource(R.drawable.ic_bookmark_false)
+            }
+        }
+    }
+
+    private fun stateLoading(state: Boolean) {
+        binding.apply {
+            if (state) {
+                progressBar.visibility = View.VISIBLE
+                progressHeader.visibility = View.VISIBLE
+                clSurah.visibility = View.GONE
+                clSound.visibility = View.GONE
+            } else {
+                progressBar.visibility = View.GONE
+                progressHeader.visibility = View.GONE
+                clSurah.visibility = View.VISIBLE
+                clSound.visibility = View.VISIBLE
+            }
+        }
+    }
+
     private fun showListAyah(
         ayahs: ArrayList<Ayat>,
         index: Int,
@@ -440,9 +469,10 @@ class QuranDetailFragment : Fragment() {
         ayahNumber: Int?,
         isFromLastRead: Boolean?
     ) {
-        detailAdapter.setList(ayahs.subList(0, 3))
+        if (!sizeHasDone) detailAdapter.setList(ayahs.subList(0, 3))
         showPagination(ayahs, rvAyah)
         if (ayahNumber != null && isFromLastRead == true && !isResume) {
+            rvAyah.visibility = View.VISIBLE
             detailAdapter.setList(ayahs, true)
             appBar.setExpanded(false, true)
             rvAyah.scrollToPosition(ayahNumber.minus(index))
@@ -456,21 +486,26 @@ class QuranDetailFragment : Fragment() {
 
     private fun showPagination(ayahs: ArrayList<Ayat>, rvAyah: RecyclerView) {
         val dataSize = ayahs.size
+        val layoutManager = (rvAyah.layoutManager as LinearLayoutManager)
+
         with(rvAyah) {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
 
-                    val layoutManager = (layoutManager as LinearLayoutManager)
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                    if (!detailAdapter.getLoading() && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
+                    if (!detailAdapter.getLoading() && (visibleItemCount + firstVisibleItemPosition)
+                        >= totalItemCount && firstVisibleItemPosition >= 0 && !sizeHasDone
+                    ) {
                         // Show the progress bar and load more data
                         if (totalItemCount != dataSize && dataSize != 3) {
                             detailAdapter.showLoading()
                             loadMoreData(ayahs.subList(3, dataSize))
+                        } else {
+                            sizeHasDone = true
                         }
                     }
                 }
@@ -481,18 +516,18 @@ class QuranDetailFragment : Fragment() {
     private fun loadMoreData(ayahs: List<Ayat>) {
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                delay(500)
+                delay(200)
+                detailAdapter.hideLoading()
                 val newData = generateNewData(ayahs, currentPage)
                 detailAdapter.setList(newData)
-                detailAdapter.hideLoading()
                 currentPage++
             }
         }
     }
 
     private fun generateNewData(ayahs: List<Ayat>, currentPage: Int): List<Ayat> {
-        return ((currentPage - 1) * 3 until currentPage * 3).filter { it < ayahs.size }
-            .map { ayahs[it] }
+        val startIndex = (currentPage - 1) * 3
+        return ayahs.drop(startIndex).take(3)
     }
 
     private fun enableActionBarFunctionality(ayahs: ArrayList<Ayat>) {
@@ -513,12 +548,12 @@ class QuranDetailFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun showFontSettingDialog() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting, null)
-        val seekBar = dialogLayout.findViewById<SeekBar>(R.id.seekbar_font_size)
-        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
-        seekBar?.let { sbCurrentFontSize = it }
+        val dialogLayout = DialogFontSettingBinding.inflate(layoutInflater)
+        val seekBar = dialogLayout.seekbarFontSize
+        val buttonSave = dialogLayout.btnSave
+        seekBar.let { sbCurrentFontSize = it }
         with(curvedDialog.create()) {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             sbCurrentFontSize.max = 38
             sbCurrentFontSize.min = 20
             sbCurrentFontSize.progress = fontSize ?: 26
@@ -546,13 +581,13 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun showFontSettingDialogLower() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_font_setting_radio, null)
-        val radioSmall = dialogLayout.findViewById<RadioButton>(R.id.rb_small)
-        val radioMedium = dialogLayout.findViewById<RadioButton>(R.id.rb_medium)
-        val radioBig = dialogLayout.findViewById<RadioButton>(R.id.rb_big)
-        val buttonSave = dialogLayout.findViewById<Button>(R.id.btn_save)
+        val dialogLayout = DialogFontSettingRadioBinding.inflate(layoutInflater)
+        val radioSmall = dialogLayout.rbSmall
+        val radioMedium = dialogLayout.rbMedium
+        val radioBig = dialogLayout.rbBig
+        val buttonSave = dialogLayout.btnSave
         with(curvedDialog.create()) {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             when (fontSize) {
                 20 -> radioSmall.isChecked = true
                 26 -> radioMedium.isChecked = true
@@ -616,11 +651,11 @@ class QuranDetailFragment : Fragment() {
                     }
 
                     R.id.action_delete_audio -> {
-                        val dialogLayout = layoutInflater.inflate(R.layout.dialog_delete_all, null)
-                        val tvConfirm = dialogLayout.findViewById<TextView>(R.id.tv_confirm)
-                        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                        val dialogLayout = DialogDeleteAllBinding.inflate(layoutInflater)
+                        val tvConfirm = dialogLayout.tvConfirm
+                        val tvCancel = dialogLayout.tvCancel
                         with(curvedDialog.create()) {
-                            setView(dialogLayout)
+                            setView(dialogLayout.root)
                             tvConfirm.setOnClickListener {
                                 if (file.exists()) {
                                     file.delete()
@@ -649,11 +684,11 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun showSearchDialog(ayahs: ArrayList<Ayat>) {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_search_ayah, null)
-        val etSearch = dialogLayout.findViewById<EditText>(R.id.et_ayah)
-        val btnSearch = dialogLayout.findViewById<Button>(R.id.btn_search)
+        val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
+        val etSearch = dialogLayout.etAyah
+        val btnSearch = dialogLayout.btnSearch
         with(curvedDialog.create()) {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             btnSearch.setOnClickListener {
                 detailAdapter.setList(ayahs, true)
                 val query = etSearch.text.toString()
@@ -815,16 +850,16 @@ class QuranDetailFragment : Fragment() {
             }
 
             else -> {
-                val dialogLayout = layoutInflater.inflate(R.layout.dialog_player_action, null)
-                val tvTitle = dialogLayout.findViewById<TextView>(R.id.tv_player_title)
-                val tvMessage = dialogLayout.findViewById<TextView>(R.id.tv_player_message)
-                val tvDownload = dialogLayout.findViewById<TextView>(R.id.tv_download)
-                val tvStreaming = dialogLayout.findViewById<TextView>(R.id.tv_streaming)
-                val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
+                val dialogLayout = DialogPlayerActionBinding.inflate(layoutInflater)
+                val tvTitle = dialogLayout.tvPlayerTitle
+                val tvMessage = dialogLayout.tvPlayerMessage
+                val tvDownload = dialogLayout.tvDownload
+                val tvStreaming = dialogLayout.tvStreaming
+                val tvCancel = dialogLayout.tvCancel
                 tvTitle.text = getString(R.string.ask_audio_title, binding.tvSurahName.text)
                 tvMessage.text = getString(R.string.ask_audio_desc, binding.tvSurahName.text)
                 with(curvedDialog.create()) {
-                    setView(dialogLayout)
+                    setView(dialogLayout.root)
                     show()
                     tvDownload.setOnClickListener {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -1086,32 +1121,6 @@ class QuranDetailFragment : Fragment() {
         return "${String.format("%02d", minutes)}:${String.format("%02d", seconds)}"
     }
 
-    private fun setBookmark(bookmarkStatus: Boolean) {
-        binding.apply {
-            if (bookmarkStatus) {
-                ivBookmark.setImageResource(R.drawable.ic_bookmark_true)
-            } else {
-                ivBookmark.setImageResource(R.drawable.ic_bookmark_false)
-            }
-        }
-    }
-
-    private fun stateLoading(state: Boolean) {
-        binding.apply {
-            if (state) {
-                progressBar.visibility = View.VISIBLE
-                progressHeader.visibility = View.VISIBLE
-                clSurah.visibility = View.GONE
-                clSound.visibility = View.GONE
-            } else {
-                progressBar.visibility = View.GONE
-                progressHeader.visibility = View.GONE
-                clSurah.visibility = View.VISIBLE
-                clSound.visibility = View.VISIBLE
-            }
-        }
-    }
-
     private fun showDescSurah(title: String, tafsir: String, isTafsir: Boolean) {
         val htmlTeksParse = if (isTafsir) {
             tafsir
@@ -1119,14 +1128,14 @@ class QuranDetailFragment : Fragment() {
             surahDesc
         }
         val htmlFormat = HtmlCompat.fromHtml(htmlTeksParse, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_info_surah, null)
-        val tvInfoTitle = dialogLayout.findViewById<TextView>(R.id.tv_info_title)
-        val tvInfoMessage = dialogLayout.findViewById<TextView>(R.id.tv_info_message)
-        val tvInfoClose = dialogLayout.findViewById<TextView>(R.id.tv_info_close)
+        val dialogLayout = DialogInfoSurahBinding.inflate(layoutInflater)
+        val tvInfoTitle = dialogLayout.tvInfoTitle
+        val tvInfoMessage = dialogLayout.tvInfoMessage
+        val tvInfoClose = dialogLayout.tvInfoClose
         tvInfoTitle.text = title
         tvInfoMessage.text = htmlFormat
         with(curvedDialog.create()) {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             setCanceledOnTouchOutside(false)
             show()
             tvInfoClose.setOnClickListener { dismiss() }

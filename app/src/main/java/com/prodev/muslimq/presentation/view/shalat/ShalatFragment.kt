@@ -15,7 +15,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
@@ -39,6 +38,8 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.databinding.DialogGetLocationBinding
+import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
@@ -203,17 +204,17 @@ class ShalatFragment : Fragment() {
         swipeRefresh()
         dateGregorianAndHijri()
 
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_loading, null)
-        transparentDialog.setView(dialogLayout)
+        val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
+        transparentDialog.setView(dialogLayout.root)
     }
 
     private fun showDialog() {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_get_location, null)
-        val tvCancel = dialogLayout.findViewById<TextView>(R.id.tv_cancel)
-        val tvChooseManual = dialogLayout.findViewById<TextView>(R.id.tv_choose_manual)
-        val tvTurnOnGPS = dialogLayout.findViewById<TextView>(R.id.tv_turn_on_gps)
+        val dialogLayout = DialogGetLocationBinding.inflate(layoutInflater)
+        val tvTurnOnGPS = dialogLayout.tvTurnOnGps
+        val tvChooseManual = dialogLayout.tvChooseManual
+        val tvCancel = dialogLayout.tvCancel
         with(curvedDialog.create()) {
-            setView(dialogLayout)
+            setView(dialogLayout.root)
             show()
             tvTurnOnGPS.setOnClickListener {
                 dismiss()
@@ -373,7 +374,7 @@ class ShalatFragment : Fragment() {
 
     private fun refreshDataWhenCityChange() {
         setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
-            if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY)) {
+            if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
                 Handler(Looper.getMainLooper()).postDelayed({
                     binding.clNegativeCase.visibility = View.GONE
                     setViewModel()
@@ -516,13 +517,15 @@ class ShalatFragment : Fragment() {
             "Adzan Isya" to isya
         )
 
+        val adzanNames = listAdzanTime.keys.toList()
+
         with(binding.shalatLayout) {
             listOfSwitch = listOf(
                 swShubuh, swDzuhur, swAshar, swMaghrib, swIsya
             )
 
             listOfSwitch.withIndex().forEach { (index, switch) ->
-                val adzanName = listAdzanTime.keys.toList()[index]
+                val adzanName = adzanNames[index]
 
                 dataStoreViewModel.getSwitchState(adzanName)
                     .observe(viewLifecycleOwner) { state ->
