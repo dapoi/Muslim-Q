@@ -82,13 +82,13 @@ class MainActivity : AppCompatActivity() {
         if (state) {
             view.clearAnimation()
             bottomNav.clearAnimation()
-            view.animate().translationY(0f).duration = 300
-            bottomNav.animate().translationY(0f).duration = 300
+            view.animate().translationY(0f).duration = 600
+            bottomNav.animate().translationY(0f).duration = 600
         } else {
             view.clearAnimation()
             bottomNav.clearAnimation()
-            view.animate().translationY(300f).duration = 300
-            bottomNav.animate().translationY(300f).duration = 300
+            view.animate().translationY(bottomNav.height.toFloat()).duration = 600
+            bottomNav.animate().translationY(bottomNav.height.toFloat()).duration = 600
         }
     }
 

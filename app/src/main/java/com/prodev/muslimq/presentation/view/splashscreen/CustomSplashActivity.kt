@@ -25,6 +25,23 @@ class CustomSplashActivity : AppCompatActivity() {
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val duration = 2000L
 
+    override fun onStart() {
+        super.onStart()
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                when (uiTheme) {
+                    UITheme.LIGHT -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+
+                    UITheme.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityCustomSplashBinding.inflate(layoutInflater)
@@ -35,22 +52,6 @@ class CustomSplashActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.from_bottom_anim, R.anim.to_up_anim)
             finish()
         }, duration)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
-            if (uiTheme != null) {
-                when (uiTheme) {
-                    UITheme.LIGHT -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                    UITheme.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-            }
-        }
     }
 
     override fun onDestroy() {

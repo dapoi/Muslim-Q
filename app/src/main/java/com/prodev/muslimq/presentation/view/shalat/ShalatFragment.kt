@@ -90,6 +90,8 @@ class ShalatFragment : Fragment() {
     private var isya = ""
 
     private var isOnline = false
+    private var isSuccessGetData = false
+    private var isCityChange = false
     private var isFirstLoad = false
     private var stateAdzanName = ""
     private var lat = 0.0
@@ -200,7 +202,6 @@ class ShalatFragment : Fragment() {
             setViewModel()
         }
 
-        refreshDataWhenCityChange()
         swipeRefresh()
         dateGregorianAndHijri()
 
@@ -343,6 +344,7 @@ class ShalatFragment : Fragment() {
             geocoder.getFromLocation(lat, lon, 1, object : Geocoder.GeocodeListener {
                 override fun onGeocode(addresses: MutableList<Address>) {
                     if (addresses.isNotEmpty()) {
+                        isCityChange = true
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
                         transparentDialog.dismiss()
@@ -361,6 +363,7 @@ class ShalatFragment : Fragment() {
                     lat, lon, 1
                 ) as List<Address>
                 if (addresses.isNotEmpty()) {
+                    isCityChange = true
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
                     transparentDialog.dismiss()
@@ -376,7 +379,7 @@ class ShalatFragment : Fragment() {
         setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
                 Handler(Looper.getMainLooper()).postDelayed({
-                    binding.clNegativeCase.visibility = View.GONE
+                    isCityChange = true
                     setViewModel()
                 }, 800)
             }
@@ -441,7 +444,9 @@ class ShalatFragment : Fragment() {
                     }
                 }
 
-                getShalatDaily(area.first, area.second)
+                if (!isSuccessGetData || isCityChange) {
+                    getShalatDaily(area.first, area.second)
+                }
             }
         }
     }
@@ -471,6 +476,8 @@ class ShalatFragment : Fragment() {
                         clNegativeCase.visibility = View.GONE
                         result.data?.let { data -> getAllShalatData(data) }
                         setReminderAdzanTime()
+                        isSuccessGetData = true
+                        isCityChange = false
                     }
                 }
             }
@@ -706,5 +713,12 @@ class ShalatFragment : Fragment() {
 
     private fun adzanLowerCase(adzanName: String): String {
         return adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (isCityChange) setViewModel()
+        refreshDataWhenCityChange()
     }
 }

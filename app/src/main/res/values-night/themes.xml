@@ -12,7 +12,6 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/white_base</item>
         <!-- Customize your theme here. -->
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@color/white_second</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
@@ -20,7 +19,6 @@
 
     <style name="Theme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">@color/white_base</item>
-        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:navigationBarColor">@color/white_base</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>

@@ -262,6 +262,7 @@ class QuranDetailFragment : Fragment() {
                         clSound.visibility = View.GONE
                     } else {
                         stateLoading(false)
+                        rvAyah.visibility = View.VISIBLE
                         clNoInternet.visibility = View.GONE
 
                         val dataSurah = result.data!!
@@ -286,12 +287,11 @@ class QuranDetailFragment : Fragment() {
                         // set list
                         val ayahNumber = arguments?.getInt(AYAH_NUMBER)
                         val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
-                        val isBismillah = checkFirstAyahIsBismillah(ayahs)
-                        if (isBismillah) ayahs.removeAt(0)
+                        val isAlfatihah = dataSurah.ayat[0].ayatNumber.toString().startsWith("2")
 
                         showListAyah(
                             ayahs,
-                            if (isBismillah) 2 else 1,
+                            isAlfatihah,
                             appBar,
                             rvAyah,
                             ayahNumber,
@@ -463,16 +463,19 @@ class QuranDetailFragment : Fragment() {
 
     private fun showListAyah(
         ayahs: ArrayList<Ayat>,
-        index: Int,
+        isAlfatihah: Boolean,
         appBar: AppBarLayout,
         rvAyah: RecyclerView,
         ayahNumber: Int?,
         isFromLastRead: Boolean?
     ) {
-        if (!sizeHasDone) detailAdapter.setList(ayahs.subList(0, 3))
+        if (!sizeHasDone) {
+            detailAdapter.setList(ayahs.subList(0, 3))
+        }
         showPagination(ayahs, rvAyah)
+
+        val index = if (isAlfatihah) 2 else 1
         if (ayahNumber != null && isFromLastRead == true && !isResume) {
-            rvAyah.visibility = View.VISIBLE
             detailAdapter.setList(ayahs, true)
             appBar.setExpanded(false, true)
             rvAyah.scrollToPosition(ayahNumber.minus(index))
@@ -710,10 +713,6 @@ class QuranDetailFragment : Fragment() {
             }
             show()
         }
-    }
-
-    private fun checkFirstAyahIsBismillah(ayahs: List<Ayat>): Boolean {
-        return ayahs[0].ayatTerjemahan.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")
     }
 
     private fun setUpMediaPlayer(audio: String) {

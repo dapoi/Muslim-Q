@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white_second"
-        app:itemIconSize="26dp"
+        app:itemIconSize="25dp"
         app:itemIconTint="@color/icon_selector"
         app:itemRippleColor="@null"
         app:itemTextColor="@color/icon_selector"
