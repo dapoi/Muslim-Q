@@ -61,10 +61,10 @@ class ShalatFragment : Fragment() {
     private lateinit var gpsStatusListener: GPSStatusListener
     private lateinit var turnOnGps: TurnOnGps
     private lateinit var fusedLocation: FusedLocationProviderClient
+    private lateinit var adzanReceiver: AdzanReceiver
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    private val adzanReceiver = AdzanReceiver()
 
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
@@ -190,6 +190,7 @@ class ShalatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         isOnline = isOnline(requireContext())
+        adzanReceiver = AdzanReceiver()
         gpsStatusListener = GPSStatusListener(requireContext())
         turnOnGps = TurnOnGps(requireContext())
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -514,7 +515,6 @@ class ShalatFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setReminderAdzanTime() {
-        timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
         val listAdzanTime = mapOf(
             "Adzan Shubuh" to shubuh,
@@ -554,12 +554,12 @@ class ShalatFragment : Fragment() {
                     }
                 }
 
-                listAdzanTime[adzanName]?.let { adzanTime ->
+                listAdzanTime[adzanName].let { adzanTime ->
                     if (switch.isChecked) {
                         adzanReceiver.setAdzanReminder(
                             context = requireContext(),
                             adzanName = adzanName,
-                            adzanTime = adzanTime,
+                            adzanTime = adzanTime.toString(),
                             adzanCode = index + 1,
                             isShubuh = adzanName == "Adzan Shubuh"
                         )
@@ -572,6 +572,8 @@ class ShalatFragment : Fragment() {
                 }
             }
         }
+
+        timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
         binding.apply {
             when {
