@@ -32,4 +32,9 @@ dependencies {
     // Chuck library
     def chuckVersion = "3.5.2"
     debugImplementation "com.github.chuckerteam.chucker:library:$chuckVersion"
+    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chuckVersion"
+
+    // Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
 }
