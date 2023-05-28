@@ -13,3 +13,7 @@ annotation class Area
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class Shalat
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class IoDispatcher

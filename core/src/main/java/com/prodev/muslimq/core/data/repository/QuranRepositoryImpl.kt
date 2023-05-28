@@ -6,10 +6,11 @@ import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
+import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,7 +21,9 @@ import javax.inject.Singleton
 
 @Singleton
 class QuranRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource, private val localDataSource: LocalDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : QuranRepository {
 
     override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
@@ -105,7 +108,7 @@ class QuranRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 emit(Resource.Error(e))
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(dispatcher)
     }
 
     override fun getBookmark(): Flow<List<QuranDetailEntity>> {
@@ -113,13 +116,13 @@ class QuranRepositoryImpl @Inject constructor(
     }
 
     override fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(dispatcher).launch {
             localDataSource.insertToBookmark(quran, isBookmarked)
         }
     }
 
     override fun deleteAllBookmark() {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(dispatcher).launch {
             localDataSource.deleteAllBookmark()
         }
     }

@@ -11,6 +11,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -50,12 +51,12 @@ object NetworkBuilder {
     @Provides
     @Quran
     fun provideQuranApi(
-        @ApplicationContext context: Context,
+        okHttpClient: OkHttpClient
     ): Retrofit {
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         return Retrofit.Builder().baseUrl("https://equran.id/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(provideOkHttpClient(context))
+            .client(okHttpClient)
             .build()
     }
 
@@ -63,12 +64,12 @@ object NetworkBuilder {
     @Provides
     @Area
     fun provideArea(
-        @ApplicationContext context: Context,
+        okHttpClient: OkHttpClient
     ): Retrofit {
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         return Retrofit.Builder().baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(provideOkHttpClient(context))
+            .client(okHttpClient)
             .build()
     }
 
@@ -76,13 +77,16 @@ object NetworkBuilder {
     @Provides
     @Shalat
     fun provideShalatApi(
-        @ApplicationContext context: Context,
+        okHttpClient: OkHttpClient
     ): Retrofit {
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         return Retrofit.Builder().baseUrl("https://api.aladhan.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(provideOkHttpClient(context))
+            .client(okHttpClient)
             .build()
     }
 
+    @Provides
+    @IoDispatcher
+    fun provideIoDispatcher() = Dispatchers.IO
 }

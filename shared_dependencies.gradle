@@ -32,5 +32,4 @@ dependencies {
     // Chuck library
     def chuckVersion = "3.5.2"
     debugImplementation "com.github.chuckerteam.chucker:library:$chuckVersion"
-    releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chuckVersion"
 }

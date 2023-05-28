@@ -5,21 +5,24 @@ import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
+import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ShalatRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ShalatRepository {
 
     override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
@@ -30,7 +33,7 @@ class ShalatRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(Resource.Error(e))
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(dispatcher)
 
     override fun getAllCity(id: String): Flow<Resource<List<CityResponse>>> = flow {
         emit(Resource.Loading())
@@ -40,7 +43,7 @@ class ShalatRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(Resource.Error(e))
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(dispatcher)
 
     override fun getShalatDaily(
         city: String, country: String

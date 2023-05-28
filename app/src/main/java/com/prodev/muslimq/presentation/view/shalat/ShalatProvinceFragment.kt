@@ -104,26 +104,29 @@ class ShalatProvinceFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        shalatViewModel.getAllProvince().observe(viewLifecycleOwner) {
-            with(binding) {
-                when (it) {
-                    is Resource.Loading -> {
-                        stateNoInternetView(false)
-                        stateLoading(true)
-                    }
-
-                    is Resource.Success -> {
-                        Handler(Looper.getMainLooper()).postDelayed({
+        shalatViewModel.apply {
+            getAllProvince()
+            getProvinceResult.observe(viewLifecycleOwner) {
+                binding.apply {
+                    when (it) {
+                        is Resource.Loading -> {
                             stateNoInternetView(false)
-                            stateLoading(false)
-                            provinceAdapter.setList(it.data!!)
-                        }, 800)
-                    }
+                            stateLoading(true)
+                        }
 
-                    is Resource.Error -> {
-                        stateNoInternetView(true)
-                        stateLoading(false)
-                        rvProvince.visibility = View.GONE
+                        is Resource.Success -> {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                stateNoInternetView(false)
+                                stateLoading(false)
+                                provinceAdapter.setList(it.data!!)
+                            }, 800)
+                        }
+
+                        is Resource.Error -> {
+                            stateNoInternetView(true)
+                            stateLoading(false)
+                            rvProvince.visibility = View.GONE
+                        }
                     }
                 }
             }

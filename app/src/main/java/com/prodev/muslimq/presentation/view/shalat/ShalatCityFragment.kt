@@ -57,9 +57,11 @@ class ShalatCityFragment : Fragment() {
                     "DKI JAKARTA" -> {
                         "DKI Jakarta"
                     }
+
                     "DI YOGYAKARTA" -> {
                         "Yogyakarta"
                     }
+
                     else -> {
                         capitalizeEachWord(province.second)
                     }
@@ -120,25 +122,29 @@ class ShalatCityFragment : Fragment() {
 
     private fun setViewModel() {
         dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { dataProv ->
-            shalatViewModel.getAllCity(dataProv.first).observe(viewLifecycleOwner) {
-                with(binding) {
-                    when (it) {
-                        is Resource.Loading -> {
+            shalatViewModel.getAllCity(dataProv.first)
+        }
+
+        shalatViewModel.getCityResult.observe(viewLifecycleOwner) {
+            binding.apply {
+                when (it) {
+                    is Resource.Loading -> {
+                        stateNoInternetView(false)
+                        stateLoading(true)
+                    }
+
+                    is Resource.Success -> {
+                        Handler(Looper.getMainLooper()).postDelayed({
                             stateNoInternetView(false)
-                            stateLoading(true)
-                        }
-                        is Resource.Success -> {
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                stateNoInternetView(false)
-                                stateLoading(false)
-                                cityAdapter.setList(it.data!!)
-                            }, 700)
-                        }
-                        is Resource.Error -> {
-                            stateNoInternetView(true)
                             stateLoading(false)
-                            rvCity.visibility = View.GONE
-                        }
+                            cityAdapter.setList(it.data!!)
+                        }, 700)
+                    }
+
+                    is Resource.Error -> {
+                        stateNoInternetView(true)
+                        stateLoading(false)
+                        rvCity.visibility = View.GONE
                     }
                 }
             }
