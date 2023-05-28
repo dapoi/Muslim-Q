@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "710152974744",
+    "project_id": "muslimq2202",
+    "storage_bucket": "muslimq2202.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710152974744:android:7b583dde4f1b1094977bed",
+        "android_client_info": {
+          "package_name": "com.prodev.muslimq"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzqtr8iwiHtuEG6DHM8lL_k0FupOPLME0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710152974744:android:936e45c067c6b8e2977bed",
+        "android_client_info": {
+          "package_name": "com.prodev.muslimq.debug"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzqtr8iwiHtuEG6DHM8lL_k0FupOPLME0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
