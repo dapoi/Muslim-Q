@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:background="@drawable/bg_round_green"
+        android:background="@drawable/bg_round_green_header"
         android:paddingHorizontal="20dp"
         android:paddingVertical="10dp"
         app:layout_constraintTop_toTopOf="parent">

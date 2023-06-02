@@ -131,13 +131,14 @@ class QuranFragment : Fragment() {
                 val surahNameArabic = data.first
                 val surahName = data.second
                 if (surahName != "" || surahNameArabic != "") {
+                    btnContinueRead.visibility = View.VISIBLE
+                    tvSurahNameArabic.visibility = View.VISIBLE
                     tvSurahNameArabic.text = surahNameArabic
                     tvSurahName.text = "Q.S $surahName ayat $ayahNumber"
-                    btnContinueRead.visibility = View.VISIBLE
                 } else {
+                    btnContinueRead.visibility = View.GONE
                     tvSurahNameArabic.visibility = View.GONE
                     tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
-                    btnContinueRead.visibility = View.GONE
                 }
 
                 surahDesc = data.third

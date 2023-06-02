@@ -41,7 +41,7 @@
                     android:layout_marginHorizontal="10dp"
                     android:layout_marginTop="70dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/bg_round_green"
+                    android:background="@drawable/bg_round_green_header"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">

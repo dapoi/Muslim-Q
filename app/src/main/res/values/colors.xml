@@ -7,7 +7,9 @@
     <color name="green_header_end">#289672</color>
     <color name="green_ic_quran_light">#29BB89</color>
     <color name="green_ic_quran_dark">#1E6F5C</color>
-    <color name="green_button">#289672</color>
+    <color name="green_button_last_read">#289672</color>
+    <color name="green_button_start">#29BB89</color>
+    <color name="green_button_end">#289672</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#3C3C3C</color>
