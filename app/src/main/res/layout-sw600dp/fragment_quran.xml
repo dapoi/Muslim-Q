@@ -68,7 +68,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_marginStart="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="16dp"
                         android:src="@drawable/ic_book"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -80,11 +80,12 @@
                         android:layout_height="0dp"
                         android:layout_marginStart="8dp"
                         android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
                         android:text="@string/last_read"
                         android:textColor="@color/white_header"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_last_read"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_surah_name_arabic"
                         app:layout_constraintStart_toEndOf="@+id/iv_last_read"
                         app:layout_constraintTop_toTopOf="@+id/iv_last_read" />
 
@@ -92,42 +93,72 @@
                         android:id="@+id/tv_surah_name"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginVertical="16dp"
                         android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
                         android:textColor="@color/white_header"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
+                        app:layout_constraintBottom_toTopOf="@id/btn_continue_read"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_surah_name_arabic"
                         app:layout_constraintStart_toStartOf="@+id/iv_last_read"
                         app:layout_constraintTop_toBottomOf="@+id/tv_last_read"
-                        tools:text="Al-Fatihah" />
+                        tools:text="Q.S Al-Fathihah ayat 7" />
 
-                    <TextView
-                        android:id="@+id/tv_surah_meaning"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="7dp"
-                        android:layout_marginBottom="20dp"
-                        android:fontFamily="@font/poppins"
-                        android:textColor="@color/white_header"
+                    <Button
+                        android:id="@+id/btn_continue_read"
+                        android:layout_width="wrap_content"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="16dp"
+                        android:backgroundTint="@color/white_button"
+                        android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
+                        android:padding="10dp"
+                        android:text="@string/continue_reading"
+                        android:textAllCaps="false"
+                        android:textColor="@color/green_button"
                         android:textSize="18sp"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/iv_quran"
-                        app:layout_constraintStart_toStartOf="@+id/tv_surah_name"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_surah_name"
-                        tools:text="Pembukaan" />
+                        app:layout_constraintStart_toStartOf="@+id/tv_surah_name" />
 
                     <ImageView
-                        android:id="@+id/iv_quran"
-                        android:layout_width="250dp"
-                        android:layout_height="140dp"
-                        android:layout_marginEnd="-10dp"
-                        android:layout_marginBottom="-9dp"
+                        android:id="@+id/iv_kaligrafi"
+                        android:layout_width="200dp"
+                        android:layout_height="90dp"
+                        android:layout_marginTop="-20dp"
                         android:alpha="0.5"
-                        android:src="@drawable/ic_quran_home"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:rotation="90"
+                        android:src="@drawable/ic_kaligrafi"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="ContentDescription" />
+
+                    <ImageView
+                        android:layout_width="200dp"
+                        android:layout_height="90dp"
+                        android:layout_marginStart="50dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.5"
+                        android:importantForAccessibility="no"
+                        android:rotation="-90"
+                        android:src="@drawable/ic_kaligrafi"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/btn_continue_read" />
+
+                    <TextView
+                        android:id="@+id/tv_surah_name_arabic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:fontFamily="@font/amiri_bold"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/white_header"
+                        android:textSize="45sp"
+                        app:layout_constraintBottom_toBottomOf="@id/btn_continue_read"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_kaligrafi"
+                        tools:text="الفاتحة" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

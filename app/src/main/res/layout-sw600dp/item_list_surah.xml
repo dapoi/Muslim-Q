@@ -70,8 +70,8 @@
             android:id="@+id/tv_surah_name_arabic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="-7dp"
             android:fontFamily="@font/amiri_bold"
+            android:includeFontPadding="false"
             android:textColor="@color/green_base"
             android:textSize="21sp"
             app:layout_constraintBottom_toTopOf="@id/guideline_surah"
@@ -84,14 +84,17 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.5" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/v_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="5dp"
-        android:background="@color/white_low_opp"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/v_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white_low_opp"
+            android:paddingBottom="-10dp"
+            app:layout_constraintTop_toBottomOf="@id/cl_surah_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

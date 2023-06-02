@@ -33,7 +33,7 @@
             android:id="@+id/tv_ayah_arabic"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/bg_header_gray"
             android:fontFamily="@font/amiri_bold"
             android:letterSpacing="0.05"

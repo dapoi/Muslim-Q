@@ -132,17 +132,6 @@
                         app:layout_constraintTop_toBottomOf="@+id/v_divider"
                         tools:layout_editor_absoluteX="20dp" />
 
-                    <ImageView
-                        android:id="@+id/iv_quran"
-                        android:layout_width="220dp"
-                        android:layout_height="130dp"
-                        android:layout_marginBottom="-20dp"
-                        android:alpha="0.15"
-                        android:src="@drawable/ic_quran_home"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:ignore="ContentDescription" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout

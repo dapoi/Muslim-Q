@@ -17,13 +17,13 @@ class DataStoreViewModel @Inject constructor(
 
     fun saveSurah(
         surahId: Int,
+        surahNameArabic: String,
         surahName: String,
-        surahMeaning: String,
         surahDesc: String,
         ayahNumber: Int
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePref.saveSurah(surahId, surahName, surahMeaning, surahDesc, ayahNumber)
+            dataStorePref.saveSurah(surahId, surahNameArabic, surahName, surahDesc, ayahNumber)
         }
     }
 
@@ -34,7 +34,7 @@ class DataStoreViewModel @Inject constructor(
     }
 
     fun saveAreaData(cityName: String, countryName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             dataStorePref.saveCityAndCountryData(cityName, countryName)
         }
     }
@@ -63,7 +63,7 @@ class DataStoreViewModel @Inject constructor(
 
     val getProvinceData = dataStorePref.getProvinceData.asLiveData()
 
-    val getAreaData = dataStorePref.getCityAndCountryData.asLiveData()
+    val getAreaData = dataStorePref.getCityAndCountryData
 
     val getAyahSize = dataStorePref.getAyahSize.asLiveData()
 

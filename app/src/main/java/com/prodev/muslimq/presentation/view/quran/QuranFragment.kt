@@ -10,8 +10,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -70,7 +68,7 @@ class QuranFragment : Fragment() {
         isOnline = isOnline(requireActivity())
 
         binding.apply {
-            getLastReadSurah(tvSurahName, tvSurahMeaning)
+            getLastReadSurah()
 
             fabBackToTop.setOnClickListener {
                 // scroll to parent
@@ -122,42 +120,42 @@ class QuranFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun getLastReadSurah(tvSurahName: TextView, tvSurahMeaning: TextView) {
+    private fun getLastReadSurah() {
         dataStorePreference.getDetailSurahAyah.observe(viewLifecycleOwner) { data ->
             surahId = data.first
             ayahNumber = data.second
         }
 
-        dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
-            if (data.first != "" || data.second != "") {
-                tvSurahName.text = "${data.first} Ayat $ayahNumber"
-                tvSurahMeaning.text = data.second
-                tvSurahMeaning.visibility = View.VISIBLE
-            } else {
-                tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
-                tvSurahMeaning.visibility = View.GONE
+        binding.apply {
+            dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
+                val surahNameArabic = data.first
+                val surahName = data.second
+                if (surahName != "" || surahNameArabic != "") {
+                    tvSurahNameArabic.text = surahNameArabic
+                    tvSurahName.text = "Q.S $surahName ayat $ayahNumber"
+                    btnContinueRead.visibility = View.VISIBLE
+                } else {
+                    tvSurahNameArabic.visibility = View.GONE
+                    tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
+                    btnContinueRead.visibility = View.GONE
+                }
+
+                surahDesc = data.third
             }
 
-            surahDesc = data.third
-        }
-
-        binding.clSurah.setOnClickListener {
-            if (ayahNumber != 0) {
+            btnContinueRead.setOnClickListener {
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
-                        putString(QuranDetailFragment.SURAH_NAME, tvSurahName.text.toString())
+                        putString(
+                            QuranDetailFragment.SURAH_NAME,
+                            binding.tvSurahName.text.toString()
+                        )
                         putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
                         putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
                         putString(QuranDetailFragment.SURAH_DESC, surahDesc)
                         putBoolean(QuranDetailFragment.IS_FROM_LAST_READ, true)
                     }
                 )
-            } else {
-                Toast.makeText(
-                    requireActivity(),
-                    "Belum ada surah terakhir dibaca",
-                    Toast.LENGTH_SHORT
-                ).show()
             }
         }
     }
@@ -175,7 +173,7 @@ class QuranFragment : Fragment() {
                 hideKeyboard(requireActivity())
 
                 binding.apply {
-                    getLastReadSurah(tvSurahName, tvSurahMeaning)
+                    getLastReadSurah()
                 }
             }
         })
@@ -244,10 +242,12 @@ class QuranFragment : Fragment() {
                         stateLoading(true)
                         clNoInternet.visibility = View.GONE
                     }
+
                     it is Resource.Error && it.data.isNullOrEmpty() -> {
                         stateLoading(false)
                         stateNoInternet(ctlHeader, clNoInternet, true)
                     }
+
                     else -> {
                         stateLoading(false)
                         stateNoInternet(ctlHeader, clNoInternet, false)

@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -404,6 +405,7 @@ class ShalatFragment : Fragment() {
 
                             handlerData.postDelayed({
                                 clNegativeCase.visibility = View.GONE
+                                reloadAgain = true
                                 setViewModel()
                             }, 2350)
                         } else {
@@ -448,9 +450,10 @@ class ShalatFragment : Fragment() {
 
             if (!dontShowAgain || reloadAgain) {
                 shalatViewModel.getShalatTime(city, country)
-                initUIResult()
             }
         }
+
+        initUIResult()
     }
 
     private fun initUIResult() {
@@ -559,9 +562,15 @@ class ShalatFragment : Fragment() {
 
                 switch.setOnCheckedChangeListener { adzanSwitch, isChecked ->
                     if (Build.VERSION.SDK_INT >= 33) {
-                        checkNotificationPermissionWhenLaunch(adzanName, isChecked, adzanSwitch)
+                        checkNotificationPermissionWhenLaunch(
+                            listAdzanTime,
+                            adzanName,
+                            isChecked,
+                            adzanSwitch,
+                            index
+                        )
                     } else {
-                        stateNotifIcon(adzanName, isChecked)
+                        stateNotifIcon(listAdzanTime, adzanName, isChecked, index)
                     }
                 }
 
@@ -617,9 +626,11 @@ class ShalatFragment : Fragment() {
     }
 
     private fun checkNotificationPermissionWhenLaunch(
+        listAdzanTime: Map<String, String>,
         adzanName: String,
         isChecked: Boolean,
         adzanSwitch: CompoundButton,
+        index: Int,
     ) {
         stateAdzanName = adzanName
         if (Build.VERSION.SDK_INT >= 33) {
@@ -627,7 +638,7 @@ class ShalatFragment : Fragment() {
                 ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    stateNotifIcon(adzanName, isChecked)
+                    stateNotifIcon(listAdzanTime, adzanName, isChecked, index)
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
@@ -649,26 +660,42 @@ class ShalatFragment : Fragment() {
         }
     }
 
-    private fun stateNotifIcon(adzanName: String, isChecked: Boolean) {
+    private fun stateNotifIcon(
+        listAdzanTime: Map<String, String>,
+        adzanName: String,
+        isChecked: Boolean,
+        index: Int
+    ) {
         val lowerCaseAdzanName = adzanLowerCase(adzanName)
-        if (isChecked) {
-            reloadAgain = true
-            dataStoreViewModel.saveSwitchState(adzanName, true)
-            (activity as MainActivity).customSnackbar(
-                true,
-                requireContext(),
-                binding.root,
-                "$lowerCaseAdzanName diaktifkan",
-            )
-        } else {
-            reloadAgain = true
-            dataStoreViewModel.saveSwitchState(adzanName, false)
-            (activity as MainActivity).customSnackbar(
-                false,
-                requireContext(),
-                binding.root,
-                "$lowerCaseAdzanName dimatikan",
-            )
+        listAdzanTime[adzanName].let { adzanTime ->
+            if (isChecked) {
+                adzanReceiver.setAdzanReminder(
+                    context = requireContext(),
+                    adzanName = adzanName,
+                    adzanTime = adzanTime.toString(),
+                    adzanCode = index + 1,
+                    isShubuh = adzanName == "Adzan Shubuh"
+                )
+                dataStoreViewModel.saveSwitchState(adzanName, true)
+                (activity as MainActivity).customSnackbar(
+                    true,
+                    requireContext(),
+                    binding.root,
+                    "$lowerCaseAdzanName diaktifkan",
+                )
+            } else {
+                adzanReceiver.cancelAdzanReminder(
+                    context = requireContext(),
+                    adzanCode = index + 1
+                )
+                dataStoreViewModel.saveSwitchState(adzanName, false)
+                (activity as MainActivity).customSnackbar(
+                    false,
+                    requireContext(),
+                    binding.root,
+                    "$lowerCaseAdzanName dimatikan",
+                )
+            }
         }
     }
 
@@ -735,5 +762,7 @@ class ShalatFragment : Fragment() {
 
         if (reloadAgain) setViewModel()
         refreshDataWhenCityChange()
+
+        Log.d("TAG", "onResume: ")
     }
 }

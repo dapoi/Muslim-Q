@@ -65,10 +65,12 @@ import java.util.*
 @AndroidEntryPoint
 class QuranDetailFragment : Fragment() {
 
+    private var _binding: FragmentQuranDetailBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrentFontSize: SeekBar
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var binding: FragmentQuranDetailBinding
 
     private val detailViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
@@ -86,13 +88,12 @@ class QuranDetailFragment : Fragment() {
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
-    private var isFirstLoad = false
     private var isResume = false
     private var sizeHasDone = false
 
     private var surahId: Int? = null
+    private var surahNameArabic: String = ""
     private var surahName: String = ""
-    private var surahMeaning: String = ""
     private var surahDesc: String = ""
     private var currentPage = 1
 
@@ -157,30 +158,19 @@ class QuranDetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        if (this::binding.isInitialized) {
-            binding
-            isFirstLoad = false
-        } else {
-            binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
-            isFirstLoad = true
-        }
+        _binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.ivBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        if (isFirstLoad) {
-            setAdapter()
-            setViewModel()
-        }
+        binding.ivBack.setOnClickListener { findNavController().popBackStack() }
 
         surahDesc = arguments?.getString(SURAH_DESC) ?: ""
 
+        setAdapter()
+        setViewModel()
         initProgressDialog()
     }
 
@@ -275,12 +265,12 @@ class QuranDetailFragment : Fragment() {
                         val place = dataSurah.tempatTurun.replaceFirstChar { it.uppercase() }
                         val totalAyah = dataSurah.jumlahAyat
                         val toolbarTitle = dataSurah.namaLatin
-                        surahName = dataSurah.namaLatin
-                        surahMeaning = dataSurah.artiQuran
 
+                        surahNameArabic = dataSurah.nama
+                        surahName = dataSurah.namaLatin
                         toolbar.title = toolbarTitle
-                        tvSurahName.text = surahName
-                        tvAyahMeaning.text = surahMeaning
+                        tvSurahName.text = dataSurah.namaLatin
+                        tvAyahMeaning.text = dataSurah.artiQuran
                         tvCityAndTotalAyah.text =
                             getString(R.string.tv_city_and_total_ayah, place, totalAyah)
 
@@ -341,7 +331,7 @@ class QuranDetailFragment : Fragment() {
                     setView(dialogLayout.root)
                     tvTagging.setOnClickListener {
                         dataStoreViewModel.saveSurah(
-                            surahId!!, surahName, surahMeaning, surahDesc, data.ayatNumber
+                            surahId!!, surahNameArabic, surahName, surahDesc, data.ayatNumber
                         )
 
                         Toast.makeText(
@@ -350,6 +340,7 @@ class QuranDetailFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                         dismiss()
+                        findNavController().popBackStack()
                     }
                     tvCancel.setOnClickListener {
                         dismiss()
@@ -557,7 +548,7 @@ class QuranDetailFragment : Fragment() {
         seekBar.let { sbCurrentFontSize = it }
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
-            sbCurrentFontSize.max = 38
+            sbCurrentFontSize.max = 40
             sbCurrentFontSize.min = 20
             sbCurrentFontSize.progress = fontSize ?: 26
             sbCurrentFontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -1100,7 +1091,7 @@ class QuranDetailFragment : Fragment() {
                     binding.sbSound.progress = mediaPlayer.currentPosition
                     handler.postDelayed(this, 1000)
                 } catch (e: Exception) {
-                    binding.sbSound.progress = 0
+                    handler.removeCallbacks(this)
                 }
             }
         }, 0)
@@ -1158,17 +1149,12 @@ class QuranDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
-        detailViewModel.getQuranDetail(surahId!!).removeObservers(viewLifecycleOwner)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
+        _binding = null
         if (audioIsPlaying) {
             mediaPlayer.stop()
             mediaPlayer.release()
         }
+        detailViewModel.getQuranDetail(surahId!!).removeObservers(viewLifecycleOwner)
     }
 
     companion object {

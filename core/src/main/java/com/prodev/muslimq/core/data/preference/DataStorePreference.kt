@@ -9,18 +9,21 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.asLiveData
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private var SURAH_ID = intPreferencesKey("surah_id")
+private var SURAH_NAME_ARABIC = stringPreferencesKey("surah_name_arabic")
 private val SURAH_NAME = stringPreferencesKey("surah_name")
-private val SURAH_MEANING = stringPreferencesKey("surah_meaning")
 private val SURAH_DESC = stringPreferencesKey("surah_desc")
 private val AYAH_NUMBER = intPreferencesKey("ayah_number")
 private val PROVINCE_ID = stringPreferencesKey("province_id")
@@ -42,15 +45,15 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     suspend fun saveSurah(
         surahId: Int,
+        surahNameArabic: String,
         surahName: String,
-        surahMeaning: String,
         surahDesc: String,
         ayahNumber: Int
     ) {
         dataStore.edit { preferences ->
             preferences[SURAH_ID] = surahId
+            preferences[SURAH_NAME_ARABIC] = surahNameArabic
             preferences[SURAH_NAME] = surahName
-            preferences[SURAH_MEANING] = surahMeaning
             preferences[SURAH_DESC] = surahDesc
             preferences[AYAH_NUMBER] = ayahNumber
         }
@@ -60,10 +63,10 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Get surah name & meaning from data store
      */
     val getSurah = dataStore.data.map { preferences ->
+        val surahNameArabic = preferences[SURAH_NAME_ARABIC] ?: ""
         val surahName = preferences[SURAH_NAME] ?: ""
-        val surahMeaning = preferences[SURAH_MEANING] ?: ""
         val surahDesc = preferences[SURAH_DESC] ?: ""
-        Triple(surahName, surahMeaning, surahDesc)
+        Triple(surahNameArabic, surahName, surahDesc)
     }
 
     /**
@@ -115,9 +118,11 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Save city and country name to data store
      */
     suspend fun saveCityAndCountryData(cityName: String, countryName: String) {
-        dataStore.edit { preferences ->
-            preferences[CITY_NAME] = cityName
-            preferences[COUNTRY_NAME] = countryName
+        runBlocking {
+            dataStore.edit { preferences ->
+                preferences[CITY_NAME] = cityName
+                preferences[COUNTRY_NAME] = countryName
+            }
         }
     }
 
@@ -128,7 +133,7 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         val cityName = preferences[CITY_NAME] ?: ""
         val countryName = preferences[COUNTRY_NAME] ?: ""
         Pair(cityName, countryName)
-    }
+    }.distinctUntilChanged().asLiveData()
 
     /**
      * Save dark mode switch state to data store
