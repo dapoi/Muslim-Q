@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -118,11 +117,9 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Save city and country name to data store
      */
     suspend fun saveCityAndCountryData(cityName: String, countryName: String) {
-        runBlocking {
-            dataStore.edit { preferences ->
-                preferences[CITY_NAME] = cityName
-                preferences[COUNTRY_NAME] = countryName
-            }
+        dataStore.edit { preferences ->
+            preferences[CITY_NAME] = cityName
+            preferences[COUNTRY_NAME] = countryName
         }
     }
 

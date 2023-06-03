@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +56,9 @@ import java.util.*
 @AndroidEntryPoint
 class ShalatFragment : Fragment() {
 
-    private lateinit var binding: FragmentShalatBinding
+    private var _binding: FragmentShalatBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var listOfSwitch: List<SwitchCompat>
     private lateinit var gpsStatusListener: GPSStatusListener
     private lateinit var turnOnGps: TurnOnGps
@@ -91,7 +92,6 @@ class ShalatFragment : Fragment() {
     private var isya: String = ""
 
     private var isOnline = false
-    private var isFirstLoad = false
     private var dontShowAgain = false
     private var reloadAgain = false
     private var stateAdzanName = ""
@@ -115,56 +115,33 @@ class ShalatFragment : Fragment() {
     private val requestGPSPermission = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            (activity as MainActivity).customSnackbar(
-                state = true,
-                context = requireContext(),
-                view = binding.root,
-                message = "GPS diaktifkan"
-            )
-        } else {
-            (activity as MainActivity).customSnackbar(
-                state = false,
-                context = requireContext(),
-                view = binding.root,
-                message = "GPS tidak diaktifkan",
-            )
-        }
+        val message =
+            if (result.resultCode == RESULT_OK) "GPS diaktifkan" else "GPS tidak diaktifkan"
+        (activity as MainActivity).customSnackbar(
+            state = result.resultCode == RESULT_OK,
+            context = requireContext(),
+            view = binding.root,
+            message = message
+        )
     }
 
     private val requestLocationPermission = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        when {
-            permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false -> {
-                (activity as MainActivity).customSnackbar(
-                    state = true,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin lokasi diberikan",
-                )
-                showDialog()
-            }
+        val permissionGranted =
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
-            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false -> {
-                (activity as MainActivity).customSnackbar(
-                    state = true,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin lokasi diberikan",
-                )
-                showDialog()
-            }
-
-            else -> {
-                (activity as MainActivity).customSnackbar(
-                    state = false,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin lokasi ditolak",
-                )
-            }
+        if (permissionGranted) {
+            getGPSStatusObserver()
         }
+
+        val message = if (permissionGranted) "Izin lokasi diberikan" else "Izin lokasi ditolak"
+        (activity as MainActivity).customSnackbar(
+            state = permissionGranted,
+            context = requireContext(),
+            view = binding.root,
+            message = message
+        )
     }
 
     private fun checkLocationPermission(permission: String): Boolean {
@@ -177,13 +154,7 @@ class ShalatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        if (this::binding.isInitialized) {
-            binding
-            isFirstLoad = false
-        } else {
-            binding = FragmentShalatBinding.inflate(inflater, container, false)
-            isFirstLoad = true
-        }
+        _binding = FragmentShalatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -196,14 +167,9 @@ class ShalatFragment : Fragment() {
         turnOnGps = TurnOnGps(requireContext())
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        binding.ivIconChoose.setOnClickListener {
-            checkStateLocationPermission()
-        }
+        binding.ivIconChoose.setOnClickListener { showDialogLocation() }
 
-        if (isFirstLoad) {
-            setViewModel()
-        }
-
+        setViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
 
@@ -211,7 +177,7 @@ class ShalatFragment : Fragment() {
         transparentDialog.setView(dialogLayout.root)
     }
 
-    private fun showDialog() {
+    private fun showDialogLocation() {
         val dialogLayout = DialogGetLocationBinding.inflate(layoutInflater)
         val tvTurnOnGPS = dialogLayout.tvTurnOnGps
         val tvChooseManual = dialogLayout.tvChooseManual
@@ -221,28 +187,7 @@ class ShalatFragment : Fragment() {
             show()
             tvTurnOnGPS.setOnClickListener {
                 dismiss()
-                var isGPSStatusChanged: Boolean? = null
-                gpsStatusListener.observe(viewLifecycleOwner) { isGPSOn ->
-                    if (isGPSStatusChanged == null) {
-                        if (!isGPSOn) {
-                            turnOnGps.startGps(requestGPSPermission)
-                        } else {
-                            transparentDialog.show()
-                            getLiveLocation()
-                        }
-                        isGPSStatusChanged = isGPSOn
-                    } else {
-                        if (isGPSStatusChanged != isGPSOn) {
-                            if (!isGPSOn) {
-                                turnOnGps.startGps(requestGPSPermission)
-                            } else {
-                                transparentDialog.show()
-                                getLiveLocation()
-                            }
-                            isGPSStatusChanged = isGPSOn
-                        }
-                    }
-                }
+                checkStateLocationPermission()
             }
             tvChooseManual.setOnClickListener {
                 dismiss()
@@ -261,7 +206,7 @@ class ShalatFragment : Fragment() {
             ) && checkLocationPermission(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) -> {
-                showDialog()
+                getGPSStatusObserver()
             }
 
             shouldShowRequestPermissionRationale(
@@ -286,6 +231,31 @@ class ShalatFragment : Fragment() {
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     )
                 )
+            }
+        }
+    }
+
+    private fun getGPSStatusObserver() {
+        var isGPSStatusChanged: Boolean? = null
+        gpsStatusListener.observe(viewLifecycleOwner) { isGPSOn ->
+            if (isGPSStatusChanged == null) {
+                if (!isGPSOn) {
+                    turnOnGps.startGps(requestGPSPermission)
+                } else {
+                    transparentDialog.show()
+                    getLiveLocation()
+                }
+                isGPSStatusChanged = isGPSOn
+            } else {
+                if (isGPSStatusChanged != isGPSOn) {
+                    if (!isGPSOn) {
+                        turnOnGps.startGps(requestGPSPermission)
+                    } else {
+                        transparentDialog.show()
+                        getLiveLocation()
+                    }
+                    isGPSStatusChanged = isGPSOn
+                }
             }
         }
     }
@@ -349,7 +319,6 @@ class ShalatFragment : Fragment() {
                         reloadAgain = true
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
-                        transparentDialog.dismiss()
                         dataStoreViewModel.saveAreaData(city, country)
                     }
                 }
@@ -368,7 +337,6 @@ class ShalatFragment : Fragment() {
                     reloadAgain = true
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
-                    transparentDialog.dismiss()
                     dataStoreViewModel.saveAreaData(city, country)
                 }
             } catch (e: IOException) {
@@ -383,7 +351,7 @@ class ShalatFragment : Fragment() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     reloadAgain = true
                     setViewModel()
-                }, 800)
+                }, 300)
             }
         }
     }
@@ -451,9 +419,9 @@ class ShalatFragment : Fragment() {
             if (!dontShowAgain || reloadAgain) {
                 shalatViewModel.getShalatTime(city, country)
             }
-        }
 
-        initUIResult()
+            initUIResult()
+        }
     }
 
     private fun initUIResult() {
@@ -461,6 +429,7 @@ class ShalatFragment : Fragment() {
             binding.apply {
                 when {
                     result is Resource.Loading && result.data == null -> {
+                        transparentDialog.dismiss()
                         progressBar.visibility = View.VISIBLE
                         clNegativeCase.visibility = View.GONE
                         shalatLayout.root.visibility = View.GONE
@@ -597,22 +566,22 @@ class ShalatFragment : Fragment() {
 
         binding.apply {
             when {
-                timeNow <= dzuhur && timeNow > shubuh -> {
+                timeNow > shubuh && timeNow <= dzuhur -> {
                     tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
                     setNextPrayShalatBackground(shalatLayout.clDzuhur)
                 }
 
-                timeNow <= ashar && timeNow > dzuhur -> {
+                timeNow > dzuhur && timeNow <= ashar -> {
                     tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
                     setNextPrayShalatBackground(shalatLayout.clAshar)
                 }
 
-                timeNow <= maghrib && timeNow > ashar -> {
+                timeNow > ashar && timeNow <= maghrib -> {
                     tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
                     setNextPrayShalatBackground(shalatLayout.clMaghrib)
                 }
 
-                timeNow <= isya && timeNow > maghrib -> {
+                timeNow > maghrib && timeNow <= isya -> {
                     tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
                     setNextPrayShalatBackground(shalatLayout.clIsya)
                 }
@@ -760,9 +729,11 @@ class ShalatFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (reloadAgain) setViewModel()
         refreshDataWhenCityChange()
+    }
 
-        Log.d("TAG", "onResume: ")
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

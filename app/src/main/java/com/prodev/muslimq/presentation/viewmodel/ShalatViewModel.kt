@@ -10,7 +10,8 @@ import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +29,12 @@ class ShalatViewModel @Inject constructor(
     private var _getCityResult = MutableLiveData<Resource<List<CityResponse>>>()
     val getCityResult: LiveData<Resource<List<CityResponse>>> get() = _getCityResult
 
+    private var _getShalatJob: Job? = null
+
     fun getShalatTime(city: String, country: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        _getShalatJob?.cancel()
+        _getShalatJob = viewModelScope.launch {
+            delay(500)
             repository.getShalatDaily(city, country).collect {
                 _getShalatTimeResult.postValue(it)
             }

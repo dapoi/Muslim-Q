@@ -90,8 +90,7 @@
                     android:src="@drawable/ic_choose"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_icon_loc"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/iv_icon_loc"
-                    app:tint="@color/green_base" />
+                    app:layout_constraintTop_toTopOf="@+id/iv_icon_loc" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_info_shalat"

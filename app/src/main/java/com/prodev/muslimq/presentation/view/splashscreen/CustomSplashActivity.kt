@@ -23,29 +23,22 @@ class CustomSplashActivity : AppCompatActivity() {
     private val binding get() = _binding!!
 
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    private val duration = 2000L
-
-    override fun onStart() {
-        super.onStart()
-        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
-            if (uiTheme != null) {
-                when (uiTheme) {
-                    UITheme.LIGHT -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-
-                    UITheme.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-            }
-        }
-    }
+    private val duration = 1500L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityCustomSplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                val stateUIMode = when (uiTheme) {
+                    UITheme.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                    UITheme.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                }
+                AppCompatDelegate.setDefaultNightMode(stateUIMode)
+            }
+        }
 
         Handler(Looper.getMainLooper()).postDelayed({
             Intent(this, MainActivity::class.java).also(::startActivity)
