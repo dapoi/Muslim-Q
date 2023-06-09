@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
 import com.prodev.muslimq.presentation.MainActivity
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
 
 class AdzanReceiver : BroadcastReceiver() {
 
@@ -97,17 +96,17 @@ class AdzanReceiver : BroadcastReceiver() {
         calendar.set(Calendar.HOUR_OF_DAY, adzanTimeParts[0].toInt())
         calendar.set(Calendar.MINUTE, adzanTimeParts[1].toInt())
         calendar.set(Calendar.SECOND, 0)
-        var alarmTime = calendar.timeInMillis
 
-        // If the alarm time is before the current time, add a day to the alarm time
-        if (alarmTime < currentTime) {
-            alarmTime += TimeUnit.DAYS.toMillis(1)
+        // Check if the alarm time is in the past, if so, add a day
+        if (calendar.timeInMillis < currentTime) {
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
-        // AlarmManager.RTC_WAKEUP: Alarm will go off even if the device is in sleep mode
-        alarmManager.setExactAndAllowWhileIdle(
+        // Set the alarm every day
+        alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
-            alarmTime,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
     }

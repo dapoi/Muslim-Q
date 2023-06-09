@@ -56,9 +56,7 @@ import java.util.*
 @AndroidEntryPoint
 class ShalatFragment : Fragment() {
 
-    private var _binding: FragmentShalatBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: FragmentShalatBinding
     private lateinit var listOfSwitch: List<SwitchCompat>
     private lateinit var gpsStatusListener: GPSStatusListener
     private lateinit var turnOnGps: TurnOnGps
@@ -91,9 +89,11 @@ class ShalatFragment : Fragment() {
     private var maghrib: String = ""
     private var isya: String = ""
 
+    private var isFirstLoad = false
     private var isOnline = false
     private var dontShowAgain = false
     private var reloadAgain = false
+    private var resetSwitch = false
     private var stateAdzanName = ""
     private var lat = 0.0
     private var lon = 0.0
@@ -154,7 +154,14 @@ class ShalatFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentShalatBinding.inflate(inflater, container, false)
+        if (this::binding.isInitialized) {
+            binding
+            isFirstLoad = false
+        } else {
+            binding = FragmentShalatBinding.inflate(inflater, container, false)
+            isFirstLoad = true
+        }
+
         return binding.root
     }
 
@@ -169,7 +176,7 @@ class ShalatFragment : Fragment() {
 
         binding.ivIconChoose.setOnClickListener { showDialogLocation() }
 
-        setViewModel()
+        if (isFirstLoad) setViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
 
@@ -349,9 +356,10 @@ class ShalatFragment : Fragment() {
         setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
                 Handler(Looper.getMainLooper()).postDelayed({
+                    resetSwitch = true
                     reloadAgain = true
                     setViewModel()
-                }, 300)
+                }, 800)
             }
         }
     }
@@ -418,9 +426,8 @@ class ShalatFragment : Fragment() {
 
             if (!dontShowAgain || reloadAgain) {
                 shalatViewModel.getShalatTime(city, country)
+                initUIResult()
             }
-
-            initUIResult()
         }
     }
 
@@ -517,17 +524,19 @@ class ShalatFragment : Fragment() {
             listOfSwitch.withIndex().forEach { (index, switch) ->
                 val adzanName = adzanNames[index]
 
-                dataStoreViewModel.getSwitchState(adzanName)
-                    .observe(viewLifecycleOwner) { state ->
-                        if (ContextCompat.checkSelfPermission(
-                                requireContext(), Manifest.permission.POST_NOTIFICATIONS
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            switch.isChecked = false
-                        } else {
-                            switch.isChecked = state
+                if (!resetSwitch) {
+                    dataStoreViewModel.getSwitchState(adzanName)
+                        .observe(viewLifecycleOwner) { state ->
+                            if (ContextCompat.checkSelfPermission(
+                                    requireContext(), Manifest.permission.POST_NOTIFICATIONS
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                switch.isChecked = false
+                            } else {
+                                switch.isChecked = state
+                            }
                         }
-                    }
+                }
 
                 switch.setOnCheckedChangeListener { adzanSwitch, isChecked ->
                     if (Build.VERSION.SDK_INT >= 33) {
@@ -542,23 +551,14 @@ class ShalatFragment : Fragment() {
                         stateNotifIcon(listAdzanTime, adzanName, isChecked, index)
                     }
                 }
+            }
 
-                listAdzanTime[adzanName].let { adzanTime ->
-                    if (switch.isChecked) {
-                        adzanReceiver.setAdzanReminder(
-                            context = requireContext(),
-                            adzanName = adzanName,
-                            adzanTime = adzanTime.toString(),
-                            adzanCode = index + 1,
-                            isShubuh = adzanName == "Adzan Shubuh"
-                        )
-                    } else {
-                        adzanReceiver.cancelAdzanReminder(
-                            context = requireContext(),
-                            adzanCode = index + 1
-                        )
-                    }
+            if (resetSwitch) {
+                for (i in listOfSwitch.indices) {
+                    listOfSwitch[i].isChecked = false
                 }
+
+                resetSwitch = false
             }
         }
 
@@ -636,12 +636,12 @@ class ShalatFragment : Fragment() {
         index: Int
     ) {
         val lowerCaseAdzanName = adzanLowerCase(adzanName)
-        listAdzanTime[adzanName].let { adzanTime ->
+        listAdzanTime[adzanName]?.let { adzanTime ->
             if (isChecked) {
                 adzanReceiver.setAdzanReminder(
                     context = requireContext(),
                     adzanName = adzanName,
-                    adzanTime = adzanTime.toString(),
+                    adzanTime = adzanTime,
                     adzanCode = index + 1,
                     isShubuh = adzanName == "Adzan Shubuh"
                 )
@@ -650,7 +650,7 @@ class ShalatFragment : Fragment() {
                     true,
                     requireContext(),
                     binding.root,
-                    "$lowerCaseAdzanName diaktifkan",
+                    "$lowerCaseAdzanName diaktifkan"
                 )
             } else {
                 adzanReceiver.cancelAdzanReminder(
@@ -658,11 +658,16 @@ class ShalatFragment : Fragment() {
                     adzanCode = index + 1
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, false)
+                val message = if (resetSwitch) {
+                    "Ubah lokasi berhasil, aktifkan kembali adzan"
+                } else {
+                    "$lowerCaseAdzanName dimatikan"
+                }
                 (activity as MainActivity).customSnackbar(
-                    false,
+                    resetSwitch,
                     requireContext(),
                     binding.root,
-                    "$lowerCaseAdzanName dimatikan",
+                    message
                 )
             }
         }
@@ -730,10 +735,5 @@ class ShalatFragment : Fragment() {
         super.onResume()
 
         refreshDataWhenCityChange()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

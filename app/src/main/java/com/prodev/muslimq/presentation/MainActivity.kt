@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 50)
+        layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 60)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
     }
