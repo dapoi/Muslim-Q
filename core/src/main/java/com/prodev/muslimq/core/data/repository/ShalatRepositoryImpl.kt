@@ -30,7 +30,7 @@ class ShalatRepositoryImpl @Inject constructor(
         try {
             val response = remoteDataSource.getAllProvince()
             emit(Resource.Success(response))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             emit(Resource.Error(e))
         }
     }.flowOn(dispatcher)

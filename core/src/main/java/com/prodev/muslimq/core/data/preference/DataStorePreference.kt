@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.asLiveData
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -118,9 +117,11 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Save city and country name to data store
      */
     suspend fun saveCityAndCountryData(cityName: String, countryName: String) {
-        dataStore.edit { preferences ->
-            preferences[CITY_NAME] = cityName
-            preferences[COUNTRY_NAME] = countryName
+        runBlocking {
+            dataStore.edit { preferences ->
+                preferences[CITY_NAME] = cityName
+                preferences[COUNTRY_NAME] = countryName
+            }
         }
     }
 
@@ -131,16 +132,18 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         val cityName = preferences[CITY_NAME] ?: ""
         val countryName = preferences[COUNTRY_NAME] ?: ""
         Pair(cityName, countryName)
-    }.distinctUntilChanged().asLiveData()
+    }
 
     /**
      * Save dark mode switch state to data store
      */
     suspend fun saveSwitchDarkModeState(uiTheme: UITheme) {
-        dataStore.edit { preferences ->
-            preferences[SWITCH_DARK_MODE] = when (uiTheme) {
-                UITheme.LIGHT -> false
-                UITheme.DARK -> true
+        runBlocking {
+            dataStore.edit { preferences ->
+                preferences[SWITCH_DARK_MODE] = when (uiTheme) {
+                    UITheme.LIGHT -> false
+                    UITheme.DARK -> true
+                }
             }
         }
     }
@@ -177,9 +180,7 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     /**
      * Get shalat switch state from data store
      */
-    fun getSwitchState(switchName: String): Flow<Boolean> {
-        return dataStore.data.map { preferences ->
-            preferences[booleanPreferencesKey(switchName)] ?: false
-        }.distinctUntilChanged()
+    fun getSwitchState(switchName: String): Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[booleanPreferencesKey(switchName)] ?: false
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -31,10 +33,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+
+    private var keep = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        splashScreen.setKeepOnScreenCondition { keep }
+        Handler(mainLooper).postDelayed({
+            keep = false
+        }, 1000)
+
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                when (uiTheme) {
+                    UITheme.LIGHT -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+
+                    UITheme.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+            }
+        }
 
         val navHosFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -55,20 +81,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
-
-        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
-            if (uiTheme != null) {
-                when (uiTheme) {
-                    UITheme.LIGHT -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-
-                    UITheme.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-            }
-        }
 
         val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
         if (fromNotif) {

@@ -63,7 +63,7 @@ class DataStoreViewModel @Inject constructor(
 
     val getProvinceData = dataStorePref.getProvinceData.asLiveData()
 
-    val getAreaData = dataStorePref.getCityAndCountryData
+    val getAreaData = dataStorePref.getCityAndCountryData.asLiveData()
 
     val getAyahSize = dataStorePref.getAyahSize.asLiveData()
 

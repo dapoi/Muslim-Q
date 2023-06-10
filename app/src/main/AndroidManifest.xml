@@ -38,20 +38,21 @@
             android:configChanges="orientation|screenSize"
             android:exported="true"
             android:screenOrientation="locked"
-            android:theme="@style/Theme.Splash">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.Splash" />
         <activity
             android:name="com.prodev.muslimq.presentation.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="locked"
-            android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/Theme.App.Starting"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name=".service.notification.AdzanReceiver"

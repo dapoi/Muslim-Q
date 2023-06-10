@@ -242,6 +242,7 @@ class QuranFragment : Fragment() {
                     it is Resource.Loading && it.data.isNullOrEmpty() -> {
                         stateLoading(true)
                         clNoInternet.visibility = View.GONE
+                        emptyState.root.visibility = View.GONE
                     }
 
                     it is Resource.Error && it.data.isNullOrEmpty() -> {

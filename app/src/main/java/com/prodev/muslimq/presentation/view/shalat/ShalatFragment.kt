@@ -327,6 +327,7 @@ class ShalatFragment : Fragment() {
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
                         dataStoreViewModel.saveAreaData(city, country)
+                        resetSwitch = true
                     }
                 }
 
@@ -345,6 +346,7 @@ class ShalatFragment : Fragment() {
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
                     dataStoreViewModel.saveAreaData(city, country)
+                    resetSwitch = true
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -427,6 +429,8 @@ class ShalatFragment : Fragment() {
             if (!dontShowAgain || reloadAgain) {
                 shalatViewModel.getShalatTime(city, country)
                 initUIResult()
+                dontShowAgain = true
+                reloadAgain = false
             }
         }
     }
@@ -456,8 +460,6 @@ class ShalatFragment : Fragment() {
                     else -> {
                         clNegativeCase.visibility = View.GONE
                         result?.data?.let { data -> getAllShalatData(data) }
-                        dontShowAgain = true
-                        reloadAgain = false
                     }
                 }
             }
