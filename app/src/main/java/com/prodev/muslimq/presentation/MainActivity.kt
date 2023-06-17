@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -30,6 +32,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val navHostFragment: NavHostFragment by lazy {
+        supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+    }
+    private val navController: NavController by lazy {
+        navHostFragment.navController
+    }
+    private val windowInsetsControllerCompat by lazy {
+        WindowInsetsControllerCompat(window, binding.root)
+    }
 
     private var keep = true
 
@@ -38,13 +49,10 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen().setKeepOnScreenCondition { keep }
         Handler(mainLooper).postDelayed({
             keep = false
-        }, 1500)
+        }, 2100)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navHosFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHosFragment.navController
         val destinationToHideBottomnav = setOf(
             R.id.quranDetailFragment,
             R.id.shalatProvinceFragment,
@@ -61,13 +69,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
-
-//        val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
-//        if (fromNotif) {
-//            val intent = Intent(this, AdzanService::class.java)
-//            intent.putExtra(STOP_ADZAN, true)
-//            stopService(intent)
-//        }
     }
 
     private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView, view: View) {
@@ -145,10 +146,23 @@ class MainActivity : AppCompatActivity() {
                 when (uiTheme) {
                     UITheme.LIGHT -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+                        navController.addOnDestinationChangedListener { _, destination, _ ->
+                            val exceptionFragment = destination.id != R.id.aboutAppFragment
+                            windowInsetsControllerCompat.apply {
+                                isAppearanceLightStatusBars = exceptionFragment
+                                isAppearanceLightNavigationBars = exceptionFragment
+                            }
+                        }
                     }
 
                     UITheme.DARK -> {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+                        windowInsetsControllerCompat.apply {
+                            isAppearanceLightStatusBars = false
+                            isAppearanceLightNavigationBars = false
+                        }
                     }
                 }
             }

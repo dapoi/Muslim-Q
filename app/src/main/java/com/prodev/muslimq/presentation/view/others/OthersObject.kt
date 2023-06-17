@@ -6,15 +6,15 @@ object OthersObject {
 
     private val menuImage = intArrayOf(
         R.drawable.ic_collection,
-        R.drawable.ic_support,
         R.drawable.ic_dark_mode,
+        R.drawable.ic_support,
         R.drawable.ic_about
     )
 
     private val menuTitle = listOf(
         "Baca Nanti",
-        "Kirim Masukan",
         "Mode Gelap",
+        "Kirim Masukan",
         "Info Aplikasi"
     )
 

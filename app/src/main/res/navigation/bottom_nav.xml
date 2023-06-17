@@ -57,8 +57,8 @@
             android:id="@+id/action_othersFragment_to_aboutAppFragment"
             app:destination="@id/aboutAppFragment"
             app:enterAnim="@anim/from_right_anim"
-            app:exitAnim="@anim/to_left_anim"
-            app:popEnterAnim="@anim/from_left_anim"
+            app:exitAnim="@anim/no_anim"
+            app:popEnterAnim="@anim/no_anim"
             app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment

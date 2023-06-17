@@ -28,8 +28,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_version">
 
         <TextView
             android:id="@+id/tv_title"
@@ -75,7 +75,7 @@
             android:fontFamily="@font/poppins_medium"
             android:includeFontPadding="false"
             android:text="@string/license"
-            android:textColor="@color/black"
+            android:textColor="@color/green_button_end"
             android:textSize="22sp"
             app:backgroundTint="@color/white_header"
             app:cornerRadius="20dp"
