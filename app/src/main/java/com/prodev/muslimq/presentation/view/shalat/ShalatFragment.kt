@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -45,6 +46,7 @@ import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.service.location.GPSStatusListener
 import com.prodev.muslimq.service.location.TurnOnGps
 import com.prodev.muslimq.service.notification.AdzanReceiver
+import com.prodev.muslimq.service.notification.AdzanService
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
@@ -167,6 +169,12 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
         transparentDialog.setView(dialogLayout.root)
+
+        arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
+            if (isFromNotif) {
+                requireActivity().stopService(Intent(requireContext(), AdzanService::class.java))
+            }
+        }
     }
 
     private fun showDialogLocation() {
