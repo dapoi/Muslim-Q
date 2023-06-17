@@ -15,7 +15,7 @@ object OthersObject {
         "Baca Nanti",
         "Kirim Masukan",
         "Mode Gelap",
-        "Tentang Aplikasi"
+        "Info Aplikasi"
     )
 
     val listData: ArrayList<Others>

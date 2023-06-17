@@ -7,11 +7,8 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,15 +23,15 @@ import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.FragmentQuranBinding
 import com.prodev.muslimq.presentation.adapter.QuranAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class QuranFragment : Fragment() {
+class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::inflate) {
 
-    private lateinit var binding: FragmentQuranBinding
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var quranAdapter: QuranAdapter
 
@@ -42,24 +39,10 @@ class QuranFragment : Fragment() {
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
     private var isOnline = false
-    private var isFirstLoad = false
 
     private var surahId: Int? = null
     private var ayahNumber: Int? = null
     private var surahDesc: String? = ""
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        if (this::binding.isInitialized) {
-            binding
-            isFirstLoad = false
-        } else {
-            binding = FragmentQuranBinding.inflate(inflater, container, false)
-            isFirstLoad = true
-        }
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -75,48 +58,10 @@ class QuranFragment : Fragment() {
                 rvSurah.smoothScrollToPosition(0)
                 appBar.setExpanded(true, true)
             }
-
-
-            tilSurah.setEndIconOnClickListener {
-                etSurah.text?.clear()
-                hideKeyboard(requireActivity())
-                etSurah.clearFocus()
-            }
-
-            etSurah.apply {
-                addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(s: Editable?) {}
-
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
-                    }
-
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
-                        quranAdapter.filter.filter(s)
-                    }
-                })
-
-                setOnEditorActionListener { _, _, _ ->
-                    hideKeyboard(requireActivity())
-                    etSurah.clearFocus()
-                    true
-                }
-            }
         }
 
-        if (isFirstLoad) {
-            setAdapter()
-            setViewModel()
-        }
+        setAdapter()
+        setViewModel()
     }
 
     @SuppressLint("SetTextI18n")
@@ -206,7 +151,14 @@ class QuranFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        quranViewModel.getSurah().observe(viewLifecycleOwner) {
+        quranViewModel.isCollapse.observe(viewLifecycleOwner) { yes ->
+            if (yes) {
+                binding.appBar.setExpanded(false, true)
+                binding.fabBackToTop.show()
+            }
+        }
+
+        quranViewModel.getListQuran.observe(viewLifecycleOwner) { response ->
             with(binding) {
                 srlSurah.apply {
                     setLottieAnimation("loading.json")
@@ -222,7 +174,7 @@ class QuranFragment : Fragment() {
                                 }, 2000)
 
                                 handlerData.postDelayed({
-                                    if (it.data.isNullOrEmpty()) {
+                                    if (response.data.isNullOrEmpty()) {
                                         InternetReceiver().onReceive(requireActivity(), Intent())
                                     } else {
                                         rvSurah.visibility = View.VISIBLE
@@ -238,14 +190,43 @@ class QuranFragment : Fragment() {
                     })
                 }
 
+                etSurah.apply {
+                    addTextChangedListener(object : TextWatcher {
+                        override fun afterTextChanged(s: Editable?) {}
+
+                        override fun beforeTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            count: Int,
+                            after: Int
+                        ) {
+                        }
+
+                        override fun onTextChanged(
+                            s: CharSequence?,
+                            start: Int,
+                            before: Int,
+                            count: Int
+                        ) {
+                            quranAdapter.filter.filter(s)
+                        }
+                    })
+
+                    setOnEditorActionListener { _, _, _ ->
+                        hideKeyboard(requireActivity())
+                        etSurah.clearFocus()
+                        true
+                    }
+                }
+
                 when {
-                    it is Resource.Loading && it.data.isNullOrEmpty() -> {
+                    response is Resource.Loading && response.data.isNullOrEmpty() -> {
                         stateLoading(true)
                         clNoInternet.visibility = View.GONE
                         emptyState.root.visibility = View.GONE
                     }
 
-                    it is Resource.Error && it.data.isNullOrEmpty() -> {
+                    response is Resource.Error && response.data.isNullOrEmpty() -> {
                         stateLoading(false)
                         stateNoInternet(ctlHeader, clNoInternet, true)
                     }
@@ -253,8 +234,25 @@ class QuranFragment : Fragment() {
                     else -> {
                         stateLoading(false)
                         stateNoInternet(ctlHeader, clNoInternet, false)
-                        quranAdapter.setList(it.data!!)
+                        quranAdapter.setList(
+                            if (quranViewModel.searchQuery.isNotEmpty() &&
+                                quranViewModel.filteredData.isNotEmpty()
+                            ) {
+                                quranViewModel.filteredData
+                            } else {
+                                response.data!!
+                            }
+                        )
+                        emptyState.root.visibility = View.GONE
+                        rvSurah.visibility = View.VISIBLE
                         bottomNav.visibility = View.VISIBLE
+
+                        tilSurah.setEndIconOnClickListener {
+                            quranAdapter.setList(response.data!!)
+                            hideKeyboard(requireActivity())
+                            etSurah.text?.clear()
+                            etSurah.clearFocus()
+                        }
                     }
                 }
             }
@@ -290,6 +288,20 @@ class QuranFragment : Fragment() {
         } else {
             ctlHeader.visibility = View.VISIBLE
             clNoInternet.visibility = View.GONE
+        }
+    }
+
+    private fun isAppBarCollapse(): Boolean {
+        return binding.appBar.height + binding.appBar.y == binding.toolbar.height.toFloat()
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        quranViewModel.apply {
+            setCollapseAppbar(isAppBarCollapse())
+            searchQuery = binding.etSurah.text.toString()
+            filteredData = quranAdapter.getList()
         }
     }
 }

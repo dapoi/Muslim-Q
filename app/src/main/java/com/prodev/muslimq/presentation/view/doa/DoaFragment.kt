@@ -11,26 +11,16 @@ import androidx.recyclerview.widget.SimpleItemAnimator
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.databinding.FragmentDoaBinding
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DoaViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
-class DoaFragment : Fragment() {
+class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate) {
 
-    private lateinit var binding: FragmentDoaBinding
     private lateinit var doaAdapter: DoaAdapter
 
     private val doaViewModel: DoaViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentDoaBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,10 +60,12 @@ class DoaFragment : Fragment() {
                 is Resource.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
+
                 is Resource.Success -> {
                     binding.progressBar.visibility = View.GONE
                     doaAdapter.setDoa(it.data!!)
                 }
+
                 is Resource.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.rvDoa.visibility = View.GONE

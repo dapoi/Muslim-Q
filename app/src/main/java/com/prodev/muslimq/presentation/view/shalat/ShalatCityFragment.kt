@@ -1,14 +1,9 @@
 package com.prodev.muslimq.presentation.view.shalat
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,74 +16,49 @@ import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.presentation.adapter.CityAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ShalatCityFragment : Fragment() {
-
-    private var _binding: FragmentShalatCityBinding? = null
-    private val binding get() = _binding!!
+class ShalatCityFragment :
+    BaseFragment<FragmentShalatCityBinding>(FragmentShalatCityBinding::inflate) {
 
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-
-    private lateinit var cityAdapter: CityAdapter
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentShalatCityBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val cityAdapter: CityAdapter by lazy { CityAdapter(binding.emptyState.root) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setAdapter()
-        setViewModel()
-
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() }
-            dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { province ->
-                val provinceName = when (province.second) {
-                    "DKI JAKARTA" -> {
-                        "DKI Jakarta"
-                    }
 
-                    "DI YOGYAKARTA" -> {
-                        "Yogyakarta"
-                    }
-
-                    else -> {
-                        capitalizeEachWord(province.second)
-                    }
-                }
-                tvTitleCity.text = getString(R.string.city_choose, provinceName)
-            }
-
-            svCity.setOnSearchClickListener {
-                tvTitleCity.visibility = View.GONE
-            }
-
-            svCity.setOnCloseListener {
-                tvTitleCity.visibility = View.VISIBLE
-                false
-            }
-
-            svCity.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    hideKeyboard(requireActivity())
-                    return true
+            svCity.apply {
+                setOnSearchClickListener {
+                    tvTitleCity.visibility = View.GONE
                 }
 
-                override fun onQueryTextChange(newText: String): Boolean {
-                    cityAdapter.filter.filter(newText)
-                    return true
+                setOnCloseListener {
+                    tvTitleCity.visibility = View.VISIBLE
+                    false
                 }
-            })
+
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                    override fun onQueryTextSubmit(query: String?): Boolean {
+                        hideKeyboard(requireActivity())
+                        return true
+                    }
+
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        cityAdapter.filter.filter(newText)
+                        return true
+                    }
+                })
+            }
 
             swipeRefresh(
                 requireContext(),
@@ -98,31 +68,46 @@ class ShalatCityFragment : Fragment() {
                 rvCity
             )
         }
+
+        setAdapter()
+        setViewModel()
     }
 
     private fun setAdapter() {
-        cityAdapter = CityAdapter(binding.emptyState.root)
         binding.rvCity.apply {
             adapter = cityAdapter
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
+        }
 
-            cityAdapter.onCLick = { city ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    dataStoreViewModel.apply {
-                        saveAreaData(city.name, "Indonesia")
-                    }
-                }
-
-                setFragmentResult(REQUEST_CITY_KEY, bundleOf(BUNDLE_CITY to true))
-                findNavController().popBackStack(R.id.shalatFragment, false)
+        cityAdapter.onCLick = { city ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                dataStoreViewModel.saveAreaData(city.name, "Indonesia")
             }
+
+            setFragmentResult(REQUEST_CITY_KEY, bundleOf(BUNDLE_CITY to true))
+            findNavController().popBackStack(R.id.shalatFragment, false)
         }
     }
 
     private fun setViewModel() {
         dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { dataProv ->
             shalatViewModel.getAllCity(dataProv.first)
+
+            val provinceName = when (dataProv.second) {
+                "DKI JAKARTA" -> {
+                    "DKI Jakarta"
+                }
+
+                "DI YOGYAKARTA" -> {
+                    "Yogyakarta"
+                }
+
+                else -> {
+                    capitalizeEachWord(dataProv.second)
+                }
+            }
+            binding.tvTitleCity.text = getString(R.string.city_choose, provinceName)
         }
 
         shalatViewModel.getCityResult.observe(viewLifecycleOwner) {
@@ -134,11 +119,12 @@ class ShalatCityFragment : Fragment() {
                     }
 
                     is Resource.Success -> {
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            delay(500)
                             stateNoInternetView(false)
                             stateLoading(false)
                             cityAdapter.setList(it.data!!)
-                        }, 700)
+                        }
                     }
 
                     is Resource.Error -> {
@@ -165,11 +151,6 @@ class ShalatCityFragment : Fragment() {
 
     private fun stateNoInternetView(state: Boolean) {
         binding.clNoInternet.visibility = if (state) View.VISIBLE else View.GONE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

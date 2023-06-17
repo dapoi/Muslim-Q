@@ -4,7 +4,7 @@
     <string name="daily_prayer">Doa</string>
     <string name="schedule_pray">Shalat</string>
     <string name="other">Lainnya</string>
-    <string name="about">Tentang Aplikasi</string>
+    <string name="about">Info Aplikasi</string>
     <string name="contact">Kontak</string>
     <string name="quran">Qur\'an</string>
     <string name="others">Lainnya</string>
@@ -16,7 +16,6 @@
     <string name="next_prayer">Waktu Shalat Berikutnya :</string>
     <string name="province_choose">Pilih Provinsi</string>
     <string name="city_choose">Pilih Kota di %s</string>
-    <string name="choose_your_location">Pilih Lokasi Anda</string>
     <string name="location_not_found">Lokasi tidak ditemukan, cari lokasi lain</string>
     <string name="last_read_surah_empty">"Belum ada surah yang ditandai"</string>
     <string name="shubuh">Shubuh</string>
@@ -46,7 +45,6 @@
     <string name="are_you_sure_desc">Jika memilih hapus, maka data surah yang sudah Anda simpan sebelumnya akan terhapus.</string>
     <string name="your_location">Lokasi Anda</string>
     <string name="not_found_location">Anda belum memilih lokasi</string>
-    <string name="desc_about_app">MuslimQ merupakan sebuah aplikasi untuk kebutuhan ibadah umat Muslim yang berstatus <i>open-source</i>. \n\n Aplikasi ini memberikan akses terbuka pada sumber kode, sehingga dapat disesuaikan dan dimodifikasi sesuai kebutuhan oleh pengembang lainnya. Kami mengajak pengguna yang tertarik untuk ikut berpartisipasi dalam pengembangan MuslimQ. \n\n Anda dapat bergabung dengan tim pengembang kami dan memberikan masukan serta saran melalui fitur \n “Kirim Masukan” \n untuk meningkatkan kualitas dan fungsionalitas aplikasi.</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="search_surah">Cari Surah</string>
@@ -78,4 +76,6 @@
     <string name="input_number">Masukkan Nomor Ayat</string>
     <string name="app_version">Versi %s</string>
     <string name="continue_reading">Lanjut Baca</string>
+    <string name="copyright">Hak Cipta © 2023</string>
+    <string name="license">Lisensi</string>
 </resources>

@@ -2,6 +2,7 @@ package com.prodev.muslimq.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.utils.uitheme.UITheme
@@ -63,7 +64,7 @@ class DataStoreViewModel @Inject constructor(
 
     val getProvinceData = dataStorePref.getProvinceData.asLiveData()
 
-    val getAreaData = dataStorePref.getCityAndCountryData.asLiveData()
+    val getAreaData = dataStorePref.getCityAndCountryData.asLiveData().distinctUntilChanged()
 
     val getAyahSize = dataStorePref.getAyahSize.asLiveData()
 

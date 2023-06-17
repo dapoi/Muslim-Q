@@ -3,41 +3,29 @@ package com.prodev.muslimq.presentation.view.others
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.prodev.muslimq.BuildConfig
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class OthersFragment : Fragment() {
+class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding::inflate) {
 
-    private lateinit var binding: FragmentOthersBinding
     private lateinit var othersAdapter: OthersAdapter
 
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentOthersBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setRecyclerView()
-        binding.tvVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
     }
 
     private fun setRecyclerView() {
@@ -94,7 +82,7 @@ class OthersFragment : Fragment() {
                         startActivity(intent)
                     }
 
-                    "Tentang Aplikasi" -> {
+                    "Info Aplikasi" -> {
                         findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                     }
                 }

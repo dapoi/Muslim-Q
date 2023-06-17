@@ -35,6 +35,8 @@ class QuranAdapter(
         notifyDataSetChanged()
     }
 
+    fun getList(): List<QuranEntity> = listSurahFilter
+
     override fun getItemCount(): Int = listSurahFilter.size
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =

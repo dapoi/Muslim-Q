@@ -32,17 +32,4 @@
         tools:layout_editor_absoluteX="74dp"
         tools:listitem="@layout/item_list_other" />
 
-    <TextView
-        android:id="@+id/tv_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:fontFamily="@font/poppins_medium"
-        android:textColor="@color/green_base"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_others"
-        tools:text="Versi 1.0" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

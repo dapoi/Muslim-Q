@@ -4,6 +4,7 @@
     package="com.prodev.muslimq">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -34,12 +35,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.view.splashscreen.CustomSplashActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="true"
-            android:screenOrientation="locked"
-            android:theme="@style/Theme.Splash" />
-        <activity
             android:name="com.prodev.muslimq.presentation.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
@@ -57,6 +52,15 @@
         <receiver
             android:name=".service.notification.AdzanReceiver"
             android:exported="false" />
+
+        <receiver
+            android:name=".service.notification.BootReceiver"
+            android:enabled="false"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".service.notification.AdzanService"

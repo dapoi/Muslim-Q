@@ -11,9 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,7 +21,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -42,6 +39,7 @@ import com.prodev.muslimq.databinding.DialogGetLocationBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.presentation.MainActivity
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.service.location.GPSStatusListener
@@ -54,9 +52,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @AndroidEntryPoint
-class ShalatFragment : Fragment() {
+class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding::inflate) {
 
-    private lateinit var binding: FragmentShalatBinding
     private lateinit var listOfSwitch: List<SwitchCompat>
     private lateinit var gpsStatusListener: GPSStatusListener
     private lateinit var turnOnGps: TurnOnGps
@@ -89,10 +86,7 @@ class ShalatFragment : Fragment() {
     private var maghrib: String = ""
     private var isya: String = ""
 
-    private var isFirstLoad = false
     private var isOnline = false
-    private var dontShowAgain = false
-    private var reloadAgain = false
     private var resetSwitch = false
     private var stateAdzanName = ""
     private var lat = 0.0
@@ -151,18 +145,9 @@ class ShalatFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        if (this::binding.isInitialized) {
-            binding
-            isFirstLoad = false
-        } else {
-            binding = FragmentShalatBinding.inflate(inflater, container, false)
-            isFirstLoad = true
-        }
-
-        return binding.root
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        refreshDataWhenCityChange()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -176,7 +161,7 @@ class ShalatFragment : Fragment() {
 
         binding.ivIconChoose.setOnClickListener { showDialogLocation() }
 
-        if (isFirstLoad) setViewModel()
+        setViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
 
@@ -249,6 +234,7 @@ class ShalatFragment : Fragment() {
                 if (!isGPSOn) {
                     turnOnGps.startGps(requestGPSPermission)
                 } else {
+                    resetSwitch = true
                     transparentDialog.show()
                     getLiveLocation()
                 }
@@ -258,6 +244,7 @@ class ShalatFragment : Fragment() {
                     if (!isGPSOn) {
                         turnOnGps.startGps(requestGPSPermission)
                     } else {
+                        resetSwitch = true
                         transparentDialog.show()
                         getLiveLocation()
                     }
@@ -323,11 +310,9 @@ class ShalatFragment : Fragment() {
             geocoder.getFromLocation(lat, lon, 1, object : Geocoder.GeocodeListener {
                 override fun onGeocode(addresses: MutableList<Address>) {
                     if (addresses.isNotEmpty()) {
-                        reloadAgain = true
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
                         dataStoreViewModel.saveAreaData(city, country)
-                        resetSwitch = true
                     }
                 }
 
@@ -342,11 +327,9 @@ class ShalatFragment : Fragment() {
                     lat, lon, 1
                 ) as List<Address>
                 if (addresses.isNotEmpty()) {
-                    reloadAgain = true
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
                     dataStoreViewModel.saveAreaData(city, country)
-                    resetSwitch = true
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -359,8 +342,6 @@ class ShalatFragment : Fragment() {
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
                 Handler(Looper.getMainLooper()).postDelayed({
                     resetSwitch = true
-                    reloadAgain = true
-                    setViewModel()
                 }, 800)
             }
         }
@@ -383,11 +364,10 @@ class ShalatFragment : Fragment() {
 
                             handlerData.postDelayed({
                                 clNegativeCase.visibility = View.GONE
-                                reloadAgain = true
-                                setViewModel()
+                                shalatViewModel.refreshShalatTime()
                             }, 2350)
                         } else {
-                            negativeCase(true)
+                            negativeCase()
                             setRefreshing(false)
                         }
                     }
@@ -412,31 +392,16 @@ class ShalatFragment : Fragment() {
 
     private fun setViewModel() {
         dataStoreViewModel.getAreaData.observe(viewLifecycleOwner) { area ->
-            val city = area.first
-            val country = area.second
-            binding.apply {
-                if (city.isEmpty() && country.isEmpty()) {
-                    clInfoLocation.visibility = View.GONE
-                    tvChooseLocation.text =
-                        resources.getString(R.string.choose_your_location)
-                } else {
-                    clInfoLocation.visibility = View.VISIBLE
-                    tvYourLocation.text = area.first.uppercase()
-                    tvChooseLocation.visibility = View.GONE
-                }
-            }
+            shalatViewModel.getShalatTime(area)
 
-            if (!dontShowAgain || reloadAgain) {
-                shalatViewModel.getShalatTime(city, country)
-                initUIResult()
-                dontShowAgain = true
-                reloadAgain = false
-            }
+            binding.tvYourLocation.text = area.first
         }
+
+        initUIResult()
     }
 
     private fun initUIResult() {
-        shalatViewModel.getShalatTimeResult.observe(viewLifecycleOwner) { result ->
+        shalatViewModel.getTimeShalat.observe(viewLifecycleOwner) { result ->
             binding.apply {
                 when {
                     result is Resource.Loading && result.data == null -> {
@@ -448,13 +413,8 @@ class ShalatFragment : Fragment() {
 
                     result is Resource.Error && result.data == null -> {
                         progressBar.visibility = View.GONE
-                        isOnline = isOnline(requireContext())
-                        if (isOnline) {
-                            negativeCase(false)
-                        } else {
-                            negativeCase(true)
-                        }
                         shalatLayout.root.visibility = View.GONE
+                        negativeCase()
                     }
 
                     else -> {
@@ -547,10 +507,11 @@ class ShalatFragment : Fragment() {
                             adzanName,
                             isChecked,
                             adzanSwitch,
-                            index
+                            index,
+                            resetSwitch
                         )
                     } else {
-                        stateNotifIcon(listAdzanTime, adzanName, isChecked, index)
+                        stateNotifIcon(listAdzanTime, adzanName, isChecked, index, resetSwitch)
                     }
                 }
             }
@@ -602,6 +563,7 @@ class ShalatFragment : Fragment() {
         isChecked: Boolean,
         adzanSwitch: CompoundButton,
         index: Int,
+        resetSwitch: Boolean
     ) {
         stateAdzanName = adzanName
         if (Build.VERSION.SDK_INT >= 33) {
@@ -609,7 +571,7 @@ class ShalatFragment : Fragment() {
                 ContextCompat.checkSelfPermission(
                     requireContext(), Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    stateNotifIcon(listAdzanTime, adzanName, isChecked, index)
+                    stateNotifIcon(listAdzanTime, adzanName, isChecked, index, resetSwitch)
                 }
 
                 shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
@@ -635,7 +597,8 @@ class ShalatFragment : Fragment() {
         listAdzanTime: Map<String, String>,
         adzanName: String,
         isChecked: Boolean,
-        index: Int
+        index: Int,
+        resetSwitch: Boolean
     ) {
         val lowerCaseAdzanName = adzanLowerCase(adzanName)
         listAdzanTime[adzanName]?.let { adzanTime ->
@@ -696,24 +659,15 @@ class ShalatFragment : Fragment() {
         )
     }
 
-    private fun negativeCase(noInternet: Boolean) {
+    private fun negativeCase() {
         binding.apply {
             clNegativeCase.visibility = View.VISIBLE
             shalatLayout.root.visibility = View.GONE
-            if (noInternet) {
-                lottieNoLocation.visibility = View.GONE
-                lottieNoInternet.visibility = View.VISIBLE
-                tvResult.text = getString(R.string.no_internet)
-                clNegativeCase.applyConstraint {
-                    topToBottom(tvResult, lottieNoInternet, 16)
-                }
-            } else {
-                lottieNoLocation.visibility = View.VISIBLE
-                lottieNoInternet.visibility = View.GONE
-                tvResult.text = getString(R.string.no_prayer_time)
-                clNegativeCase.applyConstraint {
-                    topToBottom(tvResult, lottieNoLocation, 16)
-                }
+            lottieNoLocation.visibility = View.GONE
+            lottieNoInternet.visibility = View.VISIBLE
+            tvResult.text = getString(R.string.no_internet)
+            clNegativeCase.applyConstraint {
+                topToBottom(tvResult, lottieNoInternet, 16)
             }
         }
     }
@@ -731,11 +685,5 @@ class ShalatFragment : Fragment() {
 
     private fun adzanLowerCase(adzanName: String): String {
         return adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        refreshDataWhenCityChange()
     }
 }

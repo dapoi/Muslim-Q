@@ -129,8 +129,8 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Get city and country name from data store
      */
     val getCityAndCountryData = dataStore.data.map { preferences ->
-        val cityName = preferences[CITY_NAME] ?: ""
-        val countryName = preferences[COUNTRY_NAME] ?: ""
+        val cityName = preferences[CITY_NAME] ?: "DKI Jakarta"
+        val countryName = preferences[COUNTRY_NAME] ?: "Indonesia"
         Pair(cityName, countryName)
     }
 

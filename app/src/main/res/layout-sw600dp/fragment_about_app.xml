@@ -1,79 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_about_app"
     tools:context=".presentation.view.others.about.AboutAppFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="24dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white_header"
+            tools:ignore="ContentDescription" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <TextView
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/white_base"
-            android:elevation="4dp"
-            android:theme="?attr/actionBarTheme">
+            android:layout_height="match_parent"
+            android:fontFamily="@font/poppins_semibold"
+            android:includeFontPadding="false"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="@color/white_header"
+            android:textSize="24sp" />
 
-            <ImageView
-                android:id="@+id/iv_back"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginHorizontal="20dp"
-                android:src="@drawable/ic_back"
-                tools:ignore="ContentDescription" />
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_muslim"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:ignore="ContentDescription" />
 
-            <TextView
-                android:id="@+id/tv_title_city"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:text="@string/about"
-                android:textColor="@color/green_base"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_copy_right"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:fontFamily="@font/poppins"
+            android:includeFontPadding="false"
+            android:lineSpacingExtra="5dp"
+            android:text="@string/copyright"
+            android:textAlignment="center"
+            android:textColor="@color/white_header"
+            android:textSize="22sp"
+            app:layout_constraintTop_toBottomOf="@id/iv_logo" />
 
-            <ImageView
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_muslim"
-                tools:ignore="ContentDescription" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_license"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
+            android:text="@string/license"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            app:backgroundTint="@color/white_header"
+            app:cornerRadius="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_copy_right" />
 
-            <TextView
-                android:id="@+id/tv_desc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_medium"
-                android:lineSpacingExtra="5dp"
-                android:padding="20dp"
-                android:text="@string/desc_about_app"
-                android:textAlignment="center"
-                android:textColor="@color/black"
-                android:textSize="22sp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
+    <TextView
+        android:id="@+id/tv_version"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/poppins"
+        android:textAlignment="center"
+        android:textColor="@color/white_header"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:text="Versi 1.0" />
 
-    </ScrollView>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 

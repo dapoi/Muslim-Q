@@ -10,9 +10,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,7 +18,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +43,7 @@ import com.prodev.muslimq.databinding.DialogTaggingAyahBinding
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
@@ -61,12 +59,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-
 @AndroidEntryPoint
-class QuranDetailFragment : Fragment() {
-
-    private var _binding: FragmentQuranDetailBinding? = null
-    private val binding get() = _binding!!
+class QuranDetailFragment :
+    BaseFragment<FragmentQuranDetailBinding>(FragmentQuranDetailBinding::inflate) {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrentFontSize: SeekBar
@@ -96,6 +91,7 @@ class QuranDetailFragment : Fragment() {
     private var surahName: String = ""
     private var surahDesc: String = ""
     private var currentPage = 1
+    private var audioGlobal = ""
 
     private val requestPermissionStorage = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -108,6 +104,11 @@ class QuranDetailFragment : Fragment() {
                 message = "Izin penyimpanan diberikan",
                 isDetailScreen = true
             )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                saveToMediaStore(audioGlobal)
+            } else {
+                downloadAudio(audioGlobal)
+            }
         } else {
             (activity as MainActivity).customSnackbar(
                 state = false,
@@ -122,44 +123,27 @@ class QuranDetailFragment : Fragment() {
     private val requestPermissionStorageLower = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permission ->
-        when {
-            permission[Manifest.permission.READ_EXTERNAL_STORAGE] ?: false -> {
-                (activity as MainActivity).customSnackbar(
-                    state = true,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin penyimpanan diberikan",
-                    isDetailScreen = true
-                )
-            }
+        val permissionGranted = permission[Manifest.permission.READ_EXTERNAL_STORAGE] == true ||
+                permission[Manifest.permission.WRITE_EXTERNAL_STORAGE] == true
 
-            permission[Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false -> {
-                (activity as MainActivity).customSnackbar(
-                    state = true,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin penyimpanan diberikan",
-                    isDetailScreen = true
-                )
-            }
-
-            else -> {
-                (activity as MainActivity).customSnackbar(
-                    state = false,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "Izin penyimpanan ditolak",
-                    isDetailScreen = true
-                )
-            }
+        if (permissionGranted) {
+            (activity as MainActivity).customSnackbar(
+                state = true,
+                context = requireContext(),
+                view = binding.root,
+                message = "Izin penyimpanan diberikan",
+                isDetailScreen = true
+            )
+            downloadAudio(audioGlobal)
+        } else {
+            (activity as MainActivity).customSnackbar(
+                state = false,
+                context = requireContext(),
+                view = binding.root,
+                message = "Izin penyimpanan ditolak",
+                isDetailScreen = true
+            )
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentQuranDetailBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -683,6 +667,7 @@ class QuranDetailFragment : Fragment() {
         val btnSearch = dialogLayout.btnSearch
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
+            etSearch.setOnEditorActionListener { _, _, _ -> btnSearch.performClick() }
             btnSearch.setOnClickListener {
                 detailAdapter.setList(ayahs, true)
                 val query = etSearch.text.toString()
@@ -707,21 +692,10 @@ class QuranDetailFragment : Fragment() {
     }
 
     private fun setUpMediaPlayer(audio: String) {
+        audioGlobal = audio
         with(binding) {
             ivSound.setOnClickListener {
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                        checkPermissionStorageAndroidT(audio)
-                    }
-
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                        checkPermissionStorageAndroidR(audio)
-                    }
-
-                    else -> {
-                        checkPermissionStorageLower(audio)
-                    }
-                }
+                checkAudioState(audio)
             }
         }
     }
@@ -732,7 +706,7 @@ class QuranDetailFragment : Fragment() {
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_MEDIA_AUDIO
             ) == PERMISSION_GRANTED -> {
-                checkAudioState(audio)
+                downloadAudio(audio)
             }
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
@@ -759,7 +733,7 @@ class QuranDetailFragment : Fragment() {
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PERMISSION_GRANTED -> {
-                checkAudioState(audio)
+                saveToMediaStore(audio)
             }
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
@@ -793,7 +767,7 @@ class QuranDetailFragment : Fragment() {
 
         when {
             permissionStorageGranted -> {
-                checkAudioState(audio)
+                downloadAudio(audio)
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
@@ -852,11 +826,24 @@ class QuranDetailFragment : Fragment() {
                     setView(dialogLayout.root)
                     show()
                     tvDownload.setOnClickListener {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                            saveToMediaStore(audio)
-                        } else {
-                            downloadAudio(audio)
+                        when {
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                                checkPermissionStorageAndroidT(audio)
+                            }
+
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                                checkPermissionStorageAndroidR(audio)
+                            }
+
+                            else -> {
+                                checkPermissionStorageLower(audio)
+                            }
                         }
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+//                            saveToMediaStore(audio)
+//                        } else {
+//                            downloadAudio(audio)
+//                        }
                         dismiss()
                     }
                     tvStreaming.setOnClickListener {
@@ -1047,32 +1034,37 @@ class QuranDetailFragment : Fragment() {
     private fun initializeMediaPlayer(mp3File: String) {
         mediaPlayer = MediaPlayer()
         mediaPlayer.apply {
-            setDataSource(mp3File)
-            prepare()
 
             with(binding) {
-                setOnPreparedListener {
-                    sbSound.max = duration
+                try {
+                    setOnPreparedListener {
+                        sbSound.max = duration
 
-                    var currentProgress = currentPosition
-                    val audioDuration = duration
-                    durationText(tvSoundDuration, currentProgress, audioDuration)
-                    sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                        override fun onProgressChanged(
-                            seekBar: SeekBar?, progress: Int, fromUser: Boolean
-                        ) {
-                            if (fromUser) {
-                                seekTo(progress)
+                        var currentProgress = currentPosition
+                        val audioDuration = duration
+                        durationText(tvSoundDuration, currentProgress, audioDuration)
+                        sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                            override fun onProgressChanged(
+                                seekBar: SeekBar?, progress: Int, fromUser: Boolean
+                            ) {
+                                if (fromUser) {
+                                    seekTo(progress)
+                                }
+
+                                currentProgress = progress
+                                durationText(tvSoundDuration, currentProgress, audioDuration)
                             }
 
-                            currentProgress = progress
-                            durationText(tvSoundDuration, currentProgress, audioDuration)
-                        }
+                            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-                        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                        })
+                    }
 
-                        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-                    })
+                    setDataSource(mp3File)
+                    prepare()
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
 
                 setOnCompletionListener {
@@ -1149,7 +1141,7 @@ class QuranDetailFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+
         if (audioIsPlaying) {
             mediaPlayer.stop()
             mediaPlayer.release()

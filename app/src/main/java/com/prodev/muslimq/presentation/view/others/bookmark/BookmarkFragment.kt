@@ -2,12 +2,9 @@ package com.prodev.muslimq.presentation.view.others.bookmark
 
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,26 +12,16 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.DialogDeleteAllBinding
 import com.prodev.muslimq.databinding.FragmentBookmarkBinding
 import com.prodev.muslimq.presentation.adapter.QuranBookmarkAdapter
+import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.view.quran.QuranDetailFragment
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BookmarkFragment : Fragment() {
+class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkBinding::inflate) {
 
-    private var _binding: FragmentBookmarkBinding? = null
-    private val binding get() = _binding!!
     private val quranBookmarkAdapter = QuranBookmarkAdapter()
     private val quranBookmarkViewModel: QuranViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentBookmarkBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -102,7 +89,7 @@ class BookmarkFragment : Fragment() {
 
     private fun initViewModel() {
         quranBookmarkViewModel.getBookmark().observe(viewLifecycleOwner) { quran ->
-            with(binding) {
+            binding.apply {
                 if (quran.isNullOrEmpty()) {
                     clNegativeCase.visibility = View.VISIBLE
                     rvSurah.visibility = View.GONE

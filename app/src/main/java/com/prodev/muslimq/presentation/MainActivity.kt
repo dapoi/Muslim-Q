@@ -21,9 +21,6 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.FROM_NOTIFICATION
-import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.STOP_ADZAN
-import com.prodev.muslimq.service.notification.AdzanService
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -37,30 +34,13 @@ class MainActivity : AppCompatActivity() {
     private var keep = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        splashScreen.setKeepOnScreenCondition { keep }
+        installSplashScreen().setKeepOnScreenCondition { keep }
         Handler(mainLooper).postDelayed({
             keep = false
-        }, 1000)
-
-        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
-            if (uiTheme != null) {
-                when (uiTheme) {
-                    UITheme.LIGHT -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-
-                    UITheme.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    }
-                }
-            }
-        }
+        }, 1500)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val navHosFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -82,12 +62,12 @@ class MainActivity : AppCompatActivity() {
         }
         binding.bottomNav.setupWithNavController(navController)
 
-        val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
-        if (fromNotif) {
-            val intent = Intent(this, AdzanService::class.java)
-            intent.putExtra(STOP_ADZAN, true)
-            stopService(intent)
-        }
+//        val fromNotif = intent.getBooleanExtra(FROM_NOTIFICATION, false)
+//        if (fromNotif) {
+//            val intent = Intent(this, AdzanService::class.java)
+//            intent.putExtra(STOP_ADZAN, true)
+//            stopService(intent)
+//        }
     }
 
     private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView, view: View) {
@@ -118,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             if (state) {
                 setBackgroundTint(
                     ContextCompat.getColor(
-                        context, R.color.green_base
+                        context, R.color.green_button_end
                     )
                 )
             } else {
@@ -129,9 +109,9 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            setTextColor(ContextCompat.getColor(context, R.color.white_base))
+            setTextColor(ContextCompat.getColor(context, R.color.white_header))
             if (action) {
-                setActionTextColor(ContextCompat.getColor(context, R.color.white_base))
+                setActionTextColor(ContextCompat.getColor(context, R.color.white_header))
                 setAction("IZINKAN") {
                     if (toSettings) {
                         val intent = Intent()
@@ -155,5 +135,23 @@ class MainActivity : AppCompatActivity() {
         layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 60)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                when (uiTheme) {
+                    UITheme.LIGHT -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+
+                    UITheme.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    }
+                }
+            }
+        }
     }
 }

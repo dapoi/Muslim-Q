@@ -6,29 +6,18 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.RotateAnimation
-import androidx.fragment.app.Fragment
 import com.prodev.muslimq.databinding.FragmentQiblaBinding
+import com.prodev.muslimq.presentation.view.BaseFragment
 import kotlin.math.roundToInt
 
-class QiblaFragment : Fragment(), SensorEventListener {
-
-    private lateinit var binding: FragmentQiblaBinding
+class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::inflate),
+    SensorEventListener {
 
     private lateinit var sensorManager: SensorManager
     private lateinit var sensor: Sensor
     private var currentDegree = 0f
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentQiblaBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

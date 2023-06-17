@@ -26,6 +26,8 @@ class ProvinceAdapter(
         notifyDataSetChanged()
     }
 
+    fun getList(): List<ProvinceResponse> = listProvinceFilter
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProvinceViewHolder {
         return ProvinceViewHolder(
             ItemListAreaBinding.inflate(
