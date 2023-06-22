@@ -22,6 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -32,6 +33,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
@@ -172,7 +174,12 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
-                requireActivity().stopService(Intent(requireContext(), AdzanService::class.java))
+                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
+                    isVisible = false
+                }
+                Intent(requireContext(), AdzanService::class.java).also {
+                    requireContext().stopService(it)
+                }
             }
         }
     }

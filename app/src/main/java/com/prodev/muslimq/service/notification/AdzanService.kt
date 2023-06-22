@@ -11,25 +11,40 @@ class AdzanService : Service() {
 
     private var mediaPlayer: MediaPlayer? = null
 
+    companion object {
+        private var isServiceRunning = false
+
+        fun isRunning(): Boolean {
+            return isServiceRunning
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (isServiceRunning) {
+            // Service is already running, ignore the new request
+            return START_NOT_STICKY
+        }
 
         intent?.getBooleanExtra(IS_SHUBUH, false)?.let { isShubuh ->
             val audio = if (isShubuh) R.raw.adzan_shubuh else R.raw.adzan_regular
 
             mediaPlayer = MediaPlayer.create(this, audio).apply {
-                start()
                 setOnCompletionListener {
                     stop()
                     release()
                     stopSelf()
+                    isServiceRunning = false
                 }
+                start()
             }
+
+            isServiceRunning = true
         }
 
         return START_NOT_STICKY
     }
 
-    override fun onBind(p0: Intent?): IBinder? {
+    override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 }

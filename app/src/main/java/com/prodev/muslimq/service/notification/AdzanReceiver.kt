@@ -26,6 +26,12 @@ class AdzanReceiver : BroadcastReceiver() {
 
         createNotification(context, adzanName!!, adzanCode)
 
+        // Check if the AdzanService is already running
+        if (AdzanService.isRunning()) {
+            return
+        }
+
+        // Start the AdzanService
         val serviceIntent = Intent(context, AdzanService::class.java).apply {
             putExtra(IS_SHUBUH, isShubuh)
         }
@@ -59,16 +65,7 @@ class AdzanReceiver : BroadcastReceiver() {
             })
             .createPendingIntent()
 
-//        val pendingIntent = PendingIntent.getActivity(
-//            context,
-//            adzanCode,
-//            Intent(context, MainActivity::class.java).apply {
-//                putExtra(FROM_NOTIFICATION, true)
-//            },
-//            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-//        )
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, getChannelId(adzanCode))
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentIntent(notificationIntent)
             .setContentTitle(adzanName)
@@ -77,19 +74,44 @@ class AdzanReceiver : BroadcastReceiver() {
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                CHANNEL_ID, "Adzan Channel", NotificationManager.IMPORTANCE_HIGH
+                getChannelId(adzanCode),
+                getChannelName(adzanCode),
+                NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 enableVibration(true)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             }
-            notification.setChannelId(CHANNEL_ID)
+            notification.setChannelId(getChannelId(adzanCode))
             notificationManager.createNotificationChannel(channel)
         }
 
         notificationManager.notify(adzanCode, notification.build())
+    }
+
+    private fun getChannelId(adzanCode: Int): String {
+        return when (adzanCode) {
+            1 -> CHANNEL_ID_SHUBUH
+            2 -> CHANNEL_ID_DZUHUR
+            3 -> CHANNEL_ID_ASHAR
+            4 -> CHANNEL_ID_MAGHRIB
+            5 -> CHANNEL_ID_ISYA
+            else -> throw IllegalArgumentException("Unknown adzan code")
+        }
+    }
+
+    private fun getChannelName(adzanCode: Int): String {
+        return when (adzanCode) {
+            1 -> "Adzan Shubuh Channel"
+            2 -> "Adzan Dzuhur Channel"
+            3 -> "Adzan Ashar Channel"
+            4 -> "Adzan Maghrib Channel"
+            5 -> "Adzan Isya Channel"
+            else -> throw IllegalArgumentException("Unknown adzan code")
+        }
     }
 
     fun setAdzanReminder(
@@ -158,6 +180,10 @@ class AdzanReceiver : BroadcastReceiver() {
         const val IS_SHUBUH = "is_shubuh"
 
         const val FROM_NOTIFICATION = "from_notification"
-        private const val CHANNEL_ID = "prayer_time_channel"
+        private const val CHANNEL_ID_SHUBUH = "channel_shubuh"
+        private const val CHANNEL_ID_DZUHUR = "channel_dzuhur"
+        private const val CHANNEL_ID_ASHAR = "channel_ashar"
+        private const val CHANNEL_ID_MAGHRIB = "channel_maghrib"
+        private const val CHANNEL_ID_ISYA = "channel_isya"
     }
 }
