@@ -22,7 +22,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -175,7 +174,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
                 requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
-                    isVisible = false
+                    visibility = View.INVISIBLE
                 }
                 Intent(requireContext(), AdzanService::class.java).also {
                     requireContext().stopService(it)

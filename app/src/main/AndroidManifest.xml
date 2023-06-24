@@ -23,7 +23,7 @@
 
     <application
         android:name=".Application"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -63,7 +63,6 @@
 
         <service
             android:name=".service.notification.AdzanService"
-            android:enabled="true"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.prodev.muslimq.service.AdzanService" />

@@ -35,6 +35,7 @@ class AdzanService : Service() {
                     stopSelf()
                     isServiceRunning = false
                 }
+                isLooping = false
                 start()
             }
 

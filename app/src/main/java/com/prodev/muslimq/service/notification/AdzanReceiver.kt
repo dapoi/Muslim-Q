@@ -69,12 +69,11 @@ class AdzanReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentIntent(notificationIntent)
             .setContentTitle(adzanName)
+            .setSound(null)
             .setWhen(System.currentTimeMillis())
             .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
-            .setOnlyAlertOnce(true)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -82,6 +81,7 @@ class AdzanReceiver : BroadcastReceiver() {
                 getChannelName(adzanCode),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
+                setSound(null, null)
                 enableVibration(true)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             }
