@@ -24,4 +24,5 @@
     <color name="light_gray">#809A9A9A</color>
     <color name="red">#EC4747</color>
     <color name="white_5_percent">#0DFFFFFF</color>
+    <color name="blue_night">#3d6173</color>
 </resources>

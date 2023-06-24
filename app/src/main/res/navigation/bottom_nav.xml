@@ -17,6 +17,13 @@
             app:exitAnim="@anim/to_left_anim"
             app:popEnterAnim="@anim/from_left_anim"
             app:popExitAnim="@anim/to_right_anim" />
+        <action
+            android:id="@+id/action_quranFragment_to_onBoardingFragment"
+            app:destination="@id/onBoardingFragment"
+            app:enterAnim="@anim/from_bottom_anim"
+            app:exitAnim="@anim/no_anim"
+            app:popEnterAnim="@anim/from_bottom_anim"
+            app:popExitAnim="@anim/to_up_anim"  />
     </fragment>
     <fragment
         android:id="@+id/shalatFragment"
@@ -110,4 +117,9 @@
         android:name="com.prodev.muslimq.presentation.view.others.about.AboutAppFragment"
         android:label="fragment_about_app"
         tools:layout="@layout/fragment_about_app" />
+    <fragment
+        android:id="@+id/onBoardingFragment"
+        android:name="com.prodev.muslimq.presentation.view.OnBoardingFragment"
+        android:label="fragment_on_boarding"
+        tools:layout="@layout/fragment_on_boarding" />
 </navigation>

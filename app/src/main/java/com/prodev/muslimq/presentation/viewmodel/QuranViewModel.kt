@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.repository.QuranRepository
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
-import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,10 +23,13 @@ class QuranViewModel @Inject constructor(
     var filteredData: List<QuranEntity> = emptyList()
 
     private var _getListQuran = MutableLiveData<Resource<List<QuranEntity>>>()
-    val getListQuran: LiveData<Resource<List<QuranEntity>>> = _getListQuran
+    val getListQuran: LiveData<Resource<List<QuranEntity>>> get() = _getListQuran
 
     private var _isCollapse = MutableLiveData<Boolean>()
-    val isCollapse: LiveData<Boolean> = _isCollapse
+    val isCollapse: LiveData<Boolean> get() = _isCollapse
+
+    private var _keepSplashScreen = MutableLiveData(true)
+    val keepSplashscreen: LiveData<Boolean> get() = _keepSplashScreen
 
     init {
         viewModelScope.launch {
@@ -55,5 +58,9 @@ class QuranViewModel @Inject constructor(
 
     fun deleteAllBookmark() {
         repositoryImpl.deleteAllBookmark()
+    }
+
+    fun setKeepSplashScreen(keep: Boolean) {
+        _keepSplashScreen.value = keep
     }
 }

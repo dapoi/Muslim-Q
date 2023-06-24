@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
@@ -58,6 +59,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveOnboardingState(isOnboarding: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveOnboardingState(isOnboarding)
+        }
+    }
+
     val getSurah = dataStorePref.getSurah.asLiveData()
 
     val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
@@ -70,5 +77,9 @@ class DataStoreViewModel @Inject constructor(
 
     val getSwitchDarkMode = dataStorePref.getSwitchDarkMode.asLiveData()
 
-    fun getSwitchState(switchName: String) = dataStorePref.getSwitchState(switchName).asLiveData()
+    val getSwitchState: (String) -> LiveData<Boolean> = { switchName ->
+        dataStorePref.getSwitchState(switchName).asLiveData()
+    }
+
+    val getOnboardingState = dataStorePref.getOnboardingState.asLiveData().distinctUntilChanged()
 }

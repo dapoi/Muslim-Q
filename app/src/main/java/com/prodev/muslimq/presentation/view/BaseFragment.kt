@@ -8,18 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 
 abstract class BaseFragment<VB : ViewBinding>(
-    private val inflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
+    private val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> VB
 ) : Fragment() {
 
     private var _binding: VB? = null
-    protected val binding get() = _binding!!
+    protected val binding get() = _binding ?: error("ViewBinding is not initialized")
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = inflater(inflater, container, false)
+        _binding = bindingInflater(inflater, container, false)
         return binding.root
     }
 

@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -23,14 +23,15 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
+import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val quranViewModel: QuranViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -42,14 +43,11 @@ class MainActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, binding.root)
     }
 
-    private var keep = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().setKeepOnScreenCondition { keep }
-        Handler(mainLooper).postDelayed({
-            keep = false
-        }, 2100)
+        installSplashScreen().setKeepOnScreenCondition {
+            quranViewModel.keepSplashscreen.value ?: true
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             R.id.shalatProvinceFragment,
             R.id.shalatCityFragment,
             R.id.bookmarkFragment,
-            R.id.aboutAppFragment
+            R.id.aboutAppFragment,
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // give animation when hide/show bottom nav

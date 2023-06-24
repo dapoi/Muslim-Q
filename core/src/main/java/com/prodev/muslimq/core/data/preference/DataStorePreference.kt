@@ -31,6 +31,7 @@ private val CITY_NAME = stringPreferencesKey("city_name")
 private val COUNTRY_NAME = stringPreferencesKey("country_name")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val SWITCH_DARK_MODE = booleanPreferencesKey("switch_dark_mode")
+private val ONBOARDING_STATE = booleanPreferencesKey("onboarding_state")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -181,5 +182,21 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     fun getSwitchState(switchName: String): Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[booleanPreferencesKey(switchName)] ?: false
+    }
+
+    /**
+     * Save onboarding state to data store
+     */
+    suspend fun saveOnboardingState(onboardingState: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[ONBOARDING_STATE] = onboardingState
+        }
+    }
+
+    /**
+     * Get onboarding state from data store
+     */
+    val getOnboardingState = dataStore.data.map { preferences ->
+        preferences[ONBOARDING_STATE] ?: false
     }
 }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.view.OnBoardingFragment">
+
+    <ImageView
+        android:id="@+id/iv_on_boarding_logo"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="14dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_muslim"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_on_boarding_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
+        android:text="@string/app_name"
+        android:textColor="@color/green_base"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@id/iv_on_boarding_logo"
+        app:layout_constraintStart_toEndOf="@id/iv_on_boarding_logo"
+        app:layout_constraintTop_toTopOf="@id/iv_on_boarding_logo" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_onboard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:overScrollMode="ifContentScrolls"
+        app:layout_constraintBottom_toTopOf="@+id/dots_indicator"
+        app:layout_constraintHeight_percent="0.67"
+        app:layout_constraintTop_toBottomOf="@id/iv_on_boarding_logo" />
+
+    <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+        android:id="@+id/dots_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="28dp"
+        android:layout_marginBottom="50dp"
+        app:dotsColor="@color/green_base"
+        app:dotsCornerRadius="8dp"
+        app:dotsSize="14dp"
+        app:dotsSpacing="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:progressMode="true"
+        app:selectedDotColor="@color/green_base" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_on_boarding"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="28dp"
+        android:fontFamily="@font/poppins"
+        android:importantForAccessibility="no"
+        android:includeFontPadding="false"
+        android:text="@string/done"
+        android:textAllCaps="false"
+        android:textColor="@color/white_base"
+        android:textSize="18sp"
+        app:icon="@drawable/ic_check"
+        app:iconSize="20dp"
+        app:iconTint="@color/white_base"
+        app:layout_constraintBottom_toBottomOf="@id/dots_indicator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/dots_indicator" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

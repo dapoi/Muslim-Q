@@ -305,7 +305,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="22dp"
         android:layout_marginBottom="85dp"
-        android:src="@drawable/ic_up"
+        android:src="@drawable/ic_arrow_up"
         android:visibility="gone"
         app:backgroundTint="#289672"
         app:fabCustomSize="70dp"

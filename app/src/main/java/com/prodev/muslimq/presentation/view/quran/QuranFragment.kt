@@ -9,7 +9,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +30,9 @@ import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::inflate) {
@@ -35,7 +40,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var quranAdapter: QuranAdapter
 
-    private val quranViewModel: QuranViewModel by viewModels()
+    private val quranViewModel: QuranViewModel by activityViewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
     private var isOnline = false
@@ -151,6 +156,13 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     }
 
     private fun setViewModel() {
+        dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
+                delay(1000)
+                quranViewModel.setKeepSplashScreen(false)
+            }
+        }
         quranViewModel.isCollapse.observe(viewLifecycleOwner) { yes ->
             if (yes) {
                 binding.appBar.setExpanded(false, true)
