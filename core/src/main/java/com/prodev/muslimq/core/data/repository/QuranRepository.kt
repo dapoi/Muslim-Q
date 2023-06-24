@@ -13,4 +13,5 @@ interface QuranRepository {
     fun getBookmark(): Flow<List<QuranDetailEntity>>
     fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean)
     fun deleteAllBookmark()
+    fun deleteBookmark(surahId: Int)
 }

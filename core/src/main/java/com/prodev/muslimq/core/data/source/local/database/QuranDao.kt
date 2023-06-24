@@ -32,4 +32,8 @@ interface QuranDao {
     // delete all bookmark
     @Query("UPDATE quran_detail SET isBookmarked = 0")
     suspend fun deleteAllBookmark()
+
+    // delete bookmark by surahId
+    @Query("UPDATE quran_detail SET isBookmarked = 0 WHERE surahId = :surahId")
+    suspend fun deleteBookmark(surahId: Int)
 }

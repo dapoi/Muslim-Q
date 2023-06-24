@@ -40,4 +40,6 @@ class LocalDataSource @Inject constructor(
     suspend fun deleteShalatDaily() = shalatDao.deleteShalat()
 
     suspend fun deleteAllBookmark() = quranDao.deleteAllBookmark()
+
+    suspend fun deleteBookmark(surahId: Int) = quranDao.deleteBookmark(surahId)
 }

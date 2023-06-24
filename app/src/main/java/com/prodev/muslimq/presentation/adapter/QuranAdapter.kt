@@ -63,8 +63,11 @@ class QuranAdapter(
                 tvMeaningAndAyah.text = "${surah.arti} • ${surah.jumlahAyat} Ayat"
                 tvSurahNameArabic.text = surah.nama
 
-                vDivider.visibility =
-                    if (adapterPosition == listSurah.size - 1) ViewGroup.GONE else ViewGroup.VISIBLE
+                vDivider.visibility = if (adapterPosition == listSurah.size - 1) {
+                    ViewGroup.INVISIBLE
+                } else {
+                    ViewGroup.VISIBLE
+                }
 
                 root.setOnClickListener {
                     onItemClickCallback.onItemClick(surah)

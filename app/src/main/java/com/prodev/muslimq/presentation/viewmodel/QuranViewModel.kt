@@ -60,6 +60,10 @@ class QuranViewModel @Inject constructor(
         repositoryImpl.deleteAllBookmark()
     }
 
+    fun deleteBookmark(surahId: Int) {
+        repositoryImpl.deleteBookmark(surahId)
+    }
+
     fun setKeepSplashScreen(keep: Boolean) {
         _keepSplashScreen.value = keep
     }

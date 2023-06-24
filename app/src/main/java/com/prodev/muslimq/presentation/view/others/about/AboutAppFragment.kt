@@ -21,8 +21,6 @@ class AboutAppFragment : BaseFragment<FragmentAboutAppBinding>(FragmentAboutAppB
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
     }
 
-    private val dataStoreViewModel: DataStoreViewModel by viewModels()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
