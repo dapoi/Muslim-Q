@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.DoaEntity
 import com.prodev.muslimq.databinding.ItemListDoaBinding
-import java.util.*
+import java.util.Locale
 
 class DoaAdapter(
     private val emptyState: LinearLayout
@@ -37,9 +37,9 @@ class DoaAdapter(
         val doa = listDoaFilter[position]
         (holder as DoaViewHolder).apply {
             doaName.text = doa.title
-            doaArabic.text = doa.arab
+            doaArabic.text = doa.arabic
             doaLatin.text = doa.latin
-            doaTranslation.text = doa.translate
+            doaTranslation.text = doa.translation
 
             val isExpanded = doa.isExpanded
             if (isExpanded) {

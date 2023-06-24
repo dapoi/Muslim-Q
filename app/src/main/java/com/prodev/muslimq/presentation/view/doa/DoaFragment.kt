@@ -1,36 +1,37 @@
 package com.prodev.muslimq.presentation.view.doa
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.prodev.muslimq.core.utils.Resource
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.prodev.muslimq.core.data.source.local.model.DoaEntity
+import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.databinding.FragmentDoaBinding
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
-import com.prodev.muslimq.presentation.viewmodel.DoaViewModel
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate) {
 
     private lateinit var doaAdapter: DoaAdapter
 
-    private val doaViewModel: DoaViewModel by viewModels()
+    @Inject
+    lateinit var firebaseRemoteConfig: FirebaseRemoteConfig
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.svDoa.setOnQueryTextListener(object :
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        binding.svDoa.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val imm =
-                    requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                imm.hideSoftInputFromWindow(view.windowToken, 0)
+                hideKeyboard(requireActivity())
                 return true
             }
 
@@ -41,7 +42,6 @@ class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate
         })
 
         setAdapter()
-        setViewModel()
     }
 
     private fun setAdapter() {
@@ -52,25 +52,16 @@ class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate
             (binding.rvDoa.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             setHasFixedSize(true)
         }
-    }
 
-    private fun setViewModel() {
-        doaViewModel.getDoa().observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-
-                is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    doaAdapter.setDoa(it.data!!)
-                }
-
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvDoa.visibility = View.GONE
-                }
-            }
-        }
+        val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
+        val doaJson = firebaseRemoteConfig.getString("doa")
+        val doaJsonAdapter: JsonAdapter<List<DoaEntity>> = moshi.adapter(
+            Types.newParameterizedType(
+                List::class.java,
+                DoaEntity::class.java
+            )
+        )
+        val doaList = doaJsonAdapter.fromJson(doaJson)
+        doaList?.let { doaAdapter.setDoa(it) }
     }
 }
