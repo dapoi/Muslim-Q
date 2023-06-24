@@ -104,7 +104,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 state = true,
                 context = requireContext(),
                 view = binding.root,
-                message = "${adzanLowerCase(stateAdzanName)} diaktifkan",
+                message = "${adzanLowerCase(stateAdzanName)} diaktifkan"
+            )
+        } else {
+            (activity as MainActivity).customSnackbar(
+                state = false,
+                context = requireContext(),
+                view = binding.root,
+                message = "Perizinan notifikasi ditolak"
             )
         }
     }
@@ -542,30 +549,32 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
 
         binding.apply {
-            when {
-                timeNow > shubuh && timeNow <= dzuhur -> {
-                    tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
-                    setNextPrayShalatBackground(shalatLayout.clDzuhur)
-                }
+            if (!tvYourLocation.text.contains("DKI")) {
+                when {
+                    timeNow > shubuh && timeNow <= dzuhur -> {
+                        tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
+                        setNextPrayShalatBackground(shalatLayout.clDzuhur)
+                    }
 
-                timeNow > dzuhur && timeNow <= ashar -> {
-                    tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
-                    setNextPrayShalatBackground(shalatLayout.clAshar)
-                }
+                    timeNow > dzuhur && timeNow <= ashar -> {
+                        tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
+                        setNextPrayShalatBackground(shalatLayout.clAshar)
+                    }
 
-                timeNow > ashar && timeNow <= maghrib -> {
-                    tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
-                    setNextPrayShalatBackground(shalatLayout.clMaghrib)
-                }
+                    timeNow > ashar && timeNow <= maghrib -> {
+                        tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
+                        setNextPrayShalatBackground(shalatLayout.clMaghrib)
+                    }
 
-                timeNow > maghrib && timeNow <= isya -> {
-                    tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
-                    setNextPrayShalatBackground(shalatLayout.clIsya)
-                }
+                    timeNow > maghrib && timeNow <= isya -> {
+                        tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
+                        setNextPrayShalatBackground(shalatLayout.clIsya)
+                    }
 
-                else -> {
-                    tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
-                    setNextPrayShalatBackground(shalatLayout.clShubuh)
+                    else -> {
+                        tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
+                        setNextPrayShalatBackground(shalatLayout.clShubuh)
+                    }
                 }
             }
         }

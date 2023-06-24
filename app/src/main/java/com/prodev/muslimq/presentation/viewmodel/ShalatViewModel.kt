@@ -61,4 +61,12 @@ class ShalatViewModel @Inject constructor(
             _getTimeShalat.value = it
         }
     }
+
+    fun refreshProvince() {
+        viewModelScope.launch {
+            repository.getAllProvince().collect {
+                _getProvinceResult.value = it
+            }
+        }
+    }
 }

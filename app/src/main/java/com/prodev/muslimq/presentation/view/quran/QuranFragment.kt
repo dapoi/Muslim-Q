@@ -60,7 +60,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
 
             fabBackToTop.setOnClickListener {
                 // scroll to parent
-                rvSurah.smoothScrollToPosition(0)
+                rvSurah.scrollToPosition(0)
                 appBar.setExpanded(true, true)
             }
         }
@@ -98,15 +98,13 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                 findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
                         putString(
-                            QuranDetailFragment.SURAH_NAME,
-                            binding.tvSurahName.text.toString()
+                            QuranDetailFragment.SURAH_NAME, binding.tvSurahName.text.toString()
                         )
                         putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
                         putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
                         putString(QuranDetailFragment.SURAH_DESC, surahDesc)
                         putBoolean(QuranDetailFragment.IS_FROM_LAST_READ, true)
-                    }
-                )
+                    })
             }
         }
     }
@@ -156,114 +154,119 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     }
 
     private fun setViewModel() {
-        dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
-            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
-                delay(1000)
-                quranViewModel.setKeepSplashScreen(false)
-            }
-        }
-        quranViewModel.isCollapse.observe(viewLifecycleOwner) { yes ->
-            if (yes) {
-                binding.appBar.setExpanded(false, true)
-                binding.fabBackToTop.show()
-            }
-        }
+        quranViewModel.apply {
 
-        quranViewModel.getListQuran.observe(viewLifecycleOwner) { response ->
-            with(binding) {
-                srlSurah.apply {
-                    setLottieAnimation("loading.json")
-                    setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                    setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                    setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                        override fun onRefresh() {
-                            val handlerData = Handler(Looper.getMainLooper())
-                            isOnline = isOnline(requireContext())
-                            if (isOnline) {
-                                handlerData.postDelayed({
+            dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                    if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
+                    delay(1000)
+                    setKeepSplashScreen(false)
+                }
+            }
+
+            isCollapse.observe(viewLifecycleOwner) { yes ->
+                if (yes) {
+                    binding.appBar.setExpanded(false, true)
+                    binding.fabBackToTop.show()
+                }
+            }
+
+            getListQuran.observe(viewLifecycleOwner) { response ->
+                with(binding) {
+                    srlSurah.apply {
+                        setLottieAnimation("loading.json")
+                        setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
+                        setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
+                        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
+                            override fun onRefresh() {
+                                val handlerData = Handler(Looper.getMainLooper())
+                                isOnline = isOnline(requireContext())
+                                if (isOnline) {
+                                    handlerData.postDelayed({
+                                        setRefreshing(false)
+                                    }, 2000)
+
+                                    handlerData.postDelayed({
+                                        if (response.data.isNullOrEmpty()) {
+                                            InternetReceiver().onReceive(
+                                                requireActivity(), Intent()
+                                            )
+                                        } else {
+                                            rvSurah.visibility = View.VISIBLE
+                                            clNoInternet.visibility = View.GONE
+                                        }
+                                    }, 2350)
+                                } else {
+                                    rvSurah.visibility = View.GONE
+                                    clNoInternet.visibility = View.VISIBLE
                                     setRefreshing(false)
-                                }, 2000)
-
-                                handlerData.postDelayed({
-                                    if (response.data.isNullOrEmpty()) {
-                                        InternetReceiver().onReceive(requireActivity(), Intent())
-                                    } else {
-                                        rvSurah.visibility = View.VISIBLE
-                                        clNoInternet.visibility = View.GONE
-                                    }
-                                }, 2350)
-                            } else {
-                                rvSurah.visibility = View.GONE
-                                clNoInternet.visibility = View.VISIBLE
-                                setRefreshing(false)
+                                }
                             }
-                        }
-                    })
-                }
-
-                etSurah.apply {
-                    addTextChangedListener(object : TextWatcher {
-                        override fun afterTextChanged(s: Editable?) {}
-
-                        override fun beforeTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            count: Int,
-                            after: Int
-                        ) {
-                        }
-
-                        override fun onTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            before: Int,
-                            count: Int
-                        ) {
-                            quranAdapter.filter.filter(s)
-                        }
-                    })
-
-                    setOnEditorActionListener { _, _, _ ->
-                        hideKeyboard(requireActivity())
-                        etSurah.clearFocus()
-                        true
-                    }
-                }
-
-                when {
-                    response is Resource.Loading && response.data.isNullOrEmpty() -> {
-                        stateLoading(true)
-                        clNoInternet.visibility = View.GONE
-                        emptyState.root.visibility = View.GONE
+                        })
                     }
 
-                    response is Resource.Error && response.data.isNullOrEmpty() -> {
-                        stateLoading(false)
-                        stateNoInternet(ctlHeader, clNoInternet, true)
-                    }
+                    etSurah.apply {
+                        addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(s: Editable?) {}
 
-                    else -> {
-                        stateLoading(false)
-                        stateNoInternet(ctlHeader, clNoInternet, false)
-                        quranAdapter.setList(
-                            if (quranViewModel.searchQuery.isNotEmpty() &&
-                                quranViewModel.filteredData.isNotEmpty()
+                            override fun beforeTextChanged(
+                                s: CharSequence?, start: Int, count: Int, after: Int
                             ) {
-                                quranViewModel.filteredData
-                            } else {
-                                response.data!!
                             }
-                        )
-                        emptyState.root.visibility = View.GONE
-                        rvSurah.visibility = View.VISIBLE
-                        bottomNav.visibility = View.VISIBLE
 
-                        tilSurah.setEndIconOnClickListener {
-                            quranAdapter.setList(response.data!!)
+                            override fun onTextChanged(
+                                s: CharSequence?, start: Int, before: Int, count: Int
+                            ) {
+                                quranAdapter.filter.filter(s)
+                            }
+                        })
+
+                        setOnEditorActionListener { _, _, _ ->
                             hideKeyboard(requireActivity())
-                            etSurah.text?.clear()
                             etSurah.clearFocus()
+                            true
+                        }
+                    }
+
+                    when {
+                        response is Resource.Loading && response.data.isNullOrEmpty() -> {
+                            stateLoading(true)
+                            clNoInternet.visibility = View.GONE
+                            emptyState.root.visibility = View.GONE
+                        }
+
+                        response is Resource.Error && response.data.isNullOrEmpty() -> {
+                            stateLoading(false)
+                            stateNoInternet(ctlHeader, clNoInternet, true)
+                        }
+
+                        else -> {
+                            stateLoading(false)
+                            stateNoInternet(ctlHeader, clNoInternet, false)
+
+                            val listToSet = when {
+                                searchQuery.isNotEmpty() && filteredData.isNotEmpty() -> filteredData
+                                searchQuery.isNotEmpty() && filteredData.isEmpty() -> ArrayList()
+                                else -> response.data!!
+                            }
+                            quranAdapter.setList(listToSet)
+
+
+                            if (searchQuery.isNotEmpty() && filteredData.isEmpty()) {
+                                emptyState.root.visibility = View.VISIBLE
+                            } else {
+                                emptyState.root.visibility = View.GONE
+                            }
+
+                            rvSurah.visibility = View.VISIBLE
+                            bottomNav.visibility = View.VISIBLE
+
+                            tilSurah.setEndIconOnClickListener {
+                                quranAdapter.setList(response.data!!)
+                                hideKeyboard(requireActivity())
+                                etSurah.text?.clear()
+                                etSurah.clearFocus()
+                            }
                         }
                     }
                 }

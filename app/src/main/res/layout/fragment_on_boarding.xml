@@ -20,11 +20,11 @@
         android:id="@+id/tv_on_boarding_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins_semibold"
+        android:fontFamily="@font/poppins_bold"
         android:includeFontPadding="false"
         android:text="@string/app_name"
         android:textColor="@color/green_base"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_on_boarding_logo"
         app:layout_constraintStart_toEndOf="@id/iv_on_boarding_logo"
         app:layout_constraintTop_toTopOf="@id/iv_on_boarding_logo" />

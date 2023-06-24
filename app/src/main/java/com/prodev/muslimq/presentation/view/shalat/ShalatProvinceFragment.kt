@@ -36,7 +36,7 @@ class ShalatProvinceFragment :
 
             swipeRefresh(
                 requireContext(),
-                { setViewModel() },
+                { shalatViewModel.refreshProvince() },
                 srlProvince,
                 clNoInternet,
                 rvProvince
