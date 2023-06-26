@@ -40,4 +40,7 @@ dependencies {
 
     // API Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.1"
+
+    // ShowCaseView
+    implementation 'uk.co.samuelwall:material-tap-target-prompt:3.3.2'
 }

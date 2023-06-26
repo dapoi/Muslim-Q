@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,9 +26,6 @@ class QuranViewModel @Inject constructor(
 
     private var _isCollapse = MutableLiveData<Boolean>()
     val isCollapse: LiveData<Boolean> get() = _isCollapse
-
-    private var _keepSplashScreen = MutableLiveData(true)
-    val keepSplashscreen: LiveData<Boolean> get() = _keepSplashScreen
 
     init {
         viewModelScope.launch {
@@ -62,9 +58,5 @@ class QuranViewModel @Inject constructor(
 
     fun deleteBookmark(surahId: Int) {
         repositoryImpl.deleteBookmark(surahId)
-    }
-
-    fun setKeepSplashScreen(keep: Boolean) {
-        _keepSplashScreen.value = keep
     }
 }

@@ -24,6 +24,7 @@ import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -44,12 +45,18 @@ import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
+import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import com.prodev.muslimq.service.location.GPSStatusListener
 import com.prodev.muslimq.service.location.TurnOnGps
 import com.prodev.muslimq.service.notification.AdzanReceiver
 import com.prodev.muslimq.service.notification.AdzanService
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetSequence
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -64,6 +71,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private lateinit var adzanReceiver: AdzanReceiver
 
     private val shalatViewModel: ShalatViewModel by viewModels()
+    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private val curvedDialog by lazy {
@@ -169,25 +177,32 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         turnOnGps = TurnOnGps(requireContext())
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        binding.ivIconChoose.setOnClickListener { showDialogLocation() }
-
-        setViewModel()
-        swipeRefresh()
-        dateGregorianAndHijri()
+        binding.ivIconChoose.apply {
+            setOnClickListener { showDialogLocation() }
+        }
 
         val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
         transparentDialog.setView(dialogLayout.root)
 
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
+
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
-                requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
-                    visibility = View.INVISIBLE
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                    delay(200)
+                    splashScreenViewModel.setKeepSplashScreen(false)
                 }
+
+                bottomNav.visibility = View.INVISIBLE
                 Intent(requireContext(), AdzanService::class.java).also {
                     requireContext().stopService(it)
                 }
             }
         }
+
+        setViewModel(bottomNav)
+        swipeRefresh()
+        dateGregorianAndHijri()
     }
 
     private fun showDialogLocation() {
@@ -411,14 +426,74 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun setViewModel() {
-        dataStoreViewModel.getAreaData.observe(viewLifecycleOwner) { area ->
-            shalatViewModel.getShalatTime(area)
+    private fun setViewModel(bottomNav: BottomNavigationView) {
+        dataStoreViewModel.apply {
+            getAreaData.observe(viewLifecycleOwner) { area ->
+                shalatViewModel.getShalatTime(area)
 
-            binding.tvYourLocation.text = area.first
+                binding.tvYourLocation.text = area.first
+            }
+
+            getTapPromptState.observe(viewLifecycleOwner) { state ->
+                if (!state) {
+                    initTapPrompt(bottomNav)
+                    dataStoreViewModel.saveTapPromptState(true)
+                }
+            }
         }
 
         initUIResult()
+    }
+
+    private fun initTapPrompt(bottomNav: BottomNavigationView) {
+        (activity as MainActivity).showOverlay(true)
+        bottomNav.visibility = View.INVISIBLE
+        val materialTapTargetSequence = MaterialTapTargetSequence()
+        val targetTwo = MaterialTapTargetPrompt.Builder(requireActivity())
+            .setTarget(binding.ivIconChoose)
+            .setPrimaryText("Ganti Lokasi")
+            .setSecondaryText("Klik disini untuk mengubah lokasi")
+            .setSecondaryTextColour(ContextCompat.getColor(requireContext(), R.color.white_header))
+            .setBackgroundColour(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.green_transparent
+                )
+            )
+            .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
+            .setCaptureTouchEventOutsidePrompt(false)
+            .setPromptStateChangeListener { _, state ->
+                if (state == MaterialTapTargetPrompt.STATE_DISMISSED) {
+                    materialTapTargetSequence.finish()
+                    (activity as MainActivity).showOverlay(false)
+                    bottomNav.visibility = View.VISIBLE
+                } else if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                    showDialogLocation()
+                    materialTapTargetSequence.finish()
+                    (activity as MainActivity).showOverlay(false)
+                    bottomNav.visibility = View.VISIBLE
+                }
+            }
+            .create()
+        val targetOne = MaterialTapTargetPrompt.Builder(requireActivity())
+            .setTarget(binding.tvYourLocation)
+            .setSecondaryText("Secara default, DKI Jakarta merupakan lokasi awal")
+            .setBackgroundColour(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.green_transparent
+                )
+            )
+            .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
+            .setCaptureTouchEventOutsidePrompt(false)
+            .setPromptStateChangeListener { _, state ->
+                if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
+                    targetTwo?.show()
+                }
+            }
+            .create()
+        materialTapTargetSequence.addPrompt(targetOne)
+        materialTapTargetSequence.show()
     }
 
     private fun initUIResult() {

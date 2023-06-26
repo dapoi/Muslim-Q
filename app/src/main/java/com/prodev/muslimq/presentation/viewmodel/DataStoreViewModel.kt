@@ -65,6 +65,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveTapPromptState(isTapPrompt: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveTapPromptState(isTapPrompt)
+        }
+    }
+
     val getSurah = dataStorePref.getSurah.asLiveData()
 
     val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
@@ -82,4 +88,6 @@ class DataStoreViewModel @Inject constructor(
     }
 
     val getOnboardingState = dataStorePref.getOnboardingState.asLiveData().distinctUntilChanged()
+
+    val getTapPromptState = dataStorePref.getTapPromptState.asLiveData().distinctUntilChanged()
 }

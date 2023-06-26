@@ -32,6 +32,7 @@ private val COUNTRY_NAME = stringPreferencesKey("country_name")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val SWITCH_DARK_MODE = booleanPreferencesKey("switch_dark_mode")
 private val ONBOARDING_STATE = booleanPreferencesKey("onboarding_state")
+private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -198,5 +199,21 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getOnboardingState = dataStore.data.map { preferences ->
         preferences[ONBOARDING_STATE] ?: false
+    }
+
+    /**
+     * Save tap prompt state to data store
+     */
+    suspend fun saveTapPromptState(tapPromptState: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[TAP_PROMPT_STATE] = tapPromptState
+        }
+    }
+
+    /**
+     * Get tap prompt state from data store
+     */
+    val getTapPromptState = dataStore.data.map { preferences ->
+        preferences[TAP_PROMPT_STATE] ?: false
     }
 }

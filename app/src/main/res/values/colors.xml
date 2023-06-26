@@ -10,9 +10,11 @@
     <color name="green_button_last_read">#289672</color>
     <color name="green_button_start">#29BB89</color>
     <color name="green_button_end">#289672</color>
+    <color name="green_transparent">#D9289672</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#3C3C3C</color>
+    <color name="always_black">#000000</color>
     <color name="yellow">#FFEB3B</color>
     <color name="white_base">#FFFFFFFF</color>
     <color name="white_second">#FFFFFFFF</color>

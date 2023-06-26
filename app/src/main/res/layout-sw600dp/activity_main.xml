@@ -39,4 +39,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/menu_bottom" />
 
+    <android.gesture.GestureOverlayView
+        android:id="@+id/gesture_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:background="@color/black"
+        android:gestureColor="@color/green_base"
+        android:gestureStrokeType="multiple"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

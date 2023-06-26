@@ -23,7 +23,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
+import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val quranViewModel: QuranViewModel by viewModels()
+    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().setKeepOnScreenCondition {
-            quranViewModel.keepSplashscreen.value ?: true
+            splashScreenViewModel.keepSplashscreen.value ?: true
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -140,6 +140,10 @@ class MainActivity : AppCompatActivity() {
         layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 60)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
+    }
+
+    fun showOverlay(state: Boolean) {
+        binding.gestureOverlay.visibility = if (state) View.VISIBLE else View.GONE
     }
 
     override fun onResume() {

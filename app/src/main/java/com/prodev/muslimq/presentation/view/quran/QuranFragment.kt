@@ -28,6 +28,7 @@ import com.prodev.muslimq.presentation.adapter.QuranAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
+import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,8 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var quranAdapter: QuranAdapter
 
-    private val quranViewModel: QuranViewModel by activityViewModels()
+    private val quranViewModel: QuranViewModel by viewModels()
+    private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
     private val dataStorePreference: DataStoreViewModel by viewModels()
 
     private var isOnline = false
@@ -154,16 +156,15 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     }
 
     private fun setViewModel() {
-        quranViewModel.apply {
-
-            dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
-                    delay(1000)
-                    setKeepSplashScreen(false)
-                }
+        dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
+                delay(1000)
+                splashScreenViewModel.setKeepSplashScreen(false)
             }
+        }
 
+        quranViewModel.apply {
             isCollapse.observe(viewLifecycleOwner) { yes ->
                 if (yes) {
                     binding.appBar.setExpanded(false, true)
