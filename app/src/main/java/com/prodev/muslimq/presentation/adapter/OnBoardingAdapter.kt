@@ -35,7 +35,10 @@ class OnBoardingAdapter : RecyclerView.Adapter<OnBoardingAdapter.OnBoardingViewH
         RecyclerView.ViewHolder(binding.root) {
         fun bind(onBoarding: OnBoardingItem) {
             binding.apply {
-                lottieAnimationView.setAnimation(onBoarding.image)
+                lottieAnimationView.apply {
+                    setAnimation(onBoarding.image)
+                    playAnimation()
+                }
 
                 tvOnBoardingTitle.text = onBoarding.title
                 tvOnBoardingDescription.text = onBoarding.description

@@ -10,7 +10,8 @@
         android:id="@+id/lottie_animation_view"
         android:layout_width="match_parent"
         android:layout_height="320dp"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_loop="true" />
 
     <TextView
         android:id="@+id/tv_on_boarding_title"
