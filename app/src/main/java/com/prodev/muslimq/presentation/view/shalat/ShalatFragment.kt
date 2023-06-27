@@ -22,6 +22,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -53,7 +54,6 @@ import com.prodev.muslimq.service.notification.AdzanService
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetSequence
@@ -71,7 +71,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private lateinit var adzanReceiver: AdzanReceiver
 
     private val shalatViewModel: ShalatViewModel by viewModels()
-    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
+    private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private val curvedDialog by lazy {
@@ -177,22 +177,21 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         turnOnGps = TurnOnGps(requireContext())
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
 
-        binding.ivIconChoose.apply {
-            setOnClickListener { showDialogLocation() }
-        }
+        binding.ivIconChoose.setOnClickListener { showDialogLocation() }
 
         val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
         transparentDialog.setView(dialogLayout.root)
 
+        val divider = requireActivity().findViewById<View>(R.id.v_divider)
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    delay(200)
                     splashScreenViewModel.setKeepSplashScreen(false)
                 }
 
+                divider.visibility = View.INVISIBLE
                 bottomNav.visibility = View.INVISIBLE
                 Intent(requireContext(), AdzanService::class.java).also {
                     requireContext().stopService(it)
