@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -15,6 +16,7 @@ import android.os.Looper
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Px
 import androidx.appcompat.widget.SwitchCompat
@@ -25,14 +27,15 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
@@ -40,33 +43,27 @@ import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.DialogGetLocationBinding
-import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
+import com.prodev.muslimq.notification.AdzanReceiver
+import com.prodev.muslimq.notification.AdzanService
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
-import com.prodev.muslimq.service.location.GPSStatusListener
-import com.prodev.muslimq.service.location.TurnOnGps
-import com.prodev.muslimq.service.notification.AdzanReceiver
-import com.prodev.muslimq.service.notification.AdzanService
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetSequence
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
 class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding::inflate) {
 
     private lateinit var listOfSwitch: List<SwitchCompat>
-    private lateinit var gpsStatusListener: GPSStatusListener
-    private lateinit var turnOnGps: TurnOnGps
     private lateinit var fusedLocation: FusedLocationProviderClient
     private lateinit var adzanReceiver: AdzanReceiver
 
@@ -76,9 +73,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
-    }
-    private val transparentDialog by lazy {
-        AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
     }
 
     private var timeNow = ""
@@ -144,7 +138,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
 
         if (permissionGranted) {
-            getGPSStatusObserver()
+            getLiveLocation()
         }
 
         val message = if (permissionGranted) "Izin lokasi diberikan" else "Izin lokasi ditolak"
@@ -158,7 +152,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun checkLocationPermission(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(
-            requireActivity(),
+            requireContext(),
             permission
         ) == PackageManager.PERMISSION_GRANTED
     }
@@ -173,23 +167,16 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         isOnline = isOnline(requireContext())
         adzanReceiver = AdzanReceiver()
-        gpsStatusListener = GPSStatusListener(requireContext())
-        turnOnGps = TurnOnGps(requireContext())
-        fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocation = LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.ivIconChoose.setOnClickListener { showDialogLocation() }
-
-        val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
-        transparentDialog.setView(dialogLayout.root)
 
         val divider = requireActivity().findViewById<View>(R.id.v_divider)
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    splashScreenViewModel.setKeepSplashScreen(false)
-                }
+                splashScreenViewModel.setKeepSplashScreen(false)
 
                 divider.visibility = View.INVISIBLE
                 bottomNav.visibility = View.INVISIBLE
@@ -233,7 +220,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             ) && checkLocationPermission(
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) -> {
-                getGPSStatusObserver()
+                getLiveLocation()
             }
 
             shouldShowRequestPermissionRationale(
@@ -262,33 +249,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun getGPSStatusObserver() {
-        var isGPSStatusChanged: Boolean? = null
-        gpsStatusListener.observe(viewLifecycleOwner) { isGPSOn ->
-            if (isGPSStatusChanged == null) {
-                if (!isGPSOn) {
-                    turnOnGps.startGps(requestGPSPermission)
-                } else {
-                    resetSwitch = true
-                    transparentDialog.show()
-                    getLiveLocation()
-                }
-                isGPSStatusChanged = isGPSOn
-            } else {
-                if (isGPSStatusChanged != isGPSOn) {
-                    if (!isGPSOn) {
-                        turnOnGps.startGps(requestGPSPermission)
-                    } else {
-                        resetSwitch = true
-                        transparentDialog.show()
-                        getLiveLocation()
-                    }
-                    isGPSStatusChanged = isGPSOn
-                }
-            }
-        }
-    }
-
     private fun getLiveLocation() {
         if (checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
             checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -310,32 +270,49 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun requestNewLiveLocation() {
         val locRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
-            3000,
+            TimeUnit.SECONDS.toMillis(1),
         ).apply {
-            setWaitForAccurateLocation(false)
-            setMinUpdateIntervalMillis(100)
-            setMaxUpdateDelayMillis(5000)
+            setWaitForAccurateLocation(true)
+            setMaxUpdateDelayMillis(TimeUnit.SECONDS.toMillis(1))
         }.build()
 
-        fusedLocation = LocationServices.getFusedLocationProviderClient(requireActivity())
-        if (checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
-            checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-        ) {
+        val builder = LocationSettingsRequest.Builder()
+            .addLocationRequest(locRequest)
+        val client = LocationServices.getSettingsClient(requireContext())
+        client.checkLocationSettings(builder.build()).apply {
+            addOnSuccessListener { getLiveLocation() }
+            addOnFailureListener { exception ->
+                if (exception is ResolvableApiException) {
+                    try {
+                        requestGPSPermission.launch(
+                            IntentSenderRequest.Builder(exception.resolution).build()
+                        )
+                    } catch (sendEx: IntentSender.SendIntentException) {
+                        Toast.makeText(requireContext(), sendEx.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        try {
             fusedLocation.requestLocationUpdates(
                 locRequest,
                 locationCallback,
                 Looper.getMainLooper()
             )
+        } catch (e: SecurityException) {
+            Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
     private val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult) {
-            val location = result.lastLocation!!
-            lat = location.latitude
-            lon = location.longitude
+        override fun onLocationResult(locationResult: LocationResult) {
+            locationResult.locations.forEach { location ->
+                lat = location.latitude
+                lon = location.longitude
 
-            getAddressGeocoder(lat, lon)
+                getAddressGeocoder(lat, lon)
+            }
         }
     }
 
@@ -348,6 +325,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
                         dataStoreViewModel.saveAreaData(city, country)
+                        resetSwitch = true
                     }
                 }
 
@@ -365,6 +343,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
                     dataStoreViewModel.saveAreaData(city, country)
+                    resetSwitch = true
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -377,7 +356,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
                 Handler(Looper.getMainLooper()).postDelayed({
                     resetSwitch = true
-                }, 800)
+                }, 1000)
             }
         }
     }
@@ -452,7 +431,12 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .setTarget(binding.ivIconChoose)
             .setPrimaryText("Ganti Lokasi")
             .setSecondaryText("Klik disini untuk mengubah lokasi")
-            .setSecondaryTextColour(ContextCompat.getColor(requireContext(), R.color.white_header))
+            .setSecondaryTextColour(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white_header
+                )
+            )
             .setBackgroundColour(
                 ContextCompat.getColor(
                     requireContext(),
@@ -500,7 +484,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             binding.apply {
                 when {
                     result is Resource.Loading && result.data == null -> {
-                        transparentDialog.dismiss()
                         progressBar.visibility = View.VISIBLE
                         clNegativeCase.visibility = View.GONE
                         shalatLayout.root.visibility = View.GONE
@@ -752,7 +735,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun setNextPrayShalatBackground(clShalat: ConstraintLayout) {
         clShalat.background = ContextCompat.getDrawable(
-            requireActivity(), R.drawable.bg_item_shalat
+            requireContext(), R.drawable.bg_item_shalat
         )
     }
 
@@ -782,5 +765,10 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun adzanLowerCase(adzanName: String): String {
         return adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
+    }
+
+    override fun onDestroyView() {
+        fusedLocation.removeLocationUpdates(locationCallback)
+        super.onDestroyView()
     }
 }

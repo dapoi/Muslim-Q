@@ -1,11 +1,11 @@
-package com.prodev.muslimq.service.notification
+package com.prodev.muslimq.notification
 
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
 import com.prodev.muslimq.R
-import com.prodev.muslimq.service.notification.AdzanReceiver.Companion.IS_SHUBUH
+import com.prodev.muslimq.notification.AdzanReceiver.Companion.IS_SHUBUH
 
 class AdzanService : Service() {
 

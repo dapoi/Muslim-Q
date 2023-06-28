@@ -50,11 +50,11 @@
         </activity>
 
         <receiver
-            android:name=".service.notification.AdzanReceiver"
+            android:name=".notification.AdzanReceiver"
             android:exported="false" />
 
         <receiver
-            android:name=".service.notification.BootReceiver"
+            android:name=".notification.BootReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -62,7 +62,7 @@
         </receiver>
 
         <service
-            android:name=".service.notification.AdzanService"
+            android:name=".notification.AdzanService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.prodev.muslimq.service.AdzanService" />

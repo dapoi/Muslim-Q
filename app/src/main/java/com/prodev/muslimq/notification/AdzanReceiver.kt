@@ -1,4 +1,4 @@
-package com.prodev.muslimq.service.notification
+package com.prodev.muslimq.notification
 
 import android.app.AlarmManager
 import android.app.NotificationChannel
