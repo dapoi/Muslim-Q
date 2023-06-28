@@ -705,6 +705,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, false)
                 if (resetSwitch) {
+                    this.resetSwitch = false
                     Handler(Looper.getMainLooper()).postDelayed({
                         (activity as MainActivity).customSnackbar(
                             true,
