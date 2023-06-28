@@ -3,29 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="16dp">
 
     <TextView
         android:id="@+id/tv_setting_font_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="16dp"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/setting_font"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
+    <SeekBar
         android:id="@+id/seekbar_font_size"
         style="@android:style/Widget.DeviceDefault.SeekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="16dp"
+        android:progress="50"
         android:progressDrawable="@drawable/custom_seekbar_track"
         android:splitTrack="false"
-        android:progress="50"
         android:thumb="@drawable/custom_seekbar_thumb"
         app:layout_constraintTop_toBottomOf="@id/tv_big"
         tools:layout_editor_absoluteX="20dp" />
@@ -34,12 +36,13 @@
         android:id="@+id/tv_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/small"
         android:textColor="@color/green_base"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/seekbar_font_size"
         app:layout_constraintTop_toBottomOf="@+id/tv_setting_font_title" />
 
@@ -47,27 +50,28 @@
         android:id="@+id/tv_big"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/big"
         android:textColor="@color/green_base"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/seekbar_font_size"
         app:layout_constraintTop_toBottomOf="@id/tv_setting_font_title" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_save"
         android:layout_width="0dp"
-        android:layout_marginHorizontal="8dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_round_green"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/save"
         android:textColor="@color/white_header"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/seekbar_font_size"
         app:layout_constraintStart_toStartOf="@+id/seekbar_font_size"
         app:layout_constraintTop_toBottomOf="@id/seekbar_font_size" />

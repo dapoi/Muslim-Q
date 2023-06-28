@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:padding="12dp">
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/are_you_sure"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -20,8 +20,9 @@
         android:id="@+id/tv_desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/are_you_sure_desc"
         android:textColor="@color/black"
         android:textSize="22sp"
@@ -33,15 +34,16 @@
         android:id="@+id/tv_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/bg_confirm"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:paddingHorizontal="20dp"
         android:paddingVertical="7dp"
         android:text="@string/delete"
         android:textAlignment="center"
         android:textColor="@color/white_header"
-        android:textSize="24sp"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="@id/tv_desc"
         app:layout_constraintTop_toBottomOf="@+id/tv_desc" />
 
@@ -49,16 +51,17 @@
         android:id="@+id/tv_cancel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginEnd="12dp"
         android:alpha="0.8"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:padding="8dp"
         android:text="@string/cancel"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="24sp"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_confirm"
         app:layout_constraintEnd_toStartOf="@id/tv_confirm"
-        app:layout_constraintTop_toBottomOf="@+id/tv_desc" />
+        app:layout_constraintTop_toTopOf="@+id/tv_confirm" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

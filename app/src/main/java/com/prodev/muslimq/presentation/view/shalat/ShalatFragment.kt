@@ -134,8 +134,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private val requestLocationPermission = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
-        val permissionGranted =
-            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true || permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        val permissionGranted = permissions.getOrDefault(
+            Manifest.permission.ACCESS_FINE_LOCATION, false
+        ) || permissions.getOrDefault(
+            Manifest.permission.ACCESS_COARSE_LOCATION, false
+        )
 
         if (permissionGranted) {
             getLiveLocation()
@@ -354,9 +357,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun refreshDataWhenCityChange() {
         setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
             if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    resetSwitch = true
-                }, 1000)
+                resetSwitch = true
             }
         }
     }
@@ -703,17 +704,23 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     adzanCode = index + 1
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, false)
-                val message = if (resetSwitch) {
-                    "Ubah lokasi berhasil, aktifkan kembali adzan"
+                if (resetSwitch) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        (activity as MainActivity).customSnackbar(
+                            true,
+                            requireContext(),
+                            binding.root,
+                            "Ubah lokasi berhasil, aktifkan kembali adzan"
+                        )
+                    }, 600)
                 } else {
-                    "$lowerCaseAdzanName dimatikan"
+                    (activity as MainActivity).customSnackbar(
+                        false,
+                        requireContext(),
+                        binding.root,
+                        "$lowerCaseAdzanName dimatikan"
+                    )
                 }
-                (activity as MainActivity).customSnackbar(
-                    resetSwitch,
-                    requireContext(),
-                    binding.root,
-                    message
-                )
             }
         }
     }
@@ -768,6 +775,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     }
 
     override fun onDestroyView() {
+        requestLocationPermission.unregister()
         fusedLocation.removeLocationUpdates(locationCallback)
         super.onDestroyView()
     }

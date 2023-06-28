@@ -3,15 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingEnd="16dp"
+    tools:ignore="RtlSymmetry">
 
     <TextView
         android:id="@+id/tv_ayah_arabic"
         android:layout_width="0dp"
+        android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
         android:fontFamily="@font/amiri_bold"
+        android:layout_marginStart="16dp"
         android:letterSpacing="0.05"
         android:lineSpacingExtra="14dp"
         android:textColor="@color/black"
@@ -25,12 +27,13 @@
         android:id="@+id/tv_ayah_latin"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:fontFamily="@font/poppins"
+        android:includeFontPadding="false"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_medium"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/tv_ayah_arabic"
-        app:layout_constraintStart_toEndOf="@id/v_accent"
+        app:layout_constraintStart_toStartOf="@id/tv_ayah_arabic"
         app:layout_constraintTop_toBottomOf="@+id/tv_ayah_arabic"
         tools:text="al-ḥamdu lillāhi rabbil-‘ālamīn(a)" />
 
@@ -38,12 +41,13 @@
         android:id="@+id/tv_audio_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_semibold"
-        android:padding="10dp"
+        android:includeFontPadding="false"
+        android:paddingVertical="8dp"
         android:text="@string/close"
         android:textColor="@color/green_base"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin" />
 

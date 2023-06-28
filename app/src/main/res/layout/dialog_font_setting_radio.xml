@@ -2,30 +2,31 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tv_setting_font_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/setting_font"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
         android:id="@+id/rb_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/small"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_setting_font_title" />
 
@@ -33,11 +34,12 @@
         android:id="@+id/rb_medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/medium"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/rb_small"
         app:layout_constraintTop_toBottomOf="@+id/rb_small" />
 
@@ -45,11 +47,12 @@
         android:id="@+id/rb_big"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
+        android:includeFontPadding="false"
         android:text="@string/big"
         android:textColor="@color/black"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@+id/rb_small"
         app:layout_constraintTop_toBottomOf="@+id/rb_medium" />
 
@@ -57,13 +60,15 @@
         android:id="@+id/btn_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_round_green"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/save"
         android:textColor="@color/white_header"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rb_big" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

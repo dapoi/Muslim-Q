@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tv_info_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:includeFontPadding="false"
         android:fontFamily="@font/poppins_semibold"
-        android:padding="10dp"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,8 +21,7 @@
         android:id="@+id/nsv_info_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginVertical="5dp"
+        android:layout_marginTop="16dp"
         android:fadeScrollbars="true"
         android:scrollbarFadeDuration="200"
         android:scrollbarSize="2dp"
@@ -36,21 +35,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/poppins_medium"
+            android:includeFontPadding="false"
             android:lineSpacingExtra="8dp"
             android:textColor="@color/black"
             android:textSize="14sp"
             tools:text="@tools:sample/lorem/random" />
+
     </androidx.core.widget.NestedScrollView>
 
     <TextView
         android:id="@+id/tv_info_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_semibold"
-        android:padding="10dp"
         android:text="@string/close"
         android:textColor="@color/green_base"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:includeFontPadding="false"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nsv_info_message" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

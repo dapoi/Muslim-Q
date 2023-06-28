@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="14dp"
     android:padding="20dp">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -23,25 +22,27 @@
             android:id="@+id/et_ayah"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white_base"
+            android:background="@color/white_second"
             android:hint="@string/input_number"
             android:imeOptions="actionSearch"
             android:inputType="number"
-            android:textSize="24sp"
-            android:paddingVertical="14dp"
+            android:paddingVertical="5dp"
+            android:textSize="22sp"
             tools:ignore="Autofill,TextFields" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_search"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:paddingVertical="8dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/bg_round_green"
+        android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/show"
-        android:textSize="20sp"
         android:textColor="@color/white_header"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/til_ayah" />

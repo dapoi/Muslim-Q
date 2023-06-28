@@ -10,6 +10,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -93,6 +94,7 @@ class QuranDetailFragment :
     private var currentPage = 1
     private var audioGlobal = ""
 
+    @RequiresApi(Build.VERSION_CODES.R)
     private val requestPermissionStorage = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -104,11 +106,7 @@ class QuranDetailFragment :
                 message = "Izin penyimpanan diberikan",
                 isDetailScreen = true
             )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                saveToMediaStore(audioGlobal)
-            } else {
-                downloadAudio(audioGlobal)
-            }
+            saveToMediaStore(audioGlobal)
         } else {
             (activity as MainActivity).customSnackbar(
                 state = false,
@@ -155,19 +153,6 @@ class QuranDetailFragment :
 
         setAdapter()
         setViewModel()
-        initProgressDialog()
-    }
-
-    private fun initProgressDialog() {
-        val dialogLayout = DialogDownloadBinding.inflate(layoutInflater)
-        val tvTitle = dialogLayout.tvTitleDownload
-        tvTitle.text = getString(R.string.download_surah, binding.tvSurahName.text)
-        progressDialog = dialogLayout.progressBar
-        tvProgress = dialogLayout.tvProgress
-        dialog = curvedDialog.create().apply {
-            setView(dialogLayout.root)
-            setCancelable(false)
-        }
     }
 
     private fun setAdapter() {
@@ -302,6 +287,8 @@ class QuranDetailFragment :
                         if (isOnline) {
                             setUpMediaPlayer(dataSurah.audio)
                         }
+
+                        initProgressDialog(surahName)
                     }
                 }
             }
@@ -407,6 +394,18 @@ class QuranDetailFragment :
                     ).show()
                 }
             }
+        }
+    }
+
+    private fun initProgressDialog(surahName: String) {
+        val dialogLayout = DialogDownloadBinding.inflate(layoutInflater)
+        val tvTitle = dialogLayout.tvTitleDownload
+        tvTitle.text = getString(R.string.download_surah, surahName)
+        progressDialog = dialogLayout.progressBar
+        tvProgress = dialogLayout.tvProgress
+        dialog = curvedDialog.create().apply {
+            setView(dialogLayout.root)
+            setCancelable(false)
         }
     }
 
@@ -706,7 +705,7 @@ class QuranDetailFragment :
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_MEDIA_AUDIO
             ) == PERMISSION_GRANTED -> {
-                downloadAudio(audio)
+                saveToMediaStore(audio)
             }
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
@@ -839,11 +838,7 @@ class QuranDetailFragment :
                                 checkPermissionStorageLower(audio)
                             }
                         }
-//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-//                            saveToMediaStore(audio)
-//                        } else {
-//                            downloadAudio(audio)
-//                        }
+
                         dismiss()
                     }
                     tvStreaming.setOnClickListener {
@@ -863,7 +858,7 @@ class QuranDetailFragment :
         val relativeLocation = "${Environment.DIRECTORY_DOWNLOADS}/MuslimQ"
         dialog?.show()
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             try {
                 withContext(Dispatchers.IO) {
                     val connection = URL(audioUrl).openConnection() as HttpURLConnection
@@ -893,8 +888,10 @@ class QuranDetailFragment :
                                 outputStream.write(buffer, 0, len)
                                 downloadedBytes += len
                                 len = inputStream.read(buffer)
-                                progressDialog?.progress = (downloadedBytes * 100 / fileSize)
-                                tvProgress?.text = "${progressDialog?.progress}%"
+                                withContext(Dispatchers.Main) {
+                                    progressDialog?.progress = (downloadedBytes * 100 / fileSize)
+                                    tvProgress?.text = "${progressDialog?.progress}%"
+                                }
                             }
 
                             outputStream.flush()
@@ -913,8 +910,10 @@ class QuranDetailFragment :
                         message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
                         isDetailScreen = true
                     )
+                    playPauseAudio(binding.ivSound, false, audioUrl)
                 }
             } catch (e: Exception) {
+                Log.e("QuranDetailFragment", "saveToMediaStore: ${e.message}")
                 withContext(Dispatchers.Main) {
                     dialog?.dismiss()
                     (activity as MainActivity).customSnackbar(
@@ -959,7 +958,8 @@ class QuranDetailFragment :
                 Environment.DIRECTORY_DOWNLOADS, "MuslimQ/${binding.tvSurahName.text}.mp3"
             )
 
-        val downloadManager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadManager =
+            context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = downloadManager.enqueue(request)
 
         val downloadCompleteReceiver = object : BroadcastReceiver() {
@@ -980,6 +980,7 @@ class QuranDetailFragment :
                                 message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
                                 isDetailScreen = true
                             )
+                            playPauseAudio(binding.ivSound, false, audio)
                         } else {
                             dialog?.dismiss()
                             (activity as MainActivity).customSnackbar(
