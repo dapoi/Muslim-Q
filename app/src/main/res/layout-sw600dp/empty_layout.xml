@@ -20,8 +20,9 @@
         android:id="@+id/tv_search_not_found"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/poppins_semibold"
+        android:includeFontPadding="false"
         android:text="@string/not_found"
         android:textSize="24sp" />
 </LinearLayout>

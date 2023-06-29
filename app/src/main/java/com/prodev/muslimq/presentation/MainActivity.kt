@@ -49,11 +49,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().setKeepOnScreenCondition {
-            splashScreenViewModel.keepSplashscreen.value ?: true
-        }
+        val splashScreen = installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        splashScreen.setKeepOnScreenCondition {
+            splashScreenViewModel.keepSplashscreen.value ?: true
+        }
 
         val destinationToHideBottomnav = setOf(
             R.id.quranDetailFragment,
@@ -65,9 +67,9 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // give animation when hide/show bottom nav
             if (destination.id in destinationToHideBottomnav) {
-                animateVisibleHide(false, binding.bottomNav, binding.vDivider)
+                animateVisibleHide(false, binding.bottomNav)
             } else {
-                animateVisibleHide(true, binding.bottomNav, binding.vDivider)
+                animateVisibleHide(true, binding.bottomNav)
             }
         }
         binding.bottomNav.setupWithNavController(navController)
@@ -75,16 +77,12 @@ class MainActivity : AppCompatActivity() {
         firebaseRemoteConfig.fetchAndActivate()
     }
 
-    private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView, view: View) {
+    private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView) {
         if (state) {
-            view.clearAnimation()
             bottomNav.clearAnimation()
-            view.animate().translationY(0f).duration = 600
             bottomNav.animate().translationY(0f).duration = 600
         } else {
-            view.clearAnimation()
             bottomNav.clearAnimation()
-            view.animate().translationY(bottomNav.height.toFloat()).duration = 600
             bottomNav.animate().translationY(bottomNav.height.toFloat()).duration = 600
         }
     }

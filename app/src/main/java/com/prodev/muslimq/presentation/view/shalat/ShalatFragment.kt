@@ -43,6 +43,7 @@ import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.DialogGetLocationBinding
+import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.notification.AdzanReceiver
 import com.prodev.muslimq.notification.AdzanService
@@ -70,9 +71,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private val shalatViewModel: ShalatViewModel by viewModels()
     private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
+    }
+    private val transparentDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
     }
 
     private var timeNow = ""
@@ -171,17 +174,17 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         isOnline = isOnline(requireContext())
         adzanReceiver = AdzanReceiver()
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireContext())
+        val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
+        transparentDialog.setView(dialogLayout.root)
 
         binding.ivIconChoose.setOnClickListener { showDialogLocation() }
 
-        val divider = requireActivity().findViewById<View>(R.id.v_divider)
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
                 splashScreenViewModel.setKeepSplashScreen(false)
 
-                divider.visibility = View.INVISIBLE
                 bottomNav.visibility = View.INVISIBLE
                 Intent(requireContext(), AdzanService::class.java).also {
                     requireContext().stopService(it)
@@ -257,6 +260,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
         ) {
             fusedLocation.lastLocation.addOnCompleteListener(requireActivity()) { task ->
+                transparentDialog.show()
                 val location = task.result
                 if (location != null) {
                     lat = location.latitude
@@ -329,6 +333,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                         val country = addresses[0].countryName
                         dataStoreViewModel.saveAreaData(city, country)
                         resetSwitch = true
+                        transparentDialog.dismiss()
                     }
                 }
 
@@ -347,6 +352,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     val country = addresses[0].countryName
                     dataStoreViewModel.saveAreaData(city, country)
                     resetSwitch = true
+                    transparentDialog.dismiss()
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -776,7 +782,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     }
 
     override fun onDestroyView() {
-        requestLocationPermission.unregister()
         fusedLocation.removeLocationUpdates(locationCallback)
         super.onDestroyView()
     }

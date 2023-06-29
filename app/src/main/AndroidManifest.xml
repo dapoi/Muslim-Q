@@ -34,11 +34,11 @@
         android:theme="@style/Theme.MuslimQ"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
         <activity
             android:name="com.prodev.muslimq.presentation.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:launchMode="singleTop"
             android:screenOrientation="locked"
             android:theme="@style/Theme.App.Starting"
             android:windowSoftInputMode="adjustPan">
@@ -76,6 +76,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBREB-8OXi0FGrzkRM7yy36q2KoZG1udMY" />
+
     </application>
 
 </manifest>

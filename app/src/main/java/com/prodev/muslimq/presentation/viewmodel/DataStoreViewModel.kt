@@ -60,7 +60,7 @@ class DataStoreViewModel @Inject constructor(
     }
 
     fun saveOnboardingState(isOnboarding: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             dataStorePref.saveOnboardingState(isOnboarding)
         }
     }

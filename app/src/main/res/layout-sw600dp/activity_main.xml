@@ -17,23 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/bottom_nav" />
 
-    <View
-        android:id="@+id/v_divider"
-        android:layout_width="match_parent"
-        android:layout_height="0.6dp"
-        android:background="@color/green_base"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav" />
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        app:itemTextAppearanceActive="@style/BottomTextNavActive"
-        app:itemTextAppearanceInactive="@style/BottomTextNavInactive"
-        android:background="@color/white_second"
+        android:background="@drawable/bg_bottom_nav"
         app:itemIconSize="35dp"
         app:itemIconTint="@color/icon_selector"
         app:itemRippleColor="@null"
+        app:itemTextAppearanceActive="@style/BottomTextNavActive"
+        app:itemTextAppearanceInactive="@style/BottomTextNavInactive"
         app:itemTextColor="@color/icon_selector"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"

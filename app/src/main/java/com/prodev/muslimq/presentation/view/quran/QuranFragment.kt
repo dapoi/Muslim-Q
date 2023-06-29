@@ -11,7 +11,6 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -31,9 +30,6 @@ import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::inflate) {
@@ -43,7 +39,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
 
     private val quranViewModel: QuranViewModel by viewModels()
     private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
-    private val dataStorePreference: DataStoreViewModel by viewModels()
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private var isOnline = false
 
@@ -58,8 +54,6 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
         isOnline = isOnline(requireActivity())
 
         binding.apply {
-            getLastReadSurah()
-
             fabBackToTop.setOnClickListener {
                 // scroll to parent
                 rvSurah.scrollToPosition(0)
@@ -71,61 +65,18 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
         setViewModel()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun getLastReadSurah() {
-        dataStorePreference.getDetailSurahAyah.observe(viewLifecycleOwner) { data ->
-            surahId = data.first
-            ayahNumber = data.second
-        }
-
-        binding.apply {
-            dataStorePreference.getSurah.observe(viewLifecycleOwner) { data ->
-                val surahNameArabic = data.first
-                val surahName = data.second
-                if (surahName != "" || surahNameArabic != "") {
-                    btnContinueRead.visibility = View.VISIBLE
-                    tvSurahNameArabic.visibility = View.VISIBLE
-                    tvSurahNameArabic.text = surahNameArabic
-                    tvSurahName.text = "Q.S $surahName ayat $ayahNumber"
-                } else {
-                    btnContinueRead.visibility = View.GONE
-                    tvSurahNameArabic.visibility = View.GONE
-                    tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
-                }
-
-                surahDesc = data.third
-            }
-
-            btnContinueRead.setOnClickListener {
-                findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
-                    Bundle().apply {
-                        putString(
-                            QuranDetailFragment.SURAH_NAME, binding.tvSurahName.text.toString()
-                        )
-                        putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
-                        putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
-                        putString(QuranDetailFragment.SURAH_DESC, surahDesc)
-                        putBoolean(QuranDetailFragment.IS_FROM_LAST_READ, true)
-                    })
-            }
-        }
-    }
-
     private fun setAdapter() {
         quranAdapter = QuranAdapter(binding.emptyState.root)
         quranAdapter.setOnItemClick(object : QuranAdapter.OnItemClickCallback {
             override fun onItemClick(surah: QuranEntity) {
-                findNavController().navigate(R.id.action_quranFragment_to_quranDetailFragment,
+                findNavController().navigate(
+                    R.id.action_quranFragment_to_quranDetailFragment,
                     Bundle().apply {
                         putString(QuranDetailFragment.SURAH_NAME, surah.namaLatin)
                         putInt(QuranDetailFragment.SURAH_NUMBER, surah.nomor)
                         putString(QuranDetailFragment.SURAH_DESC, surah.deskripsi)
                     })
                 hideKeyboard(requireActivity())
-
-                binding.apply {
-                    getLastReadSurah()
-                }
             }
         })
 
@@ -155,12 +106,50 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setViewModel() {
-        dataStorePreference.getOnboardingState.observe(viewLifecycleOwner) { state ->
-            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+        dataStoreViewModel.apply {
+            getOnboardingState.observe(viewLifecycleOwner) { state ->
                 if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
-                delay(1000)
                 splashScreenViewModel.setKeepSplashScreen(false)
+            }
+
+            getDetailSurahAyah.observe(viewLifecycleOwner) { data ->
+                surahId = data.first
+                ayahNumber = data.second
+            }
+
+            binding.apply {
+                getSurah.observe(viewLifecycleOwner) { data ->
+                    val surahNameArabic = data.first
+                    val surahName = data.second
+                    if (surahName != "" || surahNameArabic != "") {
+                        btnContinueRead.visibility = View.VISIBLE
+                        tvSurahNameArabic.visibility = View.VISIBLE
+                        tvSurahNameArabic.text = surahNameArabic
+                        tvSurahName.text = "Q.S $surahName ayat $ayahNumber"
+                    } else {
+                        btnContinueRead.visibility = View.GONE
+                        tvSurahNameArabic.visibility = View.GONE
+                        tvSurahName.text = resources.getString(R.string.last_read_surah_empty)
+                    }
+
+                    surahDesc = data.third
+                }
+
+                btnContinueRead.setOnClickListener {
+                    findNavController().navigate(
+                        R.id.action_quranFragment_to_quranDetailFragment,
+                        Bundle().apply {
+                            putString(
+                                QuranDetailFragment.SURAH_NAME, binding.tvSurahName.text.toString()
+                            )
+                            putInt(QuranDetailFragment.SURAH_NUMBER, surahId!!)
+                            putInt(QuranDetailFragment.AYAH_NUMBER, ayahNumber!!)
+                            putString(QuranDetailFragment.SURAH_DESC, surahDesc)
+                            putBoolean(QuranDetailFragment.IS_FROM_LAST_READ, true)
+                        })
+                }
             }
         }
 

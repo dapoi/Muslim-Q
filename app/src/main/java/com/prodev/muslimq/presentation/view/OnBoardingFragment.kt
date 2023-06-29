@@ -31,7 +31,6 @@ class OnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().findViewById<View>(R.id.v_divider).isVisible = false
         requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).isVisible = false
 
         val data = listOf(

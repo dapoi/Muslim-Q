@@ -47,7 +47,7 @@
         android:paddingVertical="8dp"
         android:text="@string/close"
         android:textColor="@color/green_base"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin" />
 

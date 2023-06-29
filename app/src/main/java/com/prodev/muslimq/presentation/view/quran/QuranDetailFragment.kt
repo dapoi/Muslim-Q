@@ -10,7 +10,6 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
@@ -855,6 +854,12 @@ class QuranDetailFragment :
     @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.R)
     private fun saveToMediaStore(audioUrl: String) {
+        val mp3File = getString(
+            R.string.fileName,
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            binding.tvSurahName.text
+        )
+        val file = File(mp3File)
         val relativeLocation = "${Environment.DIRECTORY_DOWNLOADS}/MuslimQ"
         dialog?.show()
 
@@ -913,8 +918,8 @@ class QuranDetailFragment :
                     playPauseAudio(binding.ivSound, false, audioUrl)
                 }
             } catch (e: Exception) {
-                Log.e("QuranDetailFragment", "saveToMediaStore: ${e.message}")
                 withContext(Dispatchers.Main) {
+                    if (file.exists()) file.delete()
                     dialog?.dismiss()
                     (activity as MainActivity).customSnackbar(
                         state = false,
