@@ -1,7 +1,9 @@
 package com.prodev.muslimq.presentation.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.databinding.ItemOnBoardingBinding
 
@@ -36,6 +38,10 @@ class OnBoardingAdapter : RecyclerView.Adapter<OnBoardingAdapter.OnBoardingViewH
         fun bind(onBoarding: OnBoardingItem) {
             binding.apply {
                 lottieAnimationView.apply {
+                    setFailureListener {
+                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Log.e("OnBoarding", it.message.toString())
+                    }
                     setAnimation(onBoarding.image)
                     playAnimation()
                 }

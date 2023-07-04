@@ -1,7 +1,9 @@
 package com.prodev.muslimq.core.data.source.remote.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class ShalatResponse(
 
 	@Json(name="data")
@@ -10,6 +12,7 @@ data class ShalatResponse(
 //	val items: List<ShalatItem>
 )
 
+@JsonClass(generateAdapter = true)
 data class ShalatItem(
 
 	@Json(name="timings")
@@ -17,23 +20,9 @@ data class ShalatItem(
 
 	@Json(name="date")
 	val date: Date
-
-//	@Json(name="fajr")
-//	val fajr: String,
-//
-//	@Json(name="dhuhr")
-//	val dhuhr: String,
-//
-//	@Json(name="asr")
-//	val asr: String,
-//
-//	@Json(name="maghrib")
-//	val maghrib: String,
-//
-//	@Json(name="isha")
-//	val isha: String,
 )
 
+@JsonClass(generateAdapter = true)
 data class Timing(
 
 	@Json(name="Fajr")
@@ -52,6 +41,7 @@ data class Timing(
 	val Isha: String,
 )
 
+@JsonClass(generateAdapter = true)
 data class Date(
 
 	@Json(name="readable")

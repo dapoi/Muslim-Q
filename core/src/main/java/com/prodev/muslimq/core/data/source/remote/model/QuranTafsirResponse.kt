@@ -1,7 +1,9 @@
 package com.prodev.muslimq.core.data.source.remote.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class QuranTafsirResponse(
 
     @Json(name = "code")
@@ -14,12 +16,14 @@ data class QuranTafsirResponse(
     val data: TafsirItem
 )
 
+@JsonClass(generateAdapter = true)
 data class TafsirItem(
 
     @Json(name = "tafsir")
     val tafsir: List<TafsirDetailItem>
 )
 
+@JsonClass(generateAdapter = true)
 data class TafsirDetailItem(
 
     @Json(name = "ayat")

@@ -105,7 +105,7 @@ class QuranDetailFragment :
                 message = "Izin penyimpanan diberikan",
                 isDetailScreen = true
             )
-            saveToMediaStore(audioGlobal)
+            checkAudioState(audioGlobal)
         } else {
             (activity as MainActivity).customSnackbar(
                 state = false,
@@ -131,7 +131,7 @@ class QuranDetailFragment :
                 message = "Izin penyimpanan diberikan",
                 isDetailScreen = true
             )
-            downloadAudio(audioGlobal)
+            checkAudioState(audioGlobal)
         } else {
             (activity as MainActivity).customSnackbar(
                 state = false,
@@ -442,10 +442,11 @@ class QuranDetailFragment :
         ayahNumber: Int?,
         isFromLastRead: Boolean?
     ) {
-        if (!sizeHasDone) {
-            detailAdapter.setList(ayahs.subList(0, 3))
-        }
-        showPagination(ayahs, rvAyah)
+        detailAdapter.setList(ayahs, true)
+//        if (!sizeHasDone) {
+//            detailAdapter.setList(ayahs.subList(0, 3))
+//        }
+//        showPagination(ayahs, rvAyah)
 
         val index = if (isAlfatihah) 2 else 1
         if (ayahNumber != null && isFromLastRead == true && !isResume) {
@@ -693,7 +694,19 @@ class QuranDetailFragment :
         audioGlobal = audio
         with(binding) {
             ivSound.setOnClickListener {
-                checkAudioState(audio)
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                        checkPermissionStorageAndroidT(audio)
+                    }
+
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+                        checkPermissionStorageAndroidR(audio)
+                    }
+
+                    else -> {
+                        checkPermissionStorageLower(audio)
+                    }
+                }
             }
         }
     }
@@ -704,7 +717,7 @@ class QuranDetailFragment :
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_MEDIA_AUDIO
             ) == PERMISSION_GRANTED -> {
-                saveToMediaStore(audio)
+                checkAudioState(audio)
             }
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
@@ -731,7 +744,7 @@ class QuranDetailFragment :
             ContextCompat.checkSelfPermission(
                 requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE
             ) == PERMISSION_GRANTED -> {
-                saveToMediaStore(audio)
+                checkAudioState(audio)
             }
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
@@ -765,7 +778,7 @@ class QuranDetailFragment :
 
         when {
             permissionStorageGranted -> {
-                downloadAudio(audio)
+                checkAudioState(audio)
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(
@@ -824,20 +837,11 @@ class QuranDetailFragment :
                     setView(dialogLayout.root)
                     show()
                     tvDownload.setOnClickListener {
-                        when {
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                checkPermissionStorageAndroidT(audio)
-                            }
-
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                                checkPermissionStorageAndroidR(audio)
-                            }
-
-                            else -> {
-                                checkPermissionStorageLower(audio)
-                            }
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                            downloadAudio(audio)
+                        } else {
+                            saveToMediaStore(audio)
                         }
-
                         dismiss()
                     }
                     tvStreaming.setOnClickListener {

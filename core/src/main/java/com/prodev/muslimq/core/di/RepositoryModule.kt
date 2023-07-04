@@ -16,4 +16,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideShalatRepository(shalatRepository: ShalatRepositoryImpl): ShalatRepository
+
+    @Binds
+    abstract fun provideDoaRepository(doaRepository: DoaRepositoryImpl): DoaRepository
 }

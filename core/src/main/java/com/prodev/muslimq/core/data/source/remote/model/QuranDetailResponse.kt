@@ -1,7 +1,9 @@
 package com.prodev.muslimq.core.data.source.remote.model
 
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class QuranDetailResponse(
     @Json(name = "code")
     val code: Int,
@@ -13,6 +15,7 @@ data class QuranDetailResponse(
     val data: QuranDetailItem
 )
 
+@JsonClass(generateAdapter = true)
 data class QuranDetailItem(
 
     @Json(name = "nomor")
@@ -43,12 +46,14 @@ data class QuranDetailItem(
     val ayat: List<AyatItem>
 )
 
+@JsonClass(generateAdapter = true)
 data class AudioFull(
 
     @Json(name = "05")
     val audio: String? = "",
 )
 
+@JsonClass(generateAdapter = true)
 data class AyatItem(
 
     @Json(name = "nomorAyat")
@@ -67,6 +72,7 @@ data class AyatItem(
     val audio: AyahAudio,
 )
 
+@JsonClass(generateAdapter = true)
 data class AyahAudio(
 
     @Json(name = "05")

@@ -36,7 +36,6 @@ dependencies {
 
     // Firebase
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
-    implementation 'com.google.firebase:firebase-config-ktx:21.4.0'
 
     // API Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.1"

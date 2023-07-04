@@ -58,16 +58,18 @@ class OnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
             dotsIndicator.setViewPager2(vpOnboard)
 
             onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
-            onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (getItem() == 0) {
-                        isEnabled = false
-                        requireActivity().finish()
-                    } else {
-                        vpOnboard.setCurrentItem(getItem() - 1, true)
+            onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if (getItem() == 0) {
+                            isEnabled = false
+                            requireActivity().finish()
+                        } else {
+                            vpOnboard.setCurrentItem(getItem() - 1, true)
+                        }
                     }
-                }
-            })
+                })
 
             checkState = object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {

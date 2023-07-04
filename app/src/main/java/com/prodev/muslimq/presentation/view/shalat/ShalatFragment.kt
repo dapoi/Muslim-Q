@@ -9,6 +9,7 @@ import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -124,6 +125,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private val requestGPSPermission = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
+        if (result.resultCode != RESULT_OK) transparentDialog.dismiss()
         val message =
             if (result.resultCode == RESULT_OK) "GPS diaktifkan" else "GPS tidak diaktifkan"
         (activity as MainActivity).customSnackbar(
@@ -259,13 +261,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         if (checkLocationPermission(Manifest.permission.ACCESS_FINE_LOCATION) &&
             checkLocationPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
         ) {
-            fusedLocation.lastLocation.addOnCompleteListener(requireActivity()) { task ->
+            fusedLocation.lastLocation.addOnSuccessListener { location: Location? ->
                 transparentDialog.show()
-                val location = task.result
                 if (location != null) {
                     lat = location.latitude
                     lon = location.longitude
-
                     getAddressGeocoder(lat, lon)
                 } else {
                     requestNewLiveLocation()
@@ -344,17 +344,19 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             })
         } else {
             try {
-                val addresses = geocoder.getFromLocation(
-                    lat, lon, 1
-                ) as List<Address>
-                if (addresses.isNotEmpty()) {
+                val addresses = geocoder.getFromLocationName("$lat, $lon", 1)
+                if (!addresses.isNullOrEmpty()) {
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
                     dataStoreViewModel.saveAreaData(city, country)
                     resetSwitch = true
                     transparentDialog.dismiss()
+                } else {
+                    Toast.makeText(requireContext(), "Alamat tidak ditemukan", Toast.LENGTH_SHORT)
+                        .show()
                 }
             } catch (e: IOException) {
+                transparentDialog.dismiss()
                 e.printStackTrace()
             }
         }

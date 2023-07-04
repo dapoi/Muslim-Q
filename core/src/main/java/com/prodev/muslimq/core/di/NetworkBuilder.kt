@@ -39,10 +39,10 @@ object NetworkBuilder {
 
         return if (BuildConfig.DEBUG) {
             OkHttpClient.Builder().addInterceptor(logging).addInterceptor(chuckerInterceptor)
-                .connectTimeout(30, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build()
+                .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build()
         } else {
-            OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS).build()
+            OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS).build()
         }
 
     }
