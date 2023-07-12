@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="70dp"
     tools:context=".presentation.view.qibla.QiblaFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            app:layout_constraintHeight_percent="0.67"
             app:layout_constraintTop_toBottomOf="@id/tv_qibla">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,8 +44,8 @@
 
                 <ImageView
                     android:id="@+id/iv_direction"
-                    android:layout_width="450dp"
-                    android:layout_height="450dp"
+                    android:layout_width="400dp"
+                    android:layout_height="400dp"
                     android:src="@drawable/ic_direction"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +59,7 @@
                 android:id="@+id/iv_kaaba"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="50dp"
+                android:layout_marginStart="45dp"
                 android:layout_marginBottom="130dp"
                 android:rotation="-67"
                 android:src="@drawable/ic_kaaba"
@@ -70,7 +72,7 @@
                 android:id="@+id/tv_north"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="90dp"
+                android:layout_marginTop="85dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="@string/north"
                 android:textColor="@color/black"
@@ -83,7 +85,7 @@
                 android:id="@+id/tv_south"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="90dp"
+                android:layout_marginBottom="85dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="@string/south"
                 android:textColor="@color/black"
@@ -96,7 +98,7 @@
                 android:id="@+id/tv_east"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="80dp"
+                android:layout_marginEnd="85dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="@string/east"
                 android:textColor="@color/black"
@@ -109,7 +111,7 @@
                 android:id="@+id/tv_west"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="80dp"
+                android:layout_marginStart="85dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:text="@string/west"
                 android:textColor="@color/black"
@@ -121,8 +123,8 @@
 
         <ImageView
             android:id="@+id/iv_qibla"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="170dp"
+            android:layout_height="170dp"
             android:src="@drawable/ic_qibla"
             app:layout_constraintBottom_toBottomOf="@+id/cl_direction_parent"
             app:layout_constraintEnd_toEndOf="@id/cl_direction_parent"

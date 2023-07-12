@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_base"
+    android:overScrollMode="never"
+    android:paddingBottom="60dp"
     tools:context=".presentation.view.shalat.ShalatFragment">
 
     <com.simform.refresh.SSPullToRefreshLayout
