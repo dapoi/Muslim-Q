@@ -29,12 +29,6 @@
         android:name="android.hardware.sensor.compass"
         android:required="true" />
 
-    <supports-screens
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:resizeable="true"
-        android:smallScreens="false" />
-
     <application
         android:name=".Application"
         android:allowBackup="false"
