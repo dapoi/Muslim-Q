@@ -6,12 +6,15 @@
     android:layout_height="match_parent"
     android:layout_marginHorizontal="24dp">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_animation_view"
+    <ImageView
+        android:id="@+id/iv_on_boarding"
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="400dp"
+        android:layout_marginHorizontal="24dp"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/adzan_onboard"
         app:layout_constraintTop_toTopOf="parent"
-        app:lottie_loop="true" />
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/tv_on_boarding_title"

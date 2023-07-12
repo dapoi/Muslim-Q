@@ -1,10 +1,9 @@
 package com.prodev.muslimq.presentation.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.prodev.muslimq.databinding.ItemOnBoardingBinding
 
 class OnBoardingAdapter : RecyclerView.Adapter<OnBoardingAdapter.OnBoardingViewHolder>() {
@@ -37,14 +36,9 @@ class OnBoardingAdapter : RecyclerView.Adapter<OnBoardingAdapter.OnBoardingViewH
         RecyclerView.ViewHolder(binding.root) {
         fun bind(onBoarding: OnBoardingItem) {
             binding.apply {
-                lottieAnimationView.apply {
-                    setFailureListener {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                        Log.e("OnBoarding", it.message.toString())
-                    }
-                    setAnimation(onBoarding.image)
-                    playAnimation()
-                }
+                Glide.with(itemView.context)
+                    .load(onBoarding.image)
+                    .into(ivOnBoarding)
 
                 tvOnBoardingTitle.text = onBoarding.title
                 tvOnBoardingDescription.text = onBoarding.description

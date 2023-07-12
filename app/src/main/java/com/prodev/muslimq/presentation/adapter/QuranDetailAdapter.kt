@@ -158,7 +158,8 @@ class QuranDetailAdapter(
         shareIntent.putExtra(
             Intent.EXTRA_TEXT,
             "Q.S. $surahName Ayat ${ayat.ayatNumber} \n\n${ayat.ayatArab} \nArtinya: " +
-                    "\n\"${ayat.ayatTerjemahan}\" \n\n Diambil dari aplikasi Muslim Q"
+                    "\n\"${ayat.ayatTerjemahan}\" \n\n Diambil dari aplikasi Muslim Q" +
+                    "\n\n https://play.google.com/store/apps/details?id=com.prodev.muslimq"
         )
         context.startActivity(
             Intent.createChooser(

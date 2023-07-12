@@ -1,8 +1,8 @@
 package com.prodev.muslimq.presentation.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ItemListOtherBinding
@@ -51,20 +51,12 @@ class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
                 tvMenuOther.text = others.title
                 ivMenuOther.setImageResource(others.image)
 
-                vDivider.visibility = if (adapterPosition == listOthers.size - 1) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
+                vDivider.isVisible = adapterPosition != listOthers.size - 1
 
                 swDarkMode.apply {
 
                     // Set visibility of switch
-                    visibility = if (others.title == "Mode Gelap") {
-                        View.VISIBLE
-                    } else {
-                        View.GONE
-                    }
+                    isVisible = others.title.contains("Gelap")
 
                     // Set switch state
                     isChecked = switchState

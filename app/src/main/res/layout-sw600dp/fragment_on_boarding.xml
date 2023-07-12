@@ -33,10 +33,9 @@
         android:id="@+id/vp_onboard"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:overScrollMode="ifContentScrolls"
         app:layout_constraintBottom_toTopOf="@+id/dots_indicator"
-        app:layout_constraintHeight_percent="0.67"
+        app:layout_constraintHeight_percent="0.6"
         app:layout_constraintTop_toBottomOf="@id/iv_on_boarding_logo" />
 
     <com.tbuonomo.viewpagerdotsindicator.DotsIndicator

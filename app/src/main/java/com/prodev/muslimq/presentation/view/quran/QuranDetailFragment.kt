@@ -31,7 +31,6 @@ import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.DialogAudioAyahBinding
-import com.prodev.muslimq.databinding.DialogDeleteAllBinding
 import com.prodev.muslimq.databinding.DialogDownloadBinding
 import com.prodev.muslimq.databinding.DialogFontSettingBinding
 import com.prodev.muslimq.databinding.DialogFontSettingRadioBinding
@@ -597,23 +596,12 @@ class QuranDetailFragment :
     }
 
     private fun showMenuOption(ayahs: ArrayList<Ayat>) {
-        val mp3File = getString(
-            R.string.fileName,
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            binding.tvSurahName.text
-        )
-
-        val file = File(mp3File)
-        val optionDeleteEnabled =
-            (file.exists() && (this::mediaPlayer.isInitialized && !mediaPlayer.isPlaying)) || (file.exists() && !this::mediaPlayer.isInitialized)
-
         PopupMenu(requireContext(), binding.ivMore).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 setForceShowIcon(true)
             }
 
             menuInflater.inflate(R.menu.menu_detail_quran, menu)
-            menu.findItem(R.id.action_delete_audio).isEnabled = optionDeleteEnabled
 
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -624,32 +612,6 @@ class QuranDetailFragment :
 
                     R.id.action_info -> {
                         showDescSurah("Deskripsi Surah", surahDesc, false)
-                        true
-                    }
-
-                    R.id.action_delete_audio -> {
-                        val dialogLayout = DialogDeleteAllBinding.inflate(layoutInflater)
-                        val tvConfirm = dialogLayout.tvConfirm
-                        val tvCancel = dialogLayout.tvCancel
-                        with(curvedDialog.create()) {
-                            setView(dialogLayout.root)
-                            tvConfirm.setOnClickListener {
-                                if (file.exists()) {
-                                    file.delete()
-                                    (activity as MainActivity).customSnackbar(
-                                        state = false,
-                                        context = requireContext(),
-                                        view = binding.root,
-                                        message = "Berhasil menghapus Surah ${binding.tvSurahName.text}",
-                                        isDetailScreen = true
-                                    )
-                                }
-                                dismiss()
-                            }
-                            tvCancel.setOnClickListener { dismiss() }
-                            setCanceledOnTouchOutside(false)
-                            show()
-                        }
                         true
                     }
 

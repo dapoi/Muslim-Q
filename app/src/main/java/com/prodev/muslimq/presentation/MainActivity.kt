@@ -68,6 +68,37 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
+
+        setDarkMode()
+    }
+
+    private fun setDarkMode() {
+        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
+            if (uiTheme != null) {
+                when (uiTheme) {
+                    UITheme.LIGHT -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+                        navController.addOnDestinationChangedListener { _, destination, _ ->
+                            val exceptionFragment = destination.id != R.id.aboutAppFragment
+                            windowInsetsControllerCompat.apply {
+                                isAppearanceLightStatusBars = exceptionFragment
+                                isAppearanceLightNavigationBars = exceptionFragment
+                            }
+                        }
+                    }
+
+                    UITheme.DARK -> {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+                        windowInsetsControllerCompat.apply {
+                            isAppearanceLightStatusBars = false
+                            isAppearanceLightNavigationBars = false
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView) {
@@ -135,36 +166,5 @@ class MainActivity : AppCompatActivity() {
 
     fun showOverlay(state: Boolean) {
         binding.gestureOverlay.visibility = if (state) View.VISIBLE else View.GONE
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        dataStoreViewModel.getSwitchDarkMode.observe(this) { uiTheme ->
-            if (uiTheme != null) {
-                when (uiTheme) {
-                    UITheme.LIGHT -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
-                        navController.addOnDestinationChangedListener { _, destination, _ ->
-                            val exceptionFragment = destination.id != R.id.aboutAppFragment
-                            windowInsetsControllerCompat.apply {
-                                isAppearanceLightStatusBars = exceptionFragment
-                                isAppearanceLightNavigationBars = exceptionFragment
-                            }
-                        }
-                    }
-
-                    UITheme.DARK -> {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-
-                        windowInsetsControllerCompat.apply {
-                            isAppearanceLightStatusBars = false
-                            isAppearanceLightNavigationBars = false
-                        }
-                    }
-                }
-            }
-        }
     }
 }

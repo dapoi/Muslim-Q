@@ -12,7 +12,7 @@ abstract class BaseFragment<VB : ViewBinding>(
 ) : Fragment() {
 
     private var _binding: VB? = null
-    protected val binding get() = _binding ?: error("ViewBinding is not initialized")
+    protected val binding get() = requireNotNull(_binding)
 
     override fun onCreateView(
         inflater: LayoutInflater,

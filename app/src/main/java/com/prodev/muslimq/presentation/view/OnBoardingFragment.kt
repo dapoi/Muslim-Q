@@ -35,17 +35,17 @@ class OnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
 
         val data = listOf(
             OnBoardingItem(
-                R.raw.quran_on_board,
+                R.drawable.quran_onboard,
                 "Al-Qur'an",
                 "Nikmati membaca Al-Qur'an dengan mudah dalam genggaman. Jelajahi berbagai fitur yang tersedia seperti tafsir, & lainnya"
             ),
             OnBoardingItem(
-                R.raw.adzan_on_board,
+                R.drawable.adzan_onboard,
                 "Jadwal Shalat & Kiblat",
                 "Dapatkan jadwal shalat yang akurat & tepat waktu sesuai lokasi Anda, serta arah kiblat yang mudah diakses"
             ),
             OnBoardingItem(
-                R.raw.doa_on_board,
+                R.drawable.doa_onboard,
                 "Doa Harian",
                 "Temukan koleksi doa harian yang bisa Anda baca atau pelajari, & amalkan dalam kehidupan sehari-hari"
             )

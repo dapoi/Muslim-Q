@@ -48,7 +48,7 @@ class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::i
 
     override fun onResume() {
         super.onResume()
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME)
     }
 
     override fun onPause() {
