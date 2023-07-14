@@ -67,6 +67,9 @@
             app:exitAnim="@anim/no_anim"
             app:popEnterAnim="@anim/no_anim"
             app:popExitAnim="@anim/to_bottom_anim" />
+        <action
+            android:id="@+id/action_othersFragment_to_tasbihFragment"
+            app:destination="@id/tasbihFragment" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
@@ -122,4 +125,9 @@
         android:name="com.prodev.muslimq.presentation.view.OnBoardingFragment"
         android:label="fragment_on_boarding"
         tools:layout="@layout/fragment_on_boarding" />
+    <fragment
+        android:id="@+id/tasbihFragment"
+        android:name="com.prodev.muslimq.presentation.view.others.tasbih.TasbihFragment"
+        android:label="fragment_tasbih"
+        tools:layout="@layout/fragment_tasbih" />
 </navigation>

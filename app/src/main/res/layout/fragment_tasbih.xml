@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.view.others.tasbih.TasbihFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="16dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:paddingTop="1dp"
+            android:text="Tasbih"
+            android:textColor="@color/green_base"
+            android:textSize="18sp" />
+
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip_add"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:checkable="false"
+        android:fontFamily="@font/poppins_bold"
+        android:includeFontPadding="false"
+        android:text="+"
+        android:textColor="@color/black"
+        app:chipBackgroundColor="@color/white_base"
+        app:chipCornerRadius="8dp"
+        app:chipStrokeColor="@color/green_base"
+        app:chipStrokeWidth="1dp"
+        app:ensureMinTouchTargetSize="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/divider"
+        android:layout_width="1.5dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="4dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/chip_add"
+        app:layout_constraintStart_toEndOf="@id/chip_add"
+        app:layout_constraintTop_toTopOf="@id/chip_add" />
+
+    <HorizontalScrollView
+        android:id="@+id/sv_chip"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="@id/chip_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/divider"
+        app:layout_constraintTop_toTopOf="@id/chip_add">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cg_dzikir"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            app:itemSpacing="8dp"
+            app:singleLine="true"
+            tools:ignore="RtlSymmetry" />
+
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/tv_count_tasbih"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppins_bold"
+        android:textColor="@color/black"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/chip_add"
+        tools:text="33" />
+
+    <TextView
+        android:id="@+id/tv_dzikir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_count_tasbih"
+        tools:text="Subhanallah" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
