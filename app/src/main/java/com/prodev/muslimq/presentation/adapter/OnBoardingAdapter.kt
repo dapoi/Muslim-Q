@@ -42,6 +42,16 @@ class OnBoardingAdapter : RecyclerView.Adapter<OnBoardingAdapter.OnBoardingViewH
 
                 tvOnBoardingTitle.text = onBoarding.title
                 tvOnBoardingDescription.text = onBoarding.description
+
+                // check if device is 720x1280
+                if (itemView.context.resources.displayMetrics.heightPixels <= 1280) {
+                    // set margin top for onBoarding title
+                    val params = tvOnBoardingTitle.layoutParams as ViewGroup.MarginLayoutParams
+                    params.setMargins(0, 0, 0, 0)
+                    tvOnBoardingTitle.layoutParams = params
+                    tvOnBoardingTitle.textSize = 14f
+                    tvOnBoardingDescription.textSize = 12f
+                }
             }
         }
     }

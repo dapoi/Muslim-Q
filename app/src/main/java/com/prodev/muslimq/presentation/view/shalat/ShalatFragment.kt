@@ -455,12 +455,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
             .setCaptureTouchEventOutsidePrompt(false)
             .setPromptStateChangeListener { _, state ->
-                if (state == MaterialTapTargetPrompt.STATE_DISMISSED) {
-                    materialTapTargetSequence.finish()
-                    (activity as MainActivity).showOverlay(false)
-                    bottomNav.visibility = View.VISIBLE
-                } else if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                    showDialogLocation()
+                if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
                     materialTapTargetSequence.finish()
                     (activity as MainActivity).showOverlay(false)
                     bottomNav.visibility = View.VISIBLE
