@@ -16,7 +16,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -25,36 +24,44 @@ object NetworkBuilder {
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(
+    fun provideChuckerInterceptor(
         @ApplicationContext context: Context
+    ): ChuckerInterceptor {
+        return ChuckerInterceptor.Builder(context).collector(ChuckerCollector(context))
+            .maxContentLength(250000L).alwaysReadResponseBody(true).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideOkHttpClient(
+        chuckerInterceptor: ChuckerInterceptor
     ): OkHttpClient {
-        val logging = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-        } else {
-            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
-        }
-        val chuckerInterceptor =
-            ChuckerInterceptor.Builder(context).collector(ChuckerCollector(context))
-                .maxContentLength(250000L).alwaysReadResponseBody(true).build()
-
-        return if (BuildConfig.DEBUG) {
-            OkHttpClient.Builder().addInterceptor(logging).addInterceptor(chuckerInterceptor)
-                .connectTimeout(10, TimeUnit.SECONDS).readTimeout(10, TimeUnit.SECONDS).build()
-        } else {
-            OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS).build()
+        val logging = HttpLoggingInterceptor().apply {
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+            else HttpLoggingInterceptor.Level.NONE
         }
 
+        return OkHttpClient.Builder()
+            .addInterceptor(logging)
+            .addInterceptor(chuckerInterceptor)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     }
 
     @Singleton
     @Provides
     @Quran
     fun provideQuranApi(
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
+        moshi: Moshi
     ): Retrofit {
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        return Retrofit.Builder().baseUrl("https://equran.id/")
+        return Retrofit.Builder()
+            .baseUrl("https://equran.id/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()
@@ -64,10 +71,11 @@ object NetworkBuilder {
     @Provides
     @Area
     fun provideArea(
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
+        moshi: Moshi
     ): Retrofit {
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        return Retrofit.Builder().baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
+        return Retrofit.Builder()
+            .baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()
@@ -77,10 +85,11 @@ object NetworkBuilder {
     @Provides
     @Shalat
     fun provideShalatApi(
-        okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient,
+        moshi: Moshi
     ): Retrofit {
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        return Retrofit.Builder().baseUrl("https://api.aladhan.com/")
+        return Retrofit.Builder()
+            .baseUrl("https://api.aladhan.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()

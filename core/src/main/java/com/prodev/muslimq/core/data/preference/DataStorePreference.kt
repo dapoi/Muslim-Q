@@ -24,9 +24,7 @@ private var SURAH_NAME_ARABIC = stringPreferencesKey("surah_name_arabic")
 private val SURAH_NAME = stringPreferencesKey("surah_name")
 private val SURAH_DESC = stringPreferencesKey("surah_desc")
 private val AYAH_NUMBER = intPreferencesKey("ayah_number")
-private val PROVINCE_ID = stringPreferencesKey("province_id")
 private val AYAH_SIZE = intPreferencesKey("ayah_size")
-private val PROVINCE_NAME = stringPreferencesKey("province_name")
 private val CITY_NAME = stringPreferencesKey("city_name")
 private val COUNTRY_NAME = stringPreferencesKey("country_name")
 private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
@@ -76,26 +74,6 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
         val surahId = preferences[SURAH_ID] ?: 0
         val ayahNumber = preferences[AYAH_NUMBER] ?: 0
         Pair(surahId, ayahNumber)
-    }
-
-
-    /**
-     * Save province id & nameto data store
-     */
-    suspend fun saveProvinceData(provinceId: String, provinceName: String) {
-        dataStore.edit { preferences ->
-            preferences[PROVINCE_ID] = provinceId
-            preferences[PROVINCE_NAME] = provinceName
-        }
-    }
-
-    /**
-     * Get province id & name from data store
-     */
-    val getProvinceData = dataStore.data.map { preferences ->
-        val provinceId = preferences[PROVINCE_ID] ?: ""
-        val provinceName = preferences[PROVINCE_NAME] ?: ""
-        Pair(provinceId, provinceName)
     }
 
     /**

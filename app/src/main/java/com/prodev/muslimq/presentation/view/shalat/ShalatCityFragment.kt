@@ -1,6 +1,8 @@
 package com.prodev.muslimq.presentation.view.shalat
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
@@ -17,17 +19,16 @@ import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.presentation.adapter.CityAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
+import com.prodev.muslimq.presentation.viewmodel.CityViewModel
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ShalatCityFragment :
     BaseFragment<FragmentShalatCityBinding>(FragmentShalatCityBinding::inflate) {
 
-    private val shalatViewModel: ShalatViewModel by viewModels()
+    private val cityViewModel: CityViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val cityAdapter: CityAdapter by lazy { CityAdapter(binding.emptyState.root) }
 
@@ -61,11 +62,7 @@ class ShalatCityFragment :
             }
 
             swipeRefresh(
-                requireContext(),
-                { setViewModel() },
-                srlCity,
-                clNoInternet,
-                rvCity
+                requireContext(), { setViewModel() }, srlCity, clNoInternet, rvCity
             )
         }
 
@@ -91,40 +88,38 @@ class ShalatCityFragment :
     }
 
     private fun setViewModel() {
-        dataStoreViewModel.getProvinceData.observe(viewLifecycleOwner) { dataProv ->
-            shalatViewModel.getAllCity(dataProv.first)
+        val provinceIdBundle = arguments?.getString(PROVINCE_ID)
+        provinceIdBundle?.let { cityViewModel.setCity(it) }
 
-            val provinceName = when (dataProv.second) {
-                "DKI JAKARTA" -> {
-                    "DKI Jakarta"
-                }
-
-                "DI YOGYAKARTA" -> {
-                    "Yogyakarta"
-                }
-
-                else -> {
-                    capitalizeEachWord(dataProv.second)
-                }
+        val provinceName = when (val provinceNameBundle = arguments?.getString(PROVINCE_NAME)) {
+            "DKI JAKARTA" -> {
+                "DKI Jakarta"
             }
-            binding.tvTitleCity.text = getString(R.string.city_choose, provinceName)
-        }
 
-        shalatViewModel.getCityResult.observe(viewLifecycleOwner) {
+            "DI YOGYAKARTA" -> {
+                "Yogyakarta"
+            }
+
+            else -> {
+                provinceNameBundle?.let { capitalizeEachWord(it) }
+            }
+        }
+        binding.tvTitleCity.text = getString(R.string.city_choose, provinceName)
+
+        cityViewModel.getCity.observe(viewLifecycleOwner) { response ->
             binding.apply {
-                when (it) {
+                when (response) {
                     is Resource.Loading -> {
                         stateNoInternetView(false)
                         stateLoading(true)
                     }
 
                     is Resource.Success -> {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            delay(500)
+                        Handler(Looper.getMainLooper()).postDelayed({
                             stateNoInternetView(false)
                             stateLoading(false)
-                            cityAdapter.setList(it.data!!)
-                        }
+                            cityAdapter.setList(response.data!!)
+                        }, 500)
                     }
 
                     is Resource.Error -> {
@@ -156,5 +151,7 @@ class ShalatCityFragment :
     companion object {
         const val REQUEST_CITY_KEY = "request_city_key"
         const val BUNDLE_CITY = "bundle_city"
+        const val PROVINCE_ID = "province_id"
+        const val PROVINCE_NAME = "province_name"
     }
 }

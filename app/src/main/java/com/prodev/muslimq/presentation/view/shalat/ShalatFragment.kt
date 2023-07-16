@@ -416,7 +416,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun setViewModel(bottomNav: BottomNavigationView) {
         dataStoreViewModel.apply {
             getAreaData.observe(viewLifecycleOwner) { area ->
-                shalatViewModel.getShalatTime(area)
+                shalatViewModel.setShalatTime(area)
 
                 binding.tvYourLocation.text = area.first
             }
@@ -484,7 +484,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     }
 
     private fun initUIResult() {
-        shalatViewModel.getTimeShalat.observe(viewLifecycleOwner) { result ->
+        shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
             binding.apply {
                 when {
                     result is Resource.Loading && result.data == null -> {

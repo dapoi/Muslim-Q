@@ -8,14 +8,17 @@ import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.repository.QuranRepository
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
+import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class QuranViewModel @Inject constructor(
-    private val repositoryImpl: QuranRepository
+    private val repositoryImpl: QuranRepository,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     var searchQuery: String = ""
@@ -49,14 +52,14 @@ class QuranViewModel @Inject constructor(
     fun getBookmark(): LiveData<List<QuranDetailEntity>> = repositoryImpl.getBookmark().asLiveData()
 
     fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
-        repositoryImpl.insertToBookmark(quran, isBookmarked)
+        viewModelScope.launch(dispatcher) { repositoryImpl.insertToBookmark(quran, isBookmarked) }
     }
 
     fun deleteAllBookmark() {
-        repositoryImpl.deleteAllBookmark()
+        viewModelScope.launch(dispatcher) { repositoryImpl.deleteAllBookmark() }
     }
 
     fun deleteBookmark(surahId: Int) {
-        repositoryImpl.deleteBookmark(surahId)
+        viewModelScope.launch(dispatcher) { repositoryImpl.deleteBookmark(surahId) }
     }
 }

@@ -1,42 +1,40 @@
 package com.prodev.muslimq.core.data.repository
 
-import com.prodev.muslimq.core.data.source.local.LocalDataSource
+import com.prodev.muslimq.core.data.source.local.database.QuranDao
 import com.prodev.muslimq.core.data.source.local.model.Ayat
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
-import com.prodev.muslimq.core.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
+import com.prodev.muslimq.core.data.source.remote.network.QuranApi
 import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class QuranRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource,
+    private val service: QuranApi,
+    private val dao: QuranDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : QuranRepository {
 
     override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
         query = {
-            localDataSource.getQuran()
+            dao.getQuran()
         },
         fetch = {
             delay(2000)
-            remoteDataSource.getQuran()
+            service.getQuran()
         },
         saveFetchResult = { quran ->
             val local = ArrayList<QuranEntity>()
-            quran.map { response ->
+            quran.data.map { response ->
                 val data = QuranEntity(
                     response.nomor,
                     response.nama,
@@ -48,20 +46,22 @@ class QuranRepositoryImpl @Inject constructor(
                 )
                 local.add(data)
             }
-            localDataSource.deleteQuran()
-            localDataSource.insertQuran(local)
-        },
+
+            dao.deleteQuran()
+            dao.insertQuran(local)
+        }
     )
 
     override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> = networkBoundResource(
         query = {
-            localDataSource.getQuranDetail(id)
+            dao.getQuranDetail(id)
         },
         fetch = {
             delay(2000)
-            remoteDataSource.getQuranDetail(id)
+            service.getQuranDetail(id)
         },
-        saveFetchResult = { quran ->
+        saveFetchResult = { response ->
+            val quran = response.data
             val local = QuranDetailEntity(
                 id,
                 quran.nama,
@@ -88,23 +88,23 @@ class QuranRepositoryImpl @Inject constructor(
                 },
                 isBookmarked = false
             )
-            localDataSource.insertQuranDetail(local)
-        }, shouldFetch = { listAyah ->
+
+            dao.insertQuranDetail(local)
+        },
+        shouldFetch = { listAyah ->
             @Suppress("SENSELESS_COMPARISON")
             listAyah == null || listAyah.ayat.isEmpty()
         }
     )
 
     override fun getQuranTafsir(surahId: Int, ayahNumber: Int): Flow<Resource<TafsirDetailItem>> {
-        return flow<Resource<TafsirDetailItem>> {
+        return flow {
             emit(Resource.Loading())
+
             try {
-                val response = remoteDataSource.getQuranTafsir(surahId)
-                response.tafsir.filter {
-                    it.ayat == ayahNumber
-                }.map {
-                    emit(Resource.Success(it))
-                }
+                service.getQuranTafsir(surahId).data.tafsir.first { tafsir ->
+                    tafsir.ayat == ayahNumber
+                }.let { emit(Resource.Success(it)) }
             } catch (e: Exception) {
                 emit(Resource.Error(e))
             }
@@ -112,24 +112,19 @@ class QuranRepositoryImpl @Inject constructor(
     }
 
     override fun getBookmark(): Flow<List<QuranDetailEntity>> {
-        return localDataSource.getBookmark()
+        return dao.getBookmark()
     }
 
-    override fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
-        CoroutineScope(dispatcher).launch {
-            localDataSource.insertToBookmark(quran, isBookmarked)
-        }
+    override suspend fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
+        quran.isBookmarked = isBookmarked
+        dao.updateBookmark(quran)
     }
 
-    override fun deleteAllBookmark() {
-        CoroutineScope(dispatcher).launch {
-            localDataSource.deleteAllBookmark()
-        }
+    override suspend fun deleteAllBookmark() {
+        dao.deleteAllBookmark()
     }
 
-    override fun deleteBookmark(surahId: Int) {
-        CoroutineScope(dispatcher).launch {
-            localDataSource.deleteBookmark(surahId)
-        }
+    override suspend fun deleteBookmark(surahId: Int) {
+        dao.deleteBookmark(surahId)
     }
 }
