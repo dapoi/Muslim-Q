@@ -275,6 +275,7 @@ class QuranDetailFragment :
                                 context = requireContext(),
                                 view = binding.root,
                                 message = snackbarMessage,
+                                action = bookmarked,
                                 isDetailScreen = true
                             )
                         }

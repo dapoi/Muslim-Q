@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         toSettings: Boolean = false,
         isDetailScreen: Boolean = false
     ) {
+        val textAction = if (isDetailScreen) "LIHAT" else "IZINKAN"
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
             if (state) {
@@ -139,20 +140,36 @@ class MainActivity : AppCompatActivity() {
             setTextColor(ContextCompat.getColor(context, R.color.white_header))
             if (action) {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white_header))
-                setAction("IZINKAN") {
-                    if (toSettings) {
-                        val intent = Intent()
-                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                        val uri = Uri.fromParts("package", context.packageName, null)
-                        intent.data = uri
-                        startActivity(intent)
-                    } else {
-                        val intent = Intent()
-                        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
-                        intent.putExtra(
-                            "android.provider.extra.APP_PACKAGE", context.packageName
-                        )
-                        startActivity(intent)
+                setAction(textAction) {
+                    when {
+                        isDetailScreen -> {
+                            val selectedId = binding.bottomNav.selectedItemId
+                            if (selectedId == R.id.othersFragment) {
+                                navController.popBackStack(
+                                    destinationId = R.id.othersFragment,
+                                    inclusive = false
+                                )
+                            } else {
+                                binding.bottomNav.selectedItemId = R.id.othersFragment
+                            }
+                        }
+
+                        toSettings -> {
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts("package", context.packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
+
+                        else -> {
+                            val intent = Intent()
+                            intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+                            intent.putExtra(
+                                "android.provider.extra.APP_PACKAGE", context.packageName
+                            )
+                            startActivity(intent)
+                        }
                     }
                 }
             }
