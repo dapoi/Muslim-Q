@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
@@ -228,6 +229,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                         response is Resource.Error && response.data.isNullOrEmpty() -> {
                             stateLoading(false)
                             stateNoInternet(ctlHeader, clNoInternet, true)
+                            Log.e("QuranFragment", "Error: ${response.error}")
                         }
 
                         else -> {
