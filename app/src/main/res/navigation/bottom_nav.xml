@@ -37,6 +37,13 @@
             app:exitAnim="@anim/no_anim"
             app:popEnterAnim="@anim/no_anim"
             app:popExitAnim="@anim/to_bottom_anim" />
+        <action
+            android:id="@+id/action_shalatFragment_to_qiblaFragment"
+            app:destination="@id/qiblaFragment"
+            app:enterAnim="@anim/from_bottom_anim"
+            app:exitAnim="@anim/no_anim"
+            app:popEnterAnim="@anim/no_anim"
+            app:popExitAnim="@anim/to_bottom_anim" />
     </fragment>
     <fragment
         android:id="@+id/qiblaFragment"

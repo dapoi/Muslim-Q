@@ -20,14 +20,6 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="29" />
 
-    <uses-feature
-        android:name="android.hardware.sensor.gyroscope"
-        android:required="true" />
-
-    <uses-feature
-        android:name="android.hardware.sensor.compass"
-        android:required="true" />
-
     <application
         android:name=".Application"
         android:allowBackup="true"

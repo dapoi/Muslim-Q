@@ -8,6 +8,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.View
 import android.view.animation.RotateAnimation
+import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.databinding.FragmentQiblaBinding
 import com.prodev.muslimq.presentation.view.BaseFragment
 import kotlin.math.roundToInt
@@ -15,15 +16,15 @@ import kotlin.math.roundToInt
 class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::inflate),
     SensorEventListener {
 
-    private lateinit var sensorManager: SensorManager
-    private lateinit var sensor: Sensor
+    private var sensorManager: SensorManager? = null
+    private var sensor: Sensor? = null
     private var currentDegree = 0f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
         sensorManager = requireActivity().getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -48,11 +49,14 @@ class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::i
 
     override fun onResume() {
         super.onResume()
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME)
+        sensorManager?.let {
+            sensor = it.getDefaultSensor(Sensor.TYPE_ORIENTATION)
+            it.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this)
+        sensorManager?.unregisterListener(this)
     }
 }

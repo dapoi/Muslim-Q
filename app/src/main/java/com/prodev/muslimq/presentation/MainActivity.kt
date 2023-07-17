@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             R.id.shalatCityFragment,
             R.id.bookmarkFragment,
             R.id.aboutAppFragment,
+            R.id.qiblaFragment
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // give animation when hide/show bottom nav
