@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
     id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 apply from: '../shared_dependencies.gradle'
 
@@ -20,16 +21,16 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "17"
     }
     buildFeatures {
         viewBinding true
@@ -38,11 +39,14 @@ android {
 
 dependencies {
 
+    // Serialization
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
+
     // Room
     def roomVersion = '2.5.2'
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
-    kapt("androidx.room:room-compiler:$roomVersion")
+    kapt "androidx.room:room-compiler:$roomVersion"
 
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
@@ -54,7 +58,7 @@ dependencies {
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.14.0'
 
     // Coroutines
-    def coroutinesVersion = "1.6.4"
+    def coroutinesVersion = "1.7.1"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 

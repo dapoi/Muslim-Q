@@ -1,10 +1,11 @@
 package com.prodev.muslimq.core.data.repository
 
-import com.prodev.muslimq.core.data.source.local.LocalDataSource
+import com.prodev.muslimq.core.data.source.local.database.ShalatDao
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
-import com.prodev.muslimq.core.data.source.remote.RemoteDataSource
 import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
+import com.prodev.muslimq.core.data.source.remote.network.AreaApi
+import com.prodev.muslimq.core.data.source.remote.network.ShalatApi
 import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
@@ -20,15 +21,16 @@ import javax.inject.Singleton
 
 @Singleton
 class ShalatRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource,
+    private val shalatService: ShalatApi,
+    private val areaService: AreaApi,
+    private val dao: ShalatDao,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ShalatRepository {
 
     override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
         emit(Resource.Loading())
         try {
-            val response = remoteDataSource.getAllProvince()
+            val response = areaService.getAllProvince()
             emit(Resource.Success(response))
         } catch (e: Throwable) {
             emit(Resource.Error(e))
@@ -38,7 +40,7 @@ class ShalatRepositoryImpl @Inject constructor(
     override fun getAllCity(id: String): Flow<Resource<List<CityResponse>>> = flow {
         emit(Resource.Loading())
         try {
-            val response = remoteDataSource.getAllCity(id)
+            val response = areaService.getAllCity(id)
             emit(Resource.Success(response))
         } catch (e: Exception) {
             emit(Resource.Error(e))
@@ -48,8 +50,12 @@ class ShalatRepositoryImpl @Inject constructor(
     override fun getShalatDaily(
         city: String, country: String
     ): Flow<Resource<ShalatEntity>> = networkBoundResource(
-        query = { localDataSource.getShalatDailyByCity(city, country) },
-        fetch = { remoteDataSource.getShalatDaily(city, country) },
+        query = {
+            dao.getShalatDailyByCity(city, country)
+        },
+        fetch = {
+            shalatService.getShalatDaily(city, country)
+        },
         saveFetchResult = { shalat ->
             val simpleDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
             shalat.data.filter {
@@ -64,8 +70,9 @@ class ShalatRepositoryImpl @Inject constructor(
                     maghrib = pray.timings.Maghrib,
                     isya = pray.timings.Isha
                 )
-                localDataSource.deleteShalatDaily()
-                localDataSource.insertShalatDaily(local)
+
+                dao.deleteShalat()
+                dao.insertShalat(local)
             }
         }
     )

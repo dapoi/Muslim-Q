@@ -95,7 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="-40dp"
-                        android:alpha="0.2"
+                        android:alpha="0.18"
                         android:contentDescription="@string/icon_mosque"
                         android:src="@drawable/ic_mosque"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -108,6 +108,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
                         android:textAlignment="center"
                         android:textColor="@color/white_header"
                         android:textSize="14sp"
@@ -118,7 +119,7 @@
                     <TextView
                         android:id="@+id/tv_islamic_date"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textAlignment="center"
                         android:textColor="@color/white_header"
@@ -150,6 +151,20 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tv_next_shalat"
                         app:layout_constraintTop_toBottomOf="@+id/tv_next_shalat" />
+
+                    <TextView
+                        android:id="@+id/tv_qibla"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:fontFamily="@font/poppins_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/see_qibla"
+                        android:textAlignment="center"
+                        android:textColor="@color/white_header"
+                        android:textSize="14sp"
+                        app:layout_constraintBaseline_toBaselineOf="@id/tv_gregorian_date"
+                        app:layout_constraintEnd_toEndOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

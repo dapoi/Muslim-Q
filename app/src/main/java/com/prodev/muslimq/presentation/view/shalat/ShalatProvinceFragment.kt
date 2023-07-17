@@ -3,9 +3,9 @@ package com.prodev.muslimq.presentation.view.shalat
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
@@ -16,15 +16,14 @@ import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
+import com.prodev.muslimq.presentation.viewmodel.ProvinceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ShalatProvinceFragment :
     BaseFragment<FragmentShalatProvinceBinding>(FragmentShalatProvinceBinding::inflate) {
 
-    private val shalatViewModel: ShalatViewModel by viewModels()
+    private val provinceViewModel: ProvinceViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val provinceAdapter: ProvinceAdapter by lazy { ProvinceAdapter(binding.emptyState.root) }
 
@@ -36,7 +35,7 @@ class ShalatProvinceFragment :
 
             swipeRefresh(
                 requireContext(),
-                { shalatViewModel.refreshProvince() },
+                { provinceViewModel.setProvince() },
                 srlProvince,
                 clNoInternet,
                 rvProvince
@@ -56,15 +55,18 @@ class ShalatProvinceFragment :
         provinceAdapter.onClick = {
             val id = it.id
             val name = it.name
-            viewLifecycleOwner.lifecycleScope.launch {
-                dataStoreViewModel.saveProvinceData(id, name)
-            }
-            findNavController().navigate(R.id.action_shalatProvinceFragment_to_shalatCityFragment)
+            findNavController().navigate(
+                R.id.action_shalatProvinceFragment_to_shalatCityFragment,
+                bundleOf(
+                    ShalatCityFragment.PROVINCE_ID to id,
+                    ShalatCityFragment.PROVINCE_NAME to name
+                )
+            )
         }
     }
 
     private fun setViewModel() {
-        shalatViewModel.getProvinceResult.observe(viewLifecycleOwner) {
+        provinceViewModel.getProvince.observe(viewLifecycleOwner) {
             binding.apply {
                 when (it) {
                     is Resource.Loading -> {
@@ -76,17 +78,17 @@ class ShalatProvinceFragment :
                         stateNoInternetView(false)
                         stateLoading(false)
                         provinceAdapter.setList(
-                            if (shalatViewModel.searchQuery.isNotEmpty() &&
-                                shalatViewModel.filteredData.isNotEmpty()
+                            if (provinceViewModel.searchQuery.isNotEmpty() &&
+                                provinceViewModel.filteredData.isNotEmpty()
                             ) {
-                                shalatViewModel.filteredData
+                                provinceViewModel.filteredData
                             } else {
                                 it.data!!
                             }
                         )
 
-                        tvTitleProvince.isVisible = shalatViewModel.searchQuery.isEmpty()
-                        svProvince.isIconified = shalatViewModel.searchQuery.isEmpty()
+                        tvTitleProvince.isVisible = provinceViewModel.searchQuery.isEmpty()
+                        svProvince.isIconified = provinceViewModel.searchQuery.isEmpty()
 
                         svProvince.apply {
                             setOnSearchClickListener {
@@ -143,7 +145,7 @@ class ShalatProvinceFragment :
     override fun onPause() {
         super.onPause()
 
-        shalatViewModel.apply {
+        provinceViewModel.apply {
             searchQuery = binding.svProvince.query.toString()
             filteredData = provinceAdapter.getList()
         }

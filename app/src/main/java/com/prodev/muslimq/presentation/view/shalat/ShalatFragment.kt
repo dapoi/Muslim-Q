@@ -25,6 +25,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -42,6 +43,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.DialogGetLocationBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
@@ -179,7 +181,21 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
         transparentDialog.setView(dialogLayout.root)
 
-        binding.ivIconChoose.setOnClickListener { showDialogLocation() }
+        binding.apply {
+            ivIconChoose.setOnClickListener {
+                showDialogLocation()
+            }
+
+            val pm: PackageManager = requireContext().packageManager
+            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
+                // This device does not have a compass, turn off the compass feature
+                tvQibla.isVisible = false
+            }
+
+            tvQibla.setOnClickListener {
+                findNavController().navigate(R.id.action_shalatFragment_to_qiblaFragment)
+            }
+        }
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
 
@@ -416,9 +432,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun setViewModel(bottomNav: BottomNavigationView) {
         dataStoreViewModel.apply {
             getAreaData.observe(viewLifecycleOwner) { area ->
-                shalatViewModel.getShalatTime(area)
+                shalatViewModel.setShalatTime(area)
 
-                binding.tvYourLocation.text = area.first
+                binding.tvYourLocation.text = capitalizeEachWord(area.first)
             }
 
             getTapPromptState.observe(viewLifecycleOwner) { state ->
@@ -455,12 +471,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
             .setCaptureTouchEventOutsidePrompt(false)
             .setPromptStateChangeListener { _, state ->
-                if (state == MaterialTapTargetPrompt.STATE_DISMISSED) {
-                    materialTapTargetSequence.finish()
-                    (activity as MainActivity).showOverlay(false)
-                    bottomNav.visibility = View.VISIBLE
-                } else if (state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                    showDialogLocation()
+                if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
                     materialTapTargetSequence.finish()
                     (activity as MainActivity).showOverlay(false)
                     bottomNav.visibility = View.VISIBLE
@@ -489,7 +500,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     }
 
     private fun initUIResult() {
-        shalatViewModel.getTimeShalat.observe(viewLifecycleOwner) { result ->
+        shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
             binding.apply {
                 when {
                     result is Resource.Loading && result.data == null -> {

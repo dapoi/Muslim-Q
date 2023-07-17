@@ -29,12 +29,6 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveProvinceData(provinceId: String, provinceName: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            dataStorePref.saveProvinceData(provinceId, provinceName)
-        }
-    }
-
     fun saveAreaData(cityName: String, countryName: String) {
         viewModelScope.launch {
             dataStorePref.saveCityAndCountryData(cityName, countryName)
@@ -74,8 +68,6 @@ class DataStoreViewModel @Inject constructor(
     val getSurah = dataStorePref.getSurah.asLiveData()
 
     val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
-
-    val getProvinceData = dataStorePref.getProvinceData.asLiveData()
 
     val getAreaData = dataStorePref.getCityAndCountryData.asLiveData().distinctUntilChanged()
 
