@@ -19,4 +19,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideDoaRepository(doaRepository: DoaRepositoryImpl): DoaRepository
+
+    @Binds
+    abstract fun provideTasbihRepository(tasbihRepository: TasbihRepositoryImpl): TasbihRepository
 }

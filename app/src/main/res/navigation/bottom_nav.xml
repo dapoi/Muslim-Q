@@ -74,9 +74,6 @@
             app:exitAnim="@anim/no_anim"
             app:popEnterAnim="@anim/no_anim"
             app:popExitAnim="@anim/to_bottom_anim" />
-        <action
-            android:id="@+id/action_othersFragment_to_tasbihFragment"
-            app:destination="@id/tasbihFragment" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
@@ -134,7 +131,20 @@
         tools:layout="@layout/fragment_on_boarding" />
     <fragment
         android:id="@+id/tasbihFragment"
-        android:name="com.prodev.muslimq.presentation.view.others.tasbih.TasbihFragment"
+        android:name="com.prodev.muslimq.presentation.view.tasbih.TasbihFragment"
         android:label="fragment_tasbih"
-        tools:layout="@layout/fragment_tasbih" />
+        tools:layout="@layout/fragment_tasbih">
+        <action
+            android:id="@+id/action_tasbihFragment_to_dzikirFragment"
+            app:destination="@id/dzikirFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/dzikirFragment"
+        android:name="com.prodev.muslimq.presentation.view.tasbih.DzikirFragment"
+        android:label="DzikirFragment"
+        tools:layout="@layout/fragment_dzikir" />
 </navigation>

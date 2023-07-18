@@ -31,6 +31,7 @@ private val SWITCH_NAME_KEY = stringPreferencesKey("switch_name")
 private val SWITCH_DARK_MODE = booleanPreferencesKey("switch_dark_mode")
 private val ONBOARDING_STATE = booleanPreferencesKey("onboarding_state")
 private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
+private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -195,5 +196,21 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getTapPromptState = dataStore.data.map { preferences ->
         preferences[TAP_PROMPT_STATE] ?: false
+    }
+
+    /**
+     * Save input dzikir once state to data store
+     */
+    suspend fun saveInputDzikirOnceState(inputDzikirOnceState: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[INPUT_DZIKIR_ONCE] = inputDzikirOnceState
+        }
+    }
+
+    /**
+     * Get input dzikir once state from data store
+     */
+    val getInputDzikirOnceState = dataStore.data.map { preferences ->
+        preferences[INPUT_DZIKIR_ONCE] ?: false
     }
 }

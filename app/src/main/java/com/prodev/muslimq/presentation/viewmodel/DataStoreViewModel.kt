@@ -65,6 +65,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveDzikirOnce(isDzikirOnce: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveInputDzikirOnceState(isDzikirOnce)
+        }
+    }
+
     val getSurah = dataStorePref.getSurah.asLiveData()
 
     val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
@@ -82,4 +88,6 @@ class DataStoreViewModel @Inject constructor(
     val getOnboardingState = dataStorePref.getOnboardingState.asLiveData().distinctUntilChanged()
 
     val getTapPromptState = dataStorePref.getTapPromptState.asLiveData().distinctUntilChanged()
+
+    val hasInputDzikir = dataStorePref.getInputDzikirOnceState.asLiveData()
 }

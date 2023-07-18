@@ -58,14 +58,15 @@ class MainActivity : AppCompatActivity() {
             R.id.shalatCityFragment,
             R.id.bookmarkFragment,
             R.id.aboutAppFragment,
-            R.id.qiblaFragment
+            R.id.qiblaFragment,
+            R.id.dzikirFragment
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // give animation when hide/show bottom nav
             if (destination.id in destinationToHideBottomnav) {
-                animateVisibleHide(false, binding.bottomNav)
+                showBottomNav(false, binding.bottomNav)
             } else {
-                animateVisibleHide(true, binding.bottomNav)
+                showBottomNav(true, binding.bottomNav)
             }
         }
         binding.bottomNav.setupWithNavController(navController)
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun animateVisibleHide(state: Boolean, bottomNav: BottomNavigationView) {
+    private fun showBottomNav(state: Boolean, bottomNav: BottomNavigationView) {
         if (state) {
             bottomNav.clearAnimation()
             bottomNav.animate().translationY(0f).duration = 600

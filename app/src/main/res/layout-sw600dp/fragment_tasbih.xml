@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="16dp"
-    android:paddingBottom="70dp"
+    android:paddingHorizontal="20dp"
+    android:paddingBottom="80dp"
     tools:context=".presentation.view.tasbih.TasbihFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -24,21 +24,23 @@
             android:text="@string/tasbih"
             android:textAlignment="center"
             android:textColor="@color/green_base"
-            android:textSize="20sp" />
+            android:textSize="28sp" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip_add"
         style="@style/Widget.MaterialComponents.Chip.Action"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginTop="16dp"
         android:checkable="false"
         android:fontFamily="@font/poppins_bold"
         android:includeFontPadding="false"
         android:text="@string/plus"
+        android:textAlignment="center"
         android:textColor="@color/black"
+        android:textSize="32sp"
         app:chipBackgroundColor="@color/white_base"
         app:chipCornerRadius="8dp"
         app:chipStrokeColor="@color/green_base"
@@ -51,7 +53,6 @@
         android:id="@+id/divider"
         android:layout_width="1.5dp"
         android:layout_height="0dp"
-        android:layout_marginVertical="4dp"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="@id/chip_add"
         app:layout_constraintStart_toEndOf="@id/chip_add"
@@ -60,7 +61,7 @@
     <HorizontalScrollView
         android:id="@+id/sv_chip"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:overScrollMode="never"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="@id/chip_add"
@@ -75,7 +76,9 @@
             android:paddingHorizontal="16dp"
             app:itemSpacing="8dp"
             app:singleLine="true"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry">
+
+        </com.google.android.material.chip.ChipGroup>
 
     </HorizontalScrollView>
 
@@ -90,8 +93,8 @@
 
     <ImageView
         android:id="@+id/iv_settings"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_settings"
         app:layout_constraintBottom_toBottomOf="@+id/divider"
@@ -117,7 +120,7 @@
                 android:fontFamily="@font/poppins_bold"
                 android:includeFontPadding="false"
                 android:textColor="@color/black"
-                android:textSize="48sp"
+                android:textSize="56sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -131,7 +134,7 @@
                 android:fontFamily="@font/poppins_semibold"
                 android:includeFontPadding="false"
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_count_tasbih"
@@ -145,7 +148,7 @@
                 android:importantForAccessibility="no"
                 android:rotationY="180"
                 android:src="@drawable/ic_touch"
-                app:fabCustomSize="210dp"
+                app:fabCustomSize="240dp"
                 app:layout_constraintEnd_toEndOf="@+id/tv_dzikir"
                 app:layout_constraintStart_toStartOf="@+id/tv_dzikir"
                 app:layout_constraintTop_toBottomOf="@id/tv_dzikir"
@@ -164,7 +167,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="@+id/fab_tasbih"
                 app:layout_constraintStart_toStartOf="@+id/fab_tasbih"
                 app:layout_constraintTop_toBottomOf="@+id/fab_tasbih" />
