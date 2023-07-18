@@ -24,20 +24,21 @@ import com.prodev.muslimq.databinding.DialogSearchAyahBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
+import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding::inflate) {
 
     private val tasbihViewModel: TasbihViewModel by viewModels()
-
+    private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
     }
-
     private var totalSize = 0
     private var successDelete = false
     private var successAdd = false
@@ -56,11 +57,14 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         getAllDzikir()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getAllDzikir() {
         val context = requireContext()
-        val colorWhiteBase = ContextCompat.getColorStateList(context, R.color.white_base)
-        val colorGreenBase = ContextCompat.getColorStateList(context, R.color.green_base)
+        val colorWhiteBaseState = ContextCompat.getColorStateList(context, R.color.white_base)
+        val colorGreenBaseState = ContextCompat.getColorStateList(context, R.color.green_base)
+        val colorGreenBase = ContextCompat.getColor(context, R.color.green_base)
         val colorBlack = ContextCompat.getColor(context, R.color.black)
+        val colorLightGray = ContextCompat.getColor(context, R.color.light_gray)
         val cornerRadius = 18F
         val strokeWidth = 3f
 
@@ -68,10 +72,13 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             totalSize = listOfDzikir.size
             binding.apply {
                 cgDzikir.removeAllViews()
-                chipAdd.setOnClickListener { showInputDzikirDialog(context, listOfDzikir) }
+                chipAdd.setOnClickListener { showInputDialog(true, listOfDzikir =  listOfDzikir) }
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
+                }
+                toggleMaxCount.addOnButtonCheckedListener { group, _, _ ->
+                    group.clearChecked()
                 }
 
                 tasbihViewModel.apply {
@@ -81,8 +88,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             isCheckable = true
                             chipCornerRadius = cornerRadius
                             isCheckedIconVisible = false
-                            chipBackgroundColor = colorWhiteBase
-                            chipStrokeColor = colorGreenBase
+                            chipBackgroundColor = colorWhiteBaseState
+                            chipStrokeColor = colorGreenBaseState
                             chipStrokeWidth = strokeWidth
                         }
 
@@ -121,8 +128,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                         }
 
                         if (chip.isChecked) {
-                            chip.chipBackgroundColor = colorGreenBase
-                            chip.setTextColor(colorWhiteBase)
+                            chip.chipBackgroundColor = colorGreenBaseState
+                            chip.setTextColor(colorWhiteBaseState)
                             dzikirNameVM = dzikir.dzikirName
                             tvDzikir.text = capitalizeEachWord(dzikirNameVM)
                         }
@@ -133,13 +140,13 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                     val checkedChip = cgDzikir.getChildAt(i) as? Chip
                                     if (checkedChip?.id != buttonView.id) {
                                         checkedChip?.isChecked = false
-                                        checkedChip?.chipBackgroundColor = colorWhiteBase
+                                        checkedChip?.chipBackgroundColor = colorWhiteBaseState
                                         checkedChip?.setTextColor(colorBlack)
                                     }
                                 }
 
-                                chip.chipBackgroundColor = colorGreenBase
-                                chip.setTextColor(colorWhiteBase)
+                                chip.chipBackgroundColor = colorGreenBaseState
+                                chip.setTextColor(colorWhiteBaseState)
 
                                 selectedItemIndexVM = index
                                 currentIndexVM = index
@@ -155,65 +162,140 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             addView(chip)
                         }
                     }
+                }
+            }
+        }
 
-                    val vibrator = vibrateApp(context)
-                    val duration = 200L
+        dataStoreViewModel.apply {
 
-                    fabTasbih.setOnClickListener {
-                        if (dzikirCountVM == 33) {
-                            val currentIndex = selectedItemIndexVM
-                            val maxIndex = cgDzikir.childCount - 1
+            getHapticFeedbackState.observe(viewLifecycleOwner) { hapticActive ->
+                binding.apply {
+                    if (hapticActive) {
+                        ivFeedback.setBackgroundColor(colorGreenBase)
+                    } else {
+                        ivFeedback.setBackgroundColor(colorLightGray)
+                    }
 
-                            if (currentIndex < maxIndex) {
-                                val targetIndex = currentIndex + 1
-
-                                val currentChip = cgDzikir.getChildAt(currentIndex) as Chip
-                                val targetChip = cgDzikir.getChildAt(targetIndex) as Chip
-
-                                currentChip.isChecked = false
-                                targetChip.isChecked = true
-                                selectedItemIndexVM = targetIndex
-                                currentIndexVM = targetIndex
-                            }
-
-                            svChip.post {
-                                // follow item index
-                                svChip.smoothScrollTo(
-                                    cgDzikir.getChildAt(selectedItemIndexVM).left,
-                                    cgDzikir.getChildAt(selectedItemIndexVM).top
-                                )
-                            }
-
-                            if (selectedItemIndexVM != maxIndex) {
-                                dzikirCountVM = 0
-                                tvCountTasbih.text = dzikirCountVM.toString()
-                            }
+                    ivFeedback.setOnClickListener {
+                        if (hapticActive) {
+                            saveHapticFeedbackState(false)
                         } else {
-                            dzikirCountVM++
+                            saveHapticFeedbackState(true)
+                        }
+
+                        (activity as MainActivity).customSnackbar(
+                            state = !hapticActive,
+                            context = context,
+                            view = binding.root,
+                            message = if (hapticActive) "Getaran dimatikan" else "Getaran diaktifkan"
+                        )
+                    }
+                }
+            }
+
+            getDzikirMaxCount.observe(viewLifecycleOwner) { maxCount ->
+                binding.apply {
+                    if (maxCount < tasbihViewModel.dzikirCountVM) {
+                        tasbihViewModel.apply {
+                            dzikirCountVM = 0
                             tvCountTasbih.text = dzikirCountVM.toString()
                         }
+                    }
+                    tvMaxCount.text = maxCount.toString()
+                    tvMaxCount.setOnClickListener {
+                        showInputDialog(false, maxCount)
+                    }
 
-                        if (dzikirCountVM > 32) {
-                            if (selectedItemIndexVM <= cgDzikir.childCount - 1) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                    vibrator.vibrate(
-                                        VibrationEffect.createOneShot(
-                                            duration, VibrationEffect.DEFAULT_AMPLITUDE
-                                        )
-                                    )
-                                } else {
-                                    @Suppress("DEPRECATION") vibrator.vibrate(duration)
-                                }
-                            }
+                    tvPlus.setOnClickListener {
+                        saveDzikirMaxCount(maxCount + 1)
+                    }
+
+                    tvMinus.setOnClickListener {
+                        if (maxCount > 1) {
+                            saveDzikirMaxCount(maxCount - 1)
+                        } else {
+                            return@setOnClickListener
+                        }
+                    }
+                }
+            }
+
+            getCombineHapticAndMaxDzikirCount.observe(viewLifecycleOwner) { response ->
+                interactTasbih(response.first, response.second)
+            }
+        }
+    }
+
+    private fun interactTasbih(hapticActive: Boolean?, maxDzikir: Int) {
+        val isHapticActive = hapticActive ?: true
+        binding.apply {
+            tasbihViewModel.apply {
+                val vibrator = vibrateApp(requireContext())
+                val durationDone = 1000L
+
+                fabTasbih.setOnClickListener {
+                    if (isHapticActive && dzikirCountVM < maxDzikir) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+                        } else {
+                            @Suppress("DEPRECATION") vibrator.vibrate(200L)
                         }
                     }
 
-                    tvCountTasbih.text = dzikirCountVM.toString()
+                    if (dzikirCountVM == maxDzikir) {
+                        val currentIndex = selectedItemIndexVM
+                        val maxIndex = cgDzikir.childCount - 1
 
-                    btnReset.setOnClickListener {
-                        dzikirCountVM = 0
+                        if (currentIndex < maxIndex) {
+                            val targetIndex = currentIndex + 1
+
+                            val currentChip = cgDzikir.getChildAt(currentIndex) as Chip
+                            val targetChip = cgDzikir.getChildAt(targetIndex) as Chip
+
+                            currentChip.isChecked = false
+                            targetChip.isChecked = true
+                            selectedItemIndexVM = targetIndex
+                            currentIndexVM = targetIndex
+                        }
+
+                        svChip.post {
+                            // follow item index
+                            svChip.smoothScrollTo(
+                                cgDzikir.getChildAt(selectedItemIndexVM).left,
+                                cgDzikir.getChildAt(selectedItemIndexVM).top
+                            )
+                        }
+
+                        if (selectedItemIndexVM != maxIndex) {
+                            dzikirCountVM = 0
+                            tvCountTasbih.text = dzikirCountVM.toString()
+                        }
+                    } else {
+                        dzikirCountVM++
                         tvCountTasbih.text = dzikirCountVM.toString()
                     }
+
+                    if (dzikirCountVM > maxDzikir - 1) {
+                        if (selectedItemIndexVM <= cgDzikir.childCount - 1) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                vibrator.vibrate(
+                                    VibrationEffect.createOneShot(
+                                        durationDone,
+                                        VibrationEffect.DEFAULT_AMPLITUDE
+                                    )
+                                )
+                            } else {
+                                @Suppress("DEPRECATION") vibrator.vibrate(durationDone)
+                            }
+                        }
+                    }
+                }
+
+                tvCountTasbih.text = dzikirCountVM.toString()
+
+                ivRepeat.setOnClickListener {
+                    dzikirCountVM = 0
+                    tvCountTasbih.text = dzikirCountVM.toString()
                 }
             }
         }
@@ -230,55 +312,97 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         }
     }
 
-    private fun showInputDzikirDialog(context: Context, listOfDzikir: List<TasbihEntity>) {
+    private fun showInputDialog(
+        isDzikir: Boolean,
+        maxCount: Int = 0,
+        listOfDzikir: List<TasbihEntity> = listOf()
+    ) {
         val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
-        val etDzikir = dialogLayout.etAyah
+        val etInput = dialogLayout.etAyah
         val btnSave = dialogLayout.btnSearch
-        etDzikir.inputType = InputType.TYPE_CLASS_TEXT
-        etDzikir.hint = getString(R.string.input_dzikir)
+        etInput.inputType = if (isDzikir) {
+            InputType.TYPE_CLASS_TEXT
+        } else {
+            InputType.TYPE_CLASS_NUMBER
+        }
+        etInput.hint = if (isDzikir) {
+            getString(R.string.input_dzikir)
+        } else {
+            getString(R.string.input_max_dzikir)
+        }
+        etInput.setText(if (isDzikir) "" else maxCount.toString())
         btnSave.text = getString(R.string.save)
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
-            etDzikir.setOnEditorActionListener { _, _, _ -> btnSave.performClick() }
+            etInput.setOnEditorActionListener { _, _, _ -> btnSave.performClick() }
             btnSave.setOnClickListener {
-                val dzikir = etDzikir.text.toString()
-                val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
-                    TasbihEntity(capitalizeEachWord(dzikir))
-                )
-                val messageSnackbar = when {
-                    dzikir.isEmpty() -> "Dzikir belum diisi"
-                    !state -> "Dzikir sudah ada"
-                    else -> "Dzikir berhasil ditambahkan"
-                }
-
-                (activity as MainActivity).customSnackbar(
-                    state = state,
-                    context = context,
-                    view = binding.root,
-                    message = messageSnackbar
-                )
-
-                if (state) {
-                    tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir)))
-                    hideKeyboard(requireActivity())
-
-                    tasbihViewModel.apply {
-                        binding.apply {
-                            val cgSize = cgDzikir.childCount - 1
-                            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                                selectedItemIndexVM = cgSize + 1
-                                currentIndexVM = cgSize + 1
-                                dzikirCountVM = 0
-                            }
-                        }
-                    }
-
-                    successAdd = true
+                val dzikir = etInput.text.toString()
+                if (isDzikir) {
+                    insertDzikir(dzikir, listOfDzikir)
+                } else {
+                    insertMaxDzikir(dzikir)
                 }
 
                 dismiss()
             }
             show()
+        }
+    }
+
+    private fun insertDzikir(dzikir: String, listOfDzikir: List<TasbihEntity>) {
+        val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
+            TasbihEntity(capitalizeEachWord(dzikir))
+        )
+        val messageSnackbar = when {
+            dzikir.isEmpty() -> "Dzikir belum diisi"
+            !state -> "Dzikir sudah ada"
+            else -> "Dzikir berhasil ditambahkan"
+        }
+
+        (activity as MainActivity).customSnackbar(
+            state = state,
+            context = requireContext(),
+            view = binding.root,
+            message = messageSnackbar
+        )
+
+        if (state) {
+            tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir)))
+            hideKeyboard(requireActivity())
+
+            tasbihViewModel.apply {
+                binding.apply {
+                    val cgSize = cgDzikir.childCount - 1
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                        selectedItemIndexVM = cgSize + 1
+                        currentIndexVM = cgSize + 1
+                        dzikirCountVM = 0
+                    }
+                }
+            }
+
+            successAdd = true
+        }
+    }
+
+    private fun insertMaxDzikir(maxDzikir: String) {
+        val state = maxDzikir.isNotEmpty() && maxDzikir.toInt() > 0
+        val messageSnackbar = when {
+            maxDzikir.isEmpty() -> "Jumlah dzikir belum diisi"
+            !state -> "Jumlah dzikir tidak valid"
+            else -> "Jumlah dzikir berhasil ditambahkan"
+        }
+
+        (activity as MainActivity).customSnackbar(
+            state = state,
+            context = requireContext(),
+            view = binding.root,
+            message = messageSnackbar
+        )
+
+        if (state) {
+            dataStoreViewModel.saveDzikirMaxCount(maxDzikir.toInt())
+            hideKeyboard(requireActivity())
         }
     }
 }

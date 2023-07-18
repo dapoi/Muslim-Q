@@ -85,7 +85,10 @@
     <string name="list_dzikir">Dzikir</string>
     <string name="plus">+</string>
     <string name="input_dzikir">Masukkan Dzikir</string>
+    <string name="input_max_dzikir">Masukkan Batas Maksimal Dzikir</string>
     <string name="reset">Reset</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="max_count_dzikir">Batas Maksimal Dzikir</string>
+    <string name="minus">-</string>
 </resources>

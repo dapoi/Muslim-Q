@@ -32,6 +32,8 @@ private val SWITCH_DARK_MODE = booleanPreferencesKey("switch_dark_mode")
 private val ONBOARDING_STATE = booleanPreferencesKey("onboarding_state")
 private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
 private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
+private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback")
+private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -212,5 +214,37 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getInputDzikirOnceState = dataStore.data.map { preferences ->
         preferences[INPUT_DZIKIR_ONCE] ?: false
+    }
+
+    /**
+     * Save haptic feedback state to data store
+     */
+    suspend fun saveHapticFeedbackState(hapticFeedbackState: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[STATE_HAPTIC_FEEDBACK] = hapticFeedbackState
+        }
+    }
+
+    /**
+     * Get haptic feedback state from data store
+     */
+    val getHapticFeedbackState = dataStore.data.map { preferences ->
+        preferences[STATE_HAPTIC_FEEDBACK] ?: true
+    }
+
+    /**
+     * Save dzikir max count
+     */
+    suspend fun saveDzikirMaxCount(dzikirMaxCount: Int) {
+        dataStore.edit { preferences ->
+            preferences[MAX_COUNT_DZIKIR] = dzikirMaxCount
+        }
+    }
+
+    /**
+     * Get dzikir max count
+     */
+    val getDzikirMaxCount = dataStore.data.map { preferences ->
+        preferences[MAX_COUNT_DZIKIR] ?: 33
     }
 }

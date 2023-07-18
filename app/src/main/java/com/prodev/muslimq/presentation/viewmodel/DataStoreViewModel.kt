@@ -9,6 +9,9 @@ import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -65,9 +68,15 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveDzikirOnce(isDzikirOnce: Boolean) {
+    fun saveHapticFeedbackState(isHapticFeedback: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePref.saveInputDzikirOnceState(isDzikirOnce)
+            dataStorePref.saveHapticFeedbackState(isHapticFeedback)
+        }
+    }
+
+    fun saveDzikirMaxCount(count: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveDzikirMaxCount(count)
         }
     }
 
@@ -89,5 +98,16 @@ class DataStoreViewModel @Inject constructor(
 
     val getTapPromptState = dataStorePref.getTapPromptState.asLiveData().distinctUntilChanged()
 
-    val hasInputDzikir = dataStorePref.getInputDzikirOnceState.asLiveData()
+    val getHapticFeedbackState =
+        dataStorePref.getHapticFeedbackState.asLiveData().distinctUntilChanged()
+
+    val getDzikirMaxCount = dataStorePref.getDzikirMaxCount.asLiveData()
+
+    @ExperimentalCoroutinesApi
+    val getCombineHapticAndMaxDzikirCount =
+        dataStorePref.getHapticFeedbackState.flatMapLatest { hapticFeedback ->
+            dataStorePref.getDzikirMaxCount.map { maxDzikirCount ->
+                hapticFeedback to maxDzikirCount
+            }
+        }.asLiveData()
 }
