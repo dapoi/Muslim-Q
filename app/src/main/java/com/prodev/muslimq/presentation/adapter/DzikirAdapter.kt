@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
+import com.prodev.muslimq.core.utils.defaultDzikir
 import com.prodev.muslimq.databinding.ItemListDzikirBinding
 
 class DzikirAdapter(
@@ -33,11 +34,7 @@ class DzikirAdapter(
         fun bind(dzikir: TasbihEntity) {
             binding.apply {
                 tvDzikir.text = dzikir.dzikirName
-                ivDelete.isVisible = !listOf(
-                    "Subhanallah",
-                    "Alhamdulillah",
-                    "Allahuakbar"
-                ).contains(dzikir.dzikirName)
+                ivDelete.isVisible = !defaultDzikir().contains(dzikir.dzikirName)
             }
         }
 

@@ -68,7 +68,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             totalSize = listOfDzikir.size
             binding.apply {
                 cgDzikir.removeAllViews()
-                chipAdd.setOnClickListener { showInputDzikirDialog(context) }
+                chipAdd.setOnClickListener { showInputDzikirDialog(context, listOfDzikir) }
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
@@ -230,7 +230,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         }
     }
 
-    private fun showInputDzikirDialog(context: Context) {
+    private fun showInputDzikirDialog(context: Context, listOfDzikir: List<TasbihEntity>) {
         val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
         val etDzikir = dialogLayout.etAyah
         val btnSave = dialogLayout.btnSearch
@@ -241,18 +241,25 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             setView(dialogLayout.root)
             etDzikir.setOnEditorActionListener { _, _, _ -> btnSave.performClick() }
             btnSave.setOnClickListener {
-                val dzikirName = etDzikir.text.toString()
-                val state = dzikirName.isNotEmpty()
+                val dzikir = etDzikir.text.toString()
+                val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
+                    TasbihEntity(capitalizeEachWord(dzikir))
+                )
+                val messageSnackbar = when {
+                    dzikir.isEmpty() -> "Dzikir belum diisi"
+                    !state -> "Dzikir sudah ada"
+                    else -> "Dzikir berhasil ditambahkan"
+                }
 
                 (activity as MainActivity).customSnackbar(
                     state = state,
                     context = context,
                     view = binding.root,
-                    message = if (state) "Dzikir berhasil ditambahkan" else "Tidak ada dzikir yang ditambahkan"
+                    message = messageSnackbar
                 )
 
-                if (dzikirName.isNotEmpty()) {
-                    tasbihViewModel.insertDzikir(TasbihEntity(dzikirName))
+                if (state) {
+                    tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir)))
                     hideKeyboard(requireActivity())
 
                     tasbihViewModel.apply {

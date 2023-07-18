@@ -95,3 +95,9 @@ class InternetReceiver : BroadcastReceiver() {
         }
     }
 }
+
+fun defaultDzikir(): List<String> = listOf(
+    "Subhanallah",
+    "Alhamdulillah",
+    "Allahu Akbar"
+)

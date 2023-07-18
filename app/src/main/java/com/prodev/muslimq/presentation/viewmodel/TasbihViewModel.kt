@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.data.repository.TasbihRepository
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
+import com.prodev.muslimq.core.utils.defaultDzikir
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,11 +37,7 @@ class TasbihViewModel @Inject constructor(
         viewModelScope.launch {
             dataStorePreference.getInputDzikirOnceState.collect { hasInput ->
                 if (!hasInput) {
-                    val defaultDzikir = listOf(
-                        "Subhanallah",
-                        "Alhamdulillah",
-                        "Allahu Akbar"
-                    )
+                    val defaultDzikir = defaultDzikir()
                     defaultDzikir.forEach { dzikir ->
                         tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikir))
                         dataStorePreference.saveInputDzikirOnceState(true)
