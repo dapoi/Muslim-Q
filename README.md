@@ -12,7 +12,7 @@
 - Mode gelap
 
 ## Unduh aplikasi
-<a href="https://play.google.com/store/apps/details?id=com.prodev.muslimq"><img src="https://github.com/dapoi/Muslim-Q/assets/68842666/02f6ebaa-8c37-49d9-a71c-7c3768e85e5a" title="Selamatkan App" width="160" height="64" /></a>
+<a href='https://play.google.com/store/apps/details?id=com.prodev.muslimq&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Temukan di Google Play' src='https://play.google.com/intl/id/badges/static/images/badges/id_badge_web_generic.png' height="64"/></a>
 
 ## Teknologi yang digunakan
 - [Lifecycle & Livedata](https://developer.android.com/jetpack/androidx/releases/lifecycle)
