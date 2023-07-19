@@ -6,7 +6,7 @@
 ## Fitur
 - Quran + audio
 - Jadwal shalat & adzan
-- Arah kiblat
+- Tasbih digital
 - Kumpulan do'a
 - Mode gelap
 
