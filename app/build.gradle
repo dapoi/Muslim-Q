@@ -23,8 +23,8 @@ android {
         applicationId "com.prodev.muslimq"
         minSdk 24
         targetSdk 33
-        versionCode 6
-        versionName "1.6"
+        versionCode 8
+        versionName "1.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -37,7 +37,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
