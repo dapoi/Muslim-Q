@@ -59,4 +59,9 @@ class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::i
         super.onPause()
         sensorManager?.unregisterListener(this)
     }
+
+    companion object {
+        const val USER_LATITUDE = "user_latitude"
+        const val USER_LONGITUDE = "user_longitude"
+    }
 }

@@ -190,11 +190,12 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 showDialogLocation()
             }
 
-            val pm: PackageManager = requireContext().packageManager
-            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
-                // This device does not have a compass, turn off the compass feature
-                tvQibla.isVisible = false
-            }
+//            val pm: PackageManager = requireContext().packageManager
+//            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
+//                // This device does not have a compass, turn off the compass feature
+//                tvQibla.isVisible = false
+//            }
+            tvQibla.isVisible = false
         }
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
