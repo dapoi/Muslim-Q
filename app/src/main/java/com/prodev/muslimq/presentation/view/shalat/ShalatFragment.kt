@@ -52,6 +52,7 @@ import com.prodev.muslimq.notification.AdzanReceiver
 import com.prodev.muslimq.notification.AdzanService
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
+import com.prodev.muslimq.presentation.view.qibla.QiblaFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
 import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
@@ -100,8 +101,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private var isOnline = false
     private var resetSwitch = false
     private var stateAdzanName = ""
-    private var lat = 0.0
-    private var lon = 0.0
+    private var lat: Double? = null
+    private var lon: Double? = null
+    private var forQibla = false
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -127,11 +129,13 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private val requestGPSPermission = registerForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        if (result.resultCode != RESULT_OK) transparentDialog.dismiss()
-        val message =
-            if (result.resultCode == RESULT_OK) "GPS diaktifkan" else "GPS tidak diaktifkan"
+        val resultOK = result.resultCode == RESULT_OK
+        if (!resultOK) transparentDialog.dismiss()
+
+        val message = if (resultOK) "GPS diaktifkan" else "GPS tidak diaktifkan"
+
         (activity as MainActivity).customSnackbar(
-            state = result.resultCode == RESULT_OK,
+            state = resultOK,
             context = requireContext(),
             view = binding.root,
             message = message
@@ -191,10 +195,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 // This device does not have a compass, turn off the compass feature
                 tvQibla.isVisible = false
             }
-
-            tvQibla.setOnClickListener {
-                findNavController().navigate(R.id.action_shalatFragment_to_qiblaFragment)
-            }
         }
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
@@ -225,7 +225,17 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             show()
             tvTurnOnGPS.setOnClickListener {
                 dismiss()
-                checkStateLocationPermission()
+                isOnline = isOnline(requireContext())
+                if (isOnline) {
+                    checkStateLocationPermission()
+                } else {
+                    (activity as MainActivity).customSnackbar(
+                        state = false,
+                        context = requireContext(),
+                        view = binding.root,
+                        message = "Tidak ada koneksi internet"
+                    )
+                }
             }
             tvChooseManual.setOnClickListener {
                 dismiss()
@@ -282,7 +292,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 if (location != null) {
                     lat = location.latitude
                     lon = location.longitude
-                    getAddressGeocoder(lat, lon)
+                    getAddressGeocoder(lat!!, lon!!)
+                    if (forQibla) navigateToQibla(lat!!, lon!!)
                 } else {
                     requestNewLiveLocation()
                 }
@@ -333,8 +344,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             locationResult.locations.forEach { location ->
                 lat = location.latitude
                 lon = location.longitude
-
-                getAddressGeocoder(lat, lon)
+                getAddressGeocoder(lat!!, lon!!)
+                if (forQibla) navigateToQibla(lat!!, lon!!)
             }
         }
     }
@@ -347,7 +358,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     if (addresses.isNotEmpty()) {
                         val city = addresses[0].locality
                         val country = addresses[0].countryName
-                        dataStoreViewModel.saveAreaData(city, country)
+                        dataStoreViewModel.saveAreaData(capitalizeEachWord(city), country)
                         resetSwitch = true
                         transparentDialog.dismiss()
                     }
@@ -364,7 +375,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 if (!addresses.isNullOrEmpty()) {
                     val city = addresses[0].locality
                     val country = addresses[0].countryName
-                    dataStoreViewModel.saveAreaData(city, country)
+                    dataStoreViewModel.saveAreaData(capitalizeEachWord(city), country)
                     resetSwitch = true
                     transparentDialog.dismiss()
                 } else {
@@ -376,6 +387,18 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun navigateToQibla(latUser: Double, lonUser: Double) {
+        findNavController().navigate(
+            R.id.action_shalatFragment_to_qiblaFragment,
+            Bundle().apply {
+                putDouble(QiblaFragment.USER_LATITUDE, latUser)
+                putDouble(QiblaFragment.USER_LONGITUDE, lonUser)
+            }
+        )
+
+        forQibla = false
     }
 
     private fun refreshDataWhenCityChange() {
@@ -434,7 +457,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             getAreaData.observe(viewLifecycleOwner) { area ->
                 shalatViewModel.setShalatTime(area)
 
-                binding.tvYourLocation.text = capitalizeEachWord(area.first)
+                binding.tvYourLocation.text = area.first
             }
 
             getTapPromptState.observe(viewLifecycleOwner) { state ->
@@ -518,6 +541,21 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     else -> {
                         clNegativeCase.visibility = View.GONE
                         result?.data?.let { data -> getAllShalatData(data) }
+
+                        tvQibla.setOnClickListener {
+                            isOnline = isOnline(requireContext())
+                            forQibla = true
+                            if (isOnline) {
+                                checkStateLocationPermission()
+                            } else {
+                                (activity as MainActivity).customSnackbar(
+                                    state = false,
+                                    context = requireContext(),
+                                    view = binding.root,
+                                    message = "Tidak ada koneksi internet"
+                                )
+                            }
+                        }
                     }
                 }
             }

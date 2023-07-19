@@ -72,7 +72,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             totalSize = listOfDzikir.size
             binding.apply {
                 cgDzikir.removeAllViews()
-                chipAdd.setOnClickListener { showInputDialog(true, listOfDzikir =  listOfDzikir) }
+                chipAdd.setOnClickListener { showInputDialog(true, listOfDzikir = listOfDzikir) }
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
@@ -119,6 +119,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                             cgDzikir.getChildAt(currentIndexVM).top
                                         )
                                     }
+                                    dzikirCountVM = 0
+                                    tvCountTasbih.text = dzikirCountVM.toString()
 
                                     successAdd = false
                                 }
@@ -187,7 +189,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             state = !hapticActive,
                             context = context,
                             view = binding.root,
-                            message = if (hapticActive) "Getaran dimatikan" else "Getaran diaktifkan"
+                            message = if (hapticActive) "Efek getar dimatikan" else "Efek getar diaktifkan"
                         )
                     }
                 }

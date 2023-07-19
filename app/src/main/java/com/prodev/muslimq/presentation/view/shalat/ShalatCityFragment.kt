@@ -79,7 +79,7 @@ class ShalatCityFragment :
 
         cityAdapter.onCLick = { city ->
             viewLifecycleOwner.lifecycleScope.launch {
-                dataStoreViewModel.saveAreaData(city.name, "Indonesia")
+                dataStoreViewModel.saveAreaData(capitalizeEachWord(city.name), "Indonesia")
             }
 
             setFragmentResult(REQUEST_CITY_KEY, bundleOf(BUNDLE_CITY to true))
