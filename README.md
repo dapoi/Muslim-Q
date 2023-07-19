@@ -1,6 +1,7 @@
 <div align="center">
   <h1>Muslim Q</h1>
   <p>merupakan sebuah aplikasi kebutuhan umat muslim yang bersifat open-source. Dengan aplikasi ini, diharapkan dapat meningkatkan ketaqwaan kita semua... Aamiinn</p>
+  <img width="540" alt="Thumbnail" src="https://github.com/dapoi/Muslim-Q/assets/68842666/47a052fe-62b7-4afd-baa5-206af4f04a00">
 </div>
 
 ## Fitur
@@ -29,6 +30,20 @@
 ## Referensi / Sumber Data
 - Quran API : https://equran.id/apidev
 - Jadwal Shalat API : https://aladhan.com/prayer-times-api
+
+## Tangkapan Layar
+<table style="width:100%">
+  <tr>
+    <th><img width="270" alt="screen_one" src="https://github.com/dapoi/Muslim-Q/assets/68842666/80e0b08a-a118-47f1-ab4e-687b65566350"></th>
+    <th><img width="270" alt="screen_two" src="https://github.com/dapoi/Muslim-Q/assets/68842666/0ed19d5c-8bda-44bb-b369-29908278aaab"></th>
+    <th><img width="270" alt="screen_three" src="https://github.com/dapoi/Muslim-Q/assets/68842666/6e990113-2a3a-40fd-8751-2d3b5ff0c48b"></th>
+  </tr>
+  <tr>
+    <th><img width="270" alt="screen_four" src="https://github.com/dapoi/Muslim-Q/assets/68842666/a2794056-be99-41df-b277-1351ff420041"></th>
+    <th><img width="270" alt="screen_five" src="https://github.com/dapoi/Muslim-Q/assets/68842666/c0cddc92-42b9-439b-85ac-b121b2bd2a88"></th>
+    <th><img width="270" alt="screen_six" src="https://github.com/dapoi/Muslim-Q/assets/68842666/ded42d91-d55c-4104-8b68-502be769a124"></th>
+  </tr>
+</table>
 
 ## Lisensi
 ```
