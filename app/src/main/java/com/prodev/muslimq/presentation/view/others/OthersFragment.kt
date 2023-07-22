@@ -69,7 +69,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
 
                     "Kirim Masukan" -> {
                         val email = "luthfidaffaprabowo@gmail.com"
-                        val subject = "Feedback Aplikasi MuslimQ"
+                        val subject = "Feedback Aplikasi Muslim Q"
                         val body = "Silahkan tulis pesan Anda di sini"
 
                         // intent to send email
@@ -79,7 +79,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                             putExtra(Intent.EXTRA_SUBJECT, subject)
                             putExtra(Intent.EXTRA_TEXT, body)
                         }
-                        startActivity(intent)
+                        startActivity(Intent.createChooser(intent, "Pilih aplikasi email"))
                     }
 
                     "Info Aplikasi" -> {
