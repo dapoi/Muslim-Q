@@ -18,6 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -76,6 +77,7 @@ class QuranDetailFragment :
         AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
     }
     private var dialog: AlertDialog? = null
+    private var dialogLayout: DialogLoadingBinding? = null
     private var progressDialog: ProgressBar? = null
     private var tvProgress: TextView? = null
 
@@ -281,13 +283,21 @@ class QuranDetailFragment :
                         }
 
                         // setup sound
+                        val mp3File = getString(
+                            R.string.fileName,
+                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                            binding.tvSurahName.text
+                        )
+                        val file = File(mp3File)
                         val isOnline = isOnline(requireContext())
-                        clSound.visibility = if (isOnline) View.VISIBLE else View.GONE
-                        if (isOnline) {
-                            setUpMediaPlayer(dataSurah.audio)
-                        }
 
+                        clSound.isVisible = file.exists() || isOnline
+                        setUpMediaPlayer(dataSurah.audio)
                         initProgressDialog(surahName)
+
+                        // setup transparentdialog
+                        dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
+                        transparentDialog.setView(dialogLayout!!.root)
                     }
                 }
             }
@@ -321,9 +331,6 @@ class QuranDetailFragment :
 
             // tafsir
             detailAdapter.tafsirQuran = {
-                val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
-                transparentDialog.setView(dialogLayout.root)
-
                 detailViewModel.getQuranTafsir(
                     surahId!!, it.ayatNumber
                 ).observe(viewLifecycleOwner) { result ->
@@ -341,9 +348,12 @@ class QuranDetailFragment :
 
                         is Resource.Error -> {
                             transparentDialog.dismiss()
-                            Toast.makeText(
-                                requireContext(), "Gagal menampilkan tafsir", Toast.LENGTH_SHORT
-                            ).show()
+                            (activity as MainActivity).customSnackbar(
+                                state = false,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = "Tafsir gagal dimuat"
+                            )
                         }
                     }
                 }
@@ -784,7 +794,16 @@ class QuranDetailFragment :
             }
 
             playOnline -> {
-                playPauseAudio(binding.ivSound, false, audio)
+                if (isOnline(requireContext())) {
+                    playPauseAudio(binding.ivSound, false, audio)
+                } else {
+                    (activity as MainActivity).customSnackbar(
+                        state = false,
+                        context = requireContext(),
+                        view = binding.root,
+                        message = "Tidak ada koneksi internet"
+                    )
+                }
             }
 
             else -> {
@@ -800,17 +819,27 @@ class QuranDetailFragment :
                     setView(dialogLayout.root)
                     show()
                     tvDownload.setOnClickListener {
+                        dismiss()
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
                             downloadAudio(audio)
                         } else {
                             saveToMediaStore(audio)
                         }
-                        dismiss()
                     }
                     tvStreaming.setOnClickListener {
-                        playOnline = true
-                        playPauseAudio(binding.ivSound, false, audio)
                         dismiss()
+                        transparentDialog.show()
+                        playOnline = true
+                        if (isOnline(requireContext())) {
+                            playPauseAudio(binding.ivSound, false, audio)
+                        } else {
+                            (activity as MainActivity).customSnackbar(
+                                state = false,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = "Tidak ada koneksi internet"
+                            )
+                        }
                     }
                     tvCancel.setOnClickListener { dismiss() }
                 }
@@ -901,18 +930,15 @@ class QuranDetailFragment :
     }
 
     private fun playPauseAudio(
-        buttonInteract: ImageView, isPlay: Boolean, audio: String = ""
+        buttonInteract: ImageView, isPlay: Boolean, audio: String? = null
     ) {
         if (isPlay) {
             audioIsPlaying = false
             mediaPlayer.pause()
             buttonInteract.setImageResource(R.drawable.ic_play)
         } else {
-            if (!this::mediaPlayer.isInitialized) {
-                initializeMediaPlayer(audio)
-            }
+            audio?.let { checkInitializeMediaPlayer(it) }
             audioIsPlaying = true
-            mediaPlayer.start()
             buttonInteract.setImageResource(R.drawable.ic_pause)
             updateSeekbar()
         }
@@ -1004,45 +1030,71 @@ class QuranDetailFragment :
         })
     }
 
-    private fun initializeMediaPlayer(mp3File: String) {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer.apply {
+    private fun checkInitializeMediaPlayer(mp3File: String) {
+        binding.apply {
+            if (!this@QuranDetailFragment::mediaPlayer.isInitialized) {
+                initMediaPlayer(mp3File)
+            } else {
+                mediaPlayer.start()
+                transparentDialog.dismiss()
+            }
 
-            with(binding) {
+            mediaPlayer.apply {
                 try {
-                    setOnPreparedListener {
-                        sbSound.max = duration
-
-                        var currentProgress = currentPosition
-                        val audioDuration = duration
-                        durationText(tvSoundDuration, currentProgress, audioDuration)
-                        sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-                            override fun onProgressChanged(
-                                seekBar: SeekBar?, progress: Int, fromUser: Boolean
-                            ) {
-                                if (fromUser) {
-                                    seekTo(progress)
-                                }
-
-                                currentProgress = progress
-                                durationText(tvSoundDuration, currentProgress, audioDuration)
-                            }
-
-                            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-                            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-                        })
-                    }
-
-                    setDataSource(mp3File)
-                    prepare()
+                    prepareAsync()
                 } catch (e: Exception) {
                     e.printStackTrace()
+                }
+            }
+        }
+    }
+
+    private fun initMediaPlayer(mp3File: String) {
+        binding.apply {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(mp3File)
+                setOnPreparedListener {
+                    sbSound.max = duration
+
+                    var currentProgress = currentPosition
+                    val audioDuration = duration
+                    durationText(tvSoundDuration, currentProgress, audioDuration)
+                    sbSound.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
+                        override fun onProgressChanged(
+                            seekBar: SeekBar?, progress: Int, fromUser: Boolean
+                        ) {
+                            if (fromUser) {
+                                seekTo(progress)
+                            }
+
+                            currentProgress = progress
+                            durationText(tvSoundDuration, currentProgress, audioDuration)
+                        }
+
+                        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+                        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+                    })
+                    start()
+                    playOnline = true
+                    ivSound.setImageResource(R.drawable.ic_pause)
+                    transparentDialog.dismiss()
                 }
 
                 setOnCompletionListener {
                     playOnline = false
                     ivSound.setImageResource(R.drawable.ic_play)
+                }
+
+                setOnErrorListener { _, _, _ ->
+                    reset()
+                    try {
+                        setDataSource(mp3File)
+                        prepareAsync()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    false
                 }
             }
         }
@@ -1055,6 +1107,22 @@ class QuranDetailFragment :
                 try {
                     binding.sbSound.progress = mediaPlayer.currentPosition
                     handler.postDelayed(this, 1000)
+                    val isOnline = isOnline(requireContext())
+                    if (!isOnline && playOnline) {
+                        mediaPlayer.stop()
+                        binding.apply {
+                            ivSound.setImageResource(R.drawable.ic_play)
+                            transparentDialog.dismiss()
+                        }
+
+                        playOnline = false
+                        (activity as MainActivity).customSnackbar(
+                            state = false,
+                            context = requireContext(),
+                            view = binding.root,
+                            message = "Tidak ada koneksi internet"
+                        )
+                    }
                 } catch (e: Exception) {
                     handler.removeCallbacks(this)
                 }
@@ -1113,13 +1181,12 @@ class QuranDetailFragment :
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-
         if (audioIsPlaying) {
             mediaPlayer.stop()
             mediaPlayer.release()
         }
         detailViewModel.getQuranDetail(surahId!!).removeObservers(viewLifecycleOwner)
+        super.onDestroyView()
     }
 
     companion object {
