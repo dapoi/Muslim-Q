@@ -24,7 +24,7 @@ class AdzanReceiver : BroadcastReceiver() {
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
-        createNotification(context, adzanName!!, adzanCode)
+        showNotification(context, adzanName!!, adzanCode)
 
         // Check if the AdzanService is already running
         if (AdzanService.isRunning()) {
@@ -52,7 +52,7 @@ class AdzanReceiver : BroadcastReceiver() {
         return SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
     }
 
-    private fun createNotification(context: Context, adzanName: String, adzanCode: Int) {
+    private fun showNotification(context: Context, adzanName: String, adzanCode: Int) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
@@ -72,8 +72,8 @@ class AdzanReceiver : BroadcastReceiver() {
             .setSound(null)
             .setWhen(System.currentTimeMillis())
             .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
-            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -178,7 +178,6 @@ class AdzanReceiver : BroadcastReceiver() {
         const val ADZAN_NAME = "adzan_name"
         const val ADZAN_TIME = "adzan_time"
         const val IS_SHUBUH = "is_shubuh"
-
         const val FROM_NOTIFICATION = "from_notification"
         private const val CHANNEL_ID_SHUBUH = "channel_shubuh"
         private const val CHANNEL_ID_DZUHUR = "channel_dzuhur"
