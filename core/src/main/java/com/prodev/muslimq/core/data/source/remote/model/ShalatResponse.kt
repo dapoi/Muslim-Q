@@ -26,19 +26,19 @@ data class ShalatItem(
 data class Timing(
 
 	@Json(name="Fajr")
-	val Fajr: String,
+	val Fajr: String? = null,
 
 	@Json(name="Dhuhr")
-	val Dhuhr: String,
+	val Dhuhr: String? = null,
 
 	@Json(name="Asr")
-	val Asr: String,
+	val Asr: String? = null,
 
 	@Json(name="Maghrib")
-	val Maghrib: String,
+	val Maghrib: String? = null,
 
 	@Json(name="Isha")
-	val Isha: String,
+	val Isha: String? = null,
 )
 
 @JsonClass(generateAdapter = true)

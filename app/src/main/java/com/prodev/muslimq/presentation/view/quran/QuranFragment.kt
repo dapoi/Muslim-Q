@@ -10,7 +10,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.activityViewModels
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +28,6 @@ import com.prodev.muslimq.presentation.adapter.QuranAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
-import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,7 +38,6 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     private lateinit var quranAdapter: QuranAdapter
 
     private val quranViewModel: QuranViewModel by viewModels()
-    private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private var isOnline = false
@@ -111,8 +109,10 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
     private fun setViewModel() {
         dataStoreViewModel.apply {
             getOnboardingState.observe(viewLifecycleOwner) { state ->
-                if (!state) findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
-                splashScreenViewModel.setKeepSplashScreen(false)
+                if (!state) {
+                    findNavController().navigate(R.id.action_quranFragment_to_onBoardingFragment)
+                    binding.root.isVisible = false
+                }
             }
 
             getDetailSurahAyah.observe(viewLifecycleOwner) { data ->
