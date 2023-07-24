@@ -26,6 +26,7 @@ import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -233,11 +234,16 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 val durationDone = 1000L
 
                 fabTasbih.setOnClickListener {
+                    fabTasbih.isClickable = false
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(500L)
+                        fabTasbih.isClickable = true
+                    }
                     if (isHapticActive && dzikirCountVM < maxDzikir) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
                         } else {
-                            @Suppress("DEPRECATION") vibrator.vibrate(200L)
+                            @Suppress("DEPRECATION") vibrator.vibrate(100L)
                         }
                     }
 
