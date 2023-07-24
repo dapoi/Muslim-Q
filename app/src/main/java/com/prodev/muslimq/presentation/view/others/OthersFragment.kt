@@ -1,5 +1,6 @@
 package com.prodev.muslimq.presentation.view.others
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.databinding.DialogSettingNotificationBinding
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -21,6 +23,9 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
     private lateinit var othersAdapter: OthersAdapter
 
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val curvedDialog by lazy {
+        AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,6 +72,10 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                         )
                     }
 
+                    "Pengaturan Notifikasi" -> {
+                        showDialogNotifSettings()
+                    }
+
                     "Kirim Masukan" -> {
                         val email = "luthfidaffaprabowo@gmail.com"
                         val subject = "Feedback Aplikasi Muslim Q"
@@ -87,6 +96,36 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                     }
                 }
             }
+        }
+    }
+
+    private fun showDialogNotifSettings() {
+        val notifDialog = DialogSettingNotificationBinding.inflate(layoutInflater)
+        val radioAdzanNotif = notifDialog.rbSoundNotif
+        val radioOnlyNotif = notifDialog.rbOnlyNotif
+        val btnSave = notifDialog.btnSave
+        with(curvedDialog.create()) {
+            setView(notifDialog.root)
+            dataStoreViewModel.getAdzanSoundState.observe(viewLifecycleOwner) { isSoundActive ->
+                if (isSoundActive) radioAdzanNotif.isChecked = true
+                else radioOnlyNotif.isChecked = true
+            }
+            radioAdzanNotif.setOnClickListener {
+                radioOnlyNotif.isChecked = false
+            }
+            radioOnlyNotif.setOnClickListener {
+                radioAdzanNotif.isChecked = false
+            }
+            btnSave.setOnClickListener {
+                val isAdzanNotifChecked = radioAdzanNotif.isChecked
+                dataStoreViewModel.saveAdzanSoundState(isAdzanNotifChecked)
+                dismiss()
+            }
+            setCanceledOnTouchOutside(false)
+            setOnDismissListener {
+                dataStoreViewModel.getAdzanSoundState.removeObservers(viewLifecycleOwner)
+            }
+            show()
         }
     }
 }
