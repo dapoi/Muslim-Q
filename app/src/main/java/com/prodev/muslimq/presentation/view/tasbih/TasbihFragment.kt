@@ -1,15 +1,11 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
 import android.app.AlertDialog
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
 import android.text.InputType
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -20,6 +16,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
+import com.prodev.muslimq.core.utils.vibrateApp
 import com.prodev.muslimq.databinding.DialogSearchAyahBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
@@ -300,17 +297,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     tvCountTasbih.text = dzikirCountVM.toString()
                 }
             }
-        }
-    }
-
-    private fun vibrateApp(context: Context): Vibrator {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = context.getSystemService(
-                Context.VIBRATOR_MANAGER_SERVICE
-            ) as VibratorManager
-            vibratorManager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION") context.getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator
         }
     }
 

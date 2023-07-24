@@ -187,12 +187,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 showDialogLocation()
             }
 
-//            val pm: PackageManager = requireContext().packageManager
-//            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
-//                // This device does not have a compass, turn off the compass feature
-//                tvQibla.isVisible = false
-//            }
-            tvQibla.isVisible = false
+            val pm: PackageManager = requireContext().packageManager
+            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
+                // This device does not have a compass, turn off the compass feature
+                tvQibla.isVisible = false
+            }
         }
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
@@ -288,8 +287,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 if (location != null) {
                     lat = location.latitude
                     lon = location.longitude
-                    getAddressGeocoder(lat!!, lon!!)
                     if (forQibla) navigateToQibla(lat!!, lon!!)
+                    else getAddressGeocoder(lat!!, lon!!)
                 } else {
                     requestNewLiveLocation()
                 }
@@ -340,8 +339,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             locationResult.locations.forEach { location ->
                 lat = location.latitude
                 lon = location.longitude
-                getAddressGeocoder(lat!!, lon!!)
                 if (forQibla) navigateToQibla(lat!!, lon!!)
+                else getAddressGeocoder(lat!!, lon!!)
             }
         }
     }
@@ -394,6 +393,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
         )
 
+        transparentDialog.dismiss()
         forQibla = false
     }
 

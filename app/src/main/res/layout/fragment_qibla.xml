@@ -38,56 +38,46 @@
 
             <TextView
                 android:id="@+id/tv_qibla"
-                android:layout_width="250dp"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="16dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="@string/find_qibla"
+                android:includeFontPadding="false"
                 android:textAlignment="center"
+                tools:text="Temukan arah kiblat"
                 android:textColor="@color/green_base"
                 android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_direction_parent"
+            <TextView
+                android:id="@+id/tv_azimuth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintHeight_percent="0.67"
-                app:layout_constraintTop_toBottomOf="@id/tv_qibla">
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:includeFontPadding="false"
+                android:textAlignment="center"
+                android:textColor="@color/green_base"
+                android:textSize="18sp"
+                app:layout_constraintTop_toBottomOf="@id/tv_qibla"
+                tools:text="0° Utara" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/cl_direction_child"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/iv_direction"
-                        android:layout_width="400dp"
-                        android:layout_height="400dp"
-                        android:src="@drawable/ic_direction"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="ContentDescription" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_direction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_azimuth">
 
                 <ImageView
-                    android:id="@+id/iv_kaaba"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="45dp"
-                    android:layout_marginBottom="130dp"
-                    android:rotation="-67"
-                    android:src="@drawable/ic_kaaba"
-                    app:layout_constraintBottom_toBottomOf="@+id/cl_direction_child"
+                    android:id="@+id/iv_direction"
+                    android:layout_width="400dp"
+                    android:layout_height="400dp"
+                    android:src="@drawable/ic_direction"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:ignore="ContentDescription" />
@@ -96,40 +86,29 @@
                     android:id="@+id/tv_north"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="85dp"
+                    android:layout_marginTop="80dp"
                     android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
                     android:text="@string/north"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/cl_direction_child" />
+                    app:layout_constraintTop_toTopOf="@id/iv_direction" />
 
                 <TextView
                     android:id="@+id/tv_south"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="85dp"
+                    android:layout_marginBottom="80dp"
                     android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
                     android:text="@string/south"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/cl_direction_child"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_direction"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_east"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="85dp"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="@string/east"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/cl_direction_child"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_west"
@@ -137,24 +116,71 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="85dp"
                     android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:rotation="-90"
                     android:text="@string/west"
                     android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/cl_direction_child"
+                    app:layout_constraintStart_toStartOf="@id/iv_direction"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_east"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="85dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:includeFontPadding="false"
+                    android:rotation="90"
+                    android:text="@string/east"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/iv_direction"
+                    app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
-                android:id="@+id/iv_qibla"
-                android:layout_width="170dp"
-                android:layout_height="170dp"
+                android:id="@+id/iv_arrow"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:importantForAccessibility="no"
+                android:padding="105dp"
                 android:src="@drawable/ic_qibla"
-                app:layout_constraintBottom_toBottomOf="@+id/cl_direction_parent"
-                app:layout_constraintEnd_toEndOf="@id/cl_direction_parent"
-                app:layout_constraintStart_toStartOf="@+id/cl_direction_parent"
-                app:layout_constraintTop_toTopOf="@+id/cl_direction_parent"
-                tools:ignore="ContentDescription" />
+                android:tintMode="src_in"
+                app:layout_constraintBottom_toBottomOf="@id/cl_direction"
+                app:layout_constraintEnd_toEndOf="@id/cl_direction"
+                app:layout_constraintStart_toStartOf="@id/cl_direction"
+                app:layout_constraintTop_toTopOf="@id/cl_direction" />
+
+            <ImageView
+                android:id="@+id/iv_arrow_false"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:importantForAccessibility="no"
+                android:padding="105dp"
+                android:src="@drawable/ic_qibla_false"
+                android:tintMode="src_in"
+                app:layout_constraintBottom_toBottomOf="@id/cl_direction"
+                app:layout_constraintEnd_toEndOf="@id/cl_direction"
+                app:layout_constraintStart_toStartOf="@id/cl_direction"
+                app:layout_constraintTop_toTopOf="@id/cl_direction" />
+
+            <TextView
+                android:id="@+id/tv_your_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="16dp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@id/cl_direction"
+                tools:text="Jakarta, Indonesia" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
