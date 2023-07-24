@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +22,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
+import com.prodev.muslimq.presentation.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private val splashViewModel: SplashViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -40,17 +41,12 @@ class MainActivity : AppCompatActivity() {
     private val windowInsetsControllerCompat by lazy {
         WindowInsetsControllerCompat(window, binding.root)
     }
-    private var keep = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreen = installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition { splashViewModel.isLoading.value }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        splashScreen.setKeepOnScreenCondition { keep }
-        Handler(mainLooper).postDelayed({
-            keep = false
-        }, 1000)
 
         val destinationToHideBottomnav = setOf(
             R.id.quranDetailFragment,
