@@ -235,7 +235,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:fontFamily="@font/poppins_semibold"
-                        android:text="@string/no_prayer_time"
+                        android:text="@string/no_internet"
                         android:textAlignment="center"
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"

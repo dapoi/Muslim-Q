@@ -7,7 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -223,13 +222,12 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                         response is Resource.Loading && response.data.isNullOrEmpty() -> {
                             stateLoading(true)
                             clNoInternet.visibility = View.GONE
-                            emptyState.root.visibility = View.GONE
                         }
 
                         response is Resource.Error && response.data.isNullOrEmpty() -> {
                             stateLoading(false)
                             stateNoInternet(ctlHeader, clNoInternet, true)
-                            Log.e("QuranFragment", "Error: ${response.error}")
+                            fabBackToTop.hide()
                         }
 
                         else -> {
@@ -242,7 +240,6 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                                 else -> response.data!!
                             }
                             quranAdapter.setList(listToSet)
-
 
                             if (searchQuery.isNotEmpty() && filteredData.isEmpty()) {
                                 emptyState.root.visibility = View.VISIBLE
@@ -268,19 +265,10 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
 
     private fun stateLoading(state: Boolean) {
         binding.apply {
-            if (state) {
-                progressBar.visibility = View.VISIBLE
-                progressHeader.visibility = View.VISIBLE
-                tvTitle.visibility = View.GONE
-                clSurah.visibility = View.GONE
-                bottomNav.visibility = View.GONE
-            } else {
-                progressBar.visibility = View.GONE
-                progressHeader.visibility = View.GONE
-                emptyState.root.visibility = View.GONE
-                tvTitle.visibility = View.VISIBLE
-                clSurah.visibility = View.VISIBLE
-            }
+            progressBar.isVisible = state
+            progressHeader.isVisible = state
+            tvTitle.isVisible = !state
+            clSurah.isVisible = !state
         }
     }
 
@@ -289,13 +277,8 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
         clNoInternet: ConstraintLayout,
         isDataEmpty: Boolean,
     ) {
-        if (isDataEmpty) {
-            ctlHeader.visibility = View.GONE
-            clNoInternet.visibility = View.VISIBLE
-        } else {
-            ctlHeader.visibility = View.VISIBLE
-            clNoInternet.visibility = View.GONE
-        }
+        ctlHeader.isVisible = !isDataEmpty
+        clNoInternet.isVisible = isDataEmpty
     }
 
     private fun isAppBarCollapse(): Boolean {
