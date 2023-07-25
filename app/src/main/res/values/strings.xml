@@ -25,6 +25,7 @@
     <string name="small">Kecil</string>
     <string name="medium">Sedang</string>
     <string name="big">Besar</string>
+    <string name="super_big">Sangat Besar</string>
     <string name="find_qibla">Temukan arah kiblat</string>
     <string name="found_qibla">Arah kiblat ditemukan</string>
     <string name="north">U</string>

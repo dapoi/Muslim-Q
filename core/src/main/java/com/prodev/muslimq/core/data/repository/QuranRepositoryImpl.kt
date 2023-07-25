@@ -49,6 +49,10 @@ class QuranRepositoryImpl @Inject constructor(
 
             dao.deleteQuran()
             dao.insertQuran(local)
+        },
+        shouldFetch = { listQuran ->
+            @Suppress("SENSELESS_COMPARISON")
+            listQuran == null || listQuran.isEmpty()
         }
     )
 
@@ -57,7 +61,7 @@ class QuranRepositoryImpl @Inject constructor(
             dao.getQuranDetail(id)
         },
         fetch = {
-            delay(2000)
+            delay(1000)
             service.getQuranDetail(id)
         },
         saveFetchResult = { response ->
@@ -71,13 +75,7 @@ class QuranRepositoryImpl @Inject constructor(
                 quran.arti,
                 quran.deskripsi,
                 quran.audioFull.audio!!,
-                quran.ayat.filterIndexed { index, ayat ->
-                    if (ayat.teksIndonesia.contains("Dengan nama Allah Yang Maha Pengasih, Maha Penyayang")) {
-                        index >= 1
-                    } else {
-                        index >= 0
-                    }
-                }.map { ayat ->
+                quran.ayat.map { ayat ->
                     Ayat(
                         ayatNumber = ayat.nomorAyat,
                         ayatArab = ayat.teksArab,
@@ -85,15 +83,14 @@ class QuranRepositoryImpl @Inject constructor(
                         ayatTerjemahan = ayat.teksIndonesia,
                         ayatAudio = ayat.audio.ayahAudio!!
                     )
-                },
-                isBookmarked = false
+                }
             )
 
             dao.insertQuranDetail(local)
         },
-        shouldFetch = { listAyah ->
+        shouldFetch = { data ->
             @Suppress("SENSELESS_COMPARISON")
-            listAyah == null || listAyah.ayat.isEmpty()
+            data == null || data.ayat.isEmpty()
         }
     )
 

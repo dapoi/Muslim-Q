@@ -20,9 +20,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,7 +47,6 @@ import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
@@ -84,14 +80,11 @@ class QuranDetailFragment :
     private var audioIsPlaying = false
     private var playOnline = false
     private var fontSize: Int? = null
-    private var isResume = false
-    private var sizeHasDone = false
 
     private var surahId: Int? = null
     private var surahNameArabic: String = ""
     private var surahName: String = ""
     private var surahDesc: String = ""
-    private var currentPage = 1
     private var audioGlobal = ""
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -164,6 +157,7 @@ class QuranDetailFragment :
             layoutManager = LinearLayoutManager(context)
             adapter = detailAdapter
             setHasFixedSize(true)
+            itemAnimator = null
         }
     }
 
@@ -228,17 +222,21 @@ class QuranDetailFragment :
 
                         // set data
                         val ayahs = ArrayList<Ayat>().apply { addAll(dataSurah.ayat) }
-                        enableActionBarFunctionality(ayahs)
+                        enableActionBarFunctionality()
 
                         // set view data
                         val place = dataSurah.tempatTurun.replaceFirstChar { it.uppercase() }
                         val totalAyah = dataSurah.jumlahAyat
-                        val toolbarTitle = dataSurah.namaLatin
+                        val nameLatin = dataSurah.namaLatin
+                        if (nameLatin.contains("Al-Fatihah")) {
+                            vDivider.isVisible = false
+                            tvBismillah.isVisible = false
+                        }
 
+                        surahName = nameLatin
+                        toolbar.title = nameLatin
+                        tvSurahName.text = nameLatin
                         surahNameArabic = dataSurah.nama
-                        surahName = dataSurah.namaLatin
-                        toolbar.title = toolbarTitle
-                        tvSurahName.text = dataSurah.namaLatin
                         tvAyahMeaning.text = dataSurah.artiQuran
                         tvCityAndTotalAyah.text =
                             getString(R.string.tv_city_and_total_ayah, place, totalAyah)
@@ -246,11 +244,9 @@ class QuranDetailFragment :
                         // set list
                         val ayahNumber = arguments?.getInt(AYAH_NUMBER)
                         val isFromLastRead = arguments?.getBoolean(IS_FROM_LAST_READ)
-                        val isAlfatihah = dataSurah.ayat[0].ayatNumber.toString().startsWith("2")
 
                         showListAyah(
                             ayahs,
-                            isAlfatihah,
                             appBar,
                             rvAyah,
                             ayahNumber,
@@ -303,7 +299,7 @@ class QuranDetailFragment :
             }
 
             // tagging
-            detailAdapter.taggingQuran = { data ->
+            detailAdapter.taggingClick = { data ->
                 val dialogLayout = DialogTaggingAyahBinding.inflate(layoutInflater)
                 val tvTagging = dialogLayout.tvTagging
                 val tvCancel = dialogLayout.tvCancel
@@ -330,7 +326,7 @@ class QuranDetailFragment :
             }
 
             // tafsir
-            detailAdapter.tafsirQuran = {
+            detailAdapter.tafsirClick = {
                 detailViewModel.getQuranTafsir(
                     surahId!!, it.ayatNumber
                 ).observe(viewLifecycleOwner) { result ->
@@ -360,7 +356,7 @@ class QuranDetailFragment :
             }
 
             // play audio per ayah
-            detailAdapter.audioAyah = {
+            detailAdapter.audioAyahClick = {
                 if (audioIsPlaying) {
                     mediaPlayer.pause()
                     binding.ivSound.setImageResource(R.drawable.ic_play)
@@ -446,78 +442,24 @@ class QuranDetailFragment :
 
     private fun showListAyah(
         ayahs: ArrayList<Ayat>,
-        isAlfatihah: Boolean,
         appBar: AppBarLayout,
         rvAyah: RecyclerView,
         ayahNumber: Int?,
         isFromLastRead: Boolean?
     ) {
-        detailAdapter.setList(ayahs, true)
-//        if (!sizeHasDone) {
-//            detailAdapter.setList(ayahs.subList(0, 3))
-//        }
-//        showPagination(ayahs, rvAyah)
+        detailAdapter.submitList(ayahs)
 
-        val index = if (isAlfatihah) 2 else 1
-        if (ayahNumber != null && isFromLastRead == true && !isResume) {
-            detailAdapter.setList(ayahs, true)
+        if (ayahNumber != null && isFromLastRead == true) {
             appBar.setExpanded(false, true)
-            rvAyah.scrollToPosition(ayahNumber.minus(index))
-            detailAdapter.setAnimItem(true, ayahNumber.minus(index))
+            rvAyah.scrollToPosition(ayahNumber.minus(1))
+            detailAdapter.setTagging(true, ayahNumber.minus(1))
             Toast.makeText(
                 requireContext(), "Melanjutkan dari ayat $ayahNumber", Toast.LENGTH_SHORT
             ).show()
-            isResume = true
         }
     }
 
-    private fun showPagination(ayahs: ArrayList<Ayat>, rvAyah: RecyclerView) {
-        val dataSize = ayahs.size
-        val layoutManager = (rvAyah.layoutManager as LinearLayoutManager)
-
-        with(rvAyah) {
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-
-                    val visibleItemCount = layoutManager.childCount
-                    val totalItemCount = layoutManager.itemCount
-                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                    if (!detailAdapter.getLoading() && (visibleItemCount + firstVisibleItemPosition)
-                        >= totalItemCount && firstVisibleItemPosition >= 0 && !sizeHasDone
-                    ) {
-                        // Show the progress bar and load more data
-                        if (totalItemCount != dataSize && dataSize != 3) {
-                            detailAdapter.showLoading()
-                            loadMoreData(ayahs.subList(3, dataSize))
-                        } else {
-                            sizeHasDone = true
-                        }
-                    }
-                }
-            })
-        }
-    }
-
-    private fun loadMoreData(ayahs: List<Ayat>) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                delay(200)
-                detailAdapter.hideLoading()
-                val newData = generateNewData(ayahs, currentPage)
-                detailAdapter.setList(newData)
-                currentPage++
-            }
-        }
-    }
-
-    private fun generateNewData(ayahs: List<Ayat>, currentPage: Int): List<Ayat> {
-        val startIndex = (currentPage - 1) * 3
-        return ayahs.drop(startIndex).take(3)
-    }
-
-    private fun enableActionBarFunctionality(ayahs: ArrayList<Ayat>) {
+    private fun enableActionBarFunctionality() {
         binding.apply {
             ivFontSetting.setOnClickListener {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -528,7 +470,7 @@ class QuranDetailFragment :
             }
 
             ivMore.setOnClickListener {
-                showMenuOption(ayahs)
+                showMenuOption()
             }
         }
     }
@@ -541,9 +483,9 @@ class QuranDetailFragment :
         seekBar.let { sbCurrentFontSize = it }
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
-            sbCurrentFontSize.max = 40
-            sbCurrentFontSize.min = 20
-            sbCurrentFontSize.progress = fontSize ?: 26
+            sbCurrentFontSize.max = 48
+            sbCurrentFontSize.min = 26
+            sbCurrentFontSize.progress = fontSize ?: 34
             sbCurrentFontSize.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?, progress: Int, fromUser: Boolean
@@ -572,31 +514,43 @@ class QuranDetailFragment :
         val radioSmall = dialogLayout.rbSmall
         val radioMedium = dialogLayout.rbMedium
         val radioBig = dialogLayout.rbBig
+        val radioSuperBig = dialogLayout.rbSuperBig
         val buttonSave = dialogLayout.btnSave
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
             when (fontSize) {
-                20 -> radioSmall.isChecked = true
-                26 -> radioMedium.isChecked = true
-                32 -> radioBig.isChecked = true
+                26 -> radioSmall.isChecked = true
+                34 -> radioMedium.isChecked = true
+                40 -> radioBig.isChecked = true
+                48 -> radioSuperBig.isChecked = true
             }
             radioSmall.setOnClickListener {
-                fontSize = 20
-                detailAdapter.setFontSize(fontSize!!)
-                radioMedium.isChecked = false
-                radioBig.isChecked = false
-            }
-            radioMedium.setOnClickListener {
                 fontSize = 26
                 detailAdapter.setFontSize(fontSize!!)
+                radioMedium.isChecked = false
+                radioBig.isChecked = false
+                radioSuperBig.isChecked = false
+            }
+            radioMedium.setOnClickListener {
+                fontSize = 34
+                detailAdapter.setFontSize(fontSize!!)
                 radioSmall.isChecked = false
                 radioBig.isChecked = false
+                radioSuperBig.isChecked = false
             }
             radioBig.setOnClickListener {
-                fontSize = 32
+                fontSize = 40
                 detailAdapter.setFontSize(fontSize!!)
                 radioSmall.isChecked = false
                 radioMedium.isChecked = false
+                radioSuperBig.isChecked = false
+            }
+            radioSuperBig.setOnClickListener {
+                fontSize = 48
+                detailAdapter.setFontSize(fontSize!!)
+                radioSmall.isChecked = false
+                radioMedium.isChecked = false
+                radioBig.isChecked = false
             }
             buttonSave.setOnClickListener {
                 dismiss()
@@ -606,7 +560,7 @@ class QuranDetailFragment :
         }
     }
 
-    private fun showMenuOption(ayahs: ArrayList<Ayat>) {
+    private fun showMenuOption() {
         PopupMenu(requireContext(), binding.ivMore).apply {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 setForceShowIcon(true)
@@ -617,7 +571,7 @@ class QuranDetailFragment :
             setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.action_search -> {
-                        showSearchDialog(ayahs)
+                        showSearchDialog()
                         true
                     }
 
@@ -633,7 +587,7 @@ class QuranDetailFragment :
         }
     }
 
-    private fun showSearchDialog(ayahs: ArrayList<Ayat>) {
+    private fun showSearchDialog() {
         val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
         val etSearch = dialogLayout.etAyah
         val btnSearch = dialogLayout.btnSearch
@@ -641,16 +595,15 @@ class QuranDetailFragment :
             setView(dialogLayout.root)
             etSearch.setOnEditorActionListener { _, _, _ -> btnSearch.performClick() }
             btnSearch.setOnClickListener {
-                detailAdapter.setList(ayahs, true)
                 val query = etSearch.text.toString()
-                val position = detailAdapter.getAyahs().indexOfFirst {
+                val position = detailAdapter.currentList.indexOfFirst {
                     it.ayatNumber.toString() == query
                 }
                 if (position != -1) {
                     binding.apply {
                         appBar.setExpanded(position < 1, true)
                         rvAyah.scrollToPosition(position)
-                        detailAdapter.setAnimItem(true, position)
+                        detailAdapter.setTagging(true, position)
                     }
                     dismiss()
                 } else {

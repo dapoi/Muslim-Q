@@ -93,7 +93,7 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Get ayah size from data store
      */
     val getAyahSize = dataStore.data.map { preferences ->
-        preferences[AYAH_SIZE] ?: 26
+        preferences[AYAH_SIZE] ?: 34
     }
 
     /**
