@@ -1,7 +1,7 @@
 package com.prodev.muslimq.core.utils
 
 enum class DzikirType(val value: String) {
-    DEFAULT("default"),
+    DEFAULT("umum"),
     PAGI("pagi"),
     SORE("sore"),
     SHALAT("shalat"),

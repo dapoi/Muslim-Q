@@ -8,5 +8,7 @@ import com.prodev.muslimq.core.utils.DzikirType
 data class TasbihEntity(
     @PrimaryKey
     val dzikirName: String,
-    val dzikirType: DzikirType? = null
+    val dzikirType: DzikirType? = null,
+    val arabText: String? = null,
+    val translation: String? = null
 )

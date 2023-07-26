@@ -12,6 +12,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.simform.refresh.SSPullToRefreshLayout
 
 fun capitalizeEachWord(str: String, delimiter: String = " ", separator: String = " "): String {
@@ -96,16 +97,21 @@ class InternetReceiver : BroadcastReceiver() {
     }
 }
 
-fun defaultDzikir(): List<String> = listOf(
-    "Subhanallah",
-    "Alhamdulillah",
-    "Allahu Akbar"
+fun defaultDzikir(): List<TasbihEntity> = listOf(
+    TasbihEntity("Subhanallah", DzikirType.DEFAULT, "سُبْحَانَ ٱللَّٰهِ", "Maha suci Allah"),
+    TasbihEntity("Alhamdulillah", DzikirType.DEFAULT, "الْحَمْدُ للَّهِِ", "Segala Puji Bagi Allah"),
+    TasbihEntity("Allahu Akbar", DzikirType.DEFAULT, "ٱللَّٰهُ أَكْبَرُِ", " Allah Maha Besar")
 )
 
-fun defaultDzikirPagi(): List<String> = listOf(
-    "Subhanallah - Pagi",
-    "Alhamdulillah - Pagi",
-    "Allahu Akbar - Pagi"
+fun defaultDzikirPagi(): List<TasbihEntity> = listOf(
+    TasbihEntity("Taawudz", DzikirType.PAGI, "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ", "Aku berlindung kepada Allah dari godaan syaitan yang terkutuk."),
+    TasbihEntity("Ayat Kursi", DzikirType.PAGI, "اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ الْحَيُّ الْقَيُّومُ، لاَ تَأْخُذُهُ سِنَةٌ وَلاَ نَوْمٌ، لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ، مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلاَّ بِإِذْنِهِ، يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ، وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلاَّ بِمَا شَاءَ، وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ، وَلَا يَئُودُهُ حِفْظُهُمَا، وَهُوَ الْعَلِيُّ الْعَظِيمُ", "Allah, tidak ada ilah (yang berhak disembah) melainkan Dia, yang hidup kekal lagi terus menerus mengurus (makhluk-Nya). Dia tidak mengantuk dan tidak tidur. Kepunyaan-Nya apa yang di langit dan di bumi. Tiada yang dapat memberi syafa’at di sisi-Nya tanpa seizin-Nya. Dia mengetahui apa-apa yang di hadapan mereka dan di belakang mereka. Mereka tidak mengetahui apa-apa dari ilmu Allah melainkan apa yang dikehendaki-Nya. Kursi Allah meliputi langit dan bumi. Dia tidak merasa berat memelihara keduanya. Dan Dia Maha Tinggi lagi Maha besar"),
+    TasbihEntity("An-Ikhlas", DzikirType.PAGI, "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\n" +
+            "قُلْ هُوَ اللَّهُ أَحَدٌ اللَّهُ الصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ", "Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang. Katakanlah: Dialah Allah, Yang Maha Esa. Allah adalah ilah yang bergantung kepada-Nya segala urusan. Dia tidak beranak dan tiada pula diperanakkan, dan tidak ada seorang pun yang setara dengan Dia"),
+    TasbihEntity("Al-Falaq", DzikirType.PAGI, "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\n" +
+            "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ مِن شَرِّ مَا خَلَقَ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ  وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ", "Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang. Katakanlah: Aku berlindung kepada Rabb yang menguasai Shubuh, dari kejahatan makhluk-Nya, dan dari kejahatan malam apabila telah gelap gulita, dan dari kejahatan-kejahatan wanita tukang sihir yang menghembus pada buhul-buhul, dan dari kejahatan orang yang dengki apabila ia dengki."),
+    TasbihEntity("An-Nass", DzikirType.PAGI, "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ\n" +
+            "قُلْ أَعُوذُ بِرَبِّ النَّاسِ مَلِكِ النَّاسِ إِلَهِ النَّاسِ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ مِنَ الْجِنَّةِ وَ النَّاسِ", "Dengan menyebut nama Allah Yang Maha Pengasih lagi Maha Penyayang. Katakanlah: Aku berlindung kepada Rabb manusia. Raja manusia. Sembahan manusia, dari kejahatan (bisikan) syaitan yang biasa bersembunyi, yang membisikkan (kejahatan) ke dalam dada manusia, dari jin dan manusia.")
 )
 fun defaultDzikirSore(): List<String> = listOf(
     "Subhanallah - Sore",

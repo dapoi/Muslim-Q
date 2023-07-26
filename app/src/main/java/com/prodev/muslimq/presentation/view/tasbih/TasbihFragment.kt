@@ -1,6 +1,5 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -68,11 +67,12 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             //check if custom is empty, change selected type to default
             if (listOfDzikir.none { it.dzikirType == selectedType }){
                 dataStoreViewModel.saveSelectedDzikirType(DzikirType.DEFAULT)
+                selectedType = DzikirType.DEFAULT
             }
             totalSize = listOfDzikir.filter{it.dzikirType == selectedType}.size
             binding.apply {
                 cgDzikir.removeAllViews()
-                chipAdd?.setOnClickListener { showInputDialog(true, listOfDzikir = listOfDzikir) }
+                chipType?.text = capitalizeEachWord(selectedType.value)
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
@@ -109,6 +109,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                 }
 
                                 successDelete = false
+                            } else {
+                                chip.isChecked = index == 0
                             }
                         } else {
                             chip.isChecked = currentIndexVM == index
@@ -118,7 +120,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             chip.chipBackgroundColor = colorGreenBaseState
                             chip.setTextColor(colorWhiteBaseState)
                             dzikirNameVM = dzikir.dzikirName
-                            tvDzikir.text = capitalizeEachWord(dzikirNameVM)
+                            changeDetail(dzikir)
                         }
 
                         chip.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -140,7 +142,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                 dzikirCountVM = 0
                                 tvCountTasbih.text = dzikirCountVM.toString()
                                 dzikirNameVM = dzikir.dzikirName
-                                tvDzikir.text = capitalizeEachWord(dzikirNameVM)
+                                changeDetail(dzikir)
                             }
                         }
 
@@ -211,6 +213,23 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 interactTasbih(response.first, response.second)
             }
         }
+    }
+
+    private fun changeDetail(dzikir: TasbihEntity) {
+        binding.apply {
+            dzikir.apply {
+                if (arabText != null && translation != null){
+                    tvDzikirArab?.visibility = View.VISIBLE
+                    tvDzikirMeaning?.visibility = View.VISIBLE
+                    tvDzikirArab?.text = arabText
+                    tvDzikirMeaning?.text = translation
+                } else {
+                    tvDzikirArab?.visibility = View.GONE
+                    tvDzikirMeaning?.visibility = View.GONE
+                }
+            }
+        }
+
     }
 
     private fun interactTasbih(hapticActive: Boolean?, maxDzikir: Int) {

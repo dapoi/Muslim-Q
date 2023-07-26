@@ -46,12 +46,12 @@ class TasbihViewModel @Inject constructor(
                 if (!hasInput) {
                     val defaultDzikir = defaultDzikir()
                     defaultDzikir.forEach { dzikir ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikir, dzikirType = DzikirType.DEFAULT))
+                        tasbihRepository.insertDzikir(dzikir)
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                     val defaultDzikirPagi = defaultDzikirPagi()
                     defaultDzikirPagi.forEach { dzikirPagi ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirPagi, dzikirType = DzikirType.PAGI))
+                        tasbihRepository.insertDzikir(dzikirPagi)
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                     val defaultDzikirSore = defaultDzikirSore()

@@ -50,9 +50,7 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
             R.array.tipe_dzikir,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
-            // Specify the layout to use when the list of choices appears
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Apply the adapter to the spinner
             binding.spinnerDzikir?.adapter = adapter
         }
         dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner){
@@ -67,6 +65,7 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
                         4 -> selectedType = DzikirType.CUSTOM
                     }
                     tasbihViewModel.getDzikirByType(selectedType)
+                    tasbihViewModel.currentIndexVM = 0
                     dataStoreViewModel.saveSelectedDzikirType(selectedType)
                     initDzikir()
                 }
