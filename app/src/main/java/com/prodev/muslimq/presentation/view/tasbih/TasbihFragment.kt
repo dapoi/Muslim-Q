@@ -1,17 +1,13 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
-import android.content.Context
-import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.VibratorManager
-import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import com.prodev.muslimq.R
@@ -20,7 +16,6 @@ import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.vibrateApp
-import com.prodev.muslimq.databinding.DialogSearchAyahBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
