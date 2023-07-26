@@ -13,6 +13,7 @@
         android:layout_marginTop="70dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_header_gray"
+        android:paddingBottom="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -21,7 +22,7 @@
             android:id="@+id/tv_surah_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/poppins_medium"
             android:textColor="@color/white_base"
             android:textSize="28sp"
@@ -68,12 +69,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="20dp"
             android:fontFamily="@font/amiri_bold"
             android:textAlignment="center"
             android:textColor="@color/white_base"
             android:textSize="35sp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/v_divider" />
 
         <ImageView
@@ -110,9 +109,9 @@
             android:id="@+id/sb_sound"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
             android:progressDrawable="@drawable/custom_seekbar_track_600"
             android:thumb="@color/light_gray"
-            android:layout_marginHorizontal="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_sound"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_sound"

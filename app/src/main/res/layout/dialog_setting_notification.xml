@@ -1,82 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/tv_setting_font_title"
+        android:id="@+id/tv_setting_notif_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="@font/poppins_semibold"
         android:includeFontPadding="false"
-        android:text="@string/setting_font"
+        android:text="@string/setting_notif"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
-        android:id="@+id/rb_small"
+        android:id="@+id/rb_sound_notif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
         android:includeFontPadding="false"
-        android:paddingStart="8dp"
-        android:text="@string/small"
+        android:text="@string/sound_notif"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_setting_font_title"
-        tools:ignore="RtlSymmetry" />
+        app:layout_constraintTop_toBottomOf="@id/tv_setting_notif_title" />
 
     <RadioButton
-        android:id="@+id/rb_medium"
+        android:id="@+id/rb_only_notif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/poppins_medium"
         android:includeFontPadding="false"
-        android:paddingStart="8dp"
-        android:text="@string/medium"
+        android:text="@string/only_notif"
         android:textColor="@color/black"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/rb_small"
-        app:layout_constraintTop_toBottomOf="@+id/rb_small"
-        tools:ignore="RtlSymmetry" />
-
-    <RadioButton
-        android:id="@+id/rb_big"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_medium"
-        android:includeFontPadding="false"
-        android:paddingStart="8dp"
-        android:text="@string/big"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/rb_small"
-        app:layout_constraintTop_toBottomOf="@+id/rb_medium"
-        tools:ignore="RtlSymmetry" />
-
-    <RadioButton
-        android:id="@+id/rb_super_big"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_medium"
-        android:includeFontPadding="false"
-        android:paddingStart="8dp"
-        android:text="@string/super_big"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/rb_small"
-        app:layout_constraintTop_toBottomOf="@+id/rb_big"
-        tools:ignore="RtlSymmetry" />
+        app:layout_constraintStart_toStartOf="@+id/rb_sound_notif"
+        app:layout_constraintTop_toBottomOf="@+id/rb_sound_notif" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_save"
@@ -91,6 +56,6 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rb_super_big" />
+        app:layout_constraintTop_toBottomOf="@+id/rb_only_notif" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -244,6 +244,111 @@
       "arabic": "اَللّٰهُمَّ اغْفِرْلِى ذَنْبِى وَوَسِّعْ لِى فِىْ دَارِىْ وَبَارِكْ لِىْ فِىْ رِزْقِىْ",
       "latin": "Alloohummaghfirlii dzambii wa wassi'lii fii daarii wa baarik lii fii rizqii",
       "translation": "Ya Allah ampunilah dosa kesalahanku dan berilah keluasaan di rumahku serta berkahilah pada rezekiku"
+    },
+    {
+      "id": 36,
+      "title": "Niat Mandi Besar (Junub) untuk Pria",
+      "arabic": "نَوَيْتُ الْغُسْلَ لِرَفْعِ الْحَدَثِ الْأَكْبَرِ فَرْضًا لِلَّهِ تَعَالَى",
+      "latin": "Nawaitul ghusla liraf'il hadatsil akbari fardan lillahi ta'ala",
+      "translation": "Saya niat mandi besar untuk mengangkat hadas besar wajib karena Allah Ta'ala"
+    },
+    {
+      "id": 37,
+      "title": "Niat Mandi Besar (Junub) untuk Wanita",
+      "arabic": "نَوَيْتُ الْغُسْلَ لِرَفْعِ الْحَدَثِ الْأَكْبَرِ فَرْضًا لِلَّهِ تَعَالَى",
+      "latin": "Nawaitul ghusla liraf'il hadatsil akbari fardan lillahi ta'ala",
+      "translation": "Saya niat mandi besar untuk mengangkat hadas besar wajib karena Allah Ta'ala"
+    },
+    {
+      "id": 38,
+      "title": "Doa Ketika Mendapat Musibah",
+      "arabic": "إِنَّا لِلّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ",
+      "latin": "Inna lillahi wa inna ilaihi raaji'uun",
+      "translation": "Kami berasal dari Allah dan kepada-Nya kami kembali"
+    },
+    {
+      "id": 39,
+      "title": "Doa Mohon Dijauhkan dari Kejelekan",
+      "arabic": "اَللّٰهُمَّ إِنِّىْ أَعُوْذُ بِكَ مِنَ الْفَقْرِ وَالْقِلَّةِ وَالذِّلَّةِ وَأَعُوْذُ بِكَ مِنْ اَنْ اَظْلِمَ اَوْ أُظْلَمَ",
+      "latin": "Alloohumma innii a'uudzubika minal faqr, wal qillati, wadz dzillati, wa a'uudzubika min an azlima au uzhlama",
+      "translation": "Ya Allah, aku berlindung kepada-Mu dari kefakiran, kekurangan, dan kehinaan. Aku juga berlindung kepada-Mu dari berbuat dzalim atau dianiaya."
+    },
+    {
+      "id": 40,
+      "title": "Doa Agar Diberi Kemudahan",
+      "arabic": "اللّٰهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلٰتَهٗ سَهْلًا وَّأَنْتَ تَجْعَلُ الْحَزْنَ إِذَا شِئْتَ سَهْلًا",
+      "latin": "Alloohumma laa sahla illaa maa ja'altahu sahla, wa anta taj'alul hazna idza syi'ta sahla",
+      "translation": "Ya Allah, tidak ada yang mudah kecuali apa yang Engkau jadikan mudah. Dan Engkau bisa menjadikan kesedihan mudah jika Engkau kehendaki."
+    },
+    {
+      "id": 41,
+      "title": "Doa Agar Diberi Kesabaran",
+      "arabic": "اللَّهُمَّ أَعِنِّيْ عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
+      "latin": "Alloohumma a'inii 'alaa dzikrika wa syukrika wa husni 'ibaadatik",
+      "translation": "Ya Allah, tolonglah aku untuk selalu mengingat-Mu, bersyukur kepada-Mu, dan beribadah dengan baik kepada-Mu."
+    },
+    {
+      "id": 42,
+      "title": "Doa Mohon Perlindungan dari Kesusahan",
+      "arabic": "اللّٰهُمَّ إِنِّىْ أَعُوْذُبِكَ مِنَ الْهَـمِّ وَالْحُـزْنِ وَالْعَـجْزِ وَالْكَسَلِ وَالْبُخْـلِ وَالْجُـبْنِ وَضَلْـعِ الـدَّيْنِ وَغَلَبَـةِ الرِّجَالِ",
+      "latin": "Alloohumma innii a'uudzubika minal hammi wal huzni wal 'ajzi wal kasal wal bukhli wal jubni wa dalla addaini wa ghalabatir rijal",
+      "translation": "Ya Allah, aku berlindung kepada-Mu dari rasa gelisah, kesedihan, kelemahan, kemalasan, kikir, ketakutan, hutang, dan dari penindasan orang lain"
+    },
+    {
+      "id": 43,
+      "title": "Doa Memohon Kebaikan di Dunia dan Akhirat",
+      "arabic": "اللّٰهُمَّ اغْفِرْ لِيْ وَارْحَمْنِيْ وَاهْدِنِيْ وَارْزُقْنِيْ",
+      "latin": "Alloohumma ghfirlii warhamnii wahdinii warzuqnii",
+      "translation": "Ya Allah, ampunilah aku, berilah rahmat padaku, beri petunjuk padaku, dan berilah rezeki kepadaku."
+    },
+    {
+      "id": 44,
+      "title": "Doa Agar Diberi Kekuatan dan Pertolongan",
+      "arabic": "اللَّهُمَّ أَنْتَ عَضُدِيْ وَأَنْتَ نَصِيْرِيْ بِكَ أَجُوْلُ وَبِكَ أَصُوْلُ وَبِكَ أُقَاتِلُ",
+      "latin": "Alloohumma anta 'aduudii wa anta nashiirii bika ajulu wa bika ashulu wa bika uqaatilu",
+      "translation": "Ya Allah, Engkaulah tempatku bersandar, dan Engkaulah yang memberi pertolongan kepadaku. Dengan pertolongan-Mu aku bergerak, dengan pertolongan-Mu aku bertahan, dan dengan pertolongan-Mu aku berperang."
+    },
+    {
+      "id": 45,
+      "title": "Doa Memohon Ilmu yang Bermanfaat",
+      "arabic": "اللّٰهُمَّ إِنِّيْ أَسْأَلُكَ عِلْمًا نَّافِعًا وَّرِزْقًا طَيِّبًا وَّعَمَلاً مُّتَقَبَّلاً",
+      "latin": "Alloohumma innii as-aluka 'ilman naafi'an wa rizqan thayyiban wa 'amalan mutaqabbalan",
+      "translation": "Ya Allah, aku memohon kepada-Mu ilmu yang bermanfaat, rezeki yang baik, dan amal yang diterima."
+    },
+    {
+      "id": 46,
+      "title": "Doa Mohon Perlindungan dari Kejahatan dan Fitnah",
+      "arabic": "اَللّٰهُمَّ إِنِّىْٓ أَعُوْذُ بِكَ مِنْ عَذَابِ الْقَـبْرِ، وَعَذَابِ جَهَـنَّمَ، وَمِنْ فِتْنَةِ الْمَحْـيَا وَالْمَمَاتِ، وَمِنْ فِتْنَةِ الْمَسِيْحِ الدَّجَّالِ",
+      "latin": "Alloohumma innii a'uudzubika min 'adzaabil qabr, wa 'adzaabijahannam, wa min fitnatil mahyaa wal mamaat, wa min fitnatil masiihid dajjaal",
+      "translation": "Ya Allah, aku berlindung kepada-Mu dari siksa kubur, siksa neraka, fitnah kehidupan dan kematian, serta fitnah Al-Masih Ad-Dajjal."
+    },
+    {
+      "id": 47,
+      "title": "Doa Mohon Dilapangkan Hati dan Dimudahkan Urusan",
+      "arabic": "اللّٰهُمَّ لَا سَهْلَ إِلَّا مَا جَعَلْتَهٗ سَهْلًا وَّأَنْتَ تَجْعَلُ الْحَزَنَ إِذَا شِئْتَ سَهْلًا",
+      "latin": "Alloohumma laa sahla illaa maa ja'al-tahu sahla, wa anta taj'alul haza-na idzaa syi'ta sahla",
+      "translation": "Ya Allah, tidak ada yang mudah kecuali apa yang Engkau jadikan mudah. Dan Engkau bisa menjadikan kesedihan mudah jika Engkau kehendaki."
+    },
+    {
+      "id": 48,
+      "title": "Doa Mohon Keselamatan dan Keberkahan dalam Rizki",
+      "arabic": "اَللّٰهُمَّ بَارِكْ لَنَا فِيْ رِزْقٍ وَّعَافِيَةٍ وَّاجْعَلْهُ لَـنَا مِنْ أَوَّلِهِ إِلَى آخِرِهِ",
+      "latin": "Alloohumma baarik lanaa fi rizqin wa 'aafiyatin waj'alhu lanaa min awwalihi ilaa aakhirihi",
+      "translation": "Ya Allah, berkahilah rizki dan kesehatan kami, dan jadikanlah rizki tersebut bagi kami dari awal hingga akhir."
+    },
+    {
+      "id": 49,
+      "title": "Doa Mohon Perlindungan dari Azab Kubur",
+      "arabic": "اللّٰهُمَّ إِنِّيْ أَعُوْذُ بِكَ مِنْ عَذَابِ الْقَـبْرِ، لاَ إِلٰهَ إِلاَّ اَنْتَ",
+      "latin": "Alloohumma innii a'uudzubika min 'adzaabil qabr, laa ilaaha illa anta",
+      "translation": "Ya Allah, aku berlindung kepada-Mu dari siksa kubur, tidak ada tuhan yang berhak disembah selain Engkau."
+    },
+    {
+      "id": 50,
+      "title": "Doa Mohon Diberi Kekuatan Iman dan Kesabaran",
+      "arabic": "اَللّٰهُمَّ أَعِنِّيْ عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
+      "latin": "Alloohumma a'inii 'alaa dzikrika wa syukrika wa husni 'ibaadatik",
+      "translation": "Ya Allah, tolonglah aku untuk selalu mengingat-Mu, bersyukur kepada-Mu, dan beribadah dengan baik kepada-Mu."
     }
   ]
 }

@@ -7,6 +7,7 @@ object OthersObject {
     private val menuImage = intArrayOf(
         R.drawable.ic_collection,
         R.drawable.ic_dark_mode,
+        R.drawable.ic_notif_setting,
         R.drawable.ic_support,
         R.drawable.ic_about
     )
@@ -14,6 +15,7 @@ object OthersObject {
     private val menuTitle = listOf(
         "Baca Nanti",
         "Mode Gelap",
+        "Pengaturan Notifikasi",
         "Kirim Masukan",
         "Info Aplikasi"
     )

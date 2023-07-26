@@ -87,6 +87,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveAdzanSoundState(isAdzanSound: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveAdzanSoundState(isAdzanSound)
+        }
+    }
+
     val getSurah = dataStorePref.getSurah.asLiveData()
 
     val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
@@ -118,4 +124,6 @@ class DataStoreViewModel @Inject constructor(
                 hapticFeedback to maxDzikirCount
             }
         }.asLiveData()
+
+    val getAdzanSoundState = dataStorePref.getAdzanSoundState.asLiveData().distinctUntilChanged()
 }

@@ -1,8 +1,10 @@
 package com.prodev.muslimq.notification
 
 import android.app.Service
+import android.content.ContentResolver
 import android.content.Intent
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.IBinder
 import com.prodev.muslimq.R
 import com.prodev.muslimq.notification.AdzanReceiver.Companion.IS_SHUBUH
@@ -25,22 +27,39 @@ class AdzanService : Service() {
             return START_NOT_STICKY
         }
 
-        intent?.getBooleanExtra(IS_SHUBUH, false)?.let { isShubuh ->
-            val audio = if (isShubuh) R.raw.adzan_shubuh else R.raw.adzan_regular
-
-            mediaPlayer = MediaPlayer.create(this, audio).apply {
-                setOnCompletionListener {
-                    stop()
-                    release()
-                    stopSelf()
-                    isServiceRunning = false
-                }
-                isLooping = false
-                start()
-            }
-
-            isServiceRunning = true
+        val isShubuh = intent?.getBooleanExtra(IS_SHUBUH, false) ?: false
+        val audio = if (isShubuh) {
+            Uri.parse(buildString {
+                append(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                append("://")
+                append(packageName)
+                append("/")
+                append(R.raw.adzan_shubuh)
+            })
+        } else {
+            Uri.parse(buildString {
+                append(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                append("://")
+                append(packageName)
+                append("/")
+                append(R.raw.adzan_regular)
+            })
         }
+
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(applicationContext, audio)
+            setOnCompletionListener {
+                stop()
+                release()
+                stopSelf()
+                isServiceRunning = false
+            }
+            prepare()
+            isLooping = false
+            start()
+        }
+
+        isServiceRunning = true
 
         return START_NOT_STICKY
     }

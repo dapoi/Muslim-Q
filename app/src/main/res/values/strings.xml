@@ -8,7 +8,6 @@
     <string name="quran">Qur\'an</string>
     <string name="others">Lainnya</string>
     <string name="no_internet">Sepertinya ada masalah, tarik ke bawah untuk memuat ulang</string>
-    <string name="no_prayer_time">Anda belum memilih lokasi untuk melihat jadwal shalat</string>
     <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
     <string name="icon_loc">ikon lokasi</string>
     <string name="icon_mosque">ikon masjid</string>
@@ -25,7 +24,9 @@
     <string name="small">Kecil</string>
     <string name="medium">Sedang</string>
     <string name="big">Besar</string>
-    <string name="find_qibla">Temukan arah kiblat di sekitar Anda</string>
+    <string name="super_big">Sangat Besar</string>
+    <string name="find_qibla">Temukan arah kiblat</string>
+    <string name="found_qibla">Arah kiblat ditemukan</string>
     <string name="north">U</string>
     <string name="south">S</string>
     <string name="east">T</string>
@@ -43,7 +44,7 @@
     <string name="cancel">Batal</string>
     <string name="are_you_sure_desc">Jika memilih hapus, maka data surah yang sudah Anda simpan sebelumnya akan terhapus.</string>
     <string name="your_location">Lokasi Anda</string>
-    <string name="not_found_location">Anda belum memilih lokasi</string>
+    <string name="not_found_location">-</string>
     <string name="on">ON</string>
     <string name="off">OFF</string>
     <string name="search_surah">Cari Surah</string>
@@ -88,10 +89,11 @@
     <string name="input_dzikir">Masukkan Dzikir</string>
     <string name="input_max_dzikir">Masukkan Batas Maksimal Dzikir</string>
     <string name="reset">Reset</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="max_count_dzikir">Batas Maksimal Dzikir</string>
     <string name="minus">-</string>
+    <string name="sound_notif"><![CDATA[Adzan & Notifikasi]]></string>
+    <string name="only_notif">Hanya Notifikasi</string>
+    <string name="setting_notif">Pengaturan Notifikasi</string>
     <string name="custom_dzikir_empty">Tidak ada dzikir custom yang disimpan</string>
     <string-array name="tipe_dzikir">
         <item>Umum</item>

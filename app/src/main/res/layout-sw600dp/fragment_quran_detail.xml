@@ -41,37 +41,17 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="70dp"
                     android:layout_marginBottom="16dp"
+                    android:paddingBottom="20dp"
                     android:background="@drawable/bg_round_green_header"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <ImageView
-                        android:id="@+id/iv_left_kaligrafi"
-                        android:layout_width="40dp"
-                        android:layout_height="70dp"
-                        android:src="@drawable/ic_kaligrafi"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="ContentDescription" />
-
-                    <ImageView
-                        android:id="@+id/iv_right_kaligrafi"
-                        android:layout_width="40dp"
-                        android:layout_height="70dp"
-                        android:rotationY="180"
-                        android:src="@drawable/ic_kaligrafi"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="ContentDescription" />
-
                     <TextView
                         android:id="@+id/tv_surah_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="20dp"
                         android:fontFamily="@font/poppins_medium"
                         android:textColor="@color/white_header"
                         android:textSize="28sp"
@@ -122,17 +102,36 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
-                        android:layout_marginBottom="20dp"
                         android:fontFamily="@font/amiri_bold"
                         android:text="@string/bismillah"
                         android:textAlignment="center"
                         android:textColor="@color/white_header"
                         android:textSize="35sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/v_divider"
                         tools:layout_editor_absoluteX="20dp" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <ImageView
+                    android:id="@+id/iv_left_kaligrafi"
+                    android:layout_width="40dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/ic_kaligrafi"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
+                    app:layout_constraintStart_toStartOf="@id/cl_surah"
+                    app:layout_constraintTop_toTopOf="@id/cl_surah"
+                    tools:ignore="ContentDescription" />
+
+                <ImageView
+                    android:id="@+id/iv_right_kaligrafi"
+                    android:layout_width="40dp"
+                    android:layout_height="70dp"
+                    android:rotationY="180"
+                    android:src="@drawable/ic_kaligrafi"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
+                    app:layout_constraintEnd_toEndOf="@id/cl_surah"
+                    app:layout_constraintTop_toTopOf="@id/cl_surah"
+                    tools:ignore="ContentDescription" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_sound"

@@ -104,16 +104,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="@font/amiri_bold"
+            android:fontFamily="@font/scheherazade_bold"
             android:includeFontPadding="false"
-            android:letterSpacing="0.05"
-            android:lineSpacingExtra="14dp"
             android:textColor="@color/black"
-            android:textSize="22sp"
+            android:lineSpacingExtra="8sp"
+            android:letterSpacing="0.1"
+            android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="@id/cl_child"
             app:layout_constraintStart_toStartOf="@+id/cl_child"
             app:layout_constraintTop_toBottomOf="@id/cl_child"
-            tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ" />
+            tools:text="ََاَلْحَمْدُ لِلّٰهِ رَبِّ الْعٰلَمِيْنَۙ"/>
 
         <TextView
             android:id="@+id/tv_ayah_latin"

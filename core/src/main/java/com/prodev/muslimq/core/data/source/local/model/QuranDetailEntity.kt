@@ -19,7 +19,7 @@ data class QuranDetailEntity(
     val deskripsi: String,
     val audio: String,
     val ayat: List<Ayat>,
-    var isBookmarked: Boolean,
+    var isBookmarked: Boolean = false,
 )
 
 @Entity(tableName = "ayat")

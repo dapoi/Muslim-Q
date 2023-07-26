@@ -1,13 +1,14 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
 import android.content.Context
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.text.InputType
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -18,6 +19,8 @@ import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
+import com.prodev.muslimq.core.utils.vibrateApp
+import com.prodev.muslimq.databinding.DialogSearchAyahBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -25,6 +28,8 @@ import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding::inflate) {
@@ -240,11 +245,16 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 val durationDone = 1000L
 
                 fabTasbih.setOnClickListener {
+                    fabTasbih.isClickable = false
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(500L)
+                        fabTasbih.isClickable = true
+                    }
                     if (isHapticActive && dzikirCountVM < maxDzikir) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
                         } else {
-                            @Suppress("DEPRECATION") vibrator.vibrate(200L)
+                            @Suppress("DEPRECATION") vibrator.vibrate(100L)
                         }
                     }
 
@@ -304,17 +314,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     tvCountTasbih.text = dzikirCountVM.toString()
                 }
             }
-        }
-    }
-
-    private fun vibrateApp(context: Context): Vibrator {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = context.getSystemService(
-                Context.VIBRATOR_MANAGER_SERVICE
-            ) as VibratorManager
-            vibratorManager.defaultVibrator
-        } else {
-            @Suppress("DEPRECATION") context.getSystemService(AppCompatActivity.VIBRATOR_SERVICE) as Vibrator
         }
     }
 

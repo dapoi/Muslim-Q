@@ -72,13 +72,6 @@
         <item name="android:windowMinWidthMinor">90%</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@android:color/white</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:navigationBarColor">@color/white_base</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-    </style>
-
     <style name="Rounded.Image" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">8dp</item>

@@ -22,7 +22,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
-import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
+import com.prodev.muslimq.presentation.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
+    private val splashViewModel: SplashViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val navHostFragment: NavHostFragment by lazy {
         supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -44,13 +44,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreen = installSplashScreen()
+        installSplashScreen().setKeepOnScreenCondition { splashViewModel.isLoading.value }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        splashScreen.setKeepOnScreenCondition {
-            splashScreenViewModel.keepSplashscreen.value ?: true
-        }
 
         val destinationToHideBottomnav = setOf(
             R.id.quranDetailFragment,

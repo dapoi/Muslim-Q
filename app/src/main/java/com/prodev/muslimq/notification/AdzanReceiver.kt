@@ -7,16 +7,27 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
 import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.prodev.muslimq.R
+import com.prodev.muslimq.core.data.preference.DataStorePreference
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AdzanReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var dataStorePreference: DataStorePreference
 
     override fun onReceive(context: Context, intent: Intent) {
         val adzanName = intent.getStringExtra(ADZAN_NAME)
@@ -24,22 +35,36 @@ class AdzanReceiver : BroadcastReceiver() {
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
-        createNotification(context, adzanName!!, adzanCode)
+        adzanName?.let { showNotification(context, it, adzanCode) }
 
         // Check if the AdzanService is already running
         if (AdzanService.isRunning()) {
             return
         }
 
-        // Start the AdzanService
-        val serviceIntent = Intent(context, AdzanService::class.java).apply {
-            putExtra(IS_SHUBUH, isShubuh)
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStorePreference.getAdzanSoundState.collect { isSoundActive ->
+                if (isSoundActive) {
+                    // Start the AdzanService
+                    val serviceIntent = Intent(context, AdzanService::class.java).apply {
+                        putExtra(IS_SHUBUH, isShubuh)
+                    }
+                    context.startService(serviceIntent)
+                } else {
+                    // Play the default notification ringtone
+                    RingtoneManager.getRingtone(
+                        context,
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                    ).play()
+                }
+            }
         }
-        context.startService(serviceIntent)
 
         // Reschedule the alarm for the next day
         val newAdzanTime = adzanTime?.let { getNextDayAdzanTime(it) }
-        setAdzanReminder(context, newAdzanTime!!, adzanName, adzanCode, isShubuh)
+        if (adzanName != null && newAdzanTime != null) {
+            setAdzanReminder(context, newAdzanTime, adzanName, adzanCode, isShubuh)
+        }
     }
 
     private fun getNextDayAdzanTime(adzanTime: String): String {
@@ -52,7 +77,7 @@ class AdzanReceiver : BroadcastReceiver() {
         return SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
     }
 
-    private fun createNotification(context: Context, adzanName: String, adzanCode: Int) {
+    private fun showNotification(context: Context, adzanName: String, adzanCode: Int) {
         val notificationManager = context.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
@@ -72,8 +97,8 @@ class AdzanReceiver : BroadcastReceiver() {
             .setSound(null)
             .setWhen(System.currentTimeMillis())
             .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
-            .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -178,7 +203,6 @@ class AdzanReceiver : BroadcastReceiver() {
         const val ADZAN_NAME = "adzan_name"
         const val ADZAN_TIME = "adzan_time"
         const val IS_SHUBUH = "is_shubuh"
-
         const val FROM_NOTIFICATION = "from_notification"
         private const val CHANNEL_ID_SHUBUH = "channel_shubuh"
         private const val CHANNEL_ID_DZUHUR = "channel_dzuhur"

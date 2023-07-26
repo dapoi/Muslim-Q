@@ -35,6 +35,7 @@ private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
 private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
 private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback")
 private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
+private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -94,7 +95,7 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      * Get ayah size from data store
      */
     val getAyahSize = dataStore.data.map { preferences ->
-        preferences[AYAH_SIZE] ?: 26
+        preferences[AYAH_SIZE] ?: 34
     }
 
     /**
@@ -248,6 +249,22 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getDzikirMaxCount = dataStore.data.map { preferences ->
         preferences[MAX_COUNT_DZIKIR] ?: 33
+    }
+
+    /**
+     * Save adzan sound state to data store
+     */
+    suspend fun saveAdzanSoundState(adzanSoundState: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[ADZAN_SOUND_STATE] = adzanSoundState
+        }
+    }
+
+    /**
+     * Get adzan sound state from data store
+     */
+    val getAdzanSoundState = dataStore.data.map { preferences ->
+        preferences[ADZAN_SOUND_STATE] ?: true
     }
 
     /**

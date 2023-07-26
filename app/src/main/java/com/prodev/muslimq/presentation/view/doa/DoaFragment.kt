@@ -2,10 +2,12 @@ package com.prodev.muslimq.presentation.view.doa
 
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.databinding.FragmentDoaBinding
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -22,12 +24,9 @@ class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.svDoa.setOnQueryTextListener(object :
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        binding.svDoa.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val imm =
-                    requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                imm.hideSoftInputFromWindow(view.windowToken, 0)
+                hideKeyboard(requireActivity())
                 return true
             }
 

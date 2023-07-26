@@ -26,7 +26,6 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -55,7 +54,6 @@ import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.view.qibla.QiblaFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.prodev.muslimq.presentation.viewmodel.SplashScreenViewModel
 import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
@@ -73,7 +71,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private lateinit var adzanReceiver: AdzanReceiver
 
     private val shalatViewModel: ShalatViewModel by viewModels()
-    private val splashScreenViewModel: SplashScreenViewModel by activityViewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
@@ -190,20 +187,17 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 showDialogLocation()
             }
 
-//            val pm: PackageManager = requireContext().packageManager
-//            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
-//                // This device does not have a compass, turn off the compass feature
-//                tvQibla.isVisible = false
-//            }
-            tvQibla.isVisible = false
+            val pm: PackageManager = requireContext().packageManager
+            if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
+                // This device does not have a compass, turn off the compass feature
+                tvQibla.isVisible = false
+            }
         }
 
         val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
 
         arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
             if (isFromNotif) {
-                splashScreenViewModel.setKeepSplashScreen(false)
-
                 bottomNav.visibility = View.INVISIBLE
                 Intent(requireContext(), AdzanService::class.java).also {
                     requireContext().stopService(it)
@@ -293,8 +287,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 if (location != null) {
                     lat = location.latitude
                     lon = location.longitude
-                    getAddressGeocoder(lat!!, lon!!)
                     if (forQibla) navigateToQibla(lat!!, lon!!)
+                    else getAddressGeocoder(lat!!, lon!!)
                 } else {
                     requestNewLiveLocation()
                 }
@@ -345,8 +339,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             locationResult.locations.forEach { location ->
                 lat = location.latitude
                 lon = location.longitude
-                getAddressGeocoder(lat!!, lon!!)
                 if (forQibla) navigateToQibla(lat!!, lon!!)
+                else getAddressGeocoder(lat!!, lon!!)
             }
         }
     }
@@ -399,6 +393,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
         )
 
+        transparentDialog.dismiss()
         forQibla = false
     }
 
@@ -651,6 +646,23 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                         stateNotifIcon(listAdzanTime, adzanName, isChecked, index, resetSwitch)
                     }
                 }
+
+                listAdzanTime[adzanName]?.let { adzanTime ->
+                    if (switch.isChecked) {
+                        adzanReceiver.setAdzanReminder(
+                            context = requireContext(),
+                            adzanName = adzanName,
+                            adzanTime = adzanTime,
+                            adzanCode = index + 1,
+                            isShubuh = adzanName == "Adzan Shubuh"
+                        )
+                    } else {
+                        adzanReceiver.cancelAdzanReminder(
+                            requireContext(),
+                            index + 1
+                        )
+                    }
+                }
             }
 
             if (resetSwitch) {
@@ -666,6 +678,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         binding.apply {
             if (!tvYourLocation.text.contains("DKI")) {
+                // reset all backgrounds
+                resetBackgrounds()
+
                 when {
                     timeNow > shubuh && timeNow <= dzuhur -> {
                         tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
@@ -797,6 +812,16 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         val minutes = diff
 
         return "$hours jam $minutes menit"
+    }
+
+    private fun resetBackgrounds() {
+        binding.apply {
+            shalatLayout.clDzuhur.background = null
+            shalatLayout.clAshar.background = null
+            shalatLayout.clMaghrib.background = null
+            shalatLayout.clIsya.background = null
+            shalatLayout.clShubuh.background = null
+        }
     }
 
     private fun setNextPrayShalatBackground(clShalat: ConstraintLayout) {
