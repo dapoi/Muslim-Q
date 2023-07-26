@@ -101,3 +101,19 @@ fun defaultDzikir(): List<String> = listOf(
     "Alhamdulillah",
     "Allahu Akbar"
 )
+
+fun defaultDzikirPagi(): List<String> = listOf(
+    "Subhanallah - Pagi",
+    "Alhamdulillah - Pagi",
+    "Allahu Akbar - Pagi"
+)
+fun defaultDzikirSore(): List<String> = listOf(
+    "Subhanallah - Sore",
+    "Alhamdulillah - Sore",
+    "Allahu Akbar - Sore"
+)
+fun defaultDzikirShalat(): List<String> = listOf(
+    "Subhanallah - Shalat",
+    "Alhamdulillah - Shalat",
+    "Allahu Akbar - Shalat"
+)

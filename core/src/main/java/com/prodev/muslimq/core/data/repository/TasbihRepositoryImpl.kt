@@ -2,6 +2,7 @@ package com.prodev.muslimq.core.data.repository
 
 import com.prodev.muslimq.core.data.source.local.database.TasbihDao
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
+import com.prodev.muslimq.core.utils.DzikirType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,5 +22,9 @@ class TasbihRepositoryImpl @Inject constructor(
 
     override suspend fun deleteDzikir(dzikirName: String) {
         tasbihDao.deleteDzikir(dzikirName)
+    }
+
+    override fun getAllDzikirByType(dzikirType: DzikirType): Flow<List<TasbihEntity>> {
+        return tasbihDao.getAllDzikirByType(dzikirType)
     }
 }

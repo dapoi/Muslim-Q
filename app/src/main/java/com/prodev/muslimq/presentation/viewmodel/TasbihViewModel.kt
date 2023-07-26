@@ -7,7 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.data.repository.TasbihRepository
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
+import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.defaultDzikir
+import com.prodev.muslimq.core.utils.defaultDzikirPagi
+import com.prodev.muslimq.core.utils.defaultDzikirShalat
+import com.prodev.muslimq.core.utils.defaultDzikirSore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +31,9 @@ class TasbihViewModel @Inject constructor(
     private var _getDzikirList = MutableLiveData<List<TasbihEntity>>()
     val getDzikirList: LiveData<List<TasbihEntity>> get() = _getDzikirList
 
+    private var _getDzikirType = MutableLiveData<String>()
+    val getDzikirType: LiveData<String> get() = _getDzikirType
+
     fun insertDzikir(tasbihEntity: TasbihEntity) {
         viewModelScope.launch {
             tasbihRepository.insertDzikir(tasbihEntity)
@@ -39,7 +46,22 @@ class TasbihViewModel @Inject constructor(
                 if (!hasInput) {
                     val defaultDzikir = defaultDzikir()
                     defaultDzikir.forEach { dzikir ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikir))
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikir, dzikirType = DzikirType.DEFAULT))
+                        dataStorePreference.saveInputDzikirOnceState(true)
+                    }
+                    val defaultDzikirPagi = defaultDzikirPagi()
+                    defaultDzikirPagi.forEach { dzikirPagi ->
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirPagi, dzikirType = DzikirType.PAGI))
+                        dataStorePreference.saveInputDzikirOnceState(true)
+                    }
+                    val defaultDzikirSore = defaultDzikirSore()
+                    defaultDzikirSore.forEach { dzikirSore ->
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirSore, dzikirType = DzikirType.SORE))
+                        dataStorePreference.saveInputDzikirOnceState(true)
+                    }
+                    val defaultDzikirShalat = defaultDzikirShalat()
+                    defaultDzikirShalat.forEach { dzikirShalat ->
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirShalat, dzikirType = DzikirType.SHALAT))
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                 }
@@ -56,6 +78,14 @@ class TasbihViewModel @Inject constructor(
     fun deleteDzikir(dzikirName: String) {
         viewModelScope.launch {
             tasbihRepository.deleteDzikir(dzikirName)
+        }
+    }
+
+    fun getDzikirByType(dzikirType: DzikirType){
+        viewModelScope.launch {
+            tasbihRepository.getAllDzikirByType(dzikirType).collect{
+                _getDzikirList.value = it
+            }
         }
     }
 }

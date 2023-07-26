@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,7 @@ private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
 private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
 private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback")
 private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
+private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -246,5 +248,21 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getDzikirMaxCount = dataStore.data.map { preferences ->
         preferences[MAX_COUNT_DZIKIR] ?: 33
+    }
+
+    /**
+     * Save selected dzikir type
+     */
+    suspend fun saveSelectedDzikirType(dzikirType: DzikirType) {
+        dataStore.edit { preferences ->
+            preferences[DZIKIR_TYPE] = dzikirType.ordinal
+        }
+    }
+
+    /**
+     * Get selected dzikir type
+     */
+    val getSelectedDzikirType = dataStore.data.map { preferences ->
+        preferences[DZIKIR_TYPE] ?: 0
     }
 }

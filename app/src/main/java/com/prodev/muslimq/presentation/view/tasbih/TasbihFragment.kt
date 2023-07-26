@@ -7,41 +7,34 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.text.InputType
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
+import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.databinding.DialogSearchAyahBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding::inflate) {
 
     private val tasbihViewModel: TasbihViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    private val curvedDialog by lazy {
-        AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
-    }
     private var totalSize = 0
     private var successDelete = false
-    private var successAdd = false
+    private var selectedType = DzikirType.DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,11 +61,18 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         val cornerRadius = 18F
         val strokeWidth = 3f
 
+        dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner){
+            selectedType = DzikirType.values()[it]
+        }
         tasbihViewModel.getDzikirList.observe(viewLifecycleOwner) { listOfDzikir ->
-            totalSize = listOfDzikir.size
+            //check if custom is empty, change selected type to default
+            if (listOfDzikir.none { it.dzikirType == selectedType }){
+                dataStoreViewModel.saveSelectedDzikirType(DzikirType.DEFAULT)
+            }
+            totalSize = listOfDzikir.filter{it.dzikirType == selectedType}.size
             binding.apply {
                 cgDzikir.removeAllViews()
-                chipAdd.setOnClickListener { showInputDialog(true, listOfDzikir = listOfDzikir) }
+                chipAdd?.setOnClickListener { showInputDialog(true, listOfDzikir = listOfDzikir) }
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
@@ -82,7 +82,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
 
                 tasbihViewModel.apply {
-                    listOfDzikir.forEachIndexed { index, dzikir ->
+                    listOfDzikir.filter { it.dzikirType == (selectedType) }.forEachIndexed { index, dzikir ->
                         val chip = Chip(context).apply {
                             text = capitalizeEachWord(dzikir.dzikirName)
                             isCheckable = true
@@ -109,21 +109,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                 }
 
                                 successDelete = false
-                            } else {
-                                chip.isChecked = currentIndexVM == index
-                                if (successAdd) {
-                                    svChip.post {
-                                        // follow item index
-                                        svChip.smoothScrollTo(
-                                            cgDzikir.getChildAt(currentIndexVM).left,
-                                            cgDzikir.getChildAt(currentIndexVM).top
-                                        )
-                                    }
-                                    dzikirCountVM = 0
-                                    tvCountTasbih.text = dzikirCountVM.toString()
-
-                                    successAdd = false
-                                }
                             }
                         } else {
                             chip.isChecked = currentIndexVM == index
@@ -319,71 +304,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         maxCount: Int = 0,
         listOfDzikir: List<TasbihEntity> = listOf()
     ) {
-        val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
-        val etInput = dialogLayout.etAyah
-        val btnSave = dialogLayout.btnSearch
-        etInput.inputType = if (isDzikir) {
-            InputType.TYPE_CLASS_TEXT
-        } else {
-            InputType.TYPE_CLASS_NUMBER
-        }
-        etInput.hint = if (isDzikir) {
-            getString(R.string.input_dzikir)
-        } else {
-            getString(R.string.input_max_dzikir)
-        }
-        etInput.setText(if (isDzikir) "" else maxCount.toString())
-        btnSave.text = getString(R.string.save)
-        with(curvedDialog.create()) {
-            setView(dialogLayout.root)
-            etInput.setOnEditorActionListener { _, _, _ -> btnSave.performClick() }
-            btnSave.setOnClickListener {
-                val dzikir = etInput.text.toString()
-                if (isDzikir) {
-                    insertDzikir(dzikir, listOfDzikir)
-                } else {
-                    insertMaxDzikir(dzikir)
-                }
-
-                dismiss()
-            }
-            show()
-        }
-    }
-
-    private fun insertDzikir(dzikir: String, listOfDzikir: List<TasbihEntity>) {
-        val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
-            TasbihEntity(capitalizeEachWord(dzikir))
-        )
-        val messageSnackbar = when {
-            dzikir.isEmpty() -> "Dzikir belum diisi"
-            !state -> "Dzikir sudah ada"
-            else -> "Dzikir berhasil ditambahkan"
-        }
-
-        (activity as MainActivity).customSnackbar(
-            state = state,
-            context = requireContext(),
-            view = binding.root,
-            message = messageSnackbar
-        )
-
-        if (state) {
-            tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir)))
-            hideKeyboard(requireActivity())
-
-            tasbihViewModel.apply {
-                binding.apply {
-                    val cgSize = cgDzikir.childCount - 1
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                        selectedItemIndexVM = cgSize + 1
-                        currentIndexVM = cgSize + 1
-                        dzikirCountVM = 0
-                    }
-                }
-            }
-
-            successAdd = true
+        InputDialog().showInputDialog(isDzikir, maxCount, listOfDzikir, layoutInflater, requireContext()) { new, oldList ->
+            insertMaxDzikir(new)
         }
     }
 
