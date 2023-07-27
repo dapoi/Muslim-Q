@@ -12,5 +12,6 @@ interface TasbihRepository {
 
     suspend fun deleteDzikir(dzikirName: String)
     fun getAllDzikirByType(dzikirType: DzikirType): Flow<List<TasbihEntity>>
+    fun updateMaxCount(id: Int, maxCount: Int): Flow<Int>
 
 }

@@ -119,7 +119,7 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
 
     private fun insertDzikir(dzikir: String, listOfDzikir: List<TasbihEntity>) {
         val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
-            TasbihEntity(capitalizeEachWord(dzikir))
+            TasbihEntity(capitalizeEachWord(dzikir), maxCount = 33)
         )
         val messageSnackbar = when {
             dzikir.isEmpty() -> "Dzikir belum diisi"
@@ -135,7 +135,7 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
         )
 
         if (state) {
-            tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir), DzikirType.CUSTOM))
+            tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir), DzikirType.CUSTOM, maxCount = 33))
             dataStoreViewModel.saveSelectedDzikirType(DzikirType.CUSTOM)
             selectedType = DzikirType.CUSTOM
             hideKeyboard(requireActivity())

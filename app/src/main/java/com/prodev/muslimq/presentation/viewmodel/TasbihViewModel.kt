@@ -3,6 +3,7 @@ package com.prodev.muslimq.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.data.repository.TasbihRepository
@@ -13,8 +14,13 @@ import com.prodev.muslimq.core.utils.defaultDzikirPagi
 import com.prodev.muslimq.core.utils.defaultDzikirShalat
 import com.prodev.muslimq.core.utils.defaultDzikirSore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.max
 
 @HiltViewModel
 class TasbihViewModel @Inject constructor(
@@ -33,6 +39,9 @@ class TasbihViewModel @Inject constructor(
 
     private var _getDzikirType = MutableLiveData<String>()
     val getDzikirType: LiveData<String> get() = _getDzikirType
+
+    private var _successUpdate = MutableLiveData<Boolean>()
+    val successUpdate : LiveData<Boolean> get() = _successUpdate
 
     fun insertDzikir(tasbihEntity: TasbihEntity) {
         viewModelScope.launch {
@@ -56,12 +65,12 @@ class TasbihViewModel @Inject constructor(
                     }
                     val defaultDzikirSore = defaultDzikirSore()
                     defaultDzikirSore.forEach { dzikirSore ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirSore, dzikirType = DzikirType.SORE))
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirSore, dzikirType = DzikirType.SORE, maxCount = 33))
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                     val defaultDzikirShalat = defaultDzikirShalat()
                     defaultDzikirShalat.forEach { dzikirShalat ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirShalat, dzikirType = DzikirType.SHALAT))
+                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirShalat, dzikirType = DzikirType.SHALAT, maxCount = 33))
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                 }
@@ -88,4 +97,16 @@ class TasbihViewModel @Inject constructor(
             }
         }
     }
+
+//    fun updateMaxCount(id: Int, maxCount: Int){
+//        CoroutineScope(Dispatchers.IO).launch {
+//            tasbihRepository.updateMaxCount(id, maxCount).collect{
+//                if (it > 0){
+//                    _successUpdate.value = true
+//                }
+//            }
+//        }
+//    }
+    fun updateMaxCount(id: Int, maxCount: Int) =  tasbihRepository.updateMaxCount(id, maxCount).asLiveData()
+
 }

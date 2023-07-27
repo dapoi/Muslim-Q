@@ -14,6 +14,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.capitalizeEachWord
+import com.prodev.muslimq.core.utils.defaultDzikir
 import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.vibrateApp
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
@@ -34,6 +35,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     private var totalSize = 0
     private var successDelete = false
     private var selectedType = DzikirType.DEFAULT
+    private var selectedDzikir : TasbihEntity = defaultDzikir()[0]
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,6 +144,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                 dzikirCountVM = 0
                                 tvCountTasbih.text = dzikirCountVM.toString()
                                 dzikirNameVM = dzikir.dzikirName
+                                selectedDzikir = dzikir
                                 changeDetail(dzikir)
                             }
                         }
@@ -182,39 +185,69 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
 
-            getDzikirMaxCount.observe(viewLifecycleOwner) { maxCount ->
-                binding.apply {
-                    if (maxCount < tasbihViewModel.dzikirCountVM) {
-                        tasbihViewModel.apply {
-                            dzikirCountVM = 0
-                            tvCountTasbih.text = dzikirCountVM.toString()
-                        }
-                    }
-                    tvMaxCount.text = maxCount.toString()
-                    tvMaxCount.setOnClickListener {
-                        showInputDialog(false, maxCount)
-                    }
+//            getDzikirMaxCount.observe(viewLifecycleOwner) { maxCount ->
+//                binding.apply {
+//                    if (maxCount < tasbihViewModel.dzikirCountVM) {
+//                        tasbihViewModel.apply {
+//                            dzikirCountVM = 0
+//                            tvCountTasbih.text = dzikirCountVM.toString()
+//                        }
+//                    }
+//                    tvMaxCount.text = maxCount.toString()
+//                    tvMaxCount.setOnClickListener {
+//                        showInputDialog(false, maxCount)
+//                    }
+//
+//                    tvPlus.setOnClickListener {
+//                        saveDzikirMaxCount(maxCount + 1)
+//                    }
+//
+//                    tvMinus.setOnClickListener {
+//                        if (maxCount > 1) {
+//                            saveDzikirMaxCount(maxCount - 1)
+//                        } else {
+//                            return@setOnClickListener
+//                        }
+//                    }
+//                }
+//            }
+        }
 
-                    tvPlus.setOnClickListener {
-                        saveDzikirMaxCount(maxCount + 1)
-                    }
+        binding.apply {
+            if (selectedDzikir.maxCount < tasbihViewModel.dzikirCountVM) {
+                tasbihViewModel.apply {
+                    dzikirCountVM = 0
+                    tvCountTasbih.text = dzikirCountVM.toString()
+                }
+            }
+            tvMaxCount.text = selectedDzikir.maxCount.toString()
+            tvMaxCount.setOnClickListener {
+                showInputDialog(false, selectedDzikir.maxCount, id = selectedDzikir.id!!)
+            }
 
-                    tvMinus.setOnClickListener {
-                        if (maxCount > 1) {
-                            saveDzikirMaxCount(maxCount - 1)
-                        } else {
-                            return@setOnClickListener
-                        }
+            tvPlus.setOnClickListener {
+                tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount + 1).observe(viewLifecycleOwner){
+                    if (it > 0){
+                        dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount + 1)
                     }
                 }
             }
 
-            getCombineHapticAndMaxDzikirCount.observe(viewLifecycleOwner) { response ->
-                interactTasbih(response.first, response.second)
+            tvMinus.setOnClickListener {
+                if (selectedDzikir.maxCount > 1) {
+                    tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount - 1).observe(viewLifecycleOwner){
+                        if (it > 0){
+                            dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount - 1)
+                        }
+                    }
+                } else {
+                    return@setOnClickListener
+                }
             }
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun changeDetail(dzikir: TasbihEntity) {
         binding.apply {
             dzikir.apply {
@@ -223,11 +256,16 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     tvDzikirMeaning?.visibility = View.VISIBLE
                     tvDzikirArab?.text = arabText
                     tvDzikirMeaning?.text = translation
+                    tvMaxCount.text = dzikir.maxCount.toString()
                 } else {
                     tvDzikirArab?.visibility = View.GONE
                     tvDzikirMeaning?.visibility = View.GONE
+                    tvMaxCount.text = dzikir.maxCount.toString()
                 }
             }
+        }
+        dataStoreViewModel.getCombineHapticAndMaxDzikirCount.observe(viewLifecycleOwner) { response ->
+            interactTasbih(response.first, dzikir.maxCount)
         }
 
     }
@@ -315,14 +353,15 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     private fun showInputDialog(
         isDzikir: Boolean,
         maxCount: Int = 0,
-        listOfDzikir: List<TasbihEntity> = listOf()
+        listOfDzikir: List<TasbihEntity> = listOf(),
+        id: Int
     ) {
         InputDialog().showInputDialog(isDzikir, maxCount, listOfDzikir, layoutInflater, requireContext()) { new, oldList ->
-            insertMaxDzikir(new)
+            insertMaxDzikir(new, maxCount, id)
         }
     }
 
-    private fun insertMaxDzikir(maxDzikir: String) {
+    private fun insertMaxDzikir(maxDzikir: String, maxCount: Int, id: Int) {
         val state = maxDzikir.isNotEmpty() && maxDzikir.toInt() > 0
         val messageSnackbar = when {
             maxDzikir.isEmpty() -> "Jumlah dzikir belum diisi"
@@ -338,7 +377,11 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         )
 
         if (state) {
-            dataStoreViewModel.saveDzikirMaxCount(maxDzikir.toInt())
+            tasbihViewModel.updateMaxCount(id, maxCount).observe(viewLifecycleOwner){
+                if (it > 0){
+                    dataStoreViewModel.saveDzikirMaxCount(maxDzikir.toInt())
+                }
+            }
             hideKeyboard(requireActivity())
         }
     }

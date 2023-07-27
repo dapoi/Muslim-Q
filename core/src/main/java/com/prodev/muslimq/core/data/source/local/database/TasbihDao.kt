@@ -21,4 +21,6 @@ interface TasbihDao {
     suspend fun deleteDzikir(dzikirName: String)
     @Query("SELECT * FROM tasbih WHERE dzikirType = :dzikirType")
     fun getAllDzikirByType(dzikirType: DzikirType): Flow<List<TasbihEntity>>
+    @Query("UPDATE tasbih SET maxCount = :maxCount WHERE id = :id")
+    suspend fun updateMaxCount(id: Int, maxCount: Int): Int
 }
