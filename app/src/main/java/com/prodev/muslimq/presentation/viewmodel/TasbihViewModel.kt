@@ -14,13 +14,8 @@ import com.prodev.muslimq.core.utils.defaultDzikirPagi
 import com.prodev.muslimq.core.utils.defaultDzikirShalat
 import com.prodev.muslimq.core.utils.defaultDzikirSore
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.max
 
 @HiltViewModel
 class TasbihViewModel @Inject constructor(
@@ -40,8 +35,8 @@ class TasbihViewModel @Inject constructor(
     private var _getDzikirType = MutableLiveData<String>()
     val getDzikirType: LiveData<String> get() = _getDzikirType
 
-    private var _successUpdate = MutableLiveData<Boolean>()
-    val successUpdate : LiveData<Boolean> get() = _successUpdate
+    private var _successUpdateList = MutableLiveData<Boolean>()
+    val successUpdateList : LiveData<Boolean> get() = _successUpdateList
 
     fun insertDzikir(tasbihEntity: TasbihEntity) {
         viewModelScope.launch {
@@ -65,7 +60,7 @@ class TasbihViewModel @Inject constructor(
                     }
                     val defaultDzikirSore = defaultDzikirSore()
                     defaultDzikirSore.forEach { dzikirSore ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirSore, dzikirType = DzikirType.SORE, maxCount = 33))
+                        tasbihRepository.insertDzikir(dzikirSore)
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                     val defaultDzikirShalat = defaultDzikirShalat()
@@ -109,4 +104,7 @@ class TasbihViewModel @Inject constructor(
 //    }
     fun updateMaxCount(id: Int, maxCount: Int) =  tasbihRepository.updateMaxCount(id, maxCount).asLiveData()
 
+    fun successUpdateList(boolean: Boolean){
+        _successUpdateList.value = boolean
+    }
 }

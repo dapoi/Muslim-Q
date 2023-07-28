@@ -102,4 +102,5 @@
         <item>Dzikir Setelah Shalat</item>
         <item>Custom</item>
     </string-array>
+    <string name="target_count">/ %1$s</string>
 </resources>

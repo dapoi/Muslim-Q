@@ -36,6 +36,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     private var successDelete = false
     private var selectedType = DzikirType.DEFAULT
     private var selectedDzikir : TasbihEntity = defaultDzikir()[0]
+    private var currentDzikirList = mutableListOf<TasbihEntity>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,9 +50,20 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         super.onViewCreated(view, savedInstanceState)
 
         getAllDzikir()
+        selectFirstChip()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun selectFirstChip() {
+        tasbihViewModel.successUpdateList.observe(viewLifecycleOwner){
+            if (currentDzikirList.isNotEmpty() && it == true){
+                val firstChip = binding.cgDzikir.getChildAt(0) as Chip
+                firstChip.isChecked = true
+                println("current ${currentDzikirList[0]}")
+                changeDetail(currentDzikirList[0])
+            }
+        }
+    }
+
     private fun getAllDzikir() {
         val context = requireContext()
         val colorWhiteBaseState = ContextCompat.getColorStateList(context, R.color.white_base)
@@ -79,12 +91,14 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
                 }
-                toggleMaxCount.addOnButtonCheckedListener { group, _, _ ->
-                    group.clearChecked()
-                }
+//                toggleMaxCount.addOnButtonCheckedListener { group, _, _ ->
+//                    group.clearChecked()
+//                }
 
                 tasbihViewModel.apply {
+                    currentDzikirList.clear()
                     listOfDzikir.filter { it.dzikirType == (selectedType) }.forEachIndexed { index, dzikir ->
+                        currentDzikirList.add(dzikir)
                         val chip = Chip(context).apply {
                             text = capitalizeEachWord(dzikir.dzikirName)
                             isCheckable = true
@@ -122,7 +136,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             chip.chipBackgroundColor = colorGreenBaseState
                             chip.setTextColor(colorWhiteBaseState)
                             dzikirNameVM = dzikir.dzikirName
-                            changeDetail(dzikir)
                         }
 
                         chip.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -144,7 +157,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                                 dzikirCountVM = 0
                                 tvCountTasbih.text = dzikirCountVM.toString()
                                 dzikirNameVM = dzikir.dzikirName
-                                selectedDzikir = dzikir
                                 changeDetail(dzikir)
                             }
                         }
@@ -153,6 +165,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             isSingleSelection = true
                             addView(chip)
                         }
+
+                        tasbihViewModel.successUpdateList(true)
                     }
                 }
             }
@@ -220,30 +234,29 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     tvCountTasbih.text = dzikirCountVM.toString()
                 }
             }
-            tvMaxCount.text = selectedDzikir.maxCount.toString()
-            tvMaxCount.setOnClickListener {
-                showInputDialog(false, selectedDzikir.maxCount, id = selectedDzikir.id!!)
-            }
+//            tvMaxCount.setOnClickListener {
+//                showInputDialog(false, selectedDzikir.maxCount, id = selectedDzikir.id!!)
+//            }
 
-            tvPlus.setOnClickListener {
-                tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount + 1).observe(viewLifecycleOwner){
-                    if (it > 0){
-                        dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount + 1)
-                    }
-                }
-            }
-
-            tvMinus.setOnClickListener {
-                if (selectedDzikir.maxCount > 1) {
-                    tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount - 1).observe(viewLifecycleOwner){
-                        if (it > 0){
-                            dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount - 1)
-                        }
-                    }
-                } else {
-                    return@setOnClickListener
-                }
-            }
+//            tvPlus.setOnClickListener {
+//                tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount + 1).observe(viewLifecycleOwner){
+//                    if (it > 0){
+//                        dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount + 1)
+//                    }
+//                }
+//            }
+//
+//            tvMinus.setOnClickListener {
+//                if (selectedDzikir.maxCount > 1) {
+//                    tasbihViewModel.updateMaxCount(selectedDzikir.id!!, selectedDzikir.maxCount - 1).observe(viewLifecycleOwner){
+//                        if (it > 0){
+//                            dataStoreViewModel.saveDzikirMaxCount(selectedDzikir.maxCount - 1)
+//                        }
+//                    }
+//                } else {
+//                    return@setOnClickListener
+//                }
+//            }
         }
     }
 
@@ -256,11 +269,13 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     tvDzikirMeaning?.visibility = View.VISIBLE
                     tvDzikirArab?.text = arabText
                     tvDzikirMeaning?.text = translation
-                    tvMaxCount.text = dzikir.maxCount.toString()
+                    tvMaxCountNew?.text = getString(R.string.target_count, dzikir.maxCount.toString())
+                    selectedDzikir = dzikir
                 } else {
                     tvDzikirArab?.visibility = View.GONE
                     tvDzikirMeaning?.visibility = View.GONE
-                    tvMaxCount.text = dzikir.maxCount.toString()
+                    tvMaxCountNew?.text = getString(R.string.target_count, dzikir.maxCount.toString())
+                    selectedDzikir = dzikir
                 }
             }
         }
