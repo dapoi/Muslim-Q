@@ -549,11 +549,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun getAllShalatData(data: ShalatEntity) {
         // shalat time with zone
-        shubuhWithZone = data.shubuh
-        dzuhurWithZone = data.dzuhur
-        asharWithZone = data.ashar
-        maghribWithZone = data.maghrib
-        isyaWithZone = data.isya
+        shubuhWithZone = data.shubuh.toString()
+        dzuhurWithZone = data.dzuhur.toString()
+        asharWithZone = data.ashar.toString()
+        maghribWithZone = data.maghrib.toString()
+        isyaWithZone = data.isya.toString()
 
         try {  // shalat time without zone
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))

@@ -61,28 +61,18 @@ class ShalatRepositoryImpl @Inject constructor(
             shalat.data.filter {
                 it.date.readable.contains(simpleDateFormat.format(Date()))
             }.map { pray ->
-                val local = pray.timings.Fajr?.let { shubuh ->
-                    pray.timings.Dhuhr?.let { dzuhur ->
-                        pray.timings.Asr?.let { ashar ->
-                            pray.timings.Maghrib?.let { maghrib ->
-                                pray.timings.Isha?.let { isya ->
-                                    ShalatEntity(
-                                        city = city,
-                                        country = country,
-                                        shubuh = shubuh,
-                                        dzuhur = dzuhur,
-                                        ashar = ashar,
-                                        maghrib = maghrib,
-                                        isya = isya
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                val local = ShalatEntity(
+                    city = city,
+                    country = country,
+                    shubuh = pray.timings.Fajr,
+                    dzuhur = pray.timings.Dhuhr,
+                    ashar = pray.timings.Asr,
+                    maghrib = pray.timings.Maghrib,
+                    isya = pray.timings.Isha
+                )
 
                 dao.deleteShalat()
-                local?.let { dao.insertShalat(it) }
+                dao.insertShalat(local)
             }
         }
     )
