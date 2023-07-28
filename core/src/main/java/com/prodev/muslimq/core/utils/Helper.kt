@@ -342,3 +342,25 @@ class SOTWFormatter {
         }
     }
 }
+
+fun getChannelId(adzanCode: Int): String {
+    return when (adzanCode) {
+        1 -> Constant.CHANNEL_ID_SHUBUH
+        2 -> Constant.CHANNEL_ID_DZUHUR
+        3 -> Constant.CHANNEL_ID_ASHAR
+        4 -> Constant.CHANNEL_ID_MAGHRIB
+        5 -> Constant.CHANNEL_ID_ISYA
+        else -> throw IllegalArgumentException("Unknown adzan code")
+    }
+}
+
+fun getChannelName(adzanCode: Int): String {
+    return when (adzanCode) {
+        1 -> Constant.CHANNEL_NAME_SHUBUH
+        2 -> Constant.CHANNEL_NAME_DZUHUR
+        3 -> Constant.CHANNEL_NAME_ASHAR
+        4 -> Constant.CHANNEL_NAME_MAGHRIB
+        5 -> Constant.CHANNEL_NAME_ISYA
+        else -> throw IllegalArgumentException("Unknown adzan code")
+    }
+}

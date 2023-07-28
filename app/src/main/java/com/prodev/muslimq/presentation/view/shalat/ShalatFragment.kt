@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Address
@@ -41,6 +40,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
+import com.prodev.muslimq.core.utils.Constant
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.isOnline
@@ -48,7 +48,6 @@ import com.prodev.muslimq.databinding.DialogGetLocationBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
 import com.prodev.muslimq.notification.AdzanReceiver
-import com.prodev.muslimq.notification.AdzanService
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.view.qibla.QiblaFragment
@@ -194,18 +193,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
         }
 
-        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
-
-        arguments?.getBoolean(AdzanReceiver.FROM_NOTIFICATION, false)?.let { isFromNotif ->
-            if (isFromNotif) {
-                bottomNav.visibility = View.INVISIBLE
-                Intent(requireContext(), AdzanService::class.java).also {
-                    requireContext().stopService(it)
-                }
-            }
-        }
-
-        setViewModel(bottomNav)
+        setViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
     }
@@ -448,7 +436,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun setViewModel(bottomNav: BottomNavigationView) {
+    private fun setViewModel() {
         dataStoreViewModel.apply {
             getAreaData.observe(viewLifecycleOwner) { area ->
                 shalatViewModel.setShalatTime(area)
@@ -458,7 +446,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
             getTapPromptState.observe(viewLifecycleOwner) { state ->
                 if (!state) {
-                    initTapPrompt(bottomNav)
+                    initTapPrompt()
                     dataStoreViewModel.saveTapPromptState(true)
                 }
             }
@@ -467,7 +455,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         initUIResult()
     }
 
-    private fun initTapPrompt(bottomNav: BottomNavigationView) {
+    private fun initTapPrompt() {
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
         (activity as MainActivity).showOverlay(true)
         bottomNav.visibility = View.INVISIBLE
         val materialTapTargetSequence = MaterialTapTargetSequence()
@@ -560,11 +549,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun getAllShalatData(data: ShalatEntity) {
         // shalat time with zone
-        shubuhWithZone = data.shubuh
-        dzuhurWithZone = data.dzuhur
-        asharWithZone = data.ashar
-        maghribWithZone = data.maghrib
-        isyaWithZone = data.isya
+        shubuhWithZone = data.shubuh.toString()
+        dzuhurWithZone = data.dzuhur.toString()
+        asharWithZone = data.ashar.toString()
+        maghribWithZone = data.maghrib.toString()
+        isyaWithZone = data.isya.toString()
 
         try {  // shalat time without zone
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
@@ -601,11 +590,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     ) {
 
         val listAdzanTime = mapOf(
-            "Adzan Shubuh" to shubuh,
-            "Adzan Dzuhur" to dzuhur,
-            "Adzan Ashar" to ashar,
-            "Adzan Maghrib" to maghrib,
-            "Adzan Isya" to isya
+            Constant.KEY_ADZAN_SHUBUH to shubuh,
+            Constant.KEY_ADZAN_DZUHUR to dzuhur,
+            Constant.KEY_ADZAN_ASHAR to ashar,
+            Constant.KEY_ADZAN_MAGHRIB to maghrib,
+            Constant.KEY_ADZAN_ISYA to isya
         )
 
         val adzanNames = listAdzanTime.keys.toList()
@@ -654,7 +643,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             adzanName = adzanName,
                             adzanTime = adzanTime,
                             adzanCode = index + 1,
-                            isShubuh = adzanName == "Adzan Shubuh"
+                            isShubuh = adzanName == Constant.KEY_ADZAN_SHUBUH
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
@@ -762,7 +751,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     adzanName = adzanName,
                     adzanTime = adzanTime,
                     adzanCode = index + 1,
-                    isShubuh = adzanName == "Adzan Shubuh"
+                    isShubuh = adzanName == Constant.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)
                 (activity as MainActivity).customSnackbar(

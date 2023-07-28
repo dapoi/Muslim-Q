@@ -9,11 +9,15 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
-import android.os.Bundle
 import androidx.core.app.NotificationCompat
-import androidx.navigation.NavDeepLinkBuilder
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.preference.DataStorePreference
+import com.prodev.muslimq.core.utils.Constant.ADZAN_CODE
+import com.prodev.muslimq.core.utils.Constant.ADZAN_NAME
+import com.prodev.muslimq.core.utils.Constant.ADZAN_TIME
+import com.prodev.muslimq.core.utils.Constant.IS_SHUBUH
+import com.prodev.muslimq.core.utils.getChannelId
+import com.prodev.muslimq.core.utils.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,23 +39,22 @@ class AdzanReceiver : BroadcastReceiver() {
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
-        adzanName?.let { showNotification(context, it, adzanCode) }
-
-        // Check if the AdzanService is already running
-        if (AdzanService.isRunning()) {
-            return
-        }
+        //   Check if the AdzanService is already running
+        if (AdzanService.isRunning()) return
 
         CoroutineScope(Dispatchers.IO).launch {
             dataStorePreference.getAdzanSoundState.collect { isSoundActive ->
                 if (isSoundActive) {
                     // Start the AdzanService
                     val serviceIntent = Intent(context, AdzanService::class.java).apply {
+                        putExtra(ADZAN_NAME, adzanName)
+                        putExtra(ADZAN_CODE, adzanCode)
                         putExtra(IS_SHUBUH, isShubuh)
                     }
                     context.startService(serviceIntent)
                 } else {
-                    // Play the default notification ringtone
+                    // Show notif with default ringtone
+                    adzanName?.let { context.showDefaultNotification(it, adzanCode) }
                     RingtoneManager.getRingtone(
                         context,
                         RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -77,27 +80,18 @@ class AdzanReceiver : BroadcastReceiver() {
         return SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
     }
 
-    private fun showNotification(context: Context, adzanName: String, adzanCode: Int) {
-        val notificationManager = context.getSystemService(
+    private fun Context.showDefaultNotification(adzanName: String, adzanCode: Int) {
+        val notificationManager = this.getSystemService(
             Context.NOTIFICATION_SERVICE
         ) as NotificationManager
 
-        val notificationIntent = NavDeepLinkBuilder(context)
-            .setGraph(R.navigation.bottom_nav)
-            .setDestination(R.id.shalatFragment)
-            .setArguments(Bundle().apply {
-                putBoolean(FROM_NOTIFICATION, true)
-            })
-            .createPendingIntent()
-
-        val notification = NotificationCompat.Builder(context, getChannelId(adzanCode))
+        val notification = NotificationCompat.Builder(this, getChannelId(adzanCode))
             .setSmallIcon(R.drawable.ic_notif_circle)
-            .setContentIntent(notificationIntent)
             .setContentTitle(adzanName)
+            .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
             .setSound(null)
             .setWhen(System.currentTimeMillis())
-            .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -115,28 +109,6 @@ class AdzanReceiver : BroadcastReceiver() {
         }
 
         notificationManager.notify(adzanCode, notification.build())
-    }
-
-    private fun getChannelId(adzanCode: Int): String {
-        return when (adzanCode) {
-            1 -> CHANNEL_ID_SHUBUH
-            2 -> CHANNEL_ID_DZUHUR
-            3 -> CHANNEL_ID_ASHAR
-            4 -> CHANNEL_ID_MAGHRIB
-            5 -> CHANNEL_ID_ISYA
-            else -> throw IllegalArgumentException("Unknown adzan code")
-        }
-    }
-
-    private fun getChannelName(adzanCode: Int): String {
-        return when (adzanCode) {
-            1 -> "Adzan Shubuh Channel"
-            2 -> "Adzan Dzuhur Channel"
-            3 -> "Adzan Ashar Channel"
-            4 -> "Adzan Maghrib Channel"
-            5 -> "Adzan Isya Channel"
-            else -> throw IllegalArgumentException("Unknown adzan code")
-        }
     }
 
     fun setAdzanReminder(
@@ -196,18 +168,5 @@ class AdzanReceiver : BroadcastReceiver() {
         )
 
         alarmManager.cancel(pendingIntent)
-    }
-
-    companion object {
-        const val ADZAN_CODE = "adzan_code"
-        const val ADZAN_NAME = "adzan_name"
-        const val ADZAN_TIME = "adzan_time"
-        const val IS_SHUBUH = "is_shubuh"
-        const val FROM_NOTIFICATION = "from_notification"
-        private const val CHANNEL_ID_SHUBUH = "channel_shubuh"
-        private const val CHANNEL_ID_DZUHUR = "channel_dzuhur"
-        private const val CHANNEL_ID_ASHAR = "channel_ashar"
-        private const val CHANNEL_ID_MAGHRIB = "channel_maghrib"
-        private const val CHANNEL_ID_ISYA = "channel_isya"
     }
 }
