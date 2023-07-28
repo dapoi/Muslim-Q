@@ -65,7 +65,7 @@ class TasbihViewModel @Inject constructor(
                     }
                     val defaultDzikirShalat = defaultDzikirShalat()
                     defaultDzikirShalat.forEach { dzikirShalat ->
-                        tasbihRepository.insertDzikir(TasbihEntity(dzikirName = dzikirShalat, dzikirType = DzikirType.SHALAT, maxCount = 33))
+                        tasbihRepository.insertDzikir(dzikirShalat)
                         dataStorePreference.saveInputDzikirOnceState(true)
                     }
                 }
