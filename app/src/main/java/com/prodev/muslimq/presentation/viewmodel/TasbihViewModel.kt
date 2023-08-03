@@ -18,7 +18,6 @@ class TasbihViewModel @Inject constructor(
     private val dataStorePreference: DataStorePreference
 ) : ViewModel() {
 
-    var currentIndexVM = 0
     var totalSizeVM = 0
     var selectedItemIndexVM = 0
     var dzikirCountVM = 0

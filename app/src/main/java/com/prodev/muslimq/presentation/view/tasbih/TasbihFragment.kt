@@ -1,6 +1,8 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
 import android.app.AlertDialog
+import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -17,7 +19,7 @@ import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.vibrateApp
-import com.prodev.muslimq.databinding.DialogSearchAyahBinding
+import com.prodev.muslimq.databinding.DialogSearchBinding
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -55,7 +57,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         getAllDzikir()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun getAllDzikir() {
         val context = requireContext()
         val colorWhiteBaseState = ContextCompat.getColorStateList(context, R.color.white_base)
@@ -70,104 +71,151 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             totalSize = listOfDzikir.size
             binding.apply {
                 cgDzikir.removeAllViews()
+
                 chipAdd.setOnClickListener { showInputDialog(true, listOfDzikir = listOfDzikir) }
+
                 ivSettings.setOnClickListener {
                     findNavController().navigate(R.id.action_tasbihFragment_to_dzikirFragment)
                     tasbihViewModel.totalSizeVM = totalSize
                 }
+
                 toggleMaxCount.addOnButtonCheckedListener { group, _, _ ->
                     group.clearChecked()
                 }
 
-                tasbihViewModel.apply {
-                    listOfDzikir.forEachIndexed { index, dzikir ->
-                        val chip = Chip(context).apply {
-                            text = capitalizeEachWord(dzikir.dzikirName)
-                            isCheckable = true
-                            chipCornerRadius = cornerRadius
-                            isCheckedIconVisible = false
-                            chipBackgroundColor = colorWhiteBaseState
-                            chipStrokeColor = colorGreenBaseState
-                            chipStrokeWidth = strokeWidth
-                        }
-
-                        if (totalSizeVM != totalSize) {
-                            if (successDelete) {
-                                chip.isChecked = index == 0
-                                currentIndexVM = index
-                                selectedItemIndexVM = index
-                                dzikirCountVM = 0
-
-                                svChip.post {
-                                    // follow item index
-                                    svChip.smoothScrollTo(
-                                        cgDzikir.getChildAt(index).left,
-                                        cgDzikir.getChildAt(index).top
-                                    )
-                                }
-
-                                successDelete = false
-                            } else {
-                                chip.isChecked = currentIndexVM == index
-                                if (successAdd) {
-                                    svChip.post {
-                                        // follow item index
-                                        svChip.smoothScrollTo(
-                                            cgDzikir.getChildAt(currentIndexVM).left,
-                                            cgDzikir.getChildAt(currentIndexVM).top
-                                        )
-                                    }
-                                    dzikirCountVM = 0
-                                    tvCountTasbih.text = dzikirCountVM.toString()
-
-                                    successAdd = false
-                                }
-                            }
-                        } else {
-                            chip.isChecked = currentIndexVM == index
-                        }
-
-                        if (chip.isChecked) {
-                            chip.chipBackgroundColor = colorGreenBaseState
-                            chip.setTextColor(colorWhiteBaseState)
-                            dzikirNameVM = dzikir.dzikirName
-                            tvDzikir.text = capitalizeEachWord(dzikirNameVM)
-                        }
-
-                        chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                            if (isChecked) {
-                                for (i in 0 until cgDzikir.childCount) {
-                                    val checkedChip = cgDzikir.getChildAt(i) as? Chip
-                                    if (checkedChip?.id != buttonView.id) {
-                                        checkedChip?.isChecked = false
-                                        checkedChip?.chipBackgroundColor = colorWhiteBaseState
-                                        checkedChip?.setTextColor(colorBlack)
-                                    }
-                                }
-
-                                chip.chipBackgroundColor = colorGreenBaseState
-                                chip.setTextColor(colorWhiteBaseState)
-
-                                selectedItemIndexVM = index
-                                currentIndexVM = index
-                                dzikirCountVM = 0
-                                tvCountTasbih.text = dzikirCountVM.toString()
-                                dzikirNameVM = dzikir.dzikirName
-                                tvDzikir.text = capitalizeEachWord(dzikirNameVM)
-                            }
-                        }
-
-                        cgDzikir.apply {
-                            isSingleSelection = true
-                            addView(chip)
-                        }
+                listOfDzikir.forEachIndexed { index, dzikir ->
+                    val chip = Chip(context).apply {
+                        text = capitalizeEachWord(dzikir.dzikirName)
+                        isCheckable = true
+                        chipCornerRadius = cornerRadius
+                        isCheckedIconVisible = false
+                        chipBackgroundColor = colorWhiteBaseState
+                        chipStrokeColor = colorGreenBaseState
+                        chipStrokeWidth = strokeWidth
                     }
+
+                    cgDzikir.apply {
+                        isSingleSelection = true
+                        addView(chip)
+                    }
+
+                    checkStateChipGroup(
+                        chip,
+                        index,
+                        dzikir,
+                        colorWhiteBaseState,
+                        colorGreenBaseState
+                    )
+
+                    chipGroupClicked(
+                        index,
+                        dzikir,
+                        chip,
+                        colorWhiteBaseState,
+                        colorBlack,
+                        colorGreenBaseState
+                    )
                 }
             }
         }
 
+        initDataStoreViewModel(colorGreenBase, colorLightGray, context)
+    }
+
+    private fun checkStateChipGroup(
+        chip: Chip,
+        index: Int,
+        dzikir: TasbihEntity,
+        colorWhiteBaseState: ColorStateList?,
+        colorGreenBaseState: ColorStateList?
+    ) {
+        if (tasbihViewModel.totalSizeVM != totalSize) {
+            if (successDelete) {
+                chip.isChecked = index == 0
+                tasbihViewModel.apply {
+                    selectedItemIndexVM = index
+                    dzikirCountVM = 0
+                }
+
+                binding.svChip.apply {
+                    post {
+                        smoothScrollTo(
+                            binding.cgDzikir.getChildAt(index).left,
+                            binding.cgDzikir.getChildAt(index).top
+                        )
+                    }
+                }
+
+                successDelete = false
+            } else {
+                tasbihViewModel.apply {
+                    chip.isChecked = selectedItemIndexVM == index
+                    if (successAdd) {
+                        binding.svChip.apply {
+                            post {
+                                smoothScrollTo(
+                                    binding.cgDzikir.getChildAt(selectedItemIndexVM).left,
+                                    binding.cgDzikir.getChildAt(selectedItemIndexVM).top
+                                )
+                            }
+                        }
+                        dzikirCountVM = 0
+                        binding.tvCountTasbih.text = dzikirCountVM.toString()
+
+                        successAdd = false
+                    }
+                }
+            }
+        } else {
+            chip.isChecked = tasbihViewModel.selectedItemIndexVM == index
+        }
+
+        if (chip.isChecked) {
+            chip.chipBackgroundColor = colorGreenBaseState
+            chip.setTextColor(colorWhiteBaseState)
+            tasbihViewModel.dzikirNameVM = dzikir.dzikirName
+            binding.tvDzikir.text = capitalizeEachWord(tasbihViewModel.dzikirNameVM)
+        }
+    }
+
+    private fun chipGroupClicked(
+        index: Int,
+        dzikir: TasbihEntity,
+        chip: Chip,
+        colorWhiteBaseState: ColorStateList?,
+        colorBlack: Int,
+        colorGreenBaseState: ColorStateList?
+    ) {
+        chip.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                for (i in 0 until binding.cgDzikir.childCount) {
+                    val checkedChip = binding.cgDzikir.getChildAt(i) as? Chip
+                    if (checkedChip?.id != buttonView.id) {
+                        checkedChip?.isChecked = false
+                        checkedChip?.chipBackgroundColor = colorWhiteBaseState
+                        checkedChip?.setTextColor(colorBlack)
+                    }
+                }
+
+                chip.chipBackgroundColor = colorGreenBaseState
+                chip.setTextColor(colorWhiteBaseState)
+
+                tasbihViewModel.apply {
+                    selectedItemIndexVM = index
+                    dzikirCountVM = 0
+                    dzikirNameVM = dzikir.dzikirName
+                    binding.tvCountTasbih.text = tasbihViewModel.dzikirCountVM.toString()
+                    binding.tvDzikir.text = capitalizeEachWord(dzikirNameVM)
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun initDataStoreViewModel(colorGreenBase: Int, colorLightGray: Int, context: Context) {
         dataStoreViewModel.apply {
 
+            // get haptic feedback state
             getHapticFeedbackState.observe(viewLifecycleOwner) { hapticActive ->
                 binding.apply {
                     if (hapticActive) {
@@ -193,6 +241,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
 
+            // get dzikir count
             getDzikirMaxCount.observe(viewLifecycleOwner) { maxCount ->
                 binding.apply {
                     if (maxCount < tasbihViewModel.dzikirCountVM) {
@@ -220,6 +269,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
 
+            // get combine haptic and max dzikir count
             getCombineHapticAndMaxDzikirCount.observe(viewLifecycleOwner) { response ->
                 interactTasbih(response.first, response.second)
             }
@@ -260,11 +310,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             currentChip.isChecked = false
                             targetChip.isChecked = true
                             selectedItemIndexVM = targetIndex
-                            currentIndexVM = targetIndex
                         }
 
                         svChip.post {
-                            // follow item index
                             svChip.smoothScrollTo(
                                 cgDzikir.getChildAt(selectedItemIndexVM).left,
                                 cgDzikir.getChildAt(selectedItemIndexVM).top
@@ -311,8 +359,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         maxCount: Int = 0,
         listOfDzikir: List<TasbihEntity> = listOf()
     ) {
-        val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
-        val etInput = dialogLayout.etAyah
+        val dialogLayout = DialogSearchBinding.inflate(layoutInflater)
+        val etInput = dialogLayout.etSearch
         val btnSave = dialogLayout.btnSearch
         etInput.inputType = if (isDzikir) {
             InputType.TYPE_CLASS_TEXT
@@ -369,7 +417,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     val cgSize = cgDzikir.childCount - 1
                     viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                         selectedItemIndexVM = cgSize + 1
-                        currentIndexVM = cgSize + 1
                         dzikirCountVM = 0
                     }
                 }
