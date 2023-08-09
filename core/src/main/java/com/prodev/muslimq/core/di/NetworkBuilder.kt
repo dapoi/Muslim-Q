@@ -89,7 +89,7 @@ object NetworkBuilder {
         moshi: Moshi
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.aladhan.com/")
+            .baseUrl("http://api.aladhan.com/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()

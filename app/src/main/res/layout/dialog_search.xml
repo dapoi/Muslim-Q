@@ -7,7 +7,7 @@
     android:padding="16dp">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_ayah"
+        android:id="@+id/til_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:boxStrokeWidth="0dp"
@@ -19,7 +19,7 @@
         app:startIconDrawable="@drawable/ic_search">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_ayah"
+            android:id="@+id/et_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white_second"
@@ -43,6 +43,6 @@
         android:textColor="@color/white_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_ayah" />
+        app:layout_constraintTop_toBottomOf="@+id/til_search" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

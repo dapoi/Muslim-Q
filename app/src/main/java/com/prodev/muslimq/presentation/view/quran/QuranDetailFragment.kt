@@ -35,7 +35,7 @@ import com.prodev.muslimq.databinding.DialogFontSettingRadioBinding
 import com.prodev.muslimq.databinding.DialogInfoSurahBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.DialogPlayerActionBinding
-import com.prodev.muslimq.databinding.DialogSearchAyahBinding
+import com.prodev.muslimq.databinding.DialogSearchBinding
 import com.prodev.muslimq.databinding.DialogTaggingAyahBinding
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.MainActivity
@@ -588,8 +588,8 @@ class QuranDetailFragment :
     }
 
     private fun showSearchDialog() {
-        val dialogLayout = DialogSearchAyahBinding.inflate(layoutInflater)
-        val etSearch = dialogLayout.etAyah
+        val dialogLayout = DialogSearchBinding.inflate(layoutInflater)
+        val etSearch = dialogLayout.etSearch
         val btnSearch = dialogLayout.btnSearch
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
