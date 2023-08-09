@@ -84,6 +84,7 @@
     <string name="see_qibla">Lihat Kiblat ></string>
     <string name="tasbih">Tasbih</string>
     <string name="list_dzikir">Dzikir</string>
+    <string name="list_dzikir_type">Pilih Jenis Dzikir</string>
     <string name="plus">+</string>
     <string name="input_dzikir">Masukkan Dzikir</string>
     <string name="input_max_dzikir">Masukkan Batas Maksimal Dzikir</string>
@@ -93,4 +94,13 @@
     <string name="sound_notif"><![CDATA[Adzan & Notifikasi]]></string>
     <string name="only_notif">Hanya Notifikasi</string>
     <string name="setting_notif">Pengaturan Notifikasi</string>
+    <string name="custom_dzikir_empty">Tidak ada dzikir custom yang disimpan</string>
+    <string-array name="tipe_dzikir">
+        <item>Umum</item>
+        <item>Dzikir Pagi</item>
+        <item>Dzikir Petang</item>
+        <item>Dzikir Setelah Shalat</item>
+        <item>Custom</item>
+    </string-array>
+    <string name="target_count">/ %1$s</string>
 </resources>

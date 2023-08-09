@@ -28,12 +28,77 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:fontFamily="@font/poppins_bold"
-            android:includeFontPadding="false"
-            android:text="@string/list_dzikir"
+            android:paddingTop="1dp"
+            android:text="@string/list_dzikir_type"
             android:textColor="@color/green_base"
             android:textSize="18sp" />
 
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_add"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:checkable="false"
+            android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
+            android:text="@string/plus"
+            android:textColor="@color/white_base"
+            app:chipBackgroundColor="@color/green_base"
+            app:chipCornerRadius="8dp"
+            app:chipStrokeColor="@color/green_base"
+            app:chipStrokeWidth="1dp"
+            app:ensureMinTouchTargetSize="true"
+            android:layout_marginHorizontal="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_collapseMode="parallax"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="12dp"
+            app:cardBackgroundColor="@color/white_second"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="8dp"
+            app:contentPadding="8dp">
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinner_dzikir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/progress_header"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <include layout="@layout/item_header_quran" />
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_dzikir"
@@ -46,8 +111,44 @@
         android:paddingBottom="70dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/cl_spinner"
         tools:layout_editor_absoluteX="10dp"
         tools:listitem="@layout/item_list_dzikir" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_negative_case"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_empty"
+            android:layout_width="210dp"
+            android:layout_height="210dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="empty.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1" />
+
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/custom_dzikir_empty"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="16dp"
+    android:clipToPadding="false"
     tools:context=".presentation.view.tasbih.TasbihFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -28,7 +29,7 @@
     </com.google.android.material.appbar.MaterialToolbar>
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip_add"
+        android:id="@+id/chip_type"
         style="@style/Widget.MaterialComponents.Chip.Action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,9 +37,9 @@
         android:checkable="false"
         android:fontFamily="@font/poppins_bold"
         android:includeFontPadding="false"
-        android:text="@string/plus"
-        android:textColor="@color/black"
-        app:chipBackgroundColor="@color/white_base"
+        tools:text="Pagi"
+        android:textColor="@color/white_base"
+        app:chipBackgroundColor="@color/green_base"
         app:chipCornerRadius="8dp"
         app:chipStrokeColor="@color/green_base"
         app:chipStrokeWidth="1dp"
@@ -52,9 +53,9 @@
         android:layout_height="0dp"
         android:layout_marginVertical="4dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/chip_add"
-        app:layout_constraintStart_toEndOf="@id/chip_add"
-        app:layout_constraintTop_toTopOf="@id/chip_add" />
+        app:layout_constraintBottom_toBottomOf="@id/chip_type"
+        app:layout_constraintStart_toEndOf="@id/chip_type"
+        app:layout_constraintTop_toTopOf="@id/chip_type" />
 
     <HorizontalScrollView
         android:id="@+id/sv_chip"
@@ -62,10 +63,10 @@
         android:layout_height="wrap_content"
         android:overScrollMode="never"
         android:scrollbars="none"
-        app:layout_constraintBottom_toBottomOf="@id/chip_add"
         app:layout_constraintEnd_toStartOf="@id/divider2"
         app:layout_constraintStart_toEndOf="@id/divider"
-        app:layout_constraintTop_toTopOf="@id/chip_add">
+        app:layout_constraintTop_toTopOf="@id/chip_type"
+        app:layout_constraintBottom_toBottomOf="@id/chip_type">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/cg_dzikir"
@@ -82,9 +83,9 @@
         android:layout_width="1.5dp"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/divider"
+        app:layout_constraintBottom_toBottomOf="@+id/chip_type"
         app:layout_constraintEnd_toStartOf="@+id/iv_settings"
-        app:layout_constraintTop_toTopOf="@+id/divider" />
+        app:layout_constraintTop_toTopOf="@+id/chip_type" />
 
     <ImageView
         android:id="@+id/iv_settings"
@@ -92,49 +93,109 @@
         android:layout_height="35dp"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_settings"
-        app:layout_constraintBottom_toBottomOf="@+id/divider"
+        app:layout_constraintBottom_toBottomOf="@+id/chip_type"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/divider"
+        app:layout_constraintTop_toTopOf="@+id/chip_type"
         app:tint="@color/green_base" />
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="32dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider">
+        app:layout_constraintTop_toBottomOf="@id/divider2">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
+            android:id="@+id/sv_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/cl_counter"
+            android:layout_alignParentTop="true"
+            android:paddingTop="32dp"
+            android:scrollbars="none">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tv_count_tasbih"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_bold"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/green_base"
+                        android:textSize="48sp"
+                        tools:text="0" />
+                    <TextView
+                        android:id="@+id/tv_max_count_new"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginBottom="4dp"
+                        tools:text="/ 33" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <TextView
+                    android:id="@+id/tv_dzikir_arab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/amiri_bold"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:padding="4dp"
+                    android:lineSpacingMultiplier="1.2"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_dzikir"
+                    tools:text="أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ\nالرَّجِيمِ" />
+
+                <TextView
+                    android:id="@+id/tv_dzikir_meaning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:layout_gravity="start"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_ayah_latin"
+                    app:layout_constraintStart_toStartOf="@+id/tv_ayah_latin"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_ayah_latin"
+                    tools:text="Segala puji bagi Allah, Tuhan seluruh alam" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_counter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingTop="20dp"
+            android:clipToPadding="false"
             android:paddingBottom="70dp">
-
-            <TextView
-                android:id="@+id/tv_count_tasbih"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_bold"
-                android:includeFontPadding="false"
-                android:textColor="@color/black"
-                android:textSize="48sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="33" />
-
-            <TextView
-                android:id="@+id/tv_dzikir"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:includeFontPadding="false"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_count_tasbih"
-                tools:text="Subhanallah" />
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="-10dp"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_tasbih"
@@ -145,81 +206,81 @@
                 android:rotationY="180"
                 android:src="@drawable/ic_touch"
                 app:fabCustomSize="200dp"
-                app:layout_constraintEnd_toEndOf="@+id/tv_dzikir"
-                app:layout_constraintStart_toStartOf="@+id/tv_dzikir"
-                app:layout_constraintTop_toBottomOf="@id/tv_dzikir"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:maxImageSize="110dp"
                 app:tint="@color/white_header" />
 
-            <TextView
-                android:id="@+id/tv_max_count_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:includeFontPadding="false"
-                android:text="@string/max_count_dzikir"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@id/fab_tasbih"
-                app:layout_constraintStart_toStartOf="@id/fab_tasbih"
-                app:layout_constraintTop_toBottomOf="@id/fab_tasbih" />
+<!--            <TextView-->
+<!--                android:id="@+id/tv_max_count_title"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="32dp"-->
+<!--                android:fontFamily="@font/poppins_semibold"-->
+<!--                android:includeFontPadding="false"-->
+<!--                android:text="@string/max_count_dzikir"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textSize="16sp"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/fab_tasbih"-->
+<!--                app:layout_constraintStart_toStartOf="@id/fab_tasbih"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/fab_tasbih" />-->
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/toggle_max_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                app:layout_constraintEnd_toEndOf="@id/tv_max_count_title"
-                app:layout_constraintStart_toStartOf="@id/tv_max_count_title"
-                app:layout_constraintTop_toBottomOf="@id/tv_max_count_title">
+<!--            <com.google.android.material.button.MaterialButtonToggleGroup-->
+<!--                android:id="@+id/toggle_max_count"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="14dp"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/tv_max_count_title"-->
+<!--                app:layout_constraintStart_toStartOf="@id/tv_max_count_title"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tv_max_count_title">-->
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/tv_minus"
-                    style="@style/Custom.Button.Toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:includeFontPadding="false"
-                    android:padding="0dp"
-                    android:text="@string/minus"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    app:layout_constraintEnd_toStartOf="@id/tv_max_count"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/green_transparent" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/tv_minus"-->
+<!--                    style="@style/Custom.Button.Toggle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    android:includeFontPadding="false"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:text="@string/minus"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="24sp"-->
+<!--                    app:layout_constraintEnd_toStartOf="@id/tv_max_count"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:rippleColor="@color/green_transparent" />-->
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/tv_max_count"
-                    style="@style/Custom.Button.Toggle"
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:includeFontPadding="false"
-                    android:padding="0dp"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/green_transparent"
-                    tools:text="33" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/tv_max_count"-->
+<!--                    style="@style/Custom.Button.Toggle"-->
+<!--                    android:layout_width="100dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    android:includeFontPadding="false"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="24sp"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:rippleColor="@color/green_transparent"-->
+<!--                    tools:text="33" />-->
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/tv_plus"
-                    style="@style/Custom.Button.Toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins"
-                    android:includeFontPadding="false"
-                    android:padding="0dp"
-                    android:text="@string/plus"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    app:layout_constraintStart_toEndOf="@id/tv_max_count"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:rippleColor="@color/green_transparent" />
+<!--                <com.google.android.material.button.MaterialButton-->
+<!--                    android:id="@+id/tv_plus"-->
+<!--                    style="@style/Custom.Button.Toggle"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    android:includeFontPadding="false"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:text="@string/plus"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="24sp"-->
+<!--                    app:layout_constraintStart_toEndOf="@id/tv_max_count"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:rippleColor="@color/green_transparent" />-->
 
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+<!--            </com.google.android.material.button.MaterialButtonToggleGroup>-->
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_repeat"
@@ -229,9 +290,9 @@
                 android:background="@color/green_base"
                 android:src="@drawable/ic_repeat"
                 app:contentPadding="5dp"
-                app:layout_constraintBottom_toBottomOf="@id/toggle_max_count"
+                app:layout_constraintBottom_toBottomOf="@id/fab_tasbih"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_max_count_title"
+                app:layout_constraintTop_toTopOf="@id/fab_tasbih"
                 app:shapeAppearanceOverlay="@style/Rounded.Image" />
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -242,13 +303,13 @@
                 android:background="@color/green_base"
                 android:src="@drawable/ic_vibration"
                 app:contentPadding="5dp"
-                app:layout_constraintBottom_toBottomOf="@id/toggle_max_count"
+                app:layout_constraintBottom_toBottomOf="@id/fab_tasbih"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_max_count_title"
+                app:layout_constraintTop_toTopOf="@id/fab_tasbih"
                 app:shapeAppearanceOverlay="@style/Rounded.Image" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
 
-    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

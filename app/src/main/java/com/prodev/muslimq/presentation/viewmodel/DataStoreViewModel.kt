@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
+import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +81,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveSelectedDzikirType(dzikirType: DzikirType){
+        viewModelScope.launch(Dispatchers.IO){
+            dataStorePref.saveSelectedDzikirType(dzikirType)
+        }
+    }
+
     fun saveAdzanSoundState(isAdzanSound: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStorePref.saveAdzanSoundState(isAdzanSound)
@@ -108,6 +115,7 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getHapticFeedbackState.asLiveData().distinctUntilChanged()
 
     val getDzikirMaxCount = dataStorePref.getDzikirMaxCount.asLiveData()
+    val getSelectedDzikirType = dataStorePref.getSelectedDzikirType.asLiveData()
 
     @ExperimentalCoroutinesApi
     val getCombineHapticAndMaxDzikirCount =
