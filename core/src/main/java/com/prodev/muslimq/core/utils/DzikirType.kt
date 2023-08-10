@@ -5,5 +5,5 @@ enum class DzikirType(val value: String) {
     PAGI("pagi"),
     SORE("sore"),
     SHALAT("shalat"),
-    CUSTOM("custom")
+    CUSTOM("kustomisasi")
 }

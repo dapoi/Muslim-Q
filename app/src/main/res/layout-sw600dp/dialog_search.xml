@@ -26,7 +26,34 @@
             android:hint="@string/input_number"
             android:imeOptions="actionSearch"
             android:inputType="number"
-            android:paddingVertical="5dp"
+            android:paddingVertical="22dp"
+            android:textSize="22sp"
+            tools:ignore="Autofill,TextFields" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_search_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
+        app:endIconDrawable="@drawable/ic_close"
+        app:endIconMode="clear_text"
+        app:hintEnabled="false"
+        app:layout_constraintTop_toBottomOf="@id/til_search">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_search_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_second"
+            android:hint="@string/input_number"
+            android:imeOptions="actionSearch"
+            android:inputType="number"
+            android:paddingVertical="22dp"
             android:textSize="22sp"
             tools:ignore="Autofill,TextFields" />
 
@@ -36,7 +63,7 @@
         android:id="@+id/btn_search"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/bg_round_green"
         android:fontFamily="@font/poppins_semibold"
         android:includeFontPadding="false"
@@ -45,6 +72,6 @@
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/til_search" />
+        app:layout_constraintTop_toBottomOf="@+id/til_search_2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

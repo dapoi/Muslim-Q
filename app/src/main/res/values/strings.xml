@@ -100,7 +100,7 @@
         <item>Dzikir Pagi</item>
         <item>Dzikir Petang</item>
         <item>Dzikir Setelah Shalat</item>
-        <item>Custom</item>
+        <item>Kustomisasi</item>
     </string-array>
     <string name="target_count">/ %1$s</string>
 </resources>

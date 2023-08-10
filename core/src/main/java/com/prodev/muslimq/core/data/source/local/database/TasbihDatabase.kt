@@ -6,7 +6,7 @@ import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 
 @Database(
     entities = [TasbihEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class TasbihDatabase : RoomDatabase() {

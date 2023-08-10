@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
@@ -19,26 +21,34 @@ import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding::inflate) {
+
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val tasbihViewModel: TasbihViewModel by viewModels()
+    private var selectedType: DzikirType? = DzikirType.DEFAULT
     private lateinit var dzikirAdapter: DzikirAdapter
-    private lateinit var selectedType: DzikirType
     private lateinit var listOfDzikir: List<TasbihEntity>
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.ivBack.setOnClickListener { findNavController().navigateUp() }
-        binding.chipAdd?.setOnClickListener {
-            InputDialog().showInputDialog(true, 0, listOfDzikir, layoutInflater, requireContext()){new, oldList->
-                if (oldList != null){
-                    insertDzikir(new, oldList)
+        binding.ivBack.setOnClickListener { findNavController().popBackStack() }
+        binding.chipAdd.setOnClickListener {
+            InputDialog().showInputDialog(
+                listOfDzikir,
+                layoutInflater,
+                requireContext()
+            ) { dzikirName, dzikirCount, oldList ->
+                if (oldList != null) {
+                    insertDzikir(dzikirName, dzikirCount, oldList)
                 }
             }
         }
+
         initAdapter()
         initDzikir()
         initSpinner()
@@ -48,32 +58,46 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
         ArrayAdapter.createFromResource(
             requireContext(),
             R.array.tipe_dzikir,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spinnerDzikir?.adapter = adapter
+            R.layout.item_spinner
+        ).also { spinnerAdapter ->
+            spinnerAdapter.setDropDownViewResource(R.layout.item_spinner)
+            binding.spinnerDzikir.adapter = spinnerAdapter
         }
-        dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner){
-            binding.spinnerDzikir?.setSelection(it)
-            binding.spinnerDzikir?.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    when(position){
-                        0 -> selectedType = DzikirType.DEFAULT
-                        1 -> selectedType = DzikirType.PAGI
-                        2 -> selectedType = DzikirType.SORE
-                        3 -> selectedType = DzikirType.SHALAT
-                        4 -> selectedType = DzikirType.CUSTOM
+
+        dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner) {
+            binding.spinnerDzikir.apply {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            when (position) {
+                                0 -> selectedType = DzikirType.DEFAULT
+                                1 -> selectedType = DzikirType.PAGI
+                                2 -> selectedType = DzikirType.SORE
+                                3 -> selectedType = DzikirType.SHALAT
+                                4 -> selectedType = DzikirType.CUSTOM
+                            }
+                            setFragmentResult(REQUEST_DELETE_OR_UPDATE, Bundle().apply {
+                                putBoolean(BUNDLE_DELETE_OR_UPDATE, true)
+                            })
+                            tasbihViewModel.getDzikirByType(selectedType!!)
+                            tasbihViewModel.selectedItemIndexVM = 0
+                            dataStoreViewModel.saveSelectedDzikirType(selectedType!!)
+
+                            binding.chipAdd.isVisible = selectedType == DzikirType.CUSTOM
+                        }
+
+                        override fun onNothingSelected(aprent: AdapterView<*>?) {
+
+                        }
                     }
-                    tasbihViewModel.getDzikirByType(selectedType)
-                    tasbihViewModel.currentIndexVM = 0
-                    dataStoreViewModel.saveSelectedDzikirType(selectedType)
-                    initDzikir()
+
+                    setSelection(it)
                 }
-
-                override fun onNothingSelected(aprent: AdapterView<*>?) {
-
-                }
-
             }
         }
     }
@@ -83,8 +107,8 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
             deleteListener = {
                 tasbihViewModel.deleteDzikir(it.dzikirName)
 
-                setFragmentResult(REQUEST_DELETE, Bundle().apply {
-                    putBoolean(BUNDLE_DELETE, true)
+                setFragmentResult(REQUEST_DELETE_OR_UPDATE, Bundle().apply {
+                    putBoolean(BUNDLE_DELETE_OR_UPDATE, true)
                 })
 
                 (activity as MainActivity).customSnackbar(
@@ -94,7 +118,6 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
                     message = "Dzikir berhasil dihapus"
                 )
                 tasbihViewModel.getDzikirByType(DzikirType.CUSTOM)
-                initDzikir()
             }
         )
 
@@ -103,26 +126,28 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
 
     private fun initDzikir() {
         tasbihViewModel.getDzikirList.observe(viewLifecycleOwner) { response ->
+            val filteredList = response.filter { it.dzikirType == selectedType }
+            dzikirAdapter.submitList(filteredList)
+            listOfDzikir = filteredList
+
             binding.apply {
-                if (response.isNullOrEmpty()){
-                    clNegativeCase?.visibility = View.VISIBLE
-                    rvDzikir.visibility = View.GONE
-                } else {
-                    clNegativeCase?.visibility = View.GONE
-                    rvDzikir.visibility = View.VISIBLE
-                    dzikirAdapter.submitList(response)
-                    listOfDzikir = response
-                }
+                clNegativeCase.isVisible = filteredList.isEmpty()
+                rvDzikir.isVisible = filteredList.isNotEmpty()
             }
         }
     }
 
-    private fun insertDzikir(dzikir: String, listOfDzikir: List<TasbihEntity>) {
-        val state = dzikir.isNotEmpty() && !listOfDzikir.contains(
-            TasbihEntity(capitalizeEachWord(dzikir), maxCount = 33)
-        )
+    private fun insertDzikir(
+        dzikir: String,
+        dzikirCount: String,
+        listOfDzikir: List<TasbihEntity>
+    ) {
+        val state = dzikir.isNotEmpty() && dzikirCount.isNotEmpty() && !listOfDzikir.any {
+            it.dzikirName.equals(dzikir, true)
+        }
         val messageSnackbar = when {
             dzikir.isEmpty() -> "Dzikir belum diisi"
+            dzikirCount.isEmpty() || dzikirCount == "0" -> "Jumlah dzikir tidak boleh kurang dari 1"
             !state -> "Dzikir sudah ada"
             else -> "Dzikir berhasil ditambahkan"
         }
@@ -135,7 +160,13 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
         )
 
         if (state) {
-            tasbihViewModel.insertDzikir(TasbihEntity(capitalizeEachWord(dzikir), DzikirType.CUSTOM, maxCount = 33))
+            tasbihViewModel.insertDzikir(
+                TasbihEntity(
+                    capitalizeEachWord(dzikir),
+                    DzikirType.CUSTOM,
+                    maxCount = dzikirCount.toInt()
+                )
+            )
             dataStoreViewModel.saveSelectedDzikirType(DzikirType.CUSTOM)
             selectedType = DzikirType.CUSTOM
             hideKeyboard(requireActivity())
@@ -143,7 +174,7 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
     }
 
     companion object {
-        const val REQUEST_DELETE = "request_delete"
-        const val BUNDLE_DELETE = "bundle_delete"
+        const val REQUEST_DELETE_OR_UPDATE = "request_delete_or_update"
+        const val BUNDLE_DELETE_OR_UPDATE = "bundle_delete_or_update"
     }
 }

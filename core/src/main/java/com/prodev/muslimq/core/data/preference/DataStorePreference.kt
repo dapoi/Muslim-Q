@@ -37,6 +37,7 @@ private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback
 private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
 private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
+private val IS_TASBIH_DB_CREATED = booleanPreferencesKey("is_tasbih_db_created")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -281,5 +282,21 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getSelectedDzikirType = dataStore.data.map { preferences ->
         preferences[DZIKIR_TYPE] ?: 0
+    }
+
+    /**
+     * Save is tasbih db created
+     */
+    suspend fun saveIsTasbihDbCreated(isTasbihDbCreated: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_TASBIH_DB_CREATED] = isTasbihDbCreated
+        }
+    }
+
+    /**
+     * Get is tasbih db created
+     */
+    val getIsTasbihDbCreated = dataStore.data.map { preferences ->
+        preferences[IS_TASBIH_DB_CREATED] ?: true
     }
 }

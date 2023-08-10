@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_base"
-    tools:context=".presentation.view.others.bookmark.BookmarkFragment">
+    tools:context=".presentation.view.tasbih.DzikirFragment">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:layout_marginHorizontal="12dp"
             android:checkable="false"
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
@@ -49,11 +50,10 @@
             app:chipStrokeColor="@color/green_base"
             app:chipStrokeWidth="1dp"
             app:ensureMinTouchTargetSize="true"
-            android:layout_marginHorizontal="12dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_spinner"
@@ -67,36 +67,23 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="12dp"
             app:cardBackgroundColor="@color/white_second"
             app:cardCornerRadius="8dp"
             app:cardElevation="8dp"
-            app:contentPadding="8dp">
-            <androidx.appcompat.widget.AppCompatSpinner
+            app:contentPaddingBottom="4dp"
+            app:contentPaddingTop="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <Spinner
                 android:id="@+id/spinner_dzikir"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="12dp"/>
+                android:paddingVertical="12dp"
+                tools:listitem="@layout/item_spinner" />
 
         </androidx.cardview.widget.CardView>
-
-        <com.facebook.shimmer.ShimmerFrameLayout
-            android:id="@+id/progress_header"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <include layout="@layout/item_header_quran" />
-
-            </LinearLayout>
-
-        </com.facebook.shimmer.ShimmerFrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
