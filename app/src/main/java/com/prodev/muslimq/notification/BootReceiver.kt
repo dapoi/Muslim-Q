@@ -1,15 +1,21 @@
 package com.prodev.muslimq.notification
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
+import android.os.Bundle
+import androidx.core.app.NotificationCompat
+import androidx.navigation.NavDeepLinkBuilder
+import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.preference.DataStorePreference
-import com.prodev.muslimq.core.data.source.local.database.ShalatDao
 import com.prodev.muslimq.core.utils.Constant
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,31 +23,67 @@ import javax.inject.Inject
 class BootReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var shalatDao: ShalatDao
-
-    @Inject
     lateinit var dataStorePreference: DataStorePreference
 
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(SupervisorJob()).launch {
                 println("Boot up berhasil")
-                dataStorePreference.getCityAndCountryData.collect {
-                    val shalatTimes = shalatDao.getShalatDailyByCity(it.first, it.second).first()
-                    val listAdzanTime = mapOf(
-                        Constant.KEY_ADZAN_SHUBUH to shalatTimes.shubuh,
-                        Constant.KEY_ADZAN_DZUHUR to shalatTimes.dzuhur,
-                        Constant.KEY_ADZAN_ASHAR to shalatTimes.ashar,
-                        Constant.KEY_ADZAN_MAGHRIB to shalatTimes.maghrib,
-                        Constant.KEY_ADZAN_ISYA to shalatTimes.isya
-                    )
 
-                    val adzanNames = listAdzanTime.keys.toList()
-                    adzanNames.forEach { adzanName ->
-                        dataStorePreference.saveSwitchState(adzanName, false)
-                    }
+                listOf(
+                    Constant.KEY_ADZAN_SHUBUH,
+                    Constant.KEY_ADZAN_DZUHUR,
+                    Constant.KEY_ADZAN_ASHAR,
+                    Constant.KEY_ADZAN_MAGHRIB,
+                    Constant.KEY_ADZAN_ISYA
+                ).forEach { adzanName ->
+                    dataStorePreference.saveSwitchState(adzanName, false)
                 }
+
+                context.reminderNotification()
             }
         }
+    }
+
+    // reminder user to set adzan again
+    private fun Context.reminderNotification() {
+        val notificationManager = this.getSystemService(
+            Context.NOTIFICATION_SERVICE
+        ) as NotificationManager
+
+        val pendingIntent = NavDeepLinkBuilder(this)
+            .setGraph(R.navigation.bottom_nav)
+            .setDestination(R.id.shalatFragment)
+            .setArguments(Bundle().apply {
+                putBoolean(Constant.FROM_NOTIFICATION, true)
+            })
+            .createPendingIntent()
+
+        val notification = NotificationCompat.Builder(this, Constant.CHANNEL_ID_REMINDER)
+            .setSmallIcon(R.drawable.ic_notif_circle)
+            .setContentTitle("Aktifkan Pengingat Shalat")
+            .setContentText("Assalamu'alaikum, mohon untuk mengaktifkan kembali pengingat shalat setelah me-restart perangkat.")
+            .setWhen(System.currentTimeMillis())
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+            .setAutoCancel(true)
+            .setStyle(NotificationCompat.BigTextStyle())
+            .setContentIntent(pendingIntent)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                Constant.CHANNEL_ID_REMINDER,
+                Constant.CHANNEL_NAME_REMINDER,
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
+                enableVibration(true)
+                vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
+            }
+            notification.setChannelId(Constant.CHANNEL_ID_REMINDER)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        notificationManager.notify(0, notification.build())
     }
 }

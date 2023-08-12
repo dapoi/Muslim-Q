@@ -10,9 +10,6 @@ import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -115,14 +112,6 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getHapticFeedbackState.asLiveData().distinctUntilChanged()
 
     val getSelectedDzikirType = dataStorePref.getSelectedDzikirType.asLiveData()
-
-    @ExperimentalCoroutinesApi
-    val getCombineHapticAndMaxDzikirCount =
-        dataStorePref.getHapticFeedbackState.flatMapLatest { hapticFeedback ->
-            dataStorePref.getDzikirMaxCount.map { maxDzikirCount ->
-                hapticFeedback to maxDzikirCount
-            }
-        }.asLiveData()
 
     val getAdzanSoundState =
         dataStorePref.getAdzanSoundStateAndMuadzin.asLiveData().distinctUntilChanged()

@@ -20,8 +20,8 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private var SURAH_ID = intPreferencesKey("surah_id")
-private var SURAH_NAME_ARABIC = stringPreferencesKey("surah_name_arabic")
+private val SURAH_ID = intPreferencesKey("surah_id")
+private val SURAH_NAME_ARABIC = stringPreferencesKey("surah_name_arabic")
 private val SURAH_NAME = stringPreferencesKey("surah_name")
 private val SURAH_DESC = stringPreferencesKey("surah_desc")
 private val AYAH_NUMBER = intPreferencesKey("ayah_number")
@@ -34,7 +34,6 @@ private val ONBOARDING_STATE = booleanPreferencesKey("onboarding_state")
 private val TAP_PROMPT_STATE = booleanPreferencesKey("tap_prompt_state")
 private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
 private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback")
-private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
 private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
 private val IS_TASBIH_DB_CREATED = booleanPreferencesKey("is_tasbih_db_created")
@@ -237,22 +236,6 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getHapticFeedbackState = dataStore.data.map { preferences ->
         preferences[STATE_HAPTIC_FEEDBACK] ?: true
-    }
-
-    /**
-     * Save dzikir max count
-     */
-    suspend fun saveDzikirMaxCount(dzikirMaxCount: Int) {
-        dataStore.edit { preferences ->
-            preferences[MAX_COUNT_DZIKIR] = dzikirMaxCount
-        }
-    }
-
-    /**
-     * Get dzikir max count
-     */
-    val getDzikirMaxCount = dataStore.data.map { preferences ->
-        preferences[MAX_COUNT_DZIKIR] ?: 33
     }
 
     /**

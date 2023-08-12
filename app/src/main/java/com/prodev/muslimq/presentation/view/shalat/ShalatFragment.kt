@@ -196,6 +196,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         setViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
+
+        // handle deeplink
+        val isFromNotif = arguments?.getBoolean(Constant.FROM_NOTIFICATION)
+        if (isFromNotif == true) {
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
+                visibility = View.INVISIBLE
+            }
+        }
     }
 
     private fun showDialogLocation() {
