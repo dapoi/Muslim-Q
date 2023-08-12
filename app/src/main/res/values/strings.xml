@@ -103,4 +103,7 @@
         <item>Kustomisasi</item>
     </string-array>
     <string name="target_count">/ %1$s</string>
+    <string name="muadzin">Pilih Muadzin</string>
+    <string name="adzan_regular">Adzan Reguler</string>
+    <string name="adzan_shubuh">Adzan Shubuh</string>
 </resources>

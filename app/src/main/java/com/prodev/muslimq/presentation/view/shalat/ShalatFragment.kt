@@ -557,7 +557,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         try {  // shalat time without zone
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
-            dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
+            dzuhur = "14:50"
             ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
             maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
             isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))

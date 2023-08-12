@@ -75,14 +75,8 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveDzikirMaxCount(count: Int) {
+    fun saveSelectedDzikirType(dzikirType: DzikirType) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStorePref.saveDzikirMaxCount(count)
-        }
-    }
-
-    fun saveSelectedDzikirType(dzikirType: DzikirType){
-        viewModelScope.launch(Dispatchers.IO){
             dataStorePref.saveSelectedDzikirType(dzikirType)
         }
     }
@@ -90,6 +84,12 @@ class DataStoreViewModel @Inject constructor(
     fun saveAdzanSoundState(isAdzanSound: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             dataStorePref.saveAdzanSoundState(isAdzanSound)
+        }
+    }
+
+    fun saveMuadzin(muadzinRegular: String, muadzinShubuh: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStorePref.saveMuadzin(muadzinRegular, muadzinShubuh)
         }
     }
 
@@ -114,7 +114,6 @@ class DataStoreViewModel @Inject constructor(
     val getHapticFeedbackState =
         dataStorePref.getHapticFeedbackState.asLiveData().distinctUntilChanged()
 
-    val getDzikirMaxCount = dataStorePref.getDzikirMaxCount.asLiveData()
     val getSelectedDzikirType = dataStorePref.getSelectedDzikirType.asLiveData()
 
     @ExperimentalCoroutinesApi
@@ -125,5 +124,8 @@ class DataStoreViewModel @Inject constructor(
             }
         }.asLiveData()
 
-    val getAdzanSoundState = dataStorePref.getAdzanSoundState.asLiveData().distinctUntilChanged()
+    val getAdzanSoundState =
+        dataStorePref.getAdzanSoundStateAndMuadzin.asLiveData().distinctUntilChanged()
+
+    val getMuadzin = dataStorePref.getMuadzin
 }

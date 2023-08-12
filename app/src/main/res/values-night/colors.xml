@@ -8,8 +8,8 @@
     <color name="green_ic_quran_light">#66FFFFFF</color>
     <color name="green_ic_quran_dark">#4D8B8B8B</color>
     <color name="green_button_last_read">#EAEAEA</color>
-    <color name="green_button_start">#1E6F5C</color>
-    <color name="green_button_end">#1E6F5C</color>
+    <color name="green_about">#1E6F5C</color>
+    <color name="green_button">#1E6F5C</color>
     <color name="green_transparent">#D9289672</color>
     <color name="teal_200">#10FFFFFF</color>
     <color name="teal_700">#108B8B8B</color>

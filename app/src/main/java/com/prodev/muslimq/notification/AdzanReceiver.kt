@@ -16,6 +16,8 @@ import com.prodev.muslimq.core.utils.Constant.ADZAN_CODE
 import com.prodev.muslimq.core.utils.Constant.ADZAN_NAME
 import com.prodev.muslimq.core.utils.Constant.ADZAN_TIME
 import com.prodev.muslimq.core.utils.Constant.IS_SHUBUH
+import com.prodev.muslimq.core.utils.Constant.MUADZIN_REGULAR
+import com.prodev.muslimq.core.utils.Constant.MUADZIN_SHUBUH
 import com.prodev.muslimq.core.utils.getChannelId
 import com.prodev.muslimq.core.utils.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,13 +45,18 @@ class AdzanReceiver : BroadcastReceiver() {
         if (AdzanService.isRunning()) return
 
         CoroutineScope(Dispatchers.IO).launch {
-            dataStorePreference.getAdzanSoundState.collect { isSoundActive ->
+            dataStorePreference.getAdzanSoundStateAndMuadzin.collect { data ->
+                val isSoundActive = data.first
+                val muadzinRegular = data.second
+                val muadzinShubuh = data.third
                 if (isSoundActive) {
                     // Start the AdzanService
                     val serviceIntent = Intent(context, AdzanService::class.java).apply {
                         putExtra(ADZAN_NAME, adzanName)
                         putExtra(ADZAN_CODE, adzanCode)
                         putExtra(IS_SHUBUH, isShubuh)
+                        putExtra(MUADZIN_REGULAR, muadzinRegular)
+                        putExtra(MUADZIN_SHUBUH, muadzinShubuh)
                     }
                     context.startService(serviceIntent)
                 } else {

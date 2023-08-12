@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:layout_marginHorizontal="16dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingHorizontal="3dp">
 
     <ImageView
         android:id="@+id/iv_menu_other"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginVertical="16dp"
         android:contentDescription="@string/other"
+        app:layout_constraintBottom_toTopOf="@id/v_divider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/black"
@@ -21,39 +23,32 @@
     <TextView
         android:id="@+id/tv_menu_other"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="10dp"
         android:fontFamily="@font/poppins_medium"
-        android:paddingTop="5dp"
+        android:includeFontPadding="false"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_menu_other"
-        app:layout_constraintStart_toEndOf="@+id/iv_menu_other"
-        app:layout_constraintTop_toTopOf="@+id/iv_menu_other"
+        app:layout_constraintBottom_toBottomOf="@id/iv_menu_other"
+        app:layout_constraintStart_toEndOf="@id/iv_menu_other"
+        app:layout_constraintTop_toTopOf="@id/iv_menu_other"
         tools:text="Tersimpan" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/sw_dark_mode"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/iv_menu_other"
+        app:layout_constraintBottom_toBottomOf="@id/iv_menu_other"
         android:thumb="@drawable/custom_thumb"
-        app:layout_constraintBottom_toBottomOf="@id/tv_menu_other"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_menu_other"
         app:track="@drawable/custom_track" />
 
-    <View
+    <com.google.android.material.divider.MaterialDivider
         android:id="@+id/v_divider"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/white_low_opp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_menu_other"
-        tools:layout_editor_absoluteX="10dp" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -45,8 +45,19 @@ class AdzanService : Service() {
 
         val adzanName = intent?.getStringExtra(Constant.ADZAN_NAME)
         val adzanCode = intent?.getIntExtra(Constant.ADZAN_CODE, 0)
+        val muadzinRegular = intent?.getStringExtra(Constant.MUADZIN_REGULAR).toString()
+        val muadzinShubuh = intent?.getStringExtra(Constant.MUADZIN_SHUBUH).toString()
         val isShubuh = intent?.getBooleanExtra(Constant.KEY_ADZAN_SHUBUH, false) ?: false
-        val audio = if (isShubuh) R.raw.adzan_shubuh else R.raw.adzan_regular
+        val shubuhAudio = when {
+            "Hazim" in muadzinShubuh -> R.raw.abu_hazim_shubuh
+            else -> R.raw.salah_mansoor_shubuh
+        }
+        val regularAudio = when {
+            "Ali" in muadzinRegular -> R.raw.ali_ahmed_mulla
+            "Hafiz" in muadzinRegular -> R.raw.hafiz_mustafa
+            else -> R.raw.mishary_rasyid
+        }
+        val audio = if (isShubuh) shubuhAudio else regularAudio
         val attribute = AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_MEDIA)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

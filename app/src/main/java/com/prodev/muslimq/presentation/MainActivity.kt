@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
             if (state) {
                 setBackgroundTint(
                     ContextCompat.getColor(
-                        context, R.color.green_button_end
+                        context, R.color.green_button
                     )
                 )
             } else {

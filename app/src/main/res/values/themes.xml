@@ -16,78 +16,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:navigationBarColor">@color/white_second</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="bottomSheetDialogTheme">@style/Overlay.BottomSheet</item>
     </style>
 
-    <style name="Theme.MuslimQ.Toolbar">
-        <item name="android:textColor">@color/white_base</item>
-        <item name="android:fontFamily">@font/poppins_semibold</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="collapsedTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/green_base</item>
-        <item name="android:fontFamily">@font/poppins_bold</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="collapsedTabletTitleStyle" parent="@style/TextAppearance.AppCompat.Title">
-        <item name="android:textColor">@color/green_base</item>
-        <item name="android:fontFamily">@font/poppins_bold</item>
-        <item name="android:textSize">24sp</item>
-    </style>
-
-
-    <style name="expandedTitleStyle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
-        <item name="android:textColor">@color/green_base</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <style name="BottomTextNavActive" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textColor">@color/green_base</item>
-        <item name="android:fontFamily">@font/poppins_medium</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
-    <style name="BottomTextNavInactive" parent="TextAppearance.AppCompat.Caption">
-        <item name="android:textColor">@color/gray</item>
-        <item name="android:fontFamily">@font/poppins_medium</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
-    <style name="PopUpMenuTablet" parent="Widget.AppCompat.PopupMenu">
-        <item name="android:textSize">24sp</item>
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="CurvedDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@drawable/bg_round_white</item>
-        <item name="android:windowMinWidthMajor">90%</item>
-        <item name="android:windowMinWidthMinor">90%</item>
-    </style>
-
-    <style name="TransparentDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowMinWidthMajor">90%</item>
-        <item name="android:windowMinWidthMinor">90%</item>
-    </style>
-
-    <style name="Rounded.Image" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8dp</item>
-        <item name="android:itemPadding">10dp</item>
-    </style>
-
-    <style name="Custom.Button.Toggle" parent="Widget.Material3.Button.TextButton">
-        <item name="fontFamily">@font/poppins_medium</item>
-        <item name="iconPadding">0dp</item>
-        <item name="strokeWidth">0dp</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-        <item name="android:paddingStart">6dp</item>
-        <item name="android:paddingEnd">6dp</item>
-        <item name="android:minWidth">0dp</item>
-        <item name="android:minHeight">0dp</item>
-    </style>
 </resources>

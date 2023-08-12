@@ -38,6 +38,9 @@ private val MAX_COUNT_DZIKIR = intPreferencesKey("max_count_dzikir")
 private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
 private val IS_TASBIH_DB_CREATED = booleanPreferencesKey("is_tasbih_db_created")
+private val MUADZIN_REGULAR = stringPreferencesKey("muadzin_regular")
+private val MUADZIN_SHUBUH = stringPreferencesKey("muadzin_shubuh")
+
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
@@ -262,10 +265,13 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
     }
 
     /**
-     * Get adzan sound state from data store
+     * Get adzan sound state and also muadzin
      */
-    val getAdzanSoundState = dataStore.data.map { preferences ->
-        preferences[ADZAN_SOUND_STATE] ?: true
+    val getAdzanSoundStateAndMuadzin = dataStore.data.map { preferences ->
+        val adzanSoundState = preferences[ADZAN_SOUND_STATE] ?: true
+        val muadzinRegular = preferences[MUADZIN_REGULAR] ?: "Ali Ahmad Mullah"
+        val muadzinShubuh = preferences[MUADZIN_SHUBUH] ?: "Abu Hazim"
+        Triple(adzanSoundState, muadzinRegular, muadzinShubuh)
     }
 
     /**
@@ -298,5 +304,24 @@ class DataStorePreference @Inject constructor(@ApplicationContext context: Conte
      */
     val getIsTasbihDbCreated = dataStore.data.map { preferences ->
         preferences[IS_TASBIH_DB_CREATED] ?: true
+    }
+
+    /**
+     * Save muadzin regular & shubuh
+     */
+    suspend fun saveMuadzin(muadzinRegular: String, muadzinShubuh: String) {
+        dataStore.edit { preferences ->
+            preferences[MUADZIN_REGULAR] = muadzinRegular
+            preferences[MUADZIN_SHUBUH] = muadzinShubuh
+        }
+    }
+
+    /**
+     * Get muadzin regular & shubuh
+     */
+    val getMuadzin = dataStore.data.map { preferences ->
+        val muadzinRegular = preferences[MUADZIN_REGULAR] ?: "Ali Ahmad Mullah"
+        val muadzinShubuh = preferences[MUADZIN_SHUBUH] ?: "Abu Hazim"
+        Pair(muadzinRegular, muadzinShubuh)
     }
 }

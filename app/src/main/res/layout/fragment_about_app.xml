@@ -75,7 +75,7 @@
             android:fontFamily="@font/poppins_medium"
             android:includeFontPadding="false"
             android:text="@string/license"
-            android:textColor="@color/green_button_end"
+            android:textColor="@color/green_button"
             android:textSize="14sp"
             app:backgroundTint="@color/white_header"
             app:cornerRadius="8dp"

@@ -8,7 +8,7 @@ object OthersObject {
         R.drawable.ic_collection,
         R.drawable.ic_dark_mode,
         R.drawable.ic_notif_setting,
-        R.drawable.ic_support,
+        R.drawable.ic_hearing,
         R.drawable.ic_about
     )
 
@@ -16,7 +16,7 @@ object OthersObject {
         "Baca Nanti",
         "Mode Gelap",
         "Pengaturan Notifikasi",
-        "Kirim Masukan",
+        "Pilih Muadzin",
         "Info Aplikasi"
     )
 

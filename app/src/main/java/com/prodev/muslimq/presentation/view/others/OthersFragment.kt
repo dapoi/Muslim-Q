@@ -1,21 +1,25 @@
 package com.prodev.muslimq.presentation.view.others
 
 import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.uitheme.UITheme
 import com.prodev.muslimq.databinding.DialogSettingNotificationBinding
 import com.prodev.muslimq.databinding.FragmentOthersBinding
+import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.OthersAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
+import com.prodev.muslimq.presentation.view.others.BottomSheetMuadzinFragment.BottomSheetMuadzinCallback
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding::inflate) {
@@ -65,33 +69,29 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
             setList(othersItem)
 
             onClick = { item ->
-                when (item.title) {
-                    "Baca Nanti" -> {
+                val title = item.title
+                when {
+                    title.contains("Baca") -> {
                         findNavController().navigate(
                             R.id.action_othersFragment_to_quranBookmarkFragment
                         )
                     }
 
-                    "Pengaturan Notifikasi" -> {
+                    title.contains("Notifikasi") -> {
                         showDialogNotifSettings()
                     }
 
-                    "Kirim Masukan" -> {
-                        val email = "luthfidaffaprabowo@gmail.com"
-                        val subject = "Feedback Aplikasi Muslim Q"
-                        val body = "Silahkan tulis pesan Anda di sini"
-
-                        // intent to send email
-                        val intent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
-                            putExtra(Intent.EXTRA_SUBJECT, subject)
-                            putExtra(Intent.EXTRA_TEXT, body)
+                    title.contains("Muadzin") -> {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            dataStoreViewModel.getMuadzin.first().let { data ->
+                                val muadzinRegular = data.first
+                                val muadzinShubuh = data.second
+                                showBottomSheet(muadzinRegular, muadzinShubuh)
+                            }
                         }
-                        startActivity(Intent.createChooser(intent, "Pilih aplikasi email"))
                     }
 
-                    "Info Aplikasi" -> {
+                    title.contains("Info") -> {
                         findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                     }
                 }
@@ -101,31 +101,80 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
 
     private fun showDialogNotifSettings() {
         val notifDialog = DialogSettingNotificationBinding.inflate(layoutInflater)
+        notifDialog.btnSave.isVisible = false
         val radioAdzanNotif = notifDialog.rbSoundNotif
         val radioOnlyNotif = notifDialog.rbOnlyNotif
-        val btnSave = notifDialog.btnSave
         with(curvedDialog.create()) {
             setView(notifDialog.root)
-            dataStoreViewModel.getAdzanSoundState.observe(viewLifecycleOwner) { isSoundActive ->
+            dataStoreViewModel.getAdzanSoundState.observe(viewLifecycleOwner) { data ->
+                val isSoundActive = data.first
                 if (isSoundActive) radioAdzanNotif.isChecked = true
                 else radioOnlyNotif.isChecked = true
             }
             radioAdzanNotif.setOnClickListener {
-                radioOnlyNotif.isChecked = false
-            }
-            radioOnlyNotif.setOnClickListener {
-                radioAdzanNotif.isChecked = false
-            }
-            btnSave.setOnClickListener {
-                val isAdzanNotifChecked = radioAdzanNotif.isChecked
-                dataStoreViewModel.saveAdzanSoundState(isAdzanNotifChecked)
+                saveAdzanSettingState(true)
                 dismiss()
             }
-            setCanceledOnTouchOutside(false)
+            radioOnlyNotif.setOnClickListener {
+                saveAdzanSettingState(false)
+                dismiss()
+            }
             setOnDismissListener {
                 dataStoreViewModel.getAdzanSoundState.removeObservers(viewLifecycleOwner)
             }
             show()
         }
+    }
+
+    private fun saveAdzanSettingState(isSoundActive: Boolean) {
+        val message = if (isSoundActive) "Suara adzan diaktifkan" else "Suara adzan dimatikan"
+        dataStoreViewModel.saveAdzanSoundState(isSoundActive)
+        (activity as MainActivity).customSnackbar(
+            state = isSoundActive,
+            message = message,
+            context = requireContext(),
+            view = binding.root
+        )
+    }
+
+    private fun showBottomSheet(muadzinRegular: String, muadzinShubuh: String) {
+        val listMuadzinRegular = listOf(
+            "Ali Ahmad Mullah", "Hafiz Mustafa Özcan", "Mishary Rashid Alafasy"
+        )
+        val listMuadzinFajr = listOf(
+            "Abu Hazim", "Salah Mansoor Az-Zahrani"
+        )
+        val listMuadzinSelected = listOf(
+            muadzinRegular, muadzinShubuh
+        )
+        val bundle = Bundle().apply {
+            putStringArray(
+                BottomSheetMuadzinFragment.KEY_MUADZIN_REGULAR,
+                listMuadzinRegular.toTypedArray()
+            )
+            putStringArray(
+                BottomSheetMuadzinFragment.KEY_MUADZIN_FAJR,
+                listMuadzinFajr.toTypedArray()
+            )
+            putStringArray(
+                BottomSheetMuadzinFragment.KEY_MUADZIN_SELECTED,
+                listMuadzinSelected.toTypedArray()
+            )
+        }
+
+        BottomSheetMuadzinFragment().apply {
+            arguments = bundle
+            setBottomSheetMuadzinCallback(object : BottomSheetMuadzinCallback {
+                override fun onMuadzinSelected(muadzinRegular: String, muadzinShubuh: String) {
+                    dataStoreViewModel.saveMuadzin(muadzinRegular, muadzinShubuh)
+                    (activity as MainActivity).customSnackbar(
+                        state = true,
+                        message = "Muadzin berhasil diubah",
+                        context = requireContext(),
+                        view = binding.root
+                    )
+                }
+            })
+        }.show(childFragmentManager, "BottomSheetMuadzinFragment")
     }
 }

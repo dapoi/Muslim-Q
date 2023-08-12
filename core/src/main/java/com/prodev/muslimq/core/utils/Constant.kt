@@ -20,5 +20,6 @@ object Constant {
     const val CHANNEL_NAME_ASHAR = "Ashar"
     const val CHANNEL_NAME_MAGHRIB = "Maghrib"
     const val CHANNEL_NAME_ISYA = "Isya"
-    const val STOP_ADZAN = "stop_adzan"
+    const val MUADZIN_REGULAR = "Regular"
+    const val MUADZIN_SHUBUH = "Shubuh"
 }

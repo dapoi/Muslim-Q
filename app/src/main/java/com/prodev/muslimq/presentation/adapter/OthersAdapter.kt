@@ -1,6 +1,7 @@
 package com.prodev.muslimq.presentation.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -56,7 +57,11 @@ class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
                 swDarkMode.apply {
 
                     // Set visibility of switch
-                    isVisible = others.title.contains("Gelap")
+                    swDarkMode.visibility = if (others.title.contains("Gelap")) {
+                        View.VISIBLE
+                    } else {
+                        View.INVISIBLE
+                    }
 
                     // Set switch state
                     isChecked = switchState

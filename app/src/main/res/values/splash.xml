@@ -3,7 +3,8 @@
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_muslim</item>
-        <item name="windowSplashScreenBackground">@color/green_button_end</item>
+        <item name="windowSplashScreenBackground">@color/green_button</item>
         <item name="postSplashScreenTheme">@style/Theme.MuslimQ</item>
     </style>
+
 </resources>

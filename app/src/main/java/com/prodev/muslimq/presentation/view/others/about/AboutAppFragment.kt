@@ -4,14 +4,12 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.BuildConfig
 import com.prodev.muslimq.R
 import com.prodev.muslimq.databinding.DialogInfoSurahBinding
 import com.prodev.muslimq.databinding.FragmentAboutAppBinding
 import com.prodev.muslimq.presentation.view.BaseFragment
-import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,9 +46,9 @@ class AboutAppFragment : BaseFragment<FragmentAboutAppBinding>(FragmentAboutAppB
         val window = requireActivity().window
         if (state) {
             window.statusBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.green_button_end)
+                ContextCompat.getColor(requireActivity(), R.color.green_button)
             window.navigationBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.green_button_end)
+                ContextCompat.getColor(requireActivity(), R.color.green_button)
         } else {
             window.statusBarColor =
                 ContextCompat.getColor(requireActivity(), R.color.white_base)
