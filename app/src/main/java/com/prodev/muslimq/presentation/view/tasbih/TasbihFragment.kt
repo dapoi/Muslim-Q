@@ -1,11 +1,11 @@
 package com.prodev.muslimq.presentation.view.tasbih
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
@@ -20,12 +20,10 @@ import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.defaultDzikir
 import com.prodev.muslimq.core.utils.vibrateApp
 import com.prodev.muslimq.databinding.FragmentTasbihBinding
-import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.TasbihViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -62,8 +60,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         val colorBlack = ContextCompat.getColor(context, R.color.black)
         val colorLightGray = ContextCompat.getColor(context, R.color.light_gray)
 
-        initDataStoreViewModel(colorGreenBase, colorLightGray, context)
-        initTasbihViewModel(colorWhiteBaseState, colorGreenBaseState, colorBlack)
+        dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner) {
+            selectedType = DzikirType.values()[it]
+        }
 
         if (selectedDzikir.maxCount < tasbihViewModel.dzikirCountVM) {
             tasbihViewModel.apply {
@@ -71,46 +70,16 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 binding.tvCountTasbih.text = dzikirCountVM.toString()
             }
         }
+
+        initUI(colorWhiteBaseState, colorGreenBaseState, colorBlack, colorGreenBase, colorLightGray)
     }
 
-    private fun initDataStoreViewModel(colorGreenBase: Int, colorLightGray: Int, context: Context) {
-        dataStoreViewModel.apply {
-
-            getSelectedDzikirType.observe(viewLifecycleOwner) {
-                selectedType = DzikirType.values()[it]
-            }
-
-            getHapticFeedbackState.observe(viewLifecycleOwner) { hapticActive ->
-                binding.apply {
-                    if (hapticActive) {
-                        ivFeedback.setBackgroundColor(colorGreenBase)
-                    } else {
-                        ivFeedback.setBackgroundColor(colorLightGray)
-                    }
-
-                    ivFeedback.setOnClickListener {
-                        if (hapticActive) {
-                            saveHapticFeedbackState(false)
-                        } else {
-                            saveHapticFeedbackState(true)
-                        }
-
-                        (activity as MainActivity).customSnackbar(
-                            state = !hapticActive,
-                            context = context,
-                            view = binding.root,
-                            message = if (hapticActive) "Efek getar dimatikan" else "Efek getar diaktifkan"
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun initTasbihViewModel(
+    private fun initUI(
         colorWhiteBaseState: ColorStateList?,
         colorGreenBaseState: ColorStateList?,
         colorBlack: Int,
+        colorGreenBase: Int,
+        colorLightGray: Int,
     ) {
 
         tasbihViewModel.getDzikirList.observe(viewLifecycleOwner) { listOfDzikir ->
@@ -158,7 +127,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                         index,
                         dzikir,
                         colorWhiteBaseState,
-                        colorGreenBaseState
+                        colorGreenBaseState,
+                        colorGreenBase,
+                        colorLightGray
                     )
 
                     chipGroupClicked(
@@ -167,7 +138,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                         chip,
                         colorWhiteBaseState,
                         colorBlack,
-                        colorGreenBaseState
+                        colorGreenBaseState,
+                        colorGreenBase,
+                        colorLightGray
                     )
                 }
             }
@@ -179,7 +152,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         index: Int,
         dzikir: TasbihEntity,
         colorWhiteBaseState: ColorStateList?,
-        colorGreenBaseState: ColorStateList?
+        colorGreenBaseState: ColorStateList?,
+        colorGreenBase: Int,
+        colorLightGray: Int
     ) {
         if (tasbihViewModel.totalSizeVM != totalSize) {
             if (successDeleteOrUpdate) {
@@ -210,7 +185,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             chip.chipBackgroundColor = colorGreenBaseState
             chip.setTextColor(colorWhiteBaseState)
             tasbihViewModel.dzikirNameVM = dzikir.dzikirName
-            changeDetail(dzikir)
+            changeDetail(dzikir, colorGreenBase, colorLightGray)
         }
     }
 
@@ -220,7 +195,9 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         chip: Chip,
         colorWhiteBaseState: ColorStateList?,
         colorBlack: Int,
-        colorGreenBaseState: ColorStateList?
+        colorGreenBaseState: ColorStateList?,
+        colorGreenBase: Int,
+        colorLightGray: Int
     ) {
         chip.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -243,13 +220,12 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     binding.tvCountTasbih.text = dzikirCountVM.toString()
                 }
 
-                changeDetail(dzikir)
+                changeDetail(dzikir, colorGreenBase, colorLightGray)
             }
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private fun changeDetail(dzikir: TasbihEntity) {
+    private fun changeDetail(dzikir: TasbihEntity, colorGreenBase: Int, colorLightGray: Int) {
         binding.apply {
             tvDzikirArab.isVisible = dzikir.arabText != null
             tvDzikirMeaning.isVisible = dzikir.arabText != null && dzikir.translation != null
@@ -261,8 +237,28 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             selectedDzikir = dzikir
         }
 
-        dataStoreViewModel.getCombineHapticAndMaxDzikirCount.observe(viewLifecycleOwner) { response ->
-            interactTasbih(response.first, dzikir.maxCount)
+        dataStoreViewModel.apply {
+            getHapticFeedbackState.observe(viewLifecycleOwner) { hapticActive ->
+                interactTasbih(hapticActive, dzikir.maxCount)
+
+                binding.apply {
+                    if (hapticActive) {
+                        ivFeedback.setBackgroundColor(colorGreenBase)
+                    } else {
+                        ivFeedback.setBackgroundColor(colorLightGray)
+                    }
+
+                    ivFeedback.setOnClickListener {
+                        saveHapticFeedbackState(!hapticActive)
+
+                        Toast.makeText(
+                            requireContext(),
+                            if (hapticActive) "Efek getar dimatikan" else "Efek getar diaktifkan",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
         }
     }
 
