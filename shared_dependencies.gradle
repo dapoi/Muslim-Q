@@ -35,7 +35,7 @@ dependencies {
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chuckVersion"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.3.7'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.0'
 
     // API Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.1"

@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.devtools.ksp'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
     id 'dagger.hilt.android.plugin'
@@ -9,6 +10,7 @@ plugins {
 apply from: '../shared_dependencies.gradle'
 
 android {
+    namespace 'com.prodev.muslimq'
     signingConfigs {
         release {
             storeFile file('D:\\Projek\\Key\\muslimkey.jks')
@@ -55,7 +57,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'com.prodev.muslimq'
 }
 
 dependencies {
