@@ -53,7 +53,7 @@
         android:includeFontPadding="false"
         android:paddingVertical="24dp"
         android:text="@string/save"
-        android:textColor="@color/white_header"
+        android:textColor="@color/white_always"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

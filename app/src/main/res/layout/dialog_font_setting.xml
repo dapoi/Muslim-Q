@@ -70,7 +70,7 @@
         android:fontFamily="@font/poppins_semibold"
         android:includeFontPadding="false"
         android:text="@string/save"
-        android:textColor="@color/white_header"
+        android:textColor="@color/white_always"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@+id/seekbar_font_size"
         app:layout_constraintStart_toStartOf="@+id/seekbar_font_size"

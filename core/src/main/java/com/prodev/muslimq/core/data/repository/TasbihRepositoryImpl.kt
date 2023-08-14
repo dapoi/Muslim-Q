@@ -5,6 +5,7 @@ import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.DzikirType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.max
@@ -15,7 +16,7 @@ class TasbihRepositoryImpl @Inject constructor(
 ) : TasbihRepository {
 
     override suspend fun insertDzikir(tasbih: TasbihEntity) {
-        tasbihDao.insertDzikir(tasbih)
+        runBlocking { tasbihDao.insertDzikir(tasbih) }
     }
 
     override fun getAllDzikir(): Flow<List<TasbihEntity>> {

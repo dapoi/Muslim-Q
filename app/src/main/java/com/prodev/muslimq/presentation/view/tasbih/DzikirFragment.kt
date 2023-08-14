@@ -66,6 +66,8 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
 
         dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner) {
             binding.spinnerDzikir.apply {
+                setSelection(it)
+
                 viewLifecycleOwner.lifecycleScope.launch {
                     onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
@@ -95,8 +97,6 @@ class DzikirFragment : BaseFragment<FragmentDzikirBinding>(FragmentDzikirBinding
 
                         }
                     }
-
-                    setSelection(it)
                 }
             }
         }

@@ -135,9 +135,9 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            setTextColor(ContextCompat.getColor(context, R.color.white_header))
+            setTextColor(ContextCompat.getColor(context, R.color.white_always))
             if (action) {
-                setActionTextColor(ContextCompat.getColor(context, R.color.white_header))
+                setActionTextColor(ContextCompat.getColor(context, R.color.white_always))
                 setAction(textAction) {
                     when {
                         isDetailScreen -> {

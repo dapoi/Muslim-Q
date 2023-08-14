@@ -12,17 +12,17 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.preference.DataStorePreference
-import com.prodev.muslimq.core.utils.Constant.ADZAN_CODE
-import com.prodev.muslimq.core.utils.Constant.ADZAN_NAME
-import com.prodev.muslimq.core.utils.Constant.ADZAN_TIME
-import com.prodev.muslimq.core.utils.Constant.IS_SHUBUH
-import com.prodev.muslimq.core.utils.Constant.MUADZIN_REGULAR
-import com.prodev.muslimq.core.utils.Constant.MUADZIN_SHUBUH
+import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_CODE
+import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_NAME
+import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_TIME
+import com.prodev.muslimq.core.utils.AdzanConstants.IS_SHUBUH
+import com.prodev.muslimq.core.utils.AdzanConstants.MUADZIN_REGULAR
+import com.prodev.muslimq.core.utils.AdzanConstants.MUADZIN_SHUBUH
 import com.prodev.muslimq.core.utils.getChannelId
 import com.prodev.muslimq.core.utils.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -36,15 +36,14 @@ class AdzanReceiver : BroadcastReceiver() {
     lateinit var dataStorePreference: DataStorePreference
 
     override fun onReceive(context: Context, intent: Intent) {
-        val adzanName = intent.getStringExtra(ADZAN_NAME)
+        val adzanName = intent.getStringExtra(ADZAN_NAME).toString()
         val adzanCode = intent.getIntExtra(ADZAN_CODE, 0)
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
-        //   Check if the AdzanService is already running
         if (AdzanService.isRunning()) return
 
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(SupervisorJob()).launch {
             dataStorePreference.getAdzanSoundStateAndMuadzin.collect { data ->
                 val isSoundActive = data.first
                 val muadzinRegular = data.second
@@ -61,18 +60,14 @@ class AdzanReceiver : BroadcastReceiver() {
                     context.startService(serviceIntent)
                 } else {
                     // Show notif with default ringtone
-                    adzanName?.let { context.showDefaultNotification(it, adzanCode) }
-                    RingtoneManager.getRingtone(
-                        context,
-                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                    ).play()
+                    context.showDefaultNotification(adzanName, adzanCode)
                 }
             }
         }
 
         // Reschedule the alarm for the next day
         val newAdzanTime = adzanTime?.let { getNextDayAdzanTime(it) }
-        if (adzanName != null && newAdzanTime != null) {
+        if (newAdzanTime != null) {
             setAdzanReminder(context, newAdzanTime, adzanName, adzanCode, isShubuh)
         }
     }
@@ -96,7 +91,7 @@ class AdzanReceiver : BroadcastReceiver() {
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
             .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
-            .setSound(null)
+            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setWhen(System.currentTimeMillis())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
@@ -107,7 +102,7 @@ class AdzanReceiver : BroadcastReceiver() {
                 getChannelName(adzanCode),
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                setSound(null, null)
+                setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
                 enableVibration(true)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             }

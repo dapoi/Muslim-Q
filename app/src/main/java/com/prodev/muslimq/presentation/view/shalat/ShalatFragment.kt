@@ -40,7 +40,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
-import com.prodev.muslimq.core.utils.Constant
+import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.isOnline
@@ -198,7 +198,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         dateGregorianAndHijri()
 
         // handle deeplink
-        val isFromNotif = arguments?.getBoolean(Constant.FROM_NOTIFICATION)
+        val isFromNotif = arguments?.getBoolean(AdzanConstants.FROM_NOTIFICATION)
         if (isFromNotif == true) {
             requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav).apply {
                 visibility = View.INVISIBLE
@@ -475,7 +475,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .setSecondaryTextColour(
                 ContextCompat.getColor(
                     requireContext(),
-                    R.color.white_header
+                    R.color.white_always
                 )
             )
             .setBackgroundColour(
@@ -598,11 +598,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     ) {
 
         val listAdzanTime = mapOf(
-            Constant.KEY_ADZAN_SHUBUH to shubuh,
-            Constant.KEY_ADZAN_DZUHUR to dzuhur,
-            Constant.KEY_ADZAN_ASHAR to ashar,
-            Constant.KEY_ADZAN_MAGHRIB to maghrib,
-            Constant.KEY_ADZAN_ISYA to isya
+            AdzanConstants.KEY_ADZAN_SHUBUH to shubuh,
+            AdzanConstants.KEY_ADZAN_DZUHUR to dzuhur,
+            AdzanConstants.KEY_ADZAN_ASHAR to ashar,
+            AdzanConstants.KEY_ADZAN_MAGHRIB to maghrib,
+            AdzanConstants.KEY_ADZAN_ISYA to isya
         )
 
         val adzanNames = listAdzanTime.keys.toList()
@@ -651,7 +651,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             adzanName = adzanName,
                             adzanTime = adzanTime,
                             adzanCode = index + 1,
-                            isShubuh = adzanName == Constant.KEY_ADZAN_SHUBUH
+                            isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
@@ -759,7 +759,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     adzanName = adzanName,
                     adzanTime = adzanTime,
                     adzanCode = index + 1,
-                    isShubuh = adzanName == Constant.KEY_ADZAN_SHUBUH
+                    isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)
                 (activity as MainActivity).customSnackbar(

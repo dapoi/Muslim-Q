@@ -12,14 +12,13 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
-import com.prodev.muslimq.core.utils.Constant
+import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.getChannelId
 import com.prodev.muslimq.core.utils.getChannelName
 import okio.IOException
 
 class AdzanService : Service() {
 
-    private lateinit var notificationManager: NotificationManager
     private var mediaPlayer: MediaPlayer? = null
 
     companion object {
@@ -32,10 +31,8 @@ class AdzanService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.action == "STOP_ADZAN_SERVICE") {
-            mediaPlayer?.stop()
+            stopAudio()
             stopSelf()
-            isServiceRunning = false
-            return START_NOT_STICKY
         }
 
         if (isServiceRunning) {
@@ -43,11 +40,11 @@ class AdzanService : Service() {
             return START_NOT_STICKY
         }
 
-        val adzanName = intent?.getStringExtra(Constant.ADZAN_NAME)
-        val adzanCode = intent?.getIntExtra(Constant.ADZAN_CODE, 0)
-        val muadzinRegular = intent?.getStringExtra(Constant.MUADZIN_REGULAR).toString()
-        val muadzinShubuh = intent?.getStringExtra(Constant.MUADZIN_SHUBUH).toString()
-        val isShubuh = intent?.getBooleanExtra(Constant.KEY_ADZAN_SHUBUH, false) ?: false
+        val adzanName = intent?.getStringExtra(AdzanConstants.ADZAN_NAME)
+        val adzanCode = intent?.getIntExtra(AdzanConstants.ADZAN_CODE, 0)
+        val muadzinRegular = intent?.getStringExtra(AdzanConstants.MUADZIN_REGULAR).toString()
+        val muadzinShubuh = intent?.getStringExtra(AdzanConstants.MUADZIN_SHUBUH).toString()
+        val isShubuh = intent?.getBooleanExtra(AdzanConstants.KEY_ADZAN_SHUBUH, false) ?: false
         val shubuhAudio = when {
             "Hazim" in muadzinShubuh -> R.raw.abu_hazim_shubuh
             else -> R.raw.salah_mansoor_shubuh
@@ -80,8 +77,8 @@ class AdzanService : Service() {
         }
 
         mediaPlayer?.setOnCompletionListener {
+            stopAudio()
             stopSelf()
-            isServiceRunning = false
         }
 
         applicationContext.showServiceNotification(adzanName.toString(), adzanCode!!)
@@ -95,8 +92,19 @@ class AdzanService : Service() {
         return null
     }
 
+    private fun stopAudio() {
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+                release()
+                mediaPlayer = null
+            }
+        }
+        isServiceRunning = false
+    }
+
     private fun Context.showServiceNotification(adzanName: String, adzanCode: Int) {
-        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val stopIntent = Intent(this, AdzanService::class.java).apply {
             action = "STOP_ADZAN_SERVICE"
         }

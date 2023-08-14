@@ -19,7 +19,7 @@
     <color name="white_base">#FFFFFFFF</color>
     <color name="white_second">#FFFFFFFF</color>
     <color name="white_low_opp">#BBC4CE</color>
-    <color name="white_header">#FFFFFF</color>
+    <color name="white_always">#FFFFFF</color>
     <color name="white_card">#FFFFFF</color>
     <color name="white_button">#FFFFFF</color>
     <color name="gray">#8789A3</color>

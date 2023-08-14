@@ -47,7 +47,7 @@ class DzikirAdapter(
 
     companion object : DiffUtil.ItemCallback<TasbihEntity>() {
         override fun areItemsTheSame(oldItem: TasbihEntity, newItem: TasbihEntity): Boolean {
-            return oldItem.dzikirName == newItem.dzikirName
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: TasbihEntity, newItem: TasbihEntity): Boolean {

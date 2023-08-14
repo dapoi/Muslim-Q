@@ -1,6 +1,6 @@
 package com.prodev.muslimq.core.utils
 
-object Constant {
+object AdzanConstants {
     const val ADZAN_CODE = "adzan_code"
     const val ADZAN_NAME = "adzan_name"
     const val ADZAN_TIME = "adzan_time"

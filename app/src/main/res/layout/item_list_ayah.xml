@@ -41,7 +41,7 @@
                     android:background="@drawable/bg_circle"
                     android:gravity="center"
                     android:paddingHorizontal="6dp"
-                    android:textColor="@color/white_header"
+                    android:textColor="@color/white_always"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

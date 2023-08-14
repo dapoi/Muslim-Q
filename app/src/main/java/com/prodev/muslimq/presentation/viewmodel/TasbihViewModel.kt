@@ -31,6 +31,9 @@ class TasbihViewModel @Inject constructor(
     private var _getDzikirList = MutableLiveData<List<TasbihEntity>>()
     val getDzikirList: LiveData<List<TasbihEntity>> get() = _getDzikirList
 
+    private var _isFocus = MutableLiveData(false)
+    val isFocus: LiveData<Boolean> get() = _isFocus
+
     init {
         viewModelScope.launch {
             dataStorePreference.getInputDzikirOnceState.collect { hasInput ->
@@ -67,7 +70,7 @@ class TasbihViewModel @Inject constructor(
     }
 
     fun insertDzikir(tasbihEntity: TasbihEntity) {
-        viewModelScope.launch(Dispatchers.IO) { tasbihRepository.insertDzikir(tasbihEntity) }
+        viewModelScope.launch { tasbihRepository.insertDzikir(tasbihEntity) }
     }
 
     fun deleteDzikir(dzikirName: String) {
@@ -80,5 +83,9 @@ class TasbihViewModel @Inject constructor(
                 _getDzikirList.value = it
             }
         }
+    }
+
+    fun setFocus(isFocus: Boolean) {
+        _isFocus.value = isFocus
     }
 }

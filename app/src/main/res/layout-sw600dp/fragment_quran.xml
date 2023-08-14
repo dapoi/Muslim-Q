@@ -82,7 +82,7 @@
                         android:fontFamily="@font/poppins_medium"
                         android:includeFontPadding="false"
                         android:text="@string/last_read"
-                        android:textColor="@color/white_header"
+                        android:textColor="@color/white_always"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_last_read"
                         app:layout_constraintEnd_toStartOf="@+id/tv_surah_name_arabic"
@@ -96,7 +96,7 @@
                         android:layout_marginVertical="16dp"
                         android:fontFamily="@font/poppins_medium"
                         android:includeFontPadding="false"
-                        android:textColor="@color/white_header"
+                        android:textColor="@color/white_always"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toTopOf="@id/btn_continue_read"
@@ -153,7 +153,7 @@
                         android:layout_marginEnd="30dp"
                         android:fontFamily="@font/amiri_bold"
                         android:includeFontPadding="false"
-                        android:textColor="@color/white_header"
+                        android:textColor="@color/white_always"
                         android:textSize="45sp"
                         app:layout_constraintBottom_toBottomOf="@id/btn_continue_read"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -312,7 +312,7 @@
         app:layout_anchor="@id/cl_content"
         app:layout_anchorGravity="bottom|end"
         app:maxImageSize="50dp"
-        app:tint="@color/white_header"
+        app:tint="@color/white_always"
         tools:ignore="ContentDescription" />
 
     <androidx.constraintlayout.widget.ConstraintLayout

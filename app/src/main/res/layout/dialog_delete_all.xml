@@ -42,7 +42,7 @@
         android:paddingVertical="7dp"
         android:text="@string/delete"
         android:textAlignment="center"
-        android:textColor="@color/white_header"
+        android:textColor="@color/white_always"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@id/tv_desc"
         app:layout_constraintTop_toBottomOf="@+id/tv_desc" />

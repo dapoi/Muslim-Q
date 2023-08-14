@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.preference.DataStorePreference
-import com.prodev.muslimq.core.utils.Constant
+import com.prodev.muslimq.core.utils.AdzanConstants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -31,11 +31,11 @@ class BootReceiver : BroadcastReceiver() {
                 println("Boot up berhasil")
 
                 listOf(
-                    Constant.KEY_ADZAN_SHUBUH,
-                    Constant.KEY_ADZAN_DZUHUR,
-                    Constant.KEY_ADZAN_ASHAR,
-                    Constant.KEY_ADZAN_MAGHRIB,
-                    Constant.KEY_ADZAN_ISYA
+                    AdzanConstants.KEY_ADZAN_SHUBUH,
+                    AdzanConstants.KEY_ADZAN_DZUHUR,
+                    AdzanConstants.KEY_ADZAN_ASHAR,
+                    AdzanConstants.KEY_ADZAN_MAGHRIB,
+                    AdzanConstants.KEY_ADZAN_ISYA
                 ).forEach { adzanName ->
                     dataStorePreference.saveSwitchState(adzanName, false)
                 }
@@ -55,11 +55,11 @@ class BootReceiver : BroadcastReceiver() {
             .setGraph(R.navigation.bottom_nav)
             .setDestination(R.id.shalatFragment)
             .setArguments(Bundle().apply {
-                putBoolean(Constant.FROM_NOTIFICATION, true)
+                putBoolean(AdzanConstants.FROM_NOTIFICATION, true)
             })
             .createPendingIntent()
 
-        val notification = NotificationCompat.Builder(this, Constant.CHANNEL_ID_REMINDER)
+        val notification = NotificationCompat.Builder(this, AdzanConstants.CHANNEL_ID_REMINDER)
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle("Aktifkan Pengingat Shalat")
             .setContentText("Assalamu'alaikum, mohon untuk mengaktifkan kembali pengingat shalat setelah me-restart perangkat.")
@@ -72,15 +72,15 @@ class BootReceiver : BroadcastReceiver() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                Constant.CHANNEL_ID_REMINDER,
-                Constant.CHANNEL_NAME_REMINDER,
+                AdzanConstants.CHANNEL_ID_REMINDER,
+                AdzanConstants.CHANNEL_NAME_REMINDER,
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
                 setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), null)
                 enableVibration(true)
                 vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             }
-            notification.setChannelId(Constant.CHANNEL_ID_REMINDER)
+            notification.setChannelId(AdzanConstants.CHANNEL_ID_REMINDER)
             notificationManager.createNotificationChannel(channel)
         }
 

@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
@@ -32,11 +35,12 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
 
     private val tasbihViewModel: TasbihViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-    private var totalSize = 0
-    private var successDeleteOrUpdate = false
-    private var selectedType = DzikirType.DEFAULT
+    private var totalSize: Int = 0
+    private var successDeleteOrUpdate: Boolean = false
+    private var selectedType: DzikirType = DzikirType.DEFAULT
     private var selectedDzikir: TasbihEntity = defaultDzikir()[0]
-    private var currentDzikirList = mutableListOf<TasbihEntity>()
+    private var currentDzikirList: MutableList<TasbihEntity> = mutableListOf()
+    private lateinit var onBackPressedDispatcher: OnBackPressedDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +59,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     private fun getAllDzikir() {
         val context = requireContext()
         val colorWhiteBaseState = ContextCompat.getColorStateList(context, R.color.white_base)
+        val colorWhiteAlwasyState = ContextCompat.getColorStateList(context, R.color.white_always)
         val colorGreenBaseState = ContextCompat.getColorStateList(context, R.color.green_base)
         val colorGreenBase = ContextCompat.getColor(context, R.color.green_base)
         val colorBlack = ContextCompat.getColor(context, R.color.black)
@@ -71,17 +76,24 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
             }
         }
 
-        initUI(colorWhiteBaseState, colorGreenBaseState, colorBlack, colorGreenBase, colorLightGray)
+        initUI(
+            colorWhiteBaseState,
+            colorWhiteAlwasyState,
+            colorGreenBaseState,
+            colorBlack,
+            colorGreenBase,
+            colorLightGray
+        )
     }
 
     private fun initUI(
         colorWhiteBaseState: ColorStateList?,
+        colorWhiteAlwaysState: ColorStateList?,
         colorGreenBaseState: ColorStateList?,
         colorBlack: Int,
         colorGreenBase: Int,
         colorLightGray: Int,
     ) {
-
         tasbihViewModel.getDzikirList.observe(viewLifecycleOwner) { listOfDzikir ->
             //check if custom is empty, change selected type to default
             if (listOfDzikir.none { it.dzikirType == selectedType }) {
@@ -126,7 +138,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                         chip,
                         index,
                         dzikir,
-                        colorWhiteBaseState,
+                        colorWhiteAlwaysState,
                         colorGreenBaseState,
                         colorGreenBase,
                         colorLightGray
@@ -137,6 +149,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                         dzikir,
                         chip,
                         colorWhiteBaseState,
+                        colorWhiteAlwaysState,
                         colorBlack,
                         colorGreenBaseState,
                         colorGreenBase,
@@ -145,13 +158,41 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
         }
+
+        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
+        tasbihViewModel.isFocus.observe(viewLifecycleOwner) { isFocus ->
+            binding.apply {
+                toolbar.isVisible = !isFocus
+                tvFocusMode.isVisible = !isFocus
+                bottomNav.isVisible = !isFocus
+                clCounter.setPadding(0, 0, 0, if (isFocus) 30 else 200)
+
+                onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
+                onBackPressedDispatcher.addCallback(
+                    viewLifecycleOwner,
+                    object : OnBackPressedCallback(true) {
+                        override fun handleOnBackPressed() {
+                            if (isFocus) {
+                                tasbihViewModel.setFocus(false)
+                            } else {
+                                findNavController().navigateUp()
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
+        binding.tvFocusMode.setOnClickListener {
+            tasbihViewModel.setFocus(true)
+        }
     }
 
     private fun checkStateChipGroup(
         chip: Chip,
         index: Int,
         dzikir: TasbihEntity,
-        colorWhiteBaseState: ColorStateList?,
+        colorWhiteAlwaysState: ColorStateList?,
         colorGreenBaseState: ColorStateList?,
         colorGreenBase: Int,
         colorLightGray: Int
@@ -183,7 +224,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
 
         if (chip.isChecked) {
             chip.chipBackgroundColor = colorGreenBaseState
-            chip.setTextColor(colorWhiteBaseState)
+            chip.setTextColor(colorWhiteAlwaysState)
             tasbihViewModel.dzikirNameVM = dzikir.dzikirName
             changeDetail(dzikir, colorGreenBase, colorLightGray)
         }
@@ -194,6 +235,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         dzikir: TasbihEntity,
         chip: Chip,
         colorWhiteBaseState: ColorStateList?,
+        colorWhiteAlwaysState: ColorStateList?,
         colorBlack: Int,
         colorGreenBaseState: ColorStateList?,
         colorGreenBase: Int,
@@ -211,7 +253,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
 
                 chip.chipBackgroundColor = colorGreenBaseState
-                chip.setTextColor(colorWhiteBaseState)
+                chip.setTextColor(colorWhiteAlwaysState)
 
                 tasbihViewModel.apply {
                     selectedItemIndexVM = index
@@ -229,7 +271,8 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         binding.apply {
             tvDzikirArab.isVisible = dzikir.arabText != null
             tvDzikirMeaning.isVisible = dzikir.arabText != null && dzikir.translation != null
-            tvDzikirLatin.isVisible = dzikir.dzikirName.isNotEmpty()
+            tvDzikirLatin.isVisible =
+                dzikir.dzikirName.isNotEmpty() && selectedType == DzikirType.CUSTOM
             tvDzikirArab.text = dzikir.arabText
             tvDzikirMeaning.text = dzikir.translation
             tvDzikirLatin.text = dzikir.dzikirName
@@ -305,6 +348,10 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                             )
                         }
 
+                        svDetail.post {
+                            svDetail.scrollTo(0, 0)
+                        }
+
                         if (selectedItemIndexVM != maxIndex) {
                             dzikirCountVM = 0
                             tvCountTasbih.text = dzikirCountVM.toString()
@@ -338,5 +385,10 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        !onBackPressedDispatcher.hasEnabledCallbacks()
     }
 }

@@ -69,7 +69,7 @@
         android:includeFontPadding="false"
         android:paddingVertical="24dp"
         android:text="@string/save"
-        android:textColor="@color/white_header"
+        android:textColor="@color/white_always"
         android:textSize="20sp"
         app:layout_constraintTop_toBottomOf="@id/cg_muadzin_shubuh" />
 

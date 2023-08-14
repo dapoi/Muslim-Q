@@ -63,7 +63,7 @@ class BottomSheetMuadzinFragment : BottomSheetDialogFragment() {
         val context = requireContext()
         val colorWhiteBackground = ContextCompat.getColorStateList(context, R.color.white_second)
         val colorGreen = ContextCompat.getColorStateList(context, R.color.green_button)
-        val colorWhite = ContextCompat.getColor(context, R.color.white_header)
+        val colorWhite = ContextCompat.getColor(context, R.color.white_always)
         val colorBlack = ContextCompat.getColor(context, R.color.black)
 
         listMuadzin?.forEach { muadzin ->

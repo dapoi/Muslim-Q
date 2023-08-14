@@ -44,7 +44,7 @@
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
             android:text="@string/plus"
-            android:textColor="@color/white_base"
+            android:textColor="@color/white_always"
             app:chipBackgroundColor="@color/green_base"
             app:chipCornerRadius="8dp"
             app:chipStrokeColor="@color/green_base"
