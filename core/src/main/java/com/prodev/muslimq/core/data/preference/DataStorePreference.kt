@@ -11,7 +11,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.uitheme.UITheme
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -43,7 +42,7 @@ private val MUADZIN_SHUBUH = stringPreferencesKey("muadzin_shubuh")
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
-class DataStorePreference @Inject constructor(@ApplicationContext context: Context) {
+class DataStorePreference @Inject constructor(context: Context) {
 
     private val dataStore = context.dataStore
 

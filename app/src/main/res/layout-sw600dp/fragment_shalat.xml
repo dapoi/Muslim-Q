@@ -216,19 +216,6 @@
                         app:lottie_loop="true"
                         app:lottie_speed="1" />
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/lottie_no_location"
-                        android:layout_width="250dp"
-                        android:layout_height="250dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:lottie_autoPlay="true"
-                        app:lottie_fileName="location.json"
-                        app:lottie_loop="true"
-                        app:lottie_speed="1" />
-
                     <TextView
                         android:id="@+id/tv_result"
                         android:layout_width="300dp"

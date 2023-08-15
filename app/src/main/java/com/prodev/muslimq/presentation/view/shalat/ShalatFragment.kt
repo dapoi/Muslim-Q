@@ -18,10 +18,8 @@ import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.Px
 import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -175,7 +173,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isOnline = isOnline(requireContext())
         adzanReceiver = AdzanReceiver()
         fusedLocation = LocationServices.getFusedLocationProviderClient(requireContext())
         val dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
@@ -410,19 +407,13 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
                     override fun onRefresh() {
                         isOnline = isOnline(requireContext())
-                        val handlerData = Handler(Looper.getMainLooper())
                         if (isOnline) {
-                            handlerData.postDelayed({
-                                setRefreshing(false)
-                            }, 2000)
-
-                            handlerData.postDelayed({
-                                clNegativeCase.visibility = View.GONE
-                                shalatViewModel.refreshShalatTime()
-                            }, 2350)
-                        } else {
-                            negativeCase()
                             setRefreshing(false)
+                            shalatViewModel.fetchShalatTime()
+                        } else {
+                            setRefreshing(false)
+                            clNegativeCase.isVisible = true
+                            shalatLayout.root.isVisible = false
                         }
                     }
                 })
@@ -445,22 +436,39 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     }
 
     private fun setViewModel() {
-        dataStoreViewModel.apply {
-            getAreaData.observe(viewLifecycleOwner) { area ->
-                shalatViewModel.setShalatTime(area)
-
-                binding.tvYourLocation.text = area.first
-            }
-
-            getTapPromptState.observe(viewLifecycleOwner) { state ->
-                if (!state) {
-                    initTapPrompt()
-                    dataStoreViewModel.saveTapPromptState(true)
-                }
+        dataStoreViewModel.getTapPromptState.observe(viewLifecycleOwner) { state ->
+            if (!state) {
+                initTapPrompt()
+                dataStoreViewModel.saveTapPromptState(true)
             }
         }
 
-        initUIResult()
+        shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
+            binding.apply {
+                progressBar.isVisible = result is Resource.Loading
+                shalatLayout.root.isVisible = result is Resource.Success
+                clNegativeCase.isVisible = result is Resource.Error && result.data == null
+                tvResult.text = getString(R.string.no_internet)
+                tvYourLocation.text = result.data?.city
+
+                result.data?.let { getAllShalatData(it) }
+
+                tvQibla.setOnClickListener {
+                    isOnline = isOnline(requireContext())
+                    forQibla = true
+                    if (isOnline) {
+                        checkStateLocationPermission()
+                    } else {
+                        (activity as MainActivity).customSnackbar(
+                            state = false,
+                            context = requireContext(),
+                            view = binding.root,
+                            message = "Tidak ada koneksi internet"
+                        )
+                    }
+                }
+            }
+        }
     }
 
     private fun initTapPrompt() {
@@ -513,46 +521,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .create()
         materialTapTargetSequence.addPrompt(targetOne)
         materialTapTargetSequence.show()
-    }
-
-    private fun initUIResult() {
-        shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
-            binding.apply {
-                when {
-                    result is Resource.Loading && result.data == null -> {
-                        progressBar.visibility = View.VISIBLE
-                        clNegativeCase.visibility = View.GONE
-                        shalatLayout.root.visibility = View.GONE
-                    }
-
-                    result is Resource.Error && result.data == null -> {
-                        progressBar.visibility = View.GONE
-                        shalatLayout.root.visibility = View.GONE
-                        negativeCase()
-                    }
-
-                    else -> {
-                        clNegativeCase.visibility = View.GONE
-                        result?.data?.let { data -> getAllShalatData(data) }
-
-                        tvQibla.setOnClickListener {
-                            isOnline = isOnline(requireContext())
-                            forQibla = true
-                            if (isOnline) {
-                                checkStateLocationPermission()
-                            } else {
-                                (activity as MainActivity).customSnackbar(
-                                    state = false,
-                                    context = requireContext(),
-                                    view = binding.root,
-                                    message = "Tidak ada koneksi internet"
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun getAllShalatData(data: ShalatEntity) {
@@ -825,30 +793,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         clShalat.background = ContextCompat.getDrawable(
             requireContext(), R.drawable.bg_item_shalat
         )
-    }
-
-    private fun negativeCase() {
-        binding.apply {
-            clNegativeCase.visibility = View.VISIBLE
-            shalatLayout.root.visibility = View.GONE
-            lottieNoLocation.visibility = View.GONE
-            lottieNoInternet.visibility = View.VISIBLE
-            tvResult.text = getString(R.string.no_internet)
-            clNegativeCase.applyConstraint {
-                topToBottom(tvResult, lottieNoInternet, 16)
-            }
-        }
-    }
-
-    private fun ConstraintLayout.applyConstraint(block: ConstraintSet.() -> Unit) {
-        ConstraintSet().apply {
-            clone(this@applyConstraint)
-            block(this)
-        }.applyTo(this)
-    }
-
-    private fun ConstraintSet.topToBottom(v1: View, v2: View, @Px margin: Int = 0) {
-        connect(v1.id, TOP, v2.id, BOTTOM, margin)
     }
 
     private fun adzanLowerCase(adzanName: String): String {

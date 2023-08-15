@@ -200,7 +200,6 @@
                     android:id="@+id/cl_negative_case"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl_info_shalat">
 
@@ -214,19 +213,6 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:lottie_autoPlay="true"
                         app:lottie_fileName="no_internet.json"
-                        app:lottie_loop="true"
-                        app:lottie_speed="1" />
-
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/lottie_no_location"
-                        android:layout_width="210dp"
-                        android:layout_height="210dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:lottie_autoPlay="true"
-                        app:lottie_fileName="location.json"
                         app:lottie_loop="true"
                         app:lottie_speed="1" />
 
