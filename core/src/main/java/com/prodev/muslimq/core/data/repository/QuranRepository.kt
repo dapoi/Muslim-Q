@@ -1,5 +1,6 @@
 package com.prodev.muslimq.core.data.repository
 
+import com.prodev.muslimq.core.data.source.local.model.BookmarkEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
@@ -8,10 +9,18 @@ import kotlinx.coroutines.flow.Flow
 
 interface QuranRepository {
     fun getQuran(): Flow<Resource<List<QuranEntity>>>
+
     fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>>
+
     fun getQuranTafsir(surahId: Int, ayahNumber: Int): Flow<Resource<TafsirDetailItem>>
-    fun getBookmark(): Flow<List<QuranDetailEntity>>
-    suspend fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean)
+
+    fun getBookmark(): Flow<List<BookmarkEntity>>
+
+    fun isBookmarked(surahId: Int): Flow<Boolean>
+
+    suspend fun insertToBookmark(bookmarkEntity: BookmarkEntity)
+
+    suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)
+
     suspend fun deleteAllBookmark()
-    suspend fun deleteBookmark(surahId: Int)
 }

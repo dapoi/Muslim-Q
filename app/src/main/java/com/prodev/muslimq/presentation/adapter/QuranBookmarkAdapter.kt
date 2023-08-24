@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
+import com.prodev.muslimq.core.data.source.local.model.BookmarkEntity
 import com.prodev.muslimq.databinding.ItemListSurahBinding
 
 class QuranBookmarkAdapter(
-    private val onItemClick: ((QuranDetailEntity) -> Unit)? = null
-) : ListAdapter<QuranDetailEntity, QuranBookmarkAdapter.QuranBookmarkViewHolder>(DIFF_CALLBACK) {
-
-    fun getSurahAt(position: Int): QuranDetailEntity = getItem(position)
+    private val onItemClick: ((BookmarkEntity) -> Unit)? = null
+) : ListAdapter<BookmarkEntity, QuranBookmarkAdapter.QuranBookmarkViewHolder>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuranBookmarkViewHolder {
         return QuranBookmarkViewHolder(
@@ -34,7 +32,7 @@ class QuranBookmarkAdapter(
         private val binding: ItemListSurahBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(surah: QuranDetailEntity) {
+        fun bind(surah: BookmarkEntity) {
             binding.apply {
                 tvSurahNumber.text = surah.surahId.toString()
                 tvSurahName.text = surah.namaLatin
@@ -55,17 +53,17 @@ class QuranBookmarkAdapter(
     }
 
     companion object {
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<QuranDetailEntity>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<BookmarkEntity>() {
             override fun areItemsTheSame(
-                oldItem: QuranDetailEntity,
-                newItem: QuranDetailEntity
+                oldItem: BookmarkEntity,
+                newItem: BookmarkEntity
             ): Boolean {
                 return oldItem.surahId == newItem.surahId
             }
 
             override fun areContentsTheSame(
-                oldItem: QuranDetailEntity,
-                newItem: QuranDetailEntity
+                oldItem: BookmarkEntity,
+                newItem: BookmarkEntity
             ): Boolean {
                 return oldItem == newItem
             }

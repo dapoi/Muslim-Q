@@ -1,6 +1,7 @@
 package com.prodev.muslimq.core.data.source.local.database
 
 import androidx.room.*
+import com.prodev.muslimq.core.data.source.local.model.BookmarkEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import kotlinx.coroutines.flow.Flow
@@ -14,12 +15,6 @@ interface QuranDao {
     @Query("SELECT * FROM quran_detail WHERE surahId = :surahId")
     fun getQuranDetail(surahId: Int): Flow<QuranDetailEntity>
 
-    @Update
-    fun updateBookmark(quran: QuranDetailEntity)
-
-    @Query("SELECT * FROM quran_detail WHERE isBookmarked = 1")
-    fun getBookmark(): Flow<List<QuranDetailEntity>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuran(quran: List<QuranEntity>)
 
@@ -29,11 +24,21 @@ interface QuranDao {
     @Query("DELETE FROM quran")
     suspend fun deleteQuran()
 
-    // delete all bookmark
-    @Query("UPDATE quran_detail SET isBookmarked = 0")
-    suspend fun deleteAllBookmark()
+    /**
+     * Bookmark
+     */
+    @Query("SELECT * FROM bookmark")
+    fun getBookmark(): Flow<List<BookmarkEntity>>
 
-    // delete bookmark by surahId
-    @Query("UPDATE quran_detail SET isBookmarked = 0 WHERE surahId = :surahId")
-    suspend fun deleteBookmark(surahId: Int)
+    @Query("SELECT EXISTS(SELECT 1 FROM bookmark WHERE surahId = :surahId)")
+    fun isBookmarked(surahId: Int): Flow<Boolean>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBookmark(bookmark: BookmarkEntity)
+
+    @Delete
+    suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity)
+
+    @Query("DELETE FROM bookmark")
+    suspend fun deleteAllBookmark()
 }

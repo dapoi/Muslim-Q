@@ -141,6 +141,7 @@ class MainActivity : AppCompatActivity() {
                 setAction(textAction) {
                     when {
                         isDetailScreen -> {
+                            navController.navigateUp()
                             val selectedId = binding.bottomNav.selectedItemId
                             if (selectedId == R.id.othersFragment) {
                                 navController.popBackStack(

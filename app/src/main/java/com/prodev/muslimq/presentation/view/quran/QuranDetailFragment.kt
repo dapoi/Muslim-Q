@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.Ayat
+import com.prodev.muslimq.core.data.source.local.model.BookmarkEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.isOnline
 import com.prodev.muslimq.databinding.DialogAudioAyahBinding
@@ -41,6 +42,7 @@ import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
+import com.prodev.muslimq.presentation.viewmodel.BookmarkViewModel
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.QuranViewModel
 import com.simform.refresh.SSPullToRefreshLayout
@@ -64,6 +66,7 @@ class QuranDetailFragment :
     private lateinit var mediaPlayer: MediaPlayer
 
     private val detailViewModel: QuranViewModel by viewModels()
+    private val bookmarkViewModel: BookmarkViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
 
     private val curvedDialog by lazy {
@@ -165,7 +168,8 @@ class QuranDetailFragment :
         val id = arguments?.getInt(SURAH_NUMBER)
         id?.let { idSurah ->
             surahId = idSurah
-            detailViewModel.getQuranDetail(surahId!!).observe(viewLifecycleOwner) { result ->
+            detailViewModel.getQuranDetail(surahId!!)
+            detailViewModel.getDetailQuran.observe(viewLifecycleOwner) { result ->
                 with(binding) {
                     srlSurah.apply {
                         setLottieAnimation("loading.json")
@@ -254,29 +258,7 @@ class QuranDetailFragment :
                         )
 
                         // setup bookmark
-                        var bookmarked = dataSurah.isBookmarked
-                        setBookmark(bookmarked)
-
-                        ivBookmark.setOnClickListener {
-                            bookmarked = !bookmarked
-                            setBookmark(bookmarked)
-                            detailViewModel.insertToBookmark(dataSurah, bookmarked)
-
-                            val snackbarMessage = if (bookmarked) {
-                                "Berhasil ditambahkan ke \"Baca Nanti\""
-                            } else {
-                                "Berhasil dihapus dari \"Baca Nanti\""
-                            }
-
-                            (activity as MainActivity).customSnackbar(
-                                state = bookmarked,
-                                context = requireContext(),
-                                view = binding.root,
-                                message = snackbarMessage,
-                                action = bookmarked,
-                                isDetailScreen = true
-                            )
-                        }
+                        bookmarkViewModel.setBookmark(dataSurah.surahId)
 
                         // setup sound
                         val mp3File = getString(
@@ -294,6 +276,46 @@ class QuranDetailFragment :
                         // setup transparentdialog
                         dialogLayout = DialogLoadingBinding.inflate(layoutInflater)
                         transparentDialog.setView(dialogLayout!!.root)
+                    }
+                }
+            }
+
+            // get bookmark state
+            bookmarkViewModel.isBookmarked.observe(viewLifecycleOwner) { state ->
+                checkBookmarkState(state)
+
+                detailViewModel.getDetailQuran.value?.data?.let { dataSurah ->
+                    val bookmarkEntity = BookmarkEntity(
+                        dataSurah.surahId,
+                        dataSurah.nama,
+                        dataSurah.namaLatin,
+                        dataSurah.deskripsi,
+                        dataSurah.jumlahAyat,
+                        dataSurah.artiQuran,
+                    )
+
+                    binding.ivBookmark.setOnClickListener {
+
+                        if (state) {
+                            bookmarkViewModel.deleteBookmark(bookmarkEntity)
+                        } else {
+                            bookmarkViewModel.insertBookmark(bookmarkEntity)
+                        }
+
+                        val snackbarMessage = if (state) {
+                            "Berhasil dihapus dari \"Baca Nanti\""
+                        } else {
+                            "Berhasil disimpan ke \"Baca Nanti\""
+                        }
+
+                        (activity as MainActivity).customSnackbar(
+                            state = !state,
+                            context = requireContext(),
+                            view = binding.root,
+                            message = snackbarMessage,
+                            action = !state,
+                            isDetailScreen = true
+                        )
                     }
                 }
             }
@@ -414,7 +436,7 @@ class QuranDetailFragment :
         }
     }
 
-    private fun setBookmark(bookmarkStatus: Boolean) {
+    private fun checkBookmarkState(bookmarkStatus: Boolean) {
         binding.apply {
             if (bookmarkStatus) {
                 ivBookmark.setImageResource(R.drawable.ic_bookmark_true)
@@ -1138,7 +1160,7 @@ class QuranDetailFragment :
             mediaPlayer.stop()
             mediaPlayer.release()
         }
-        detailViewModel.getQuranDetail(surahId!!).removeObservers(viewLifecycleOwner)
+        detailViewModel.getDetailQuran.removeObservers(viewLifecycleOwner)
         super.onDestroyView()
     }
 

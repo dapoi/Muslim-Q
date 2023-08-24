@@ -8,31 +8,31 @@ import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.repository.QuranRepository
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
-import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class QuranViewModel @Inject constructor(
-    private val repositoryImpl: QuranRepository,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    private val quranRepository: QuranRepository
 ) : ViewModel() {
 
     var searchQuery: String = ""
     var filteredData: List<QuranEntity> = emptyList()
 
-    private var _getListQuran = MutableLiveData<Resource<List<QuranEntity>>>()
+    private val _getListQuran = MutableLiveData<Resource<List<QuranEntity>>>()
     val getListQuran: LiveData<Resource<List<QuranEntity>>> get() = _getListQuran
 
-    private var _isCollapse = MutableLiveData<Boolean>()
+    private val _isCollapse = MutableLiveData<Boolean>()
     val isCollapse: LiveData<Boolean> get() = _isCollapse
+
+    private val getDetail = MutableLiveData<Resource<QuranDetailEntity>>()
+    val getDetailQuran: LiveData<Resource<QuranDetailEntity>> get() = getDetail
 
     init {
         viewModelScope.launch {
-            repositoryImpl.getQuran().collect {
+            quranRepository.getQuran().collect {
                 _getListQuran.value = it
             }
         }
@@ -42,24 +42,16 @@ class QuranViewModel @Inject constructor(
         _isCollapse.value = isCollapse
     }
 
-    fun getQuranDetail(surahId: Int) = repositoryImpl.getQuranDetail(surahId).asLiveData()
+    fun getQuranDetail(surahId: Int) {
+        viewModelScope.launch {
+            quranRepository.getQuranDetail(surahId).collect {
+                getDetail.value = it
+            }
+        }
+    }
 
     fun getQuranTafsir(
         surahId: Int,
         ayahNumber: Int
-    ) = repositoryImpl.getQuranTafsir(surahId, ayahNumber).asLiveData()
-
-    fun getBookmark(): LiveData<List<QuranDetailEntity>> = repositoryImpl.getBookmark().asLiveData()
-
-    fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
-        viewModelScope.launch(dispatcher) { repositoryImpl.insertToBookmark(quran, isBookmarked) }
-    }
-
-    fun deleteAllBookmark() {
-        viewModelScope.launch(dispatcher) { repositoryImpl.deleteAllBookmark() }
-    }
-
-    fun deleteBookmark(surahId: Int) {
-        viewModelScope.launch(dispatcher) { repositoryImpl.deleteBookmark(surahId) }
-    }
+    ) = quranRepository.getQuranTafsir(surahId, ayahNumber).asLiveData()
 }

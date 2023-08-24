@@ -2,6 +2,7 @@ package com.prodev.muslimq.core.data.repository
 
 import com.prodev.muslimq.core.data.source.local.database.QuranDao
 import com.prodev.muslimq.core.data.source.local.model.Ayat
+import com.prodev.muslimq.core.data.source.local.model.BookmarkEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
@@ -94,34 +95,33 @@ class QuranRepositoryImpl @Inject constructor(
         }
     )
 
-    override fun getQuranTafsir(surahId: Int, ayahNumber: Int): Flow<Resource<TafsirDetailItem>> {
-        return flow {
-            emit(Resource.Loading())
+    override fun getQuranTafsir(
+        surahId: Int, ayahNumber: Int
+    ): Flow<Resource<TafsirDetailItem>> = flow {
+        emit(Resource.Loading())
 
-            try {
-                service.getQuranTafsir(surahId).data.tafsir.first { tafsir ->
-                    tafsir.ayat == ayahNumber
-                }.let { emit(Resource.Success(it)) }
-            } catch (e: Exception) {
-                emit(Resource.Error(e))
-            }
-        }.flowOn(dispatcher)
+        try {
+            service.getQuranTafsir(surahId).data.tafsir.first { tafsir ->
+                tafsir.ayat == ayahNumber
+            }.let { emit(Resource.Success(it)) }
+        } catch (e: Exception) {
+            emit(Resource.Error(e))
+        }
+    }.flowOn(dispatcher)
+
+    override fun getBookmark(): Flow<List<BookmarkEntity>> = dao.getBookmark()
+
+    override fun isBookmarked(surahId: Int): Flow<Boolean> = dao.isBookmarked(surahId)
+
+    override suspend fun insertToBookmark(bookmarkEntity: BookmarkEntity) {
+        dao.insertBookmark(bookmarkEntity)
     }
 
-    override fun getBookmark(): Flow<List<QuranDetailEntity>> {
-        return dao.getBookmark()
-    }
-
-    override suspend fun insertToBookmark(quran: QuranDetailEntity, isBookmarked: Boolean) {
-        quran.isBookmarked = isBookmarked
-        dao.updateBookmark(quran)
+    override suspend fun deleteBookmark(bookmarkEntity: BookmarkEntity) {
+        dao.deleteBookmark(bookmarkEntity)
     }
 
     override suspend fun deleteAllBookmark() {
         dao.deleteAllBookmark()
-    }
-
-    override suspend fun deleteBookmark(surahId: Int) {
-        dao.deleteBookmark(surahId)
     }
 }
