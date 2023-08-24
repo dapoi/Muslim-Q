@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -54,7 +55,10 @@ class ShalatRepositoryImpl @Inject constructor(
             dao.getShalatDailyByCity(city, country)
         },
         fetch = {
-            shalatService.getShalatDaily(city, country)
+            val calendar = Calendar.getInstance()
+            val currentYear = calendar.get(Calendar.YEAR)
+            val currentMonth = calendar.get(Calendar.MONTH) + 1
+            shalatService.getShalatDaily(currentYear, currentMonth, city, country)
         },
         saveFetchResult = { shalat ->
             val simpleDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
