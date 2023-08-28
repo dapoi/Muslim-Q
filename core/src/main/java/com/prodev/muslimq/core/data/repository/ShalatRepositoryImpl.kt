@@ -13,10 +13,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,7 +49,7 @@ class ShalatRepositoryImpl @Inject constructor(
         city: String, country: String
     ): Flow<Resource<ShalatEntity>> = networkBoundResource(
         query = {
-            dao.getShalatDailyByCity(city, country)
+            dao.getShalatDailyByCity()
         },
         fetch = {
             val calendar = Calendar.getInstance()
@@ -61,23 +58,19 @@ class ShalatRepositoryImpl @Inject constructor(
             shalatService.getShalatDaily(currentYear, currentMonth, city, country)
         },
         saveFetchResult = { shalat ->
-            val simpleDateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-            shalat.data.filter {
-                it.date.readable.contains(simpleDateFormat.format(Date()))
-            }.map { pray ->
-                val local = ShalatEntity(
-                    city = city,
-                    country = country,
-                    shubuh = pray.timings.Fajr,
-                    dzuhur = pray.timings.Dhuhr,
-                    ashar = pray.timings.Asr,
-                    maghrib = pray.timings.Maghrib,
-                    isya = pray.timings.Isha
-                )
+            val pray = shalat.data[0]
+            val local = ShalatEntity(
+                city = city,
+                country = country,
+                shubuh = pray.timings.Fajr.toString(),
+                dzuhur = pray.timings.Dhuhr.toString(),
+                ashar = pray.timings.Asr.toString(),
+                maghrib = pray.timings.Maghrib.toString(),
+                isya = pray.timings.Isha.toString()
+            )
 
-                dao.deleteShalat()
-                dao.insertShalat(local)
-            }
+            dao.deleteShalat()
+            dao.insertShalat(local)
         }
     )
 }

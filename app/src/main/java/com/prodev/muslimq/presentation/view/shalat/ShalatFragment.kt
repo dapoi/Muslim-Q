@@ -447,7 +447,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             binding.apply {
                 progressBar.isVisible = result is Resource.Loading
                 shalatLayout.root.isVisible = result is Resource.Success
-                clNegativeCase.isVisible = result is Resource.Error && result.data == null
+                clNegativeCase.isVisible = result is Resource.Error
                 tvResult.text = getString(R.string.no_internet)
                 tvYourLocation.text = result.data?.city
 

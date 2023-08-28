@@ -20,15 +20,19 @@ import javax.inject.Inject
 class ShalatViewModel @Inject constructor(
     private val repository: ShalatRepository,
     private val dataStorePreference: DataStorePreference,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _getShalatTime = MutableLiveData<Resource<ShalatEntity>>()
     val getShalatTime: LiveData<Resource<ShalatEntity>> get() = _getShalatTime
 
+    init {
+        fetchShalatTime()
+    }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun fetchShalatTime() {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePreference.getCityAndCountryData.flatMapLatest { pair ->
                 val city = if (pair.first.contains("Ambon", true)) "Ibu Kota Kep. Maluku"
                 else pair.first
@@ -39,9 +43,5 @@ class ShalatViewModel @Inject constructor(
                 _getShalatTime.postValue(result)
             }
         }
-    }
-
-    init {
-        fetchShalatTime()
     }
 }

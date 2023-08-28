@@ -6,7 +6,7 @@ import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 
 @Database(
     entities = [ShalatEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class ShalatDatabase : RoomDatabase() {
