@@ -97,7 +97,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private var stateAdzanName = ""
     private var lat: Double? = null
     private var lon: Double? = null
-    private var forQibla = false
 
     private val requestPermissionPostNotification = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -280,8 +279,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 if (location != null) {
                     lat = location.latitude
                     lon = location.longitude
-                    if (forQibla) navigateToQibla(lat!!, lon!!)
-                    else getAddressGeocoder(lat!!, lon!!)
+                    getAddressGeocoder(lat!!, lon!!)
                 } else {
                     requestNewLiveLocation()
                 }
@@ -332,8 +330,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             locationResult.locations.forEach { location ->
                 lat = location.latitude
                 lon = location.longitude
-                if (forQibla) navigateToQibla(lat!!, lon!!)
-                else getAddressGeocoder(lat!!, lon!!)
+                getAddressGeocoder(lat!!, lon!!)
             }
         }
     }
@@ -377,17 +374,17 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun navigateToQibla(latUser: Double, lonUser: Double) {
+    private fun navigateToQibla(latUser: Double?, lonUser: Double?, location: List<String>) {
         findNavController().navigate(
             R.id.action_shalatFragment_to_qiblaFragment,
             Bundle().apply {
-                putDouble(QiblaFragment.USER_LATITUDE, latUser)
-                putDouble(QiblaFragment.USER_LONGITUDE, lonUser)
+                putDouble(QiblaFragment.USER_LATITUDE, latUser!!)
+                putDouble(QiblaFragment.USER_LONGITUDE, lonUser!!)
+                putStringArray(QiblaFragment.USER_LOCATION, location.toTypedArray())
             }
         )
 
         transparentDialog.dismiss()
-        forQibla = false
     }
 
     private fun refreshDataWhenCityChange() {
@@ -450,24 +447,16 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 clNegativeCase.isVisible = result is Resource.Error
                 tvResult.text = getString(R.string.no_internet)
                 tvYourLocation.text = result.data?.city
-
-                result.data?.let { getAllShalatData(it) }
-
                 tvQibla.setOnClickListener {
-                    isOnline = isOnline(requireContext())
-                    forQibla = true
-                    if (isOnline) {
-                        checkStateLocationPermission()
-                    } else {
-                        (activity as MainActivity).customSnackbar(
-                            state = false,
-                            context = requireContext(),
-                            view = binding.root,
-                            message = "Tidak ada koneksi internet"
-                        )
-                    }
+                    navigateToQibla(
+                        result.data?.lat,
+                        result.data?.lon,
+                        listOf(result.data?.city!!, result.data?.country!!)
+                    )
                 }
             }
+
+            result.data?.let { getAllShalatData(it) }
         }
     }
 

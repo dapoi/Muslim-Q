@@ -11,5 +11,7 @@ data class ShalatEntity(
     val dzuhur: String? = "",
     val ashar: String? = "",
     val maghrib: String? = "",
-    val isya: String? = ""
+    val isya: String? = "",
+    val lat: Double? = 0.0,
+    val lon: Double? = 0.0
 )

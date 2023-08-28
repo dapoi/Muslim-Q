@@ -14,7 +14,10 @@ data class ShalatResponse(
 data class ShalatItem(
 
     @Json(name = "timings")
-    val timings: Timing
+    val timings: Timing,
+
+    @Json(name = "meta")
+    val meta: Meta
 )
 
 @JsonClass(generateAdapter = true)
@@ -34,4 +37,14 @@ data class Timing(
 
     @Json(name = "Isha")
     val Isha: String? = null,
+)
+
+@JsonClass(generateAdapter = true)
+data class Meta(
+
+    @Json(name = "latitude")
+    val latitude: Double? = null,
+
+    @Json(name = "longitude")
+    val longitude: Double? = null
 )

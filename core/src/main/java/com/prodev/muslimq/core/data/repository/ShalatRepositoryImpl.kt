@@ -59,6 +59,7 @@ class ShalatRepositoryImpl @Inject constructor(
         },
         saveFetchResult = { shalat ->
             val pray = shalat.data[0]
+            val location = shalat.data[1]
             val local = ShalatEntity(
                 city = city,
                 country = country,
@@ -66,7 +67,9 @@ class ShalatRepositoryImpl @Inject constructor(
                 dzuhur = pray.timings.Dhuhr.toString(),
                 ashar = pray.timings.Asr.toString(),
                 maghrib = pray.timings.Maghrib.toString(),
-                isya = pray.timings.Isha.toString()
+                isya = pray.timings.Isha.toString(),
+                lat = location.meta.latitude,
+                lon = location.meta.longitude
             )
 
             dao.deleteShalat()
