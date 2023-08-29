@@ -16,6 +16,9 @@ data class ShalatItem(
     @Json(name = "timings")
     val timings: Timing,
 
+    @Json(name = "date")
+    val date: Date,
+
     @Json(name = "meta")
     val meta: Meta
 )
@@ -37,6 +40,20 @@ data class Timing(
 
     @Json(name = "Isha")
     val Isha: String? = null,
+)
+
+@JsonClass(generateAdapter = true)
+data class Date(
+
+    @Json(name = "gregorian")
+    val gregorian: Gregorian,
+)
+
+@JsonClass(generateAdapter = true)
+data class Gregorian(
+
+    @Json(name = "day")
+    val day: String? = null,
 )
 
 @JsonClass(generateAdapter = true)

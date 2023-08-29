@@ -17,3 +17,7 @@ annotation class Shalat
 @Retention(AnnotationRetention.BINARY)
 @Qualifier
 annotation class IoDispatcher
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class CalendarAnn

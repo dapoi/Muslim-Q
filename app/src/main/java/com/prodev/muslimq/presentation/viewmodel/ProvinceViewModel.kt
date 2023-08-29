@@ -6,15 +6,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.repository.ShalatRepository
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
+import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProvinceViewModel @Inject constructor(
-    private val shalatRepository: ShalatRepository
+    private val shalatRepository: ShalatRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     var searchQuery: String = ""
@@ -24,7 +26,7 @@ class ProvinceViewModel @Inject constructor(
     val getProvince: LiveData<Resource<List<ProvinceResponse>>> get() = _getProvince
 
     fun setProvince() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             shalatRepository.getAllProvince().collect {
                 _getProvince.postValue(it)
             }

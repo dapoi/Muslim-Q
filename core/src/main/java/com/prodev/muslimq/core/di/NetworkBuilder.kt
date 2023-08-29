@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -101,4 +102,8 @@ object NetworkBuilder {
     @Provides
     @IoDispatcher
     fun provideIoDispatcher() = Dispatchers.IO
+
+    @Provides
+    @CalendarAnn
+    fun provideCalendar(): Calendar = Calendar.getInstance()
 }

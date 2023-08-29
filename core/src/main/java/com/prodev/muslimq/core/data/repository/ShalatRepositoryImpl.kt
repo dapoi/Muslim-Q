@@ -6,6 +6,7 @@ import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.core.data.source.remote.network.AreaApi
 import com.prodev.muslimq.core.data.source.remote.network.ShalatApi
+import com.prodev.muslimq.core.di.CalendarAnn
 import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
@@ -22,7 +23,8 @@ class ShalatRepositoryImpl @Inject constructor(
     private val shalatService: ShalatApi,
     private val areaService: AreaApi,
     private val dao: ShalatDao,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @CalendarAnn private val calendar: Calendar
 ) : ShalatRepository {
 
     override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
@@ -33,7 +35,7 @@ class ShalatRepositoryImpl @Inject constructor(
         } catch (e: Throwable) {
             emit(Resource.Error(e))
         }
-    }.flowOn(dispatcher)
+    }.flowOn(ioDispatcher)
 
     override fun getAllCity(id: String): Flow<Resource<List<CityResponse>>> = flow {
         emit(Resource.Loading())
@@ -43,7 +45,7 @@ class ShalatRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(Resource.Error(e))
         }
-    }.flowOn(dispatcher)
+    }.flowOn(ioDispatcher)
 
     override fun getShalatDaily(
         city: String, country: String
@@ -52,28 +54,30 @@ class ShalatRepositoryImpl @Inject constructor(
             dao.getShalatDailyByCity()
         },
         fetch = {
-            val calendar = Calendar.getInstance()
             val currentYear = calendar.get(Calendar.YEAR)
             val currentMonth = calendar.get(Calendar.MONTH) + 1
             shalatService.getShalatDaily(currentYear, currentMonth, city, country)
         },
         saveFetchResult = { shalat ->
-            val pray = shalat.data[0]
-            val location = shalat.data[1]
-            val local = ShalatEntity(
-                city = city,
-                country = country,
-                shubuh = pray.timings.Fajr.toString(),
-                dzuhur = pray.timings.Dhuhr.toString(),
-                ashar = pray.timings.Asr.toString(),
-                maghrib = pray.timings.Maghrib.toString(),
-                isya = pray.timings.Isha.toString(),
-                lat = location.meta.latitude,
-                lon = location.meta.longitude
-            )
-
-            dao.deleteShalat()
-            dao.insertShalat(local)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            shalat.data.filter {
+                it.date.gregorian.day?.toIntOrNull() == day
+            }.map { pray ->
+                val local = ShalatEntity(
+                    day = pray.date.gregorian.day.toString(),
+                    city = city,
+                    country = country,
+                    shubuh = pray.timings.Fajr.toString(),
+                    dzuhur = pray.timings.Dhuhr.toString(),
+                    ashar = pray.timings.Asr.toString(),
+                    maghrib = pray.timings.Maghrib.toString(),
+                    isya = pray.timings.Isha.toString(),
+                    lat = pray.meta.latitude,
+                    lon = pray.meta.longitude
+                )
+                dao.deleteShalat()
+                dao.insertShalat(local)
+            }
         }
     )
 }

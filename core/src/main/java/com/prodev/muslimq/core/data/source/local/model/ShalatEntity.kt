@@ -2,10 +2,13 @@ package com.prodev.muslimq.core.data.source.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import javax.annotation.Nonnull
 
 @Entity(tableName = "shalat")
 data class ShalatEntity(
-    @PrimaryKey val city: String,
+    @PrimaryKey
+    val day: String = "",
+    val city: String,
     val country: String? = "",
     val shubuh: String? = "",
     val dzuhur: String? = "",
