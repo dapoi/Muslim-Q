@@ -4,6 +4,9 @@
   <img width="540" alt="Thumbnail" src="https://github.com/dapoi/Muslim-Q/assets/68842666/47a052fe-62b7-4afd-baa5-206af4f04a00">
 </div>
 
+## Cara berkontribusi
+Jika ingin MR, push code ke dalam [forked-branch](https://github.com/dapoi/Muslim-Q/tree/forked-branch) untuk memudahkan proses review & merge
+
 ## Fitur
 - Quran + audio
 - Jadwal shalat & adzan
@@ -13,9 +16,6 @@
 
 ## Unduh aplikasi
 <a href='https://play.google.com/store/apps/details?id=com.prodev.muslimq&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Temukan di Google Play' src='https://play.google.com/intl/id/badges/static/images/badges/id_badge_web_generic.png' height="64"/></a>
-
-## Cara berkontribusi
-Jika ingin MR, push code ke dalam [forked-branch](https://github.com/dapoi/Muslim-Q/tree/forked-branch) untuk memudahkan proses review & merge
 
 ## Teknologi yang digunakan
 - Single Activity ✅✅✅
