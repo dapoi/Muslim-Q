@@ -100,7 +100,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan diberikan",
-                isDetailScreen = true
+                giveMarginBottom = true
             )
             checkAudioState(audioGlobal)
         } else {
@@ -109,7 +109,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan ditolak",
-                isDetailScreen = true
+                giveMarginBottom = true
             )
         }
     }
@@ -126,7 +126,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan diberikan",
-                isDetailScreen = true
+                giveMarginBottom = true
             )
             checkAudioState(audioGlobal)
         } else {
@@ -135,7 +135,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan ditolak",
-                isDetailScreen = true
+                giveMarginBottom = true
             )
         }
     }
@@ -314,7 +314,7 @@ class QuranDetailFragment :
                             view = binding.root,
                             message = snackbarMessage,
                             action = !state,
-                            isDetailScreen = true
+                            giveMarginBottom = true
                         )
                     }
                 }
@@ -676,7 +676,7 @@ class QuranDetailFragment :
                     "Izinkan untuk mengakses penyimpanan",
                     true,
                     toSettings = true,
-                    isDetailScreen = true
+                    giveMarginBottom = true
                 )
             }
 
@@ -703,7 +703,7 @@ class QuranDetailFragment :
                     message = "Izinkan penyimpanan untuk mengakses fitur ini",
                     action = true,
                     toSettings = true,
-                    isDetailScreen = true
+                    giveMarginBottom = true
                 )
             }
 
@@ -741,7 +741,7 @@ class QuranDetailFragment :
                     message = "Izinkan penyimpanan untuk mengakses fitur ini",
                     action = true,
                     toSettings = true,
-                    isDetailScreen = true
+                    giveMarginBottom = true
                 )
             }
 
@@ -884,7 +884,7 @@ class QuranDetailFragment :
                         context = requireContext(),
                         view = binding.root,
                         message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
-                        isDetailScreen = true
+                        giveMarginBottom = true
                     )
                     playPauseAudio(binding.ivSound, false, audioUrl)
                 }
@@ -897,7 +897,7 @@ class QuranDetailFragment :
                         context = requireContext(),
                         view = binding.root,
                         message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
-                        isDetailScreen = true
+                        giveMarginBottom = true
                     )
                 }
             }
@@ -951,7 +951,7 @@ class QuranDetailFragment :
                                 context = requireContext(),
                                 view = binding.root,
                                 message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
-                                isDetailScreen = true
+                                giveMarginBottom = true
                             )
                             playPauseAudio(binding.ivSound, false, audio)
                         } else {
@@ -961,7 +961,7 @@ class QuranDetailFragment :
                                 context = requireContext(),
                                 view = binding.root,
                                 message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
-                                isDetailScreen = true
+                                giveMarginBottom = true
                             )
                         }
                     }

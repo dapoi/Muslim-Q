@@ -116,9 +116,9 @@ class MainActivity : AppCompatActivity() {
         message: String,
         action: Boolean = false,
         toSettings: Boolean = false,
-        isDetailScreen: Boolean = false
+        giveMarginBottom: Boolean = false
     ) {
-        val textAction = if (isDetailScreen) "LIHAT" else "IZINKAN"
+        val textAction = if (giveMarginBottom) "LIHAT" else "IZINKAN"
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
             if (state) {
@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white_always))
                 setAction(textAction) {
                     when {
-                        isDetailScreen -> {
+                        giveMarginBottom -> {
                             navController.navigateUp()
                             val selectedId = binding.bottomNav.selectedItemId
                             if (selectedId == R.id.othersFragment) {
@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(60, 0, 60, if (isDetailScreen) 240 else 60)
+        layoutParams.setMargins(60, 0, 60, if (giveMarginBottom) 240 else 60)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
     }

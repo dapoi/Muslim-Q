@@ -699,22 +699,20 @@ class SOTWFormatter {
 
 fun getChannelId(adzanCode: Int): String {
     return when (adzanCode) {
-        1 -> CHANNEL_ID_SHUBUH
-        2 -> CHANNEL_ID_DZUHUR
-        3 -> CHANNEL_ID_ASHAR
-        4 -> CHANNEL_ID_MAGHRIB
-        5 -> CHANNEL_ID_ISYA
-        else -> throw IllegalArgumentException("Unknown adzan code")
+        0 -> CHANNEL_ID_SHUBUH
+        1 -> CHANNEL_ID_DZUHUR
+        2 -> CHANNEL_ID_ASHAR
+        3 -> CHANNEL_ID_MAGHRIB
+        else -> CHANNEL_ID_ISYA
     }
 }
 
 fun getChannelName(adzanCode: Int): String {
     return when (adzanCode) {
-        1 -> CHANNEL_NAME_SHUBUH
-        2 -> CHANNEL_NAME_DZUHUR
-        3 -> CHANNEL_NAME_ASHAR
-        4 -> CHANNEL_NAME_MAGHRIB
-        5 -> CHANNEL_NAME_ISYA
-        else -> throw IllegalArgumentException("Unknown adzan code")
+        0 -> CHANNEL_NAME_SHUBUH
+        1 -> CHANNEL_NAME_DZUHUR
+        2 -> CHANNEL_NAME_ASHAR
+        3 -> CHANNEL_NAME_MAGHRIB
+        else -> CHANNEL_NAME_ISYA
     }
 }

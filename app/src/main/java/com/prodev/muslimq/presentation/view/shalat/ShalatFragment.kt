@@ -18,12 +18,10 @@ import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.SwitchCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.apachat.primecalendar.core.hijri.HijriCalendar
@@ -63,7 +61,6 @@ import java.util.concurrent.TimeUnit
 @AndroidEntryPoint
 class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding::inflate) {
 
-    private lateinit var listOfSwitch: List<SwitchCompat>
     private lateinit var fusedLocation: FusedLocationProviderClient
     private lateinit var adzanReceiver: AdzanReceiver
 
@@ -75,8 +72,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private val transparentDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.TransparentDialog).create()
     }
-
-    private var timeNow = ""
 
     // prayer time with zone
     private var shubuhWithZone = ""
@@ -164,11 +159,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        refreshDataWhenCityChange()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -189,7 +179,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
         }
 
-        setViewModel()
+        initViewModel()
         swipeRefresh()
         dateGregorianAndHijri()
 
@@ -387,14 +377,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         transparentDialog.dismiss()
     }
 
-    private fun refreshDataWhenCityChange() {
-        setFragmentResultListener(ShalatCityFragment.REQUEST_CITY_KEY) { _, bundle ->
-            if (bundle.getBoolean(ShalatCityFragment.BUNDLE_CITY, false)) {
-                resetSwitch = true
-            }
-        }
-    }
-
     private fun swipeRefresh() {
         binding.apply {
             srlShalat.apply {
@@ -406,7 +388,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                         isOnline = isOnline(requireContext())
                         if (isOnline) {
                             setRefreshing(false)
-                            shalatViewModel.fetchShalatTime()
+                            shalatViewModel.refreshShalatTime()
                         } else {
                             setRefreshing(false)
                             clNegativeCase.isVisible = true
@@ -432,19 +414,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun setViewModel() {
-        dataStoreViewModel.getTapPromptState.observe(viewLifecycleOwner) { state ->
-            if (!state) {
-                initTapPrompt()
-                dataStoreViewModel.saveTapPromptState(true)
-            }
-        }
-
+    private fun initViewModel() {
         shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
             binding.apply {
                 progressBar.isVisible = result is Resource.Loading
-                shalatLayout.root.isVisible = result is Resource.Success
                 clNegativeCase.isVisible = result is Resource.Error
+                shalatLayout.root.isVisible = result is Resource.Success
+                if (result is Resource.Success) getAllShalatData(result.data!!)
+
                 tvResult.text = getString(R.string.no_internet)
                 tvYourLocation.text = result.data?.city
                 tvQibla.setOnClickListener {
@@ -455,8 +432,19 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     )
                 }
             }
+        }
 
-            result.data?.let { getAllShalatData(it) }
+        dataStoreViewModel.apply {
+            getTapPromptState.observe(viewLifecycleOwner) { state ->
+                if (!state) {
+                    initTapPrompt()
+                    dataStoreViewModel.saveTapPromptState(true)
+                }
+            }
+
+            getAreaData.observe(viewLifecycleOwner) { area ->
+                shalatViewModel.setShalatTime(area)
+            }
         }
     }
 
@@ -553,7 +541,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         maghrib: String,
         isya: String
     ) {
-
         val listAdzanTime = mapOf(
             AdzanConstants.KEY_ADZAN_SHUBUH to shubuh,
             AdzanConstants.KEY_ADZAN_DZUHUR to dzuhur,
@@ -565,9 +552,17 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         val adzanNames = listAdzanTime.keys.toList()
 
         binding.shalatLayout.apply {
-            listOfSwitch = listOf(
+            val listOfSwitch = listOf(
                 swShubuh, swDzuhur, swAshar, swMaghrib, swIsya
             )
+
+            if (resetSwitch) {
+                for (i in listOfSwitch.indices) {
+                    listOfSwitch[i].isChecked = false
+                }
+
+                resetSwitch = false
+            }
 
             listOfSwitch.withIndex().forEach { (index, switch) ->
                 val adzanName = adzanNames[index]
@@ -607,29 +602,20 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             context = requireContext(),
                             adzanName = adzanName,
                             adzanTime = adzanTime,
-                            adzanCode = index + 1,
+                            adzanCode = index,
                             isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
                             requireContext(),
-                            index + 1
+                            index
                         )
                     }
                 }
             }
-
-            if (resetSwitch) {
-                for (i in listOfSwitch.indices) {
-                    listOfSwitch[i].isChecked = false
-                }
-
-                resetSwitch = false
-            }
         }
 
-        timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-
+        val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         binding.apply {
             if (!tvYourLocation.text.contains("DKI")) {
                 // reset all backgrounds
@@ -637,27 +623,27 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
                 when {
                     timeNow > shubuh && timeNow <= dzuhur -> {
-                        tvTimeShalat.text = "${countDownShalat(dzuhur)} menuju dzuhur"
+                        tvTimeShalat.text = "${countDownShalat(dzuhur, timeNow)} menuju dzuhur"
                         setNextPrayShalatBackground(shalatLayout.clDzuhur)
                     }
 
                     timeNow > dzuhur && timeNow <= ashar -> {
-                        tvTimeShalat.text = "${countDownShalat(ashar)} menuju ashar"
+                        tvTimeShalat.text = "${countDownShalat(ashar, timeNow)} menuju ashar"
                         setNextPrayShalatBackground(shalatLayout.clAshar)
                     }
 
                     timeNow > ashar && timeNow <= maghrib -> {
-                        tvTimeShalat.text = "${countDownShalat(maghrib)} menuju maghrib"
+                        tvTimeShalat.text = "${countDownShalat(maghrib, timeNow)} menuju maghrib"
                         setNextPrayShalatBackground(shalatLayout.clMaghrib)
                     }
 
                     timeNow > maghrib && timeNow <= isya -> {
-                        tvTimeShalat.text = "${countDownShalat(isya)} menuju isya"
+                        tvTimeShalat.text = "${countDownShalat(isya, timeNow)} menuju isya"
                         setNextPrayShalatBackground(shalatLayout.clIsya)
                     }
 
                     else -> {
-                        tvTimeShalat.text = "${countDownShalat(shubuh)} menuju shubuh"
+                        tvTimeShalat.text = "${countDownShalat(shubuh, timeNow)} menuju shubuh"
                         setNextPrayShalatBackground(shalatLayout.clShubuh)
                     }
                 }
@@ -715,7 +701,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     context = requireContext(),
                     adzanName = adzanName,
                     adzanTime = adzanTime,
-                    adzanCode = index + 1,
+                    adzanCode = index,
                     isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)
@@ -728,7 +714,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             } else {
                 adzanReceiver.cancelAdzanReminder(
                     context = requireContext(),
-                    adzanCode = index + 1
+                    adzanCode = index
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, false)
                 if (resetSwitch) {
@@ -753,21 +739,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun countDownShalat(timeShalat: String): String {
-        val timeNowComponent = timeNow.split(":").map { it.toInt() }
-        val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
-        var diff =
-            (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 + timeShalatComponent[1] - timeNowComponent[1]
-        if (diff < 0) diff += 1440
-
-        val hours = diff / 60
-        diff %= 60
-
-        val minutes = diff
-
-        return "$hours jam $minutes menit"
-    }
-
     private fun resetBackgrounds() {
         binding.apply {
             shalatLayout.clDzuhur.background = null
@@ -782,6 +753,21 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         clShalat.background = ContextCompat.getDrawable(
             requireContext(), R.drawable.bg_item_shalat
         )
+    }
+
+    private fun countDownShalat(timeShalat: String, timeNow: String): String {
+        val timeNowComponent = timeNow.split(":").map { it.toInt() }
+        val timeShalatComponent = timeShalat.split(":").map { it.toInt() }
+        var diff =
+            (timeShalatComponent[0] + 24 - timeNowComponent[0]) % 24 * 60 + timeShalatComponent[1] - timeNowComponent[1]
+        if (diff < 0) diff += 1440
+
+        val hours = diff / 60
+        diff %= 60
+
+        val minutes = diff
+
+        return "$hours jam $minutes menit"
     }
 
     private fun adzanLowerCase(adzanName: String): String {

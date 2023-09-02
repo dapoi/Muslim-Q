@@ -5,18 +5,18 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
+import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.capitalizeEachWord
 import com.prodev.muslimq.core.utils.hideKeyboard
 import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatCityBinding
+import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.CityAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.CityViewModel
@@ -82,7 +82,24 @@ class ShalatCityFragment :
                 dataStoreViewModel.saveAreaData(capitalizeEachWord(city.name), "Indonesia")
             }
 
-            setFragmentResult(REQUEST_CITY_KEY, bundleOf(BUNDLE_CITY to true))
+            listOf(
+                AdzanConstants.KEY_ADZAN_SHUBUH,
+                AdzanConstants.KEY_ADZAN_DZUHUR,
+                AdzanConstants.KEY_ADZAN_ASHAR,
+                AdzanConstants.KEY_ADZAN_MAGHRIB,
+                AdzanConstants.KEY_ADZAN_ISYA
+            ).forEach { adzanName ->
+                dataStoreViewModel.saveSwitchState(adzanName, false)
+            }
+
+            (activity as MainActivity).customSnackbar(
+                state = true,
+                context = requireContext(),
+                view = binding.root,
+                message = "Ubah lokasi berhasil, aktifkan kembali adzan",
+                giveMarginBottom = true
+            )
+
             findNavController().popBackStack(R.id.shalatFragment, false)
         }
     }
