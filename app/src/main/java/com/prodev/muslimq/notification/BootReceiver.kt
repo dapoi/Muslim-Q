@@ -84,6 +84,6 @@ class BootReceiver : BroadcastReceiver() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        notificationManager.notify(0, notification.build())
+        notificationManager.notify(5, notification.build())
     }
 }
