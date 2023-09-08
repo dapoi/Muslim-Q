@@ -62,11 +62,8 @@
 
         <service
             android:name=".notification.AdzanService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.prodev.muslimq.service.AdzanService" />
-            </intent-filter>
-        </service>
+            android:enabled="true"
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -22,11 +22,9 @@ import com.prodev.muslimq.core.utils.getChannelId
 import com.prodev.muslimq.core.utils.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,7 +41,7 @@ class AdzanReceiver : BroadcastReceiver() {
 
         if (AdzanService.isRunning()) return
 
-        CoroutineScope(SupervisorJob()).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             dataStorePreference.getAdzanSoundStateAndMuadzin.collect { data ->
                 val isSoundActive = data.first
                 val muadzinRegular = data.second
@@ -66,20 +64,7 @@ class AdzanReceiver : BroadcastReceiver() {
         }
 
         // Reschedule the alarm for the next day
-        val newAdzanTime = adzanTime?.let { getNextDayAdzanTime(it) }
-        if (newAdzanTime != null) {
-            setAdzanReminder(context, newAdzanTime, adzanName, adzanCode, isShubuh)
-        }
-    }
-
-    private fun getNextDayAdzanTime(adzanTime: String): String {
-        val calendar = Calendar.getInstance()
-        val adzanTimeParts = adzanTime.split(":")
-        calendar.set(Calendar.HOUR_OF_DAY, adzanTimeParts[0].toInt())
-        calendar.set(Calendar.MINUTE, adzanTimeParts[1].toInt())
-        calendar.set(Calendar.SECOND, 0)
-        calendar.add(Calendar.DAY_OF_YEAR, 1)
-        return SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
+        adzanTime?.let { setAdzanReminder(context, it, adzanName, adzanCode, isShubuh) }
     }
 
     private fun Context.showDefaultNotification(adzanName: String, adzanCode: Int) {
@@ -144,7 +129,7 @@ class AdzanReceiver : BroadcastReceiver() {
         calendar.set(Calendar.SECOND, 0)
 
         // Check if the alarm time is in the past, if so, add a day
-        if (calendar.timeInMillis < currentTime) {
+        if (calendar.timeInMillis <= currentTime) {
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
 
@@ -166,7 +151,7 @@ class AdzanReceiver : BroadcastReceiver() {
             context,
             adzanCode,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
 
         if (pendingIntent != null) {

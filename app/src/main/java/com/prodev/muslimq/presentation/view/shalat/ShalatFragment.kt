@@ -512,7 +512,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
             dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
             ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
-            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
+            maghrib = "18:26"
             isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
         } catch (e: Exception) {
             e.printStackTrace()
@@ -602,13 +602,13 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             context = requireContext(),
                             adzanName = adzanName,
                             adzanTime = adzanTime,
-                            adzanCode = index,
-                            isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
+                            adzanCode = index + 1,
+                            isShubuh = adzanName.contains("Shubuh")
                         )
                     } else {
                         adzanReceiver.cancelAdzanReminder(
                             requireContext(),
-                            index
+                            index + 1
                         )
                     }
                 }
@@ -701,7 +701,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     context = requireContext(),
                     adzanName = adzanName,
                     adzanTime = adzanTime,
-                    adzanCode = index,
+                    adzanCode = index + 1,
                     isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)
@@ -714,7 +714,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             } else {
                 adzanReceiver.cancelAdzanReminder(
                     context = requireContext(),
-                    adzanCode = index
+                    adzanCode = index + 1
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, false)
                 if (resetSwitch) {

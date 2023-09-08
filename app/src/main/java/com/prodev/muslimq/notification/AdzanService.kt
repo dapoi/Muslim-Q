@@ -33,6 +33,7 @@ class AdzanService : Service() {
         if (intent?.action == "STOP_ADZAN_SERVICE") {
             stopAudio()
             stopSelf()
+            isServiceRunning = false
         }
 
         if (isServiceRunning) {
@@ -44,7 +45,7 @@ class AdzanService : Service() {
         val adzanCode = intent?.getIntExtra(AdzanConstants.ADZAN_CODE, 0)
         val muadzinRegular = intent?.getStringExtra(AdzanConstants.MUADZIN_REGULAR).toString()
         val muadzinShubuh = intent?.getStringExtra(AdzanConstants.MUADZIN_SHUBUH).toString()
-        val isShubuh = intent?.getBooleanExtra(AdzanConstants.KEY_ADZAN_SHUBUH, false) ?: false
+        val isShubuh = intent?.getBooleanExtra(AdzanConstants.IS_SHUBUH, false) ?: false
         val shubuhAudio = when {
             "Hazim" in muadzinShubuh -> R.raw.abu_hazim_shubuh
             else -> R.raw.salah_mansoor_shubuh
@@ -79,6 +80,7 @@ class AdzanService : Service() {
         mediaPlayer?.setOnCompletionListener {
             stopAudio()
             stopSelf()
+            isServiceRunning = false
         }
 
         applicationContext.showServiceNotification(adzanName.toString(), adzanCode!!)
@@ -100,7 +102,6 @@ class AdzanService : Service() {
                 mediaPlayer = null
             }
         }
-        isServiceRunning = false
     }
 
     private fun Context.showServiceNotification(adzanName: String, adzanCode: Int) {
