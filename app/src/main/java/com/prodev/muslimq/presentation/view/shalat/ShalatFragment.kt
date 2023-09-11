@@ -512,7 +512,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))
             dzuhur = dzuhurWithZone.substring(0, dzuhurWithZone.indexOf(" "))
             ashar = asharWithZone.substring(0, asharWithZone.indexOf(" "))
-            maghrib = "18:26"
+            maghrib = maghribWithZone.substring(0, maghribWithZone.indexOf(" "))
             isya = isyaWithZone.substring(0, isyaWithZone.indexOf(" "))
         } catch (e: Exception) {
             e.printStackTrace()

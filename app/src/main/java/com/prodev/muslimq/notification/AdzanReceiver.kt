@@ -64,7 +64,22 @@ class AdzanReceiver : BroadcastReceiver() {
         }
 
         // Reschedule the alarm for the next day
-        adzanTime?.let { setAdzanReminder(context, it, adzanName, adzanCode, isShubuh) }
+        val nextAdzanTime = getNextAdzanTime(adzanTime)
+        setAdzanReminder(context, nextAdzanTime, adzanName, adzanCode, isShubuh)
+    }
+
+    private fun getNextAdzanTime(adzanTime: String?): String {
+        val adzanTimeParts = adzanTime?.split(":")
+        val adzanHour = adzanTimeParts?.getOrNull(0)?.toInt() ?: 0
+        val adzanMinute = adzanTimeParts?.getOrNull(1)?.toInt() ?: 0
+
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, adzanHour)
+        calendar.set(Calendar.MINUTE, adzanMinute)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+
+        return "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
     }
 
     private fun Context.showDefaultNotification(adzanName: String, adzanCode: Int) {

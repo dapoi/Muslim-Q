@@ -33,7 +33,6 @@ class AdzanService : Service() {
         if (intent?.action == "STOP_ADZAN_SERVICE") {
             stopAudio()
             stopSelf()
-            isServiceRunning = false
         }
 
         if (isServiceRunning) {
@@ -80,7 +79,6 @@ class AdzanService : Service() {
         mediaPlayer?.setOnCompletionListener {
             stopAudio()
             stopSelf()
-            isServiceRunning = false
         }
 
         applicationContext.showServiceNotification(adzanName.toString(), adzanCode!!)
@@ -102,6 +100,8 @@ class AdzanService : Service() {
                 mediaPlayer = null
             }
         }
+
+        isServiceRunning = false
     }
 
     private fun Context.showServiceNotification(adzanName: String, adzanCode: Int) {
