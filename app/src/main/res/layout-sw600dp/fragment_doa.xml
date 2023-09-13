@@ -32,7 +32,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/poppins_bold"
+            android:includeFontPadding="false"
             android:text="@string/daily_doa"
+            android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -56,17 +58,6 @@
             app:queryHint="Cari Doa"
             tools:ignore="Autofill" />
 
-        <ImageView
-            android:id="@+id/iv_right_kaligrafi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-10dp"
-            android:layout_marginEnd="20dp"
-            android:rotation="90"
-            android:src="@drawable/ic_kaligrafi"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sv_doa"
-            tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
