@@ -1,6 +1,6 @@
 dependencies {
     // Main
-    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -35,11 +35,14 @@ dependencies {
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chuckVersion"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.1'
 
     // API Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.1"
 
     // ShowCaseView
     implementation 'uk.co.samuelwall:material-tap-target-prompt:3.3.2'
+
+    // Unity Ads
+    implementation 'com.unity3d.ads:unity-ads:4.7.0'
 }

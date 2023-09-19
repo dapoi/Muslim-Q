@@ -19,12 +19,12 @@ android {
             keyPassword 'Lutpi220201'
         }
     }
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.prodev.muslimq"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 290823
         versionName "2.2"
 

@@ -17,12 +17,22 @@ import com.prodev.muslimq.presentation.adapter.OthersAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.view.others.BottomSheetMuadzinFragment.BottomSheetMuadzinCallback
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
+import com.unity3d.ads.IUnityAdsInitializationListener
+import com.unity3d.ads.IUnityAdsLoadListener
+import com.unity3d.ads.IUnityAdsShowListener
+import com.unity3d.ads.UnityAds
+import com.unity3d.ads.UnityAdsShowOptions
+import com.unity3d.services.banners.BannerErrorInfo
+import com.unity3d.services.banners.BannerView
+import com.unity3d.services.banners.BannerView.IListener
+import com.unity3d.services.banners.UnityBannerSize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding::inflate) {
+class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding::inflate),
+    IUnityAdsInitializationListener {
 
     private lateinit var othersAdapter: OthersAdapter
 
@@ -30,11 +40,65 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
     }
+    private val bannerListener = object : IListener {
+        override fun onBannerLoaded(bannerAdView: BannerView?) {}
+        override fun onBannerClick(bannerAdView: BannerView?) {}
+        override fun onBannerFailedToLoad(bannerAdView: BannerView?, errorInfo: BannerErrorInfo?) {}
+        override fun onBannerLeftApplication(bannerView: BannerView?) {}
+    }
+    private val loadListener = object : IUnityAdsLoadListener {
+        override fun onUnityAdsAdLoaded(placementId: String?) {
+            UnityAds.show(
+                requireActivity(),
+                interstitialId,
+                UnityAdsShowOptions(),
+                showListener
+            )
+        }
+
+        override fun onUnityAdsFailedToLoad(
+            placementId: String?,
+            error: UnityAds.UnityAdsLoadError?,
+            message: String?
+        ) {
+        }
+    }
+    private val showListener = object : IUnityAdsShowListener {
+        override fun onUnityAdsShowFailure(
+            placementId: String?,
+            error: UnityAds.UnityAdsShowError?,
+            message: String?
+        ) {
+        }
+
+        override fun onUnityAdsShowStart(placementId: String?) {}
+        override fun onUnityAdsShowClick(placementId: String?) {}
+        override fun onUnityAdsShowComplete(
+            placementId: String?,
+            state: UnityAds.UnityAdsShowCompletionState?
+        ) {
+        }
+    }
+
+    private var testMode: Boolean = false
+    private var appId: String = "5414411"
+    private var bannerId: String = "Banner_Android"
+    private var bannerView: BannerView? = null
+    private var interstitialId: String = "Interstitial_Android"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initUnityAds()
         setRecyclerView()
+    }
+
+    private fun initUnityAds() {
+        UnityAds.initialize(requireActivity(), appId, testMode)
+        bannerView = BannerView(requireActivity(), bannerId, UnityBannerSize(320, 50))
+        bannerView?.listener = bannerListener
+        bannerView?.load()
+        binding.vAds.addView(bannerView)
     }
 
     private fun setRecyclerView() {
@@ -94,6 +158,10 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                     title.contains("Info") -> {
                         findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
                     }
+
+//                    title.contains("Dukung") -> {
+//                        UnityAds.load(interstitialId, loadListener)
+//                    }
                 }
             }
         }
@@ -176,5 +244,16 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                 }
             })
         }.show(childFragmentManager, "BottomSheetMuadzinFragment")
+    }
+
+    override fun onInitializationComplete() {
+        bannerView?.load()
+    }
+
+    override fun onInitializationFailed(
+        error: UnityAds.UnityAdsInitializationError?,
+        message: String?
+    ) {
+        bannerView?.destroy()
     }
 }
