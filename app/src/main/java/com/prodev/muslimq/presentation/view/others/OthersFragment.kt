@@ -44,6 +44,8 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
 
         othersAdapter = OthersAdapter()
         othersAdapter.apply {
+            setList(othersItem)
+
             with(binding.rvOthers) {
                 adapter = this@apply
                 layoutManager = LinearLayoutManager(context)
@@ -65,8 +67,6 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                     }
                 }
             }
-
-            setList(othersItem)
 
             onClick = { item ->
                 val title = item.title

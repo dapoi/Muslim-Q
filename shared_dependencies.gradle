@@ -2,7 +2,7 @@ dependencies {
     // Main
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
@@ -35,7 +35,7 @@ dependencies {
     releaseImplementation "com.github.chuckerteam.chucker:library-no-op:$chuckVersion"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.1'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:18.4.3'
 
     // API Splash Screen
     implementation "androidx.core:core-splashscreen:1.0.1"
