@@ -420,10 +420,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 progressBar.isVisible = result is Resource.Loading
                 clNegativeCase.isVisible = result is Resource.Error
                 shalatLayout.root.isVisible = result is Resource.Success
-                if (result is Resource.Success) getAllShalatData(result.data!!)
+                if (result is Resource.Success) result.data?.let { getAllShalatData(it) }
 
                 tvResult.text = getString(R.string.no_internet)
-                tvYourLocation.text = result.data?.city
                 tvQibla.setOnClickListener {
                     navigateToQibla(
                         result.data?.lat,
@@ -443,6 +442,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
 
             getAreaData.observe(viewLifecycleOwner) { area ->
+                binding.tvYourLocation.text = area.first
                 shalatViewModel.setShalatTime(area)
             }
         }

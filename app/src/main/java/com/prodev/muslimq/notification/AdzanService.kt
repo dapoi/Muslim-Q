@@ -33,6 +33,7 @@ class AdzanService : Service() {
         if (intent?.action == "STOP_ADZAN_SERVICE") {
             stopAudio()
             stopSelf()
+            return START_NOT_STICKY
         }
 
         if (isServiceRunning) {

@@ -23,6 +23,7 @@ import com.prodev.muslimq.core.utils.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -34,44 +35,44 @@ class AdzanReceiver : BroadcastReceiver() {
     lateinit var dataStorePreference: DataStorePreference
 
     override fun onReceive(context: Context, intent: Intent) {
-        val adzanName = intent.getStringExtra(ADZAN_NAME).toString()
+        val adzanName = intent.getStringExtra(ADZAN_NAME)
         val adzanCode = intent.getIntExtra(ADZAN_CODE, 0)
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
         if (AdzanService.isRunning()) return
 
-        CoroutineScope(Dispatchers.IO).launch {
-            dataStorePreference.getAdzanSoundStateAndMuadzin.collect { data ->
-                val isSoundActive = data.first
-                val muadzinRegular = data.second
-                val muadzinShubuh = data.third
-                if (isSoundActive) {
-                    // Start the AdzanService
-                    val serviceIntent = Intent(context, AdzanService::class.java).apply {
-                        putExtra(ADZAN_NAME, adzanName)
-                        putExtra(ADZAN_CODE, adzanCode)
-                        putExtra(IS_SHUBUH, isShubuh)
-                        putExtra(MUADZIN_REGULAR, muadzinRegular)
-                        putExtra(MUADZIN_SHUBUH, muadzinShubuh)
+        if (adzanName != null && adzanTime != null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                dataStorePreference.getAdzanSoundStateAndMuadzin.first().let { data ->
+                    val (isSoundActive, muadzinRegular, muadzinShubuh) = data
+                    if (isSoundActive) {
+                        // Start the AdzanService
+                        val serviceIntent = Intent(context, AdzanService::class.java).apply {
+                            putExtra(ADZAN_NAME, adzanName)
+                            putExtra(ADZAN_CODE, adzanCode)
+                            putExtra(IS_SHUBUH, isShubuh)
+                            putExtra(MUADZIN_REGULAR, muadzinRegular)
+                            putExtra(MUADZIN_SHUBUH, muadzinShubuh)
+                        }
+                        context.startService(serviceIntent)
+                    } else {
+                        // Show notif with default ringtone
+                        context.showDefaultNotification(adzanName, adzanCode)
                     }
-                    context.startService(serviceIntent)
-                } else {
-                    // Show notif with default ringtone
-                    context.showDefaultNotification(adzanName, adzanCode)
                 }
             }
-        }
 
-        // Reschedule the alarm for the next day
-        val nextAdzanTime = getNextAdzanTime(adzanTime)
-        setAdzanReminder(context, nextAdzanTime, adzanName, adzanCode, isShubuh)
+            // Reschedule the alarm for the next day
+            val nextAdzanTime = getNextAdzanTime(adzanTime)
+            setAdzanReminder(context, nextAdzanTime, adzanName, adzanCode, isShubuh)
+        }
     }
 
-    private fun getNextAdzanTime(adzanTime: String?): String {
-        val adzanTimeParts = adzanTime?.split(":")
-        val adzanHour = adzanTimeParts?.getOrNull(0)?.toInt() ?: 0
-        val adzanMinute = adzanTimeParts?.getOrNull(1)?.toInt() ?: 0
+    private fun getNextAdzanTime(adzanTime: String): String {
+        val adzanTimeParts = adzanTime.split(":")
+        val adzanHour = adzanTimeParts[0].toInt()
+        val adzanMinute = adzanTimeParts[1].toInt()
 
         val calendar = Calendar.getInstance()
         calendar.set(Calendar.HOUR_OF_DAY, adzanHour)
@@ -166,12 +167,9 @@ class AdzanReceiver : BroadcastReceiver() {
             context,
             adzanCode,
             intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        if (pendingIntent != null) {
-            pendingIntent.cancel()
-            alarmManager.cancel(pendingIntent)
-        }
+        alarmManager.cancel(pendingIntent)
     }
 }
