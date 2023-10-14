@@ -42,7 +42,4 @@ dependencies {
 
     // ShowCaseView
     implementation 'uk.co.samuelwall:material-tap-target-prompt:3.3.2'
-
-    // Unity Ads
-    implementation 'com.unity3d.ads:unity-ads:4.7.0'
 }
