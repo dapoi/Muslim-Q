@@ -417,10 +417,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun initViewModel() {
         shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
             binding.apply {
-                progressBar.isVisible = result is Resource.Loading
-                clNegativeCase.isVisible = result is Resource.Error
-                shalatLayout.root.isVisible = result is Resource.Success
-                if (result is Resource.Success) result.data?.let { getAllShalatData(it) }
+                val isLoading = result is Resource.Loading
+                val isSuccess = result is Resource.Success || result.data != null && !isLoading
+                val isError = result is Resource.Error && result.data == null
+
+                progressBar.isVisible = isLoading
+                clNegativeCase.isVisible = isError
+                shalatLayout.root.isVisible = isSuccess
+                if (isSuccess) getAllShalatData(result.data)
 
                 tvResult.text = getString(R.string.no_internet)
                 tvQibla.setOnClickListener {
@@ -455,8 +459,8 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         val materialTapTargetSequence = MaterialTapTargetSequence()
         val targetTwo = MaterialTapTargetPrompt.Builder(requireActivity())
             .setTarget(binding.ivIconChoose)
-            .setPrimaryText("Ganti Lokasi")
-            .setSecondaryText("Klik disini untuk mengubah lokasi")
+            .setPrimaryText("Ubah Lokasi")
+            .setSecondaryText("Klik di sini untuk mengubah lokasi")
             .setSecondaryTextColour(
                 ContextCompat.getColor(
                     requireContext(),
@@ -481,7 +485,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             .create()
         val targetOne = MaterialTapTargetPrompt.Builder(requireActivity())
             .setTarget(binding.tvYourLocation)
-            .setSecondaryText("Secara default, DKI Jakarta merupakan lokasi awal")
+            .setPrimaryText("Lokasi Awal")
+            .setSecondaryText("DKI Jakarta merupakan lokasi awal yang akan ditampilkan")
+            .setSecondaryTextColour(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white_always
+                )
+            )
             .setBackgroundColour(
                 ContextCompat.getColor(
                     requireContext(),
@@ -500,13 +511,13 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         materialTapTargetSequence.show()
     }
 
-    private fun getAllShalatData(data: ShalatEntity) {
+    private fun getAllShalatData(data: ShalatEntity?) {
         // shalat time with zone
-        shubuhWithZone = data.shubuh.toString()
-        dzuhurWithZone = data.dzuhur.toString()
-        asharWithZone = data.ashar.toString()
-        maghribWithZone = data.maghrib.toString()
-        isyaWithZone = data.isya.toString()
+        shubuhWithZone = data?.shubuh.toString()
+        dzuhurWithZone = data?.dzuhur.toString()
+        asharWithZone = data?.ashar.toString()
+        maghribWithZone = data?.maghrib.toString()
+        isyaWithZone = data?.isya.toString()
 
         try {  // shalat time without zone
             shubuh = shubuhWithZone.substring(0, shubuhWithZone.indexOf(" "))

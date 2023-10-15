@@ -1,13 +1,19 @@
 package com.prodev.muslimq.core.utils
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 
 inline fun <ResultType, RequestType> networkBoundResource(
     crossinline query: () -> Flow<ResultType>,
     crossinline fetch: suspend () -> RequestType,
     crossinline saveFetchResult: suspend (RequestType) -> Unit,
-    crossinline shouldFetch: (ResultType) -> Boolean = { true }
+    crossinline shouldFetch: (ResultType) -> Boolean = { true },
+    crossinline ioDispatcher: () -> CoroutineDispatcher
 ) = flow {
     val data = query().first()
 
@@ -25,4 +31,4 @@ inline fun <ResultType, RequestType> networkBoundResource(
     }
 
     emitAll(flow)
-}.flowOn(Dispatchers.IO)
+}.flowOn(ioDispatcher())

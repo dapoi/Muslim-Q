@@ -101,10 +101,8 @@ object NetworkBuilder {
     }
 
     @Provides
-    @IoDispatcher
     fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
     @Provides
-    @CalendarAnn
     fun provideCalendar(): Calendar = Calendar.getInstance()
 }

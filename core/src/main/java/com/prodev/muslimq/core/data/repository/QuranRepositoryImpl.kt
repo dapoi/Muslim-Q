@@ -7,7 +7,6 @@ import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
 import com.prodev.muslimq.core.data.source.remote.network.QuranApi
-import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,7 +21,7 @@ import javax.inject.Singleton
 class QuranRepositoryImpl @Inject constructor(
     private val service: QuranApi,
     private val dao: QuranDao,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : QuranRepository {
 
     override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
@@ -54,7 +53,8 @@ class QuranRepositoryImpl @Inject constructor(
         shouldFetch = { listQuran ->
             @Suppress("SENSELESS_COMPARISON")
             listQuran == null || listQuran.isEmpty()
-        }
+        },
+        ioDispatcher = { ioDispatcher }
     )
 
     override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> = networkBoundResource(
@@ -92,7 +92,8 @@ class QuranRepositoryImpl @Inject constructor(
         shouldFetch = { data ->
             @Suppress("SENSELESS_COMPARISON")
             data == null || data.ayat.isEmpty()
-        }
+        },
+        ioDispatcher = { ioDispatcher }
     )
 
     override fun getQuranTafsir(
@@ -107,7 +108,7 @@ class QuranRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(Resource.Error(e))
         }
-    }.flowOn(dispatcher)
+    }.flowOn(ioDispatcher)
 
     override fun getBookmark(): Flow<List<BookmarkEntity>> = dao.getBookmark()
 

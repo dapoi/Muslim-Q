@@ -190,7 +190,6 @@ class QuranDetailFragment :
                                             clNoInternet.visibility = View.GONE
                                         } else {
                                             clSurah.visibility = View.VISIBLE
-                                            clSound.visibility = View.VISIBLE
                                             rvAyah.visibility = View.VISIBLE
                                             clNoInternet.visibility = View.GONE
                                             setUpMediaPlayer(result.data?.audio!!)
@@ -198,7 +197,6 @@ class QuranDetailFragment :
                                     }, 2350)
                                 } else {
                                     clSurah.visibility = View.GONE
-                                    clSound.visibility = View.GONE
                                     rvAyah.visibility = View.GONE
                                     clNoInternet.visibility = View.VISIBLE
                                     setRefreshing(false)
@@ -216,7 +214,6 @@ class QuranDetailFragment :
                         stateLoading(false)
                         clNoInternet.visibility = View.VISIBLE
                         clSurah.visibility = View.GONE
-                        clSound.visibility = View.GONE
                     } else {
                         stateLoading(false)
                         rvAyah.visibility = View.VISIBLE
@@ -269,7 +266,6 @@ class QuranDetailFragment :
                         val file = File(mp3File)
                         val isOnline = isOnline(requireContext())
 
-                        clSound.isVisible = file.exists() || isOnline
                         setUpMediaPlayer(dataSurah.audio)
                         initProgressDialog(surahName)
 
@@ -765,7 +761,8 @@ class QuranDetailFragment :
             }
 
             file.exists() -> {
-                playPauseAudio(binding.ivSound, false, mp3File)
+                playOnline = false
+                playPauseAudio(binding.ivSound, false, mp3File, isFromLocal = true)
             }
 
             playOnline -> {
@@ -795,18 +792,27 @@ class QuranDetailFragment :
                     show()
                     tvDownload.setOnClickListener {
                         dismiss()
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                            downloadAudio(audio)
+                        if (isOnline(requireContext())) {
+                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                                downloadAudio(audio)
+                            } else {
+                                saveToMediaStore(audio)
+                            }
                         } else {
-                            saveToMediaStore(audio)
+                            (activity as MainActivity).customSnackbar(
+                                state = false,
+                                context = requireContext(),
+                                view = binding.root,
+                                message = "Tidak ada koneksi internet"
+                            )
                         }
                     }
                     tvStreaming.setOnClickListener {
                         dismiss()
-                        transparentDialog.show()
                         playOnline = true
                         if (isOnline(requireContext())) {
                             playPauseAudio(binding.ivSound, false, audio)
+                            transparentDialog.show()
                         } else {
                             (activity as MainActivity).customSnackbar(
                                 state = false,
@@ -905,7 +911,10 @@ class QuranDetailFragment :
     }
 
     private fun playPauseAudio(
-        buttonInteract: ImageView, isPlay: Boolean, audio: String? = null
+        buttonInteract: ImageView,
+        isPlay: Boolean,
+        audio: String? = null,
+        isFromLocal: Boolean = false
     ) {
         if (isPlay) {
             audioIsPlaying = false
@@ -915,7 +924,7 @@ class QuranDetailFragment :
             audio?.let { checkInitializeMediaPlayer(it) }
             audioIsPlaying = true
             buttonInteract.setImageResource(R.drawable.ic_pause)
-            updateSeekbar()
+            updateSeekbar(isFromLocal)
         }
     }
 
@@ -1075,7 +1084,7 @@ class QuranDetailFragment :
         }
     }
 
-    private fun updateSeekbar() {
+    private fun updateSeekbar(isFromLocal: Boolean) {
         val handler = Handler(Looper.getMainLooper())
         handler.postDelayed(object : Runnable {
             override fun run() {
@@ -1083,7 +1092,7 @@ class QuranDetailFragment :
                     binding.sbSound.progress = mediaPlayer.currentPosition
                     handler.postDelayed(this, 1000)
                     val isOnline = isOnline(requireContext())
-                    if (!isOnline && playOnline) {
+                    if (!isOnline && playOnline && !isFromLocal) {
                         mediaPlayer.stop()
                         binding.apply {
                             ivSound.setImageResource(R.drawable.ic_play)

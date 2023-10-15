@@ -28,15 +28,14 @@
             app:expandedTitleTextAppearance="@style/expandedTitleStyle"
             app:expandedTitleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:scrimAnimationDuration="200"
-            app:scrimVisibleHeightTrigger="300dp"
+            app:scrimAnimationDuration="10"
             app:title="Daftar Surah"
             app:titleCollapseMode="fade">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_collapseMode="parallax">
+                app:layout_collapseMode="pin">
 
                 <TextView
                     android:id="@+id/tv_title"

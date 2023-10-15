@@ -6,8 +6,6 @@ import com.prodev.muslimq.core.data.source.remote.model.CityResponse
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
 import com.prodev.muslimq.core.data.source.remote.network.AreaApi
 import com.prodev.muslimq.core.data.source.remote.network.ShalatApi
-import com.prodev.muslimq.core.di.CalendarAnn
-import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.core.utils.networkBoundResource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,8 +21,8 @@ class ShalatRepositoryImpl @Inject constructor(
     private val shalatService: ShalatApi,
     private val areaService: AreaApi,
     private val dao: ShalatDao,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @CalendarAnn private val calendar: Calendar
+    private val ioDispatcher: CoroutineDispatcher,
+    private val calendar: Calendar
 ) : ShalatRepository {
 
     override fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>> = flow {
@@ -59,9 +57,9 @@ class ShalatRepositoryImpl @Inject constructor(
             shalatService.getShalatDaily(currentYear, currentMonth, city, country)
         },
         saveFetchResult = { shalat ->
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
+            val today = calendar.get(Calendar.DAY_OF_MONTH)
             shalat.data.filter {
-                it.date.gregorian.day?.toIntOrNull() == day
+                it.date.gregorian.day?.toInt() == today
             }.map { pray ->
                 val local = ShalatEntity(
                     day = pray.date.gregorian.day.toString(),
@@ -75,9 +73,11 @@ class ShalatRepositoryImpl @Inject constructor(
                     lat = pray.meta.latitude,
                     lon = pray.meta.longitude
                 )
+
                 dao.deleteShalat()
                 dao.insertShalat(local)
             }
-        }
+        },
+        ioDispatcher = { ioDispatcher }
     )
 }

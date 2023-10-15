@@ -139,7 +139,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
-                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/cl_surah">
 
                     <ImageView

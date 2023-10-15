@@ -156,7 +156,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
         quranViewModel.apply {
             isCollapse.observe(viewLifecycleOwner) { yes ->
                 if (yes) {
-                    binding.appBar.setExpanded(false, true)
+                    binding.appBar.setExpanded(false, false)
                     binding.fabBackToTop.show()
                 }
             }

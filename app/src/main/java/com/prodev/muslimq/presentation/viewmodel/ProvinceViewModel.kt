@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.repository.ShalatRepository
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
-import com.prodev.muslimq.core.di.IoDispatcher
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProvinceViewModel @Inject constructor(
     private val shalatRepository: ShalatRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     var searchQuery: String = ""

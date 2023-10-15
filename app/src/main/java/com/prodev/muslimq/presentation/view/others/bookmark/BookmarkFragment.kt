@@ -1,17 +1,11 @@
 package com.prodev.muslimq.presentation.view.others.bookmark
 
 import android.annotation.SuppressLint
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -64,7 +58,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
                     DialogInfoSurahBinding.inflate(layoutInflater).apply {
                         tvInfoTitle.text = "Info"
                         tvInfoMessage.text =
-                            "Anda dapat menghapus tiap surah dengan cara geser kiri"
+                            "Anda dapat menghapus tiap surah dengan cara geser ke kanan atau kiri"
                         with(curvedDialog.create()) {
                             setView(root)
                             tvInfoClose.setOnClickListener { dismiss() }
@@ -86,7 +80,8 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
                                     state = true,
                                     context = requireContext(),
                                     view = binding.root,
-                                    message = "Berhasil menghapus semua surah"
+                                    message = "Berhasil menghapus semua surah",
+                                    giveMarginBottom = true
                                 )
                             }
                             tvCancel.setOnClickListener { dismiss() }
@@ -115,22 +110,13 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
             }
         )
 
-        val background = ColorDrawable()
-        val backgroundColor = ContextCompat.getColor(requireContext(), R.color.red)
-        val clearPaint = Paint().apply { xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR) }
-
-        val deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)
-        deleteIcon!!.setTint(ContextCompat.getColor(requireContext(), R.color.white_always))
-        val intrinsicWidth = deleteIcon.intrinsicWidth
-        val intrinsicHeight = deleteIcon.intrinsicHeight
-
         binding.rvSurah.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = quranBookmarkAdapter
         }
 
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
-            0, ItemTouchHelper.LEFT
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
         ) {
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -152,93 +138,12 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
                     state = true,
                     context = requireContext(),
                     view = binding.root,
-                    message = "Berhasil menghapus surah ${surah.namaLatin}"
-                )
-            }
-
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-                val itemView = viewHolder.itemView
-                val itemHeight = itemView.bottom - itemView.top
-                val isCanceled = dX == 0f && !isCurrentlyActive
-
-                if (isCanceled) {
-                    clearCanvas(
-                        c,
-                        itemView.right + dX,
-                        itemView.top.toFloat(),
-                        itemView.right.toFloat(),
-                        itemView.bottom.toFloat(),
-                        clearPaint
-                    )
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        false
-                    )
-                    return
-                }
-
-                // Draw the red delete background
-                background.color = backgroundColor
-                background.setBounds(
-                    itemView.right + dX.toInt(),
-                    itemView.top,
-                    itemView.right,
-                    itemView.bottom
-                )
-                background.draw(c)
-
-                // Calculate position of delete icon
-                val deleteIconTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                val deleteIconMargin = (itemHeight - intrinsicHeight) / 2
-                val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
-                val deleteIconRight = itemView.right - deleteIconMargin
-                val deleteIconBottom = deleteIconTop + intrinsicHeight
-
-                // Draw the delete icon
-                deleteIcon.setBounds(
-                    deleteIconLeft,
-                    deleteIconTop,
-                    deleteIconRight,
-                    deleteIconBottom
-                )
-                deleteIcon.draw(c)
-
-                super.onChildDraw(
-                    c,
-                    recyclerView,
-                    viewHolder,
-                    dX,
-                    dY,
-                    actionState,
-                    isCurrentlyActive
+                    message = "Berhasil menghapus surah ${surah.namaLatin}",
+                    giveMarginBottom = true
                 )
             }
         })
         itemTouchHelper.attachToRecyclerView(binding.rvSurah)
-    }
-
-    private fun clearCanvas(
-        c: Canvas?,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        clearPaint: Paint
-    ) {
-        c?.drawRect(left, top, right, bottom, clearPaint)
     }
 
     private fun initViewModel() {
