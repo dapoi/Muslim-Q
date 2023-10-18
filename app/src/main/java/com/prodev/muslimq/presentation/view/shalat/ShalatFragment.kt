@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.apachat.primecalendar.core.hijri.HijriCalendar
+import com.aminography.primecalendar.hijri.HijriCalendar
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -407,9 +407,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             val date = simpleDateFormat.format(Date())
             tvGregorianDate.text = date
 
-            val hijriCalendar = HijriCalendar()
+            val hijriCalendar = HijriCalendar(locale = indonesia)
             val hijriDate =
-                "${hijriCalendar.dayOfMonth} ${hijriCalendar.monthName} ${hijriCalendar.year}H"
+                "${hijriCalendar.dayOfMonth} ${hijriCalendar.monthName} ${hijriCalendar.year} H"
             tvIslamicDate.text = hijriDate
         }
     }
