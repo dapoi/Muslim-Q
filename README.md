@@ -18,7 +18,8 @@ Jika ingin MR, push code ke dalam [forked-branch](https://github.com/dapoi/Musli
 <a href='https://play.google.com/store/apps/details?id=com.prodev.muslimq&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Temukan di Google Play' src='https://play.google.com/intl/id/badges/static/images/badges/id_badge_web_generic.png' height="64"/></a>
 
 ## Teknologi yang digunakan
-- Single Activity ✅✅✅
+- [Single Activity](https://developer.android.com/guide/navigation/navigation-migrate#single-activity)
+- [Kotlin-DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html)
 - [Lifecycle & Livedata](https://developer.android.com/jetpack/androidx/releases/lifecycle)
 - [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
 - [Navigation Component](https://developer.android.com/jetpack/androidx/releases/navigation)
