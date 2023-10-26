@@ -55,7 +55,7 @@ object Libs {
             implementation("androidx.navigation:navigation-ui-ktx:$navigationVersion")
 
             // Dagger hilt
-            val daggerHiltVersion = "2.44"
+            val daggerHiltVersion = "2.48.1"
             implementation("com.google.dagger:hilt-android:$daggerHiltVersion")
             kapt("com.google.dagger:hilt-android-compiler:$daggerHiltVersion")
 
