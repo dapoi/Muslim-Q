@@ -1,4 +1,4 @@
-package com.prodev.muslimq.core.utils
+package com.prodev.muslimq.helper
 
 import android.app.Activity
 import android.content.BroadcastReceiver
@@ -31,6 +31,7 @@ import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_DZUHUR
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_ISYA
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_MAGHRIB
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_SHUBUH
+import com.prodev.muslimq.core.utils.DzikirType
 import com.simform.refresh.SSPullToRefreshLayout
 
 fun capitalizeEachWord(str: String, delimiter: String = " ", separator: String = " "): String {

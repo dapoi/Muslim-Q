@@ -18,10 +18,10 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
-import com.prodev.muslimq.core.utils.InternetReceiver
+import com.prodev.muslimq.helper.InternetReceiver
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.helper.hideKeyboard
+import com.prodev.muslimq.helper.isOnline
 import com.prodev.muslimq.databinding.FragmentQuranBinding
 import com.prodev.muslimq.presentation.adapter.QuranAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment

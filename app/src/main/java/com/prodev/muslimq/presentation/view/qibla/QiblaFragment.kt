@@ -15,9 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.R
-import com.prodev.muslimq.core.utils.Compass
-import com.prodev.muslimq.core.utils.SOTWFormatter
-import com.prodev.muslimq.core.utils.vibrateApp
+import com.prodev.muslimq.helper.Compass
+import com.prodev.muslimq.helper.SOTWFormatter
+import com.prodev.muslimq.helper.vibrateApp
 import com.prodev.muslimq.databinding.FragmentQiblaBinding
 import kotlinx.coroutines.launch
 import kotlin.math.atan2

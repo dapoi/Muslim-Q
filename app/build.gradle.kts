@@ -1,4 +1,5 @@
 import com.dapascript.buildsrc.Libs
+import com.dapascript.buildsrc.SharedLibs
 
 plugins {
     id("com.android.application")
@@ -8,6 +9,7 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -73,8 +75,33 @@ android {
 
 dependencies {
     // Apply shared dependencies
-    Libs.applySharedDeps(dependencies)
+    SharedLibs.applySharedDeps(dependencies)
 
     // Core
     implementation(project(":core"))
+
+    // Main
+    implementation(Libs.coreKtx)
+    implementation(Libs.appCompat)
+    implementation(Libs.material)
+    implementation(Libs.constraintLayout)
+    implementation(Libs.datastore)
+
+    // Appearance
+    implementation(Libs.glide)
+    implementation(Libs.lottie)
+    implementation(Libs.shimmer)
+    implementation(Libs.pullToRefresh)
+    implementation(Libs.dotsIndicator)
+    implementation(Libs.primeCalendar)
+
+    // Navigation
+    implementation(Libs.navigationFragment)
+    implementation(Libs.navigationUi)
+
+    // Api Splash Screen
+    implementation(Libs.apiSplashScreen)
+
+    // ShowCaseView
+    implementation(Libs.showCaseView)
 }

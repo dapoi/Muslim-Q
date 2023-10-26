@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.core.utils.hideKeyboard
+import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.databinding.FragmentDoaBinding
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment

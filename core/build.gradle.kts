@@ -1,4 +1,5 @@
 import com.dapascript.buildsrc.Libs
+import com.dapascript.buildsrc.SharedLibs
 
 plugins {
     id("com.android.library")
@@ -48,7 +49,7 @@ android {
 dependencies {
 
     // Apply shared dependencies
-    Libs.applySharedDeps(dependencies)
+    SharedLibs.applySharedDeps(dependencies)
 
     // Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")

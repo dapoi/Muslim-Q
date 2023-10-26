@@ -8,10 +8,10 @@ import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.data.repository.TasbihRepository
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.DzikirType
-import com.prodev.muslimq.core.utils.defaultDzikir
-import com.prodev.muslimq.core.utils.defaultDzikirPagi
-import com.prodev.muslimq.core.utils.defaultDzikirShalat
-import com.prodev.muslimq.core.utils.defaultDzikirSore
+import com.prodev.muslimq.helper.defaultDzikir
+import com.prodev.muslimq.helper.defaultDzikirPagi
+import com.prodev.muslimq.helper.defaultDzikirShalat
+import com.prodev.muslimq.helper.defaultDzikirSore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -8,7 +8,7 @@ import android.widget.Filterable
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.remote.model.ProvinceResponse
-import com.prodev.muslimq.core.utils.capitalizeEachWord
+import com.prodev.muslimq.helper.capitalizeEachWord
 import com.prodev.muslimq.databinding.ItemListAreaBinding
 
 class ProvinceAdapter(

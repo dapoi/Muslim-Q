@@ -38,8 +38,8 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.core.utils.capitalizeEachWord
-import com.prodev.muslimq.core.utils.isOnline
+import com.prodev.muslimq.helper.capitalizeEachWord
+import com.prodev.muslimq.helper.isOnline
 import com.prodev.muslimq.databinding.DialogGetLocationBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding

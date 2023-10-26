@@ -13,8 +13,8 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.AdzanConstants
-import com.prodev.muslimq.core.utils.getChannelId
-import com.prodev.muslimq.core.utils.getChannelName
+import com.prodev.muslimq.helper.getChannelId
+import com.prodev.muslimq.helper.getChannelName
 import okio.IOException
 
 class AdzanService : Service() {

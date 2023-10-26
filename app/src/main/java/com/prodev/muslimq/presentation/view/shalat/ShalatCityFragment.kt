@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.core.utils.capitalizeEachWord
-import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.core.utils.swipeRefresh
+import com.prodev.muslimq.helper.capitalizeEachWord
+import com.prodev.muslimq.helper.hideKeyboard
+import com.prodev.muslimq.helper.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.CityAdapter

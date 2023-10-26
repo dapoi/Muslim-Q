@@ -12,8 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.DzikirType
-import com.prodev.muslimq.core.utils.capitalizeEachWord
-import com.prodev.muslimq.core.utils.hideKeyboard
+import com.prodev.muslimq.helper.capitalizeEachWord
+import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.databinding.FragmentDzikirBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.DzikirAdapter

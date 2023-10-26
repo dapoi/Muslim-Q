@@ -18,8 +18,8 @@ import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_TIME
 import com.prodev.muslimq.core.utils.AdzanConstants.IS_SHUBUH
 import com.prodev.muslimq.core.utils.AdzanConstants.MUADZIN_REGULAR
 import com.prodev.muslimq.core.utils.AdzanConstants.MUADZIN_SHUBUH
-import com.prodev.muslimq.core.utils.getChannelId
-import com.prodev.muslimq.core.utils.getChannelName
+import com.prodev.muslimq.helper.getChannelId
+import com.prodev.muslimq.helper.getChannelName
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

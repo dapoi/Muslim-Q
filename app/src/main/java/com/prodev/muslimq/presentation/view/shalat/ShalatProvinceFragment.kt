@@ -10,8 +10,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.core.utils.hideKeyboard
-import com.prodev.muslimq.core.utils.swipeRefresh
+import com.prodev.muslimq.helper.hideKeyboard
+import com.prodev.muslimq.helper.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
