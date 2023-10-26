@@ -22,7 +22,8 @@ object AdzanConstants {
     const val CHANNEL_NAME_MAGHRIB = "Maghrib"
     const val CHANNEL_NAME_ISYA = "Isya"
     const val CHANNEL_NAME_REMINDER = "Pengingat Alarm"
-    const val MUADZIN_REGULAR = "Regular"
-    const val MUADZIN_SHUBUH = "Shubuh"
+    const val MUADZIN_REGULAR = "regular"
+    const val MUADZIN_SHUBUH = "shubuh"
     const val FROM_NOTIFICATION = "from_notification"
+    const val STOP_ADZAN = "stop_adzan"
 }

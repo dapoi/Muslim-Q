@@ -100,7 +100,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan diberikan",
-                giveMarginBottom = true
+                toOtherFragment = true
             )
             checkAudioState(audioGlobal)
         } else {
@@ -109,7 +109,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan ditolak",
-                giveMarginBottom = true
+                toOtherFragment = true
             )
         }
     }
@@ -126,7 +126,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan diberikan",
-                giveMarginBottom = true
+                toOtherFragment = true
             )
             checkAudioState(audioGlobal)
         } else {
@@ -135,7 +135,7 @@ class QuranDetailFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Izin penyimpanan ditolak",
-                giveMarginBottom = true
+                toOtherFragment = true
             )
         }
     }
@@ -257,15 +257,6 @@ class QuranDetailFragment :
                         // setup bookmark
                         bookmarkViewModel.setBookmark(dataSurah.surahId)
 
-                        // setup sound
-                        val mp3File = getString(
-                            R.string.fileName,
-                            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                            binding.tvSurahName.text
-                        )
-                        val file = File(mp3File)
-                        val isOnline = isOnline(requireContext())
-
                         setUpMediaPlayer(dataSurah.audio)
                         initProgressDialog(surahName)
 
@@ -310,7 +301,7 @@ class QuranDetailFragment :
                             view = binding.root,
                             message = snackbarMessage,
                             action = !state,
-                            giveMarginBottom = true
+                            toOtherFragment = true
                         )
                     }
                 }
@@ -672,7 +663,7 @@ class QuranDetailFragment :
                     "Izinkan untuk mengakses penyimpanan",
                     true,
                     toSettings = true,
-                    giveMarginBottom = true
+                    toOtherFragment = true
                 )
             }
 
@@ -699,7 +690,7 @@ class QuranDetailFragment :
                     message = "Izinkan penyimpanan untuk mengakses fitur ini",
                     action = true,
                     toSettings = true,
-                    giveMarginBottom = true
+                    toOtherFragment = true
                 )
             }
 
@@ -737,7 +728,7 @@ class QuranDetailFragment :
                     message = "Izinkan penyimpanan untuk mengakses fitur ini",
                     action = true,
                     toSettings = true,
-                    giveMarginBottom = true
+                    toOtherFragment = true
                 )
             }
 
@@ -890,7 +881,7 @@ class QuranDetailFragment :
                         context = requireContext(),
                         view = binding.root,
                         message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
-                        giveMarginBottom = true
+                        toOtherFragment = true
                     )
                     playPauseAudio(binding.ivSound, false, audioUrl)
                 }
@@ -903,7 +894,7 @@ class QuranDetailFragment :
                         context = requireContext(),
                         view = binding.root,
                         message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
-                        giveMarginBottom = true
+                        toOtherFragment = true
                     )
                 }
             }
@@ -960,7 +951,7 @@ class QuranDetailFragment :
                                 context = requireContext(),
                                 view = binding.root,
                                 message = "Berhasil mengunduh Surah ${binding.tvSurahName.text}",
-                                giveMarginBottom = true
+                                toOtherFragment = true
                             )
                             playPauseAudio(binding.ivSound, false, audio)
                         } else {
@@ -970,7 +961,7 @@ class QuranDetailFragment :
                                 context = requireContext(),
                                 view = binding.root,
                                 message = "Gagal mengunduh Surah ${binding.tvSurahName.text}",
-                                giveMarginBottom = true
+                                toOtherFragment = true
                             )
                         }
                     }

@@ -28,7 +28,6 @@ class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
             CoroutineScope(Dispatchers.IO).launch {
-                println("Boot up berhasil")
 
                 listOf(
                     AdzanConstants.KEY_ADZAN_SHUBUH,

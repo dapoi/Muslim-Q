@@ -15,7 +15,6 @@ import com.prodev.muslimq.core.utils.swipeRefresh
 import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
-import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ProvinceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +23,6 @@ class ShalatProvinceFragment :
     BaseFragment<FragmentShalatProvinceBinding>(FragmentShalatProvinceBinding::inflate) {
 
     private val provinceViewModel: ProvinceViewModel by viewModels()
-    private val dataStoreViewModel: DataStoreViewModel by viewModels()
     private val provinceAdapter: ProvinceAdapter by lazy { ProvinceAdapter(binding.emptyState.root) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,10 +54,8 @@ class ShalatProvinceFragment :
             val id = it.id
             val name = it.name
             findNavController().navigate(
-                R.id.action_shalatProvinceFragment_to_shalatCityFragment,
-                bundleOf(
-                    ShalatCityFragment.PROVINCE_ID to id,
-                    ShalatCityFragment.PROVINCE_NAME to name
+                R.id.action_shalatProvinceFragment_to_shalatCityFragment, bundleOf(
+                    ShalatCityFragment.PROVINCE_ID to id, ShalatCityFragment.PROVINCE_NAME to name
                 )
             )
         }
@@ -78,9 +74,7 @@ class ShalatProvinceFragment :
                         stateNoInternetView(false)
                         stateLoading(false)
                         provinceAdapter.setList(
-                            if (provinceViewModel.searchQuery.isNotEmpty() &&
-                                provinceViewModel.filteredData.isNotEmpty()
-                            ) {
+                            if (provinceViewModel.searchQuery.isNotEmpty() && provinceViewModel.filteredData.isNotEmpty()) {
                                 provinceViewModel.filteredData
                             } else {
                                 it.data!!

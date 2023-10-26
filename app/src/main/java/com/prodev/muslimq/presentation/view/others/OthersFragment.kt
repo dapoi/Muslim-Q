@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
-import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.DialogSettingNotificationBinding
 import com.prodev.muslimq.databinding.FragmentOthersBinding
 import com.prodev.muslimq.presentation.MainActivity

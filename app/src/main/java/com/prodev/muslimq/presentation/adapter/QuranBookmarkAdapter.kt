@@ -2,8 +2,8 @@ package com.prodev.muslimq.presentation.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -39,11 +39,7 @@ class QuranBookmarkAdapter(
                 tvMeaningAndAyah.text = "${surah.artiQuran} • ${surah.jumlahAyat} Ayat"
                 tvSurahNameArabic.text = surah.nama
 
-                vDivider.visibility = if (adapterPosition == itemCount - 1) {
-                    View.INVISIBLE
-                } else {
-                    View.VISIBLE
-                }
+                vDivider.isVisible = adapterPosition != itemCount - 1
             }
 
             itemView.setOnClickListener {

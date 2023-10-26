@@ -29,3 +29,8 @@ class DoaRepositoryImpl @Inject constructor(
         }
     }
 }
+
+interface DoaRepository {
+
+    fun getDoa(): Flow<Resource<List<DoaEntity>>>
+}

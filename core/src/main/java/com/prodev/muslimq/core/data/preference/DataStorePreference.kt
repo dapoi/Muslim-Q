@@ -10,7 +10,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.prodev.muslimq.core.utils.DzikirType
-import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.core.utils.UITheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -35,7 +35,6 @@ private val INPUT_DZIKIR_ONCE = booleanPreferencesKey("input_dzikir_once")
 private val STATE_HAPTIC_FEEDBACK = booleanPreferencesKey("state_haptic_feedback")
 private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
-private val IS_TASBIH_DB_CREATED = booleanPreferencesKey("is_tasbih_db_created")
 private val MUADZIN_REGULAR = stringPreferencesKey("muadzin_regular")
 private val MUADZIN_SHUBUH = stringPreferencesKey("muadzin_shubuh")
 
@@ -270,22 +269,6 @@ class DataStorePreference @Inject constructor(context: Context) {
      */
     val getSelectedDzikirType = dataStore.data.map { preferences ->
         preferences[DZIKIR_TYPE] ?: 0
-    }
-
-    /**
-     * Save is tasbih db created
-     */
-    suspend fun saveIsTasbihDbCreated(isTasbihDbCreated: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[IS_TASBIH_DB_CREATED] = isTasbihDbCreated
-        }
-    }
-
-    /**
-     * Get is tasbih db created
-     */
-    val getIsTasbihDbCreated = dataStore.data.map { preferences ->
-        preferences[IS_TASBIH_DB_CREATED] ?: true
     }
 
     /**

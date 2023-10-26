@@ -18,14 +18,11 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.Calendar
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkBuilder {
 
-    @Singleton
     @Provides
     fun provideChuckerInterceptor(
         @ApplicationContext context: Context
@@ -34,7 +31,6 @@ object NetworkBuilder {
             .maxContentLength(250000L).alwaysReadResponseBody(true).build()
     }
 
-    @Singleton
     @Provides
     fun provideOkHttpClient(
         chuckerInterceptor: ChuckerInterceptor
@@ -47,55 +43,54 @@ object NetworkBuilder {
         return OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor(chuckerInterceptor)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
             .build()
     }
 
-    @Singleton
     @Provides
     fun provideMoshi(): Moshi {
         return Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     }
 
-    @Singleton
+    @Provides
+    fun provideMoshiConverterFactory(moshi: Moshi): MoshiConverterFactory {
+        return MoshiConverterFactory.create(moshi)
+    }
+
     @Provides
     @Quran
     fun provideQuranApi(
         okHttpClient: OkHttpClient,
-        moshi: Moshi
+        moshiConverterFactory: MoshiConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://equran.id/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(moshiConverterFactory)
             .client(okHttpClient)
             .build()
     }
 
-    @Singleton
     @Provides
     @Area
     fun provideArea(
         okHttpClient: OkHttpClient,
-        moshi: Moshi
+        moshiConverterFactory: MoshiConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(moshiConverterFactory)
             .client(okHttpClient)
             .build()
     }
 
-    @Singleton
     @Provides
     @Shalat
     fun provideShalatApi(
         okHttpClient: OkHttpClient,
-        moshi: Moshi
+        moshiConverterFactory: MoshiConverterFactory
     ): Retrofit {
         return Retrofit.Builder()
             .baseUrl("http://api.aladhan.com/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .addConverterFactory(moshiConverterFactory)
             .client(okHttpClient)
             .build()
     }

@@ -97,7 +97,7 @@ class ShalatCityFragment :
                 context = requireContext(),
                 view = binding.root,
                 message = "Ubah lokasi berhasil, aktifkan kembali adzan",
-                giveMarginBottom = true
+                toOtherFragment = true
             )
 
             findNavController().popBackStack(R.id.shalatFragment, false)
@@ -166,8 +166,6 @@ class ShalatCityFragment :
     }
 
     companion object {
-        const val REQUEST_CITY_KEY = "request_city_key"
-        const val BUNDLE_CITY = "bundle_city"
         const val PROVINCE_ID = "province_id"
         const val PROVINCE_NAME = "province_name"
     }

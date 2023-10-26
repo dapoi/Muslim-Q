@@ -19,7 +19,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
-import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.SplashViewModel
@@ -48,6 +48,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setNavController(navController)
+        setDarkMode()
+    }
+
+    private fun setNavController(navController: NavController) {
         val destinationToHideBottomnav = setOf(
             R.id.quranDetailFragment,
             R.id.shalatProvinceFragment,
@@ -66,8 +71,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.bottomNav.setupWithNavController(navController)
-
-        setDarkMode()
     }
 
     private fun setDarkMode() {
@@ -116,9 +119,9 @@ class MainActivity : AppCompatActivity() {
         message: String,
         action: Boolean = false,
         toSettings: Boolean = false,
-        giveMarginBottom: Boolean = false
+        toOtherFragment: Boolean = false
     ) {
-        val textAction = if (giveMarginBottom) "LIHAT" else "IZINKAN"
+        val textAction = if (toOtherFragment) "LIHAT" else "IZINKAN"
         val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG).apply {
             anchorView = binding.bottomNav
             if (state) {
@@ -140,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 setActionTextColor(ContextCompat.getColor(context, R.color.white_always))
                 setAction(textAction) {
                     when {
-                        giveMarginBottom -> {
+                        toOtherFragment -> {
                             navController.navigateUp()
                             val selectedId = binding.bottomNav.selectedItemId
                             if (selectedId == R.id.othersFragment) {
@@ -175,7 +178,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val layoutParams = snackbar.view.layoutParams as ViewGroup.MarginLayoutParams
-        layoutParams.setMargins(60, 0, 60, if (giveMarginBottom) 240 else 60)
+        layoutParams.setMargins(60, 0, 60, if (toOtherFragment) 240 else 60)
         snackbar.view.layoutParams = layoutParams
         snackbar.show()
     }

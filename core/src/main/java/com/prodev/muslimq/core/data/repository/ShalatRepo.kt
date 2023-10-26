@@ -81,3 +81,12 @@ class ShalatRepositoryImpl @Inject constructor(
         ioDispatcher = { ioDispatcher }
     )
 }
+
+interface ShalatRepository {
+
+    fun getAllProvince(): Flow<Resource<List<ProvinceResponse>>>
+
+    fun getAllCity(id: String): Flow<Resource<List<CityResponse>>>
+
+    fun getShalatDaily(city: String, country: String): Flow<Resource<ShalatEntity>>
+}

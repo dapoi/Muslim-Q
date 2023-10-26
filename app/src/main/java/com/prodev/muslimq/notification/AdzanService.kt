@@ -30,7 +30,7 @@ class AdzanService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent?.action == "STOP_ADZAN_SERVICE") {
+        if (intent?.action == AdzanConstants.STOP_ADZAN) {
             stopAudio()
             stopSelf()
             return START_NOT_STICKY
@@ -108,7 +108,7 @@ class AdzanService : Service() {
     private fun Context.showServiceNotification(adzanName: String, adzanCode: Int) {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val stopIntent = Intent(this, AdzanService::class.java).apply {
-            action = "STOP_ADZAN_SERVICE"
+            action = AdzanConstants.STOP_ADZAN
         }
         val stopPendingIntent = PendingIntent.getService(
             this,

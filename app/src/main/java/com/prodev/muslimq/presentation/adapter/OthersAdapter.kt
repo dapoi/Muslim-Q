@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.ItemListOtherBinding
 import com.prodev.muslimq.presentation.view.others.Others
 

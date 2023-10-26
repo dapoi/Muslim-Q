@@ -7,15 +7,16 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.utils.DzikirType
-import com.prodev.muslimq.core.utils.uitheme.UITheme
+import com.prodev.muslimq.core.utils.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DataStoreViewModel @Inject constructor(
-    private val dataStorePref: DataStorePreference
+    private val dataStorePref: DataStorePreference,
+    private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     fun saveSurah(
@@ -25,7 +26,7 @@ class DataStoreViewModel @Inject constructor(
         surahDesc: String,
         ayahNumber: Int
     ) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveSurah(surahId, surahNameArabic, surahName, surahDesc, ayahNumber)
         }
     }
@@ -37,19 +38,19 @@ class DataStoreViewModel @Inject constructor(
     }
 
     fun saveAyahSize(ayahSize: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveAyahSize(ayahSize)
         }
     }
 
     fun saveSwitchDarkMode(uiTheme: UITheme) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveSwitchDarkModeState(uiTheme)
         }
     }
 
     fun saveSwitchState(switchName: String, isChecked: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveSwitchState(switchName, isChecked)
         }
     }
@@ -61,31 +62,31 @@ class DataStoreViewModel @Inject constructor(
     }
 
     fun saveTapPromptState(isTapPrompt: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveTapPromptState(isTapPrompt)
         }
     }
 
     fun saveHapticFeedbackState(isHapticFeedback: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveHapticFeedbackState(isHapticFeedback)
         }
     }
 
     fun saveSelectedDzikirType(dzikirType: DzikirType) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveSelectedDzikirType(dzikirType)
         }
     }
 
     fun saveAdzanSoundState(isAdzanSound: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveAdzanSoundState(isAdzanSound)
         }
     }
 
     fun saveMuadzin(muadzinRegular: String, muadzinShubuh: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             dataStorePref.saveMuadzin(muadzinRegular, muadzinShubuh)
         }
     }

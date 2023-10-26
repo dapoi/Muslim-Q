@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -81,7 +82,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
                                     context = requireContext(),
                                     view = binding.root,
                                     message = "Berhasil menghapus semua surah",
-                                    giveMarginBottom = true
+                                    toOtherFragment = true
                                 )
                             }
                             tvCancel.setOnClickListener { dismiss() }
@@ -139,7 +140,7 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
                     context = requireContext(),
                     view = binding.root,
                     message = "Berhasil menghapus surah ${surah.namaLatin}",
-                    giveMarginBottom = true
+                    toOtherFragment = true
                 )
             }
         })
@@ -149,16 +150,11 @@ class BookmarkFragment : BaseFragment<FragmentBookmarkBinding>(FragmentBookmarkB
     private fun initViewModel() {
         quranBookmarkViewModel.getBookmark().observe(viewLifecycleOwner) { quran ->
             binding.apply {
-                if (quran.isNullOrEmpty()) {
-                    clNegativeCase.visibility = View.VISIBLE
-                    rvSurah.visibility = View.GONE
-                    ivMore.visibility = View.GONE
-                } else {
-                    clNegativeCase.visibility = View.GONE
-                    rvSurah.visibility = View.VISIBLE
-                    ivMore.visibility = View.VISIBLE
-                    quranBookmarkAdapter.submitList(quran)
-                }
+                clNegativeCase.isVisible = quran.isNullOrEmpty()
+                rvSurah.isVisible = quran.isNotEmpty()
+                ivMore.isVisible = quran.isNotEmpty()
+
+                quranBookmarkAdapter.submitList(quran)
             }
         }
     }

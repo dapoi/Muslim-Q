@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.max
 
 @Singleton
 class TasbihRepositoryImpl @Inject constructor(
@@ -34,4 +33,18 @@ class TasbihRepositoryImpl @Inject constructor(
     override fun updateMaxCount(id: Int, maxCount: Int) = flow {
         emit(tasbihDao.updateMaxCount(id, maxCount))
     }
+}
+
+interface TasbihRepository {
+
+    suspend fun insertDzikir(tasbih: TasbihEntity)
+
+    fun getAllDzikir(): Flow<List<TasbihEntity>>
+
+    suspend fun deleteDzikir(dzikirName: String)
+
+    fun getAllDzikirByType(dzikirType: DzikirType): Flow<List<TasbihEntity>>
+
+    fun updateMaxCount(id: Int, maxCount: Int): Flow<Int>
+
 }
