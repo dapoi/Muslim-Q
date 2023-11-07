@@ -107,4 +107,7 @@
     <string name="adzan_regular">Adzan Reguler</string>
     <string name="adzan_shubuh">Adzan Shubuh</string>
     <string name="focus_mode"><![CDATA[Mode Fokus>>]]></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="asmaul_husna">Asmaul Husna</string>
 </resources>

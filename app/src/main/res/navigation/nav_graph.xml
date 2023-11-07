@@ -49,7 +49,7 @@
         android:id="@+id/qiblaFragment"
         android:name="com.prodev.muslimq.presentation.view.qibla.QiblaFragment"
         android:label="fragment_qibla"
-        tools:layout="@layout/fragment_qibla" >
+        tools:layout="@layout/fragment_qibla">
         <argument
             android:name="latUser"
             app:argType="float" />
@@ -81,24 +81,31 @@
             app:exitAnim="@anim/no_anim"
             app:popEnterAnim="@anim/no_anim"
             app:popExitAnim="@anim/to_bottom_anim" />
+        <action
+            android:id="@+id/action_othersFragment_to_asmaulHusnaFragment"
+            app:destination="@id/asmaulHusnaFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
         android:name="com.prodev.muslimq.presentation.view.quran.QuranDetailFragment"
         android:label="fragment_quran_detail"
-        tools:layout="@layout/fragment_quran_detail" >
+        tools:layout="@layout/fragment_quran_detail">
         <argument
             android:name="surahId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <argument
             android:name="isFromLastRead"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
         <argument
             android:name="ayahNumber"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/shalatCityFragment"
@@ -173,4 +180,9 @@
         android:name="com.prodev.muslimq.presentation.view.tasbih.DzikirFragment"
         android:label="DzikirFragment"
         tools:layout="@layout/fragment_dzikir" />
+    <fragment
+        android:id="@+id/asmaulHusnaFragment"
+        android:name="com.prodev.muslimq.presentation.view.asmaul.AsmaulHusnaFragment"
+        android:label="fragment_asmaul_husna"
+        tools:layout="@layout/fragment_asmaul_husna" />
 </navigation>

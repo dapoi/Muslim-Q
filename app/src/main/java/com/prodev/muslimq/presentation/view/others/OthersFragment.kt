@@ -73,7 +73,13 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                 when {
                     title.contains("Baca") -> {
                         findNavController().navigate(
-                            R.id.action_othersFragment_to_quranBookmarkFragment
+                            OthersFragmentDirections.actionOthersFragmentToQuranBookmarkFragment()
+                        )
+                    }
+
+                    title.contains("Husna") -> {
+                        findNavController().navigate(
+                            OthersFragmentDirections.actionOthersFragmentToAsmaulHusnaFragment()
                         )
                     }
 

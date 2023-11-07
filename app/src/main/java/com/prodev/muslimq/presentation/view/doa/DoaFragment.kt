@@ -6,9 +6,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.databinding.FragmentDoaBinding
+import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.presentation.adapter.DoaAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.DoaViewModel
@@ -51,22 +50,6 @@ class DoaFragment : BaseFragment<FragmentDoaBinding>(FragmentDoaBinding::inflate
     }
 
     private fun setViewModel() {
-        doaViewModel.getDoa().observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Loading -> {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-
-                is Resource.Success -> {
-                    binding.progressBar.visibility = View.GONE
-                    doaAdapter.setDoa(it.data!!)
-                }
-
-                is Resource.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.rvDoa.visibility = View.GONE
-                }
-            }
-        }
+        doaViewModel.getDoa().observe(viewLifecycleOwner) { doaAdapter.setDoa(it) }
     }
 }

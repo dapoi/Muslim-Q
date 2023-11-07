@@ -22,4 +22,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun provideTasbihRepository(tasbihRepository: TasbihRepositoryImpl): TasbihRepository
+
+    @Binds
+    abstract fun provideAsmaulHusnaRepository(asmaulHusnaRepository: AsmaulHusnaRepositoryImpl): AsmaulHusnaRepository
 }

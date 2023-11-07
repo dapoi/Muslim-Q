@@ -71,16 +71,6 @@
         app:layout_constraintTop_toBottomOf="@id/cl_header"
         tools:listitem="@layout/item_list_doa" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_header" />
-
     <include
         android:id="@+id/empty_state"
         layout="@layout/empty_layout"
