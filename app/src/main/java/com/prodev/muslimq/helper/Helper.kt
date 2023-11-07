@@ -11,15 +11,13 @@ import android.hardware.SensorManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.content.ContextCompat
+import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_ID_ASHAR
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_ID_DZUHUR
@@ -33,6 +31,42 @@ import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_MAGHRIB
 import com.prodev.muslimq.core.utils.AdzanConstants.CHANNEL_NAME_SHUBUH
 import com.prodev.muslimq.core.utils.DzikirType
 import com.simform.refresh.SSPullToRefreshLayout
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt.STATE_DISMISSED
+import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt.STATE_FOCAL_PRESSED
+
+fun getMaterialTargetPrompt(
+    activity: Activity,
+    view: View,
+    title: String,
+    desc: String,
+    onClick: ((prompt: MaterialTapTargetPrompt) -> Unit)? = null
+): MaterialTapTargetPrompt? {
+    return MaterialTapTargetPrompt.Builder(activity)
+        .setTarget(view)
+        .setPrimaryText(title)
+        .setSecondaryText(desc)
+        .setSecondaryTextColour(
+            ContextCompat.getColor(
+                activity,
+                R.color.white_always
+            )
+        )
+        .setBackgroundColour(
+            ContextCompat.getColor(
+                activity,
+                R.color.green_transparent
+            )
+        )
+        .setFocalColour(ContextCompat.getColor(activity, R.color.white_base))
+        .setCaptureTouchEventOutsidePrompt(false)
+        .setPromptStateChangeListener { prompt, state ->
+            if (state == STATE_DISMISSED || state == STATE_FOCAL_PRESSED) {
+                onClick?.invoke(prompt)
+            }
+        }
+        .create()
+}
 
 fun capitalizeEachWord(str: String, delimiter: String = " ", separator: String = " "): String {
     return str.split(delimiter).joinToString(separator) {
@@ -62,11 +96,8 @@ fun isOnline(context: Context): Boolean {
 }
 
 fun swipeRefresh(
-    context: Context,
     method: () -> Unit,
     srl: SSPullToRefreshLayout,
-    clNoInternet: ConstraintLayout,
-    rv: RecyclerView = RecyclerView(context),
 ) {
     srl.apply {
         setLottieAnimation("loading.json")
@@ -74,22 +105,8 @@ fun swipeRefresh(
         setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
         setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
-                val handlerData = Handler(Looper.getMainLooper())
-                val check = isOnline(context)
-                if (check) {
-                    handlerData.postDelayed({
-                        setRefreshing(false)
-                    }, 2000)
-
-                    handlerData.postDelayed({
-                        clNoInternet.visibility = View.GONE
-                        method()
-                    }, 2350)
-                } else {
-                    rv.visibility = View.GONE
-                    clNoInternet.visibility = View.VISIBLE
-                    setRefreshing(false)
-                }
+                method()
+                setRefreshing(false)
             }
         })
     }

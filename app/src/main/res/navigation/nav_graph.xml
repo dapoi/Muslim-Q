@@ -49,7 +49,14 @@
         android:id="@+id/qiblaFragment"
         android:name="com.prodev.muslimq.presentation.view.qibla.QiblaFragment"
         android:label="fragment_qibla"
-        tools:layout="@layout/fragment_qibla" />
+        tools:layout="@layout/fragment_qibla" >
+        <argument
+            android:name="latUser"
+            app:argType="float" />
+        <argument
+            android:name="locationUser"
+            app:argType="string[]" />
+    </fragment>
     <fragment
         android:id="@+id/doaFragment"
         android:name="com.prodev.muslimq.presentation.view.doa.DoaFragment"
@@ -79,7 +86,20 @@
         android:id="@+id/quranDetailFragment"
         android:name="com.prodev.muslimq.presentation.view.quran.QuranDetailFragment"
         android:label="fragment_quran_detail"
-        tools:layout="@layout/fragment_quran_detail" />
+        tools:layout="@layout/fragment_quran_detail" >
+        <argument
+            android:name="surahId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="isFromLastRead"
+            app:argType="boolean"
+            android:defaultValue="false" />
+        <argument
+            android:name="ayahNumber"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
     <fragment
         android:id="@+id/shalatCityFragment"
         android:name="com.prodev.muslimq.presentation.view.shalat.ShalatCityFragment"
@@ -92,6 +112,12 @@
             app:popExitAnim="@anim/to_bottom_anim"
             app:popUpTo="@id/shalatProvinceFragment"
             app:popUpToInclusive="true" />
+        <argument
+            android:name="provinceId"
+            app:argType="string" />
+        <argument
+            android:name="provinceName"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/shalatProvinceFragment"

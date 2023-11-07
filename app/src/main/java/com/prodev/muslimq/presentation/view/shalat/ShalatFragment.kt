@@ -38,20 +38,19 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.ShalatEntity
 import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
-import com.prodev.muslimq.helper.capitalizeEachWord
-import com.prodev.muslimq.helper.isOnline
 import com.prodev.muslimq.databinding.DialogGetLocationBinding
 import com.prodev.muslimq.databinding.DialogLoadingBinding
 import com.prodev.muslimq.databinding.FragmentShalatBinding
+import com.prodev.muslimq.helper.capitalizeEachWord
+import com.prodev.muslimq.helper.getMaterialTargetPrompt
+import com.prodev.muslimq.helper.isOnline
+import com.prodev.muslimq.helper.swipeRefresh
 import com.prodev.muslimq.notification.AdzanReceiver
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.view.BaseFragment
-import com.prodev.muslimq.presentation.view.qibla.QiblaFragment
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.ShalatViewModel
-import com.simform.refresh.SSPullToRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
-import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetPrompt
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetSequence
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -139,9 +138,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             Manifest.permission.ACCESS_COARSE_LOCATION, false
         )
 
-        if (permissionGranted) {
-            getLiveLocation()
-        }
+        if (permissionGranted) getLiveLocation()
 
         val message = if (permissionGranted) "Izin lokasi diberikan" else "Izin lokasi ditolak"
         (activity as MainActivity).customSnackbar(
@@ -179,8 +176,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
         }
 
+        swipeRefresh(
+            { shalatViewModel.refreshShalatTime() },
+            binding.srlShalat
+        )
         initViewModel()
-        swipeRefresh()
         dateGregorianAndHijri()
 
         // handle deeplink
@@ -216,7 +216,9 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
             tvChooseManual.setOnClickListener {
                 dismiss()
-                findNavController().navigate(R.id.action_shalatFragment_to_shalatProvinceFragment)
+                findNavController().navigate(
+                    ShalatFragmentDirections.actionShalatFragmentToShalatProvinceFragment()
+                )
             }
             tvCancel.setOnClickListener {
                 dismiss()
@@ -364,40 +366,14 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun navigateToQibla(latUser: Double?, lonUser: Double?, location: List<String>) {
+    private fun navigateToQibla(latUser: Double?, location: List<String>) {
         findNavController().navigate(
-            R.id.action_shalatFragment_to_qiblaFragment,
-            Bundle().apply {
-                putDouble(QiblaFragment.USER_LATITUDE, latUser!!)
-                putDouble(QiblaFragment.USER_LONGITUDE, lonUser!!)
-                putStringArray(QiblaFragment.USER_LOCATION, location.toTypedArray())
-            }
+            ShalatFragmentDirections.actionShalatFragmentToQiblaFragment(
+                latUser!!.toFloat(), location.toTypedArray()
+            )
         )
 
         transparentDialog.dismiss()
-    }
-
-    private fun swipeRefresh() {
-        binding.apply {
-            srlShalat.apply {
-                setLottieAnimation("loading.json")
-                setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
-                setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-                setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-                    override fun onRefresh() {
-                        isOnline = isOnline(requireContext())
-                        if (isOnline) {
-                            setRefreshing(false)
-                            shalatViewModel.refreshShalatTime()
-                        } else {
-                            setRefreshing(false)
-                            clNegativeCase.isVisible = true
-                            shalatLayout.root.isVisible = false
-                        }
-                    }
-                })
-            }
-        }
     }
 
     private fun dateGregorianAndHijri() {
@@ -430,7 +406,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 tvQibla.setOnClickListener {
                     navigateToQibla(
                         result.data?.lat,
-                        result.data?.lon,
                         listOf(result.data?.city!!, result.data?.country!!)
                     )
                 }
@@ -457,56 +432,28 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         (activity as MainActivity).showOverlay(true)
         bottomNav.visibility = View.INVISIBLE
         val materialTapTargetSequence = MaterialTapTargetSequence()
-        val targetTwo = MaterialTapTargetPrompt.Builder(requireActivity())
-            .setTarget(binding.ivIconChoose)
-            .setPrimaryText("Ubah Lokasi")
-            .setSecondaryText("Klik di sini untuk mengubah lokasi")
-            .setSecondaryTextColour(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white_always
-                )
-            )
-            .setBackgroundColour(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.green_transparent
-                )
-            )
-            .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
-            .setCaptureTouchEventOutsidePrompt(false)
-            .setPromptStateChangeListener { _, state ->
-                if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                    materialTapTargetSequence.finish()
-                    (activity as MainActivity).showOverlay(false)
-                    bottomNav.visibility = View.VISIBLE
-                }
+        val targetTwo = getMaterialTargetPrompt(
+            activity = requireActivity(),
+            view = binding.ivIconChoose,
+            title = "Ubah Lokasi",
+            desc = "Klik di sini untuk mengubah lokasi",
+            onClick = { prompt ->
+                prompt.dismiss()
+                materialTapTargetSequence.finish()
+                (activity as MainActivity).showOverlay(false)
+                bottomNav.visibility = View.VISIBLE
             }
-            .create()
-        val targetOne = MaterialTapTargetPrompt.Builder(requireActivity())
-            .setTarget(binding.tvYourLocation)
-            .setPrimaryText("Lokasi Awal")
-            .setSecondaryText("DKI Jakarta merupakan lokasi awal yang akan ditampilkan")
-            .setSecondaryTextColour(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.white_always
-                )
-            )
-            .setBackgroundColour(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.green_transparent
-                )
-            )
-            .setFocalColour(ContextCompat.getColor(requireContext(), R.color.white_base))
-            .setCaptureTouchEventOutsidePrompt(false)
-            .setPromptStateChangeListener { _, state ->
-                if (state == MaterialTapTargetPrompt.STATE_DISMISSED || state == MaterialTapTargetPrompt.STATE_FOCAL_PRESSED) {
-                    targetTwo?.show()
-                }
+        )
+        val targetOne = getMaterialTargetPrompt(
+            activity = requireActivity(),
+            view = binding.tvYourLocation,
+            title = "Lokasi Awal",
+            desc = "DKI Jakarta merupakan lokasi awal yang akan ditampilkan",
+            onClick = { prompt ->
+                prompt.dismiss()
+                targetTwo?.show()
             }
-            .create()
+        )
         materialTapTargetSequence.addPrompt(targetOne)
         materialTapTargetSequence.show()
     }

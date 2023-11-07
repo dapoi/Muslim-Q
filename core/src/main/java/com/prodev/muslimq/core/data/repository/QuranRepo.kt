@@ -48,12 +48,14 @@ class QuranRepositoryImpl @Inject constructor(
         @Suppress("SENSELESS_COMPARISON") listQuran == null || listQuran.isEmpty()
     }, ioDispatcher = { ioDispatcher })
 
-    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> =
-        networkBoundResource(query = {
+    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> = networkBoundResource(
+        query = {
             dao.getQuranDetail(id)
-        }, fetch = {
+        },
+        fetch = {
             service.getQuranDetail(id)
-        }, saveFetchResult = { response ->
+        },
+        saveFetchResult = { response ->
             val quran = response.data
             val local = QuranDetailEntity(id,
                 quran.nama,
@@ -74,9 +76,12 @@ class QuranRepositoryImpl @Inject constructor(
                 })
 
             dao.insertQuranDetail(local)
-        }, shouldFetch = { data ->
+        },
+        shouldFetch = { data ->
             @Suppress("SENSELESS_COMPARISON") data == null || data.ayat.isEmpty()
-        }, ioDispatcher = { ioDispatcher })
+        },
+        ioDispatcher = { ioDispatcher }
+    )
 
     override fun getQuranTafsir(
         surahId: Int, ayahNumber: Int

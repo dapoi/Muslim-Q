@@ -92,7 +92,9 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                     }
 
                     title.contains("Info") -> {
-                        findNavController().navigate(R.id.action_othersFragment_to_aboutAppFragment)
+                        findNavController().navigate(
+                            OthersFragmentDirections.actionOthersFragmentToAboutAppFragment()
+                        )
                     }
                 }
             }

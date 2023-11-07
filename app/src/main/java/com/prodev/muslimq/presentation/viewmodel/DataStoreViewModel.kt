@@ -10,6 +10,7 @@ import com.prodev.muslimq.core.utils.DzikirType
 import com.prodev.muslimq.core.utils.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,11 +24,10 @@ class DataStoreViewModel @Inject constructor(
         surahId: Int,
         surahNameArabic: String,
         surahName: String,
-        surahDesc: String,
         ayahNumber: Int
     ) {
         viewModelScope.launch(ioDispatcher) {
-            dataStorePref.saveSurah(surahId, surahNameArabic, surahName, surahDesc, ayahNumber)
+            dataStorePref.saveSurah(surahId, surahNameArabic, surahName, ayahNumber)
         }
     }
 
@@ -91,9 +91,13 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    val getSurah = dataStorePref.getSurah.asLiveData()
+    private val getSurah = dataStorePref.getSurah
 
-    val getDetailSurahAyah = dataStorePref.getDetailSurahAyah.asLiveData()
+    private val getDetailSurahAyah = dataStorePref.getDetailSurahAyah
+
+    val mergeData = getSurah.combine(getDetailSurahAyah) { data1, data2 ->
+        CombineLastRead(data1, data2)
+    }.asLiveData()
 
     val getAreaData = dataStorePref.getCityAndCountryData.asLiveData().distinctUntilChanged()
 
@@ -118,4 +122,9 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getAdzanSoundStateAndMuadzin.asLiveData().distinctUntilChanged()
 
     val getMuadzin = dataStorePref.getMuadzin
+
+    data class CombineLastRead(
+        val detailSurah: Pair<String, String>,
+        val surah: Pair<Int, Int>
+    )
 }

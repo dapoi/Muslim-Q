@@ -51,7 +51,7 @@ class BootReceiver : BroadcastReceiver() {
         ) as NotificationManager
 
         val pendingIntent = NavDeepLinkBuilder(this)
-            .setGraph(R.navigation.bottom_nav)
+            .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.shalatFragment)
             .setArguments(Bundle().apply {
                 putBoolean(AdzanConstants.FROM_NOTIFICATION, true)

@@ -3,58 +3,45 @@ package com.prodev.muslimq.presentation.view.qibla
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.prodev.muslimq.R
+import com.prodev.muslimq.databinding.FragmentQiblaBinding
 import com.prodev.muslimq.helper.Compass
 import com.prodev.muslimq.helper.SOTWFormatter
 import com.prodev.muslimq.helper.vibrateApp
-import com.prodev.muslimq.databinding.FragmentQiblaBinding
+import com.prodev.muslimq.presentation.view.BaseFragment
 import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
-class QiblaFragment : Fragment() {
+class QiblaFragment : BaseFragment<FragmentQiblaBinding>(FragmentQiblaBinding::inflate) {
 
-    private var _binding: FragmentQiblaBinding? = null
-    private val binding get() = _binding!!
-
-    private var userLat = 0.0
-    private var userLon = 0.0
-    private var userLocation = listOf<String>()
-    private var currentAzimuth = 0f
     private lateinit var compass: Compass
     private lateinit var sotwFormatter: SOTWFormatter
+    private var currentAzimuth = 0f
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentQiblaBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    private val args: QiblaFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.ivBack.setOnClickListener { findNavController().popBackStack() }
+        val userLat = args.latUser.toDouble()
+        val userLocation = args.locationUser
 
-        userLat = arguments?.getDouble(USER_LATITUDE) ?: 0.0
-        userLon = arguments?.getDouble(USER_LONGITUDE) ?: 0.0
-        userLocation = arguments?.getStringArray(USER_LOCATION)?.toList() ?: listOf()
+        binding.apply {
+            tvYourLocation.text = userLocation.joinToString(", ")
+            ivBack.setOnClickListener { findNavController().popBackStack() }
+        }
 
-        binding.tvYourLocation.text = userLocation.joinToString(", ")
         setupCompass(userLat)
     }
 
@@ -142,14 +129,7 @@ class QiblaFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
         compass.stop()
-    }
-
-    companion object {
-        const val USER_LATITUDE = "user_latitude"
-        const val USER_LONGITUDE = "user_longitude"
-        const val USER_LOCATION = "user_location"
+        super.onDestroyView()
     }
 }

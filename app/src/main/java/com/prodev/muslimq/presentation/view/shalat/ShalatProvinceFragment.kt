@@ -3,16 +3,14 @@ package com.prodev.muslimq.presentation.view.shalat
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.SearchView
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.helper.swipeRefresh
-import com.prodev.muslimq.databinding.FragmentShalatProvinceBinding
 import com.prodev.muslimq.presentation.adapter.ProvinceAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
 import com.prodev.muslimq.presentation.viewmodel.ProvinceViewModel
@@ -32,19 +30,15 @@ class ShalatProvinceFragment :
             ivBack.setOnClickListener { findNavController().popBackStack() }
 
             swipeRefresh(
-                requireContext(),
-                { provinceViewModel.setProvince() },
-                srlProvince,
-                clNoInternet,
-                rvProvince
+                { provinceViewModel.setProvince() }, srlProvince
             )
         }
 
-        setAdapter()
-        setViewModel()
+        initAdapter()
+        initViewModel()
     }
 
-    private fun setAdapter() {
+    private fun initAdapter() {
         binding.rvProvince.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = provinceAdapter
@@ -54,14 +48,14 @@ class ShalatProvinceFragment :
             val id = it.id
             val name = it.name
             findNavController().navigate(
-                R.id.action_shalatProvinceFragment_to_shalatCityFragment, bundleOf(
-                    ShalatCityFragment.PROVINCE_ID to id, ShalatCityFragment.PROVINCE_NAME to name
+                ShalatProvinceFragmentDirections.actionShalatProvinceFragmentToShalatCityFragment(
+                    id, name
                 )
             )
         }
     }
 
-    private fun setViewModel() {
+    private fun initViewModel() {
         provinceViewModel.getProvince.observe(viewLifecycleOwner) {
             binding.apply {
                 when (it) {

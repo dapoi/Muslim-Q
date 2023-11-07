@@ -52,14 +52,12 @@ class DataStorePreference @Inject constructor(context: Context) {
         surahId: Int,
         surahNameArabic: String,
         surahName: String,
-        surahDesc: String,
         ayahNumber: Int
     ) {
         dataStore.edit { preferences ->
             preferences[SURAH_ID] = surahId
             preferences[SURAH_NAME_ARABIC] = surahNameArabic
             preferences[SURAH_NAME] = surahName
-            preferences[SURAH_DESC] = surahDesc
             preferences[AYAH_NUMBER] = ayahNumber
         }
     }
@@ -70,8 +68,7 @@ class DataStorePreference @Inject constructor(context: Context) {
     val getSurah = dataStore.data.map { preferences ->
         val surahNameArabic = preferences[SURAH_NAME_ARABIC] ?: ""
         val surahName = preferences[SURAH_NAME] ?: ""
-        val surahDesc = preferences[SURAH_DESC] ?: ""
-        Triple(surahNameArabic, surahName, surahDesc)
+        Pair(surahNameArabic, surahName)
     }
 
     /**

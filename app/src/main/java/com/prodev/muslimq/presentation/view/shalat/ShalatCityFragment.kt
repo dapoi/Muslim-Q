@@ -8,14 +8,15 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.helper.capitalizeEachWord
 import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.helper.swipeRefresh
-import com.prodev.muslimq.databinding.FragmentShalatCityBinding
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.CityAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -30,6 +31,7 @@ class ShalatCityFragment :
 
     private val cityViewModel: CityViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
+    private val args: ShalatCityFragmentArgs by navArgs()
     private val cityAdapter: CityAdapter by lazy { CityAdapter(binding.emptyState.root) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,16 +63,14 @@ class ShalatCityFragment :
                 })
             }
 
-            swipeRefresh(
-                requireContext(), { setViewModel() }, srlCity, clNoInternet, rvCity
-            )
+            swipeRefresh({ cityViewModel.setCity() }, srlCity)
         }
 
-        setAdapter()
-        setViewModel()
+        initAdapter()
+        initViewModel()
     }
 
-    private fun setAdapter() {
+    private fun initAdapter() {
         binding.rvCity.apply {
             adapter = cityAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -104,11 +104,8 @@ class ShalatCityFragment :
         }
     }
 
-    private fun setViewModel() {
-        val provinceIdBundle = arguments?.getString(PROVINCE_ID)
-        provinceIdBundle?.let { cityViewModel.setCity(it) }
-
-        val provinceName = when (val provinceNameBundle = arguments?.getString(PROVINCE_NAME)) {
+    private fun initViewModel() {
+        val provinceName = when (val provinceNameArgs = args.provinceName) {
             "DKI JAKARTA" -> {
                 "DKI Jakarta"
             }
@@ -118,7 +115,7 @@ class ShalatCityFragment :
             }
 
             else -> {
-                provinceNameBundle?.let { capitalizeEachWord(it) }
+                capitalizeEachWord(provinceNameArgs)
             }
         }
         binding.tvTitleCity.text = getString(R.string.city_choose, provinceName)
@@ -163,10 +160,5 @@ class ShalatCityFragment :
 
     private fun stateNoInternetView(state: Boolean) {
         binding.clNoInternet.visibility = if (state) View.VISIBLE else View.GONE
-    }
-
-    companion object {
-        const val PROVINCE_ID = "province_id"
-        const val PROVINCE_NAME = "province_name"
     }
 }
