@@ -561,6 +561,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             adzanName = adzanName,
                             adzanTime = adzanTime,
                             adzanCode = index + 1,
+                            adzanLocation = binding.tvYourLocation.text.toString(),
                             isShubuh = adzanName.contains("Shubuh")
                         )
                     } else {
@@ -660,6 +661,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     adzanName = adzanName,
                     adzanTime = adzanTime,
                     adzanCode = index + 1,
+                    adzanLocation = binding.tvYourLocation.text.toString(),
                     isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)

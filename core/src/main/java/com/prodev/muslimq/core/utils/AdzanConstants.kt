@@ -4,6 +4,7 @@ object AdzanConstants {
     const val ADZAN_CODE = "adzan_code"
     const val ADZAN_NAME = "adzan_name"
     const val ADZAN_TIME = "adzan_time"
+    const val ADZAN_LOCATION = "adzan_location"
     const val IS_SHUBUH = "is_shubuh"
     const val KEY_ADZAN_SHUBUH = "Adzan Shubuh"
     const val KEY_ADZAN_DZUHUR = "Adzan Dzuhur"

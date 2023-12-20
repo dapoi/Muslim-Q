@@ -263,7 +263,8 @@ class QuranDetailFragment :
                         context = requireContext(),
                         view = binding.root,
                         message = snackbarMessage,
-                        action = !state
+                        action = !state,
+                        toOtherFragment = true
                     )
                 }
             }
@@ -618,7 +619,7 @@ class QuranDetailFragment :
 
             shouldShowRequestPermissionRationale(Manifest.permission.READ_MEDIA_AUDIO) -> {
                 (activity as MainActivity).customSnackbar(
-                    true,
+                    false,
                     requireContext(),
                     binding.root,
                     "Izinkan untuk mengakses penyimpanan",

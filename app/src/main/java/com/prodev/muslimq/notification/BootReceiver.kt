@@ -35,7 +35,7 @@ class BootReceiver : BroadcastReceiver() {
                     AdzanConstants.KEY_ADZAN_ASHAR,
                     AdzanConstants.KEY_ADZAN_MAGHRIB,
                     AdzanConstants.KEY_ADZAN_ISYA
-                ).forEach { adzanName ->
+                ).map { adzanName ->
                     dataStorePreference.saveSwitchState(adzanName, false)
                 }
 
@@ -61,7 +61,7 @@ class BootReceiver : BroadcastReceiver() {
         val notification = NotificationCompat.Builder(this, AdzanConstants.CHANNEL_ID_REMINDER)
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle("Aktifkan Pengingat Shalat")
-            .setContentText("Assalamu'alaikum, mohon untuk mengaktifkan kembali pengingat shalat setelah me-restart perangkat.")
+            .setContentText("Mohon untuk mengaktifkan kembali pengingat shalat setelah me-restart perangkat.")
             .setWhen(System.currentTimeMillis())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))

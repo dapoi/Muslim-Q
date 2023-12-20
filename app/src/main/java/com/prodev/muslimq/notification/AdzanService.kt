@@ -43,6 +43,7 @@ class AdzanService : Service() {
 
         val adzanName = intent?.getStringExtra(AdzanConstants.ADZAN_NAME)
         val adzanCode = intent?.getIntExtra(AdzanConstants.ADZAN_CODE, 0)
+        val adzanLocation = intent?.getStringExtra(AdzanConstants.ADZAN_LOCATION)
         val muadzinRegular = intent?.getStringExtra(AdzanConstants.MUADZIN_REGULAR).toString()
         val muadzinShubuh = intent?.getStringExtra(AdzanConstants.MUADZIN_SHUBUH).toString()
         val isShubuh = intent?.getBooleanExtra(AdzanConstants.IS_SHUBUH, false) ?: false
@@ -82,7 +83,11 @@ class AdzanService : Service() {
             stopSelf()
         }
 
-        applicationContext.showServiceNotification(adzanName.toString(), adzanCode!!)
+        applicationContext.showServiceNotification(
+            adzanName.toString(),
+            adzanCode!!,
+            adzanLocation.toString()
+        )
 
         isServiceRunning = true
 
@@ -105,7 +110,11 @@ class AdzanService : Service() {
         isServiceRunning = false
     }
 
-    private fun Context.showServiceNotification(adzanName: String, adzanCode: Int) {
+    private fun Context.showServiceNotification(
+        adzanName: String,
+        adzanCode: Int,
+        adzanLocation: String
+    ) {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val stopIntent = Intent(this, AdzanService::class.java).apply {
             action = AdzanConstants.STOP_ADZAN
@@ -116,10 +125,16 @@ class AdzanService : Service() {
             stopIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
+        val description = buildString {
+            append("Waktunya Menunaikan Shalat ")
+            append(adzanName.split(" ").getOrNull(1))
+            append(" untuk wilayah ")
+            append(adzanLocation)
+        }
         val notification = NotificationCompat.Builder(this, getChannelId(adzanCode))
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
-            .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
+            .setContentText(description)
             .setSound(null)
             .setWhen(System.currentTimeMillis())
             .setPriority(NotificationCompat.PRIORITY_HIGH)

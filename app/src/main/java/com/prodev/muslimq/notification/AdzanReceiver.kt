@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
@@ -13,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_CODE
+import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_LOCATION
 import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_NAME
 import com.prodev.muslimq.core.utils.AdzanConstants.ADZAN_TIME
 import com.prodev.muslimq.core.utils.AdzanConstants.IS_SHUBUH
@@ -38,11 +40,12 @@ class AdzanReceiver : BroadcastReceiver() {
         val adzanName = intent.getStringExtra(ADZAN_NAME)
         val adzanCode = intent.getIntExtra(ADZAN_CODE, 0)
         val adzanTime = intent.getStringExtra(ADZAN_TIME)
+        val adzanLocation = intent.getStringExtra(ADZAN_LOCATION)
         val isShubuh = intent.getBooleanExtra(IS_SHUBUH, false)
 
         if (AdzanService.isRunning()) return
 
-        if (adzanName != null && adzanTime != null) {
+        if (adzanName != null && adzanTime != null && adzanLocation != null) {
             CoroutineScope(Dispatchers.IO).launch {
                 dataStorePreference.getAdzanSoundStateAndMuadzin.first().let { data ->
                     val (isSoundActive, muadzinRegular, muadzinShubuh) = data
@@ -51,6 +54,7 @@ class AdzanReceiver : BroadcastReceiver() {
                         val serviceIntent = Intent(context, AdzanService::class.java).apply {
                             putExtra(ADZAN_NAME, adzanName)
                             putExtra(ADZAN_CODE, adzanCode)
+                            putExtra(ADZAN_LOCATION, adzanLocation)
                             putExtra(IS_SHUBUH, isShubuh)
                             putExtra(MUADZIN_REGULAR, muadzinRegular)
                             putExtra(MUADZIN_SHUBUH, muadzinShubuh)
@@ -58,14 +62,14 @@ class AdzanReceiver : BroadcastReceiver() {
                         context.startService(serviceIntent)
                     } else {
                         // Show notif with default ringtone
-                        context.showDefaultNotification(adzanName, adzanCode)
+                        context.showDefaultNotification(adzanName, adzanCode, adzanLocation)
                     }
                 }
             }
 
             // Reschedule the alarm for the next day
             val nextAdzanTime = getNextAdzanTime(adzanTime)
-            setAdzanReminder(context, nextAdzanTime, adzanName, adzanCode, isShubuh)
+            setAdzanReminder(context, nextAdzanTime, adzanName, adzanCode, adzanLocation, isShubuh)
         }
     }
 
@@ -83,18 +87,26 @@ class AdzanReceiver : BroadcastReceiver() {
         return "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
     }
 
-    private fun Context.showDefaultNotification(adzanName: String, adzanCode: Int) {
-        val notificationManager = this.getSystemService(
-            Context.NOTIFICATION_SERVICE
-        ) as NotificationManager
-
+    private fun Context.showDefaultNotification(
+        adzanName: String,
+        adzanCode: Int,
+        adzanLocation: String
+    ) {
+        val notificationManager = this.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val description = buildString {
+            append("Waktunya Menunaikan Shalat ")
+            append(adzanName.split(" ").getOrNull(1))
+            append(" untuk wilayah ")
+            append(adzanLocation)
+        }
         val notification = NotificationCompat.Builder(this, getChannelId(adzanCode))
             .setSmallIcon(R.drawable.ic_notif_circle)
             .setContentTitle(adzanName)
-            .setContentText("Waktunya Menunaikan Shalat ${adzanName.split(" ").getOrNull(1)}")
+            .setContentText(description)
             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
             .setWhen(System.currentTimeMillis())
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setStyle(NotificationCompat.BigTextStyle())
             .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -119,6 +131,7 @@ class AdzanReceiver : BroadcastReceiver() {
         adzanTime: String,
         adzanName: String,
         adzanCode: Int,
+        adzanLocation: String,
         isShubuh: Boolean
     ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -127,6 +140,7 @@ class AdzanReceiver : BroadcastReceiver() {
             putExtra(ADZAN_NAME, adzanName)
             putExtra(ADZAN_CODE, adzanCode)
             putExtra(ADZAN_TIME, adzanTime)
+            putExtra(ADZAN_LOCATION, adzanLocation)
             putExtra(IS_SHUBUH, isShubuh)
         }
         val pendingIntent = PendingIntent.getBroadcast(
@@ -145,9 +159,7 @@ class AdzanReceiver : BroadcastReceiver() {
         calendar.set(Calendar.SECOND, 0)
 
         // Check if the alarm time is in the past, if so, add a day
-        if (calendar.timeInMillis <= currentTime) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
-        }
+        if (calendar.timeInMillis <= currentTime) calendar.add(Calendar.DAY_OF_YEAR, 1)
 
         // Set the alarm
         alarmManager.setExactAndAllowWhileIdle(
