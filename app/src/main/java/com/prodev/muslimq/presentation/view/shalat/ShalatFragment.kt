@@ -3,7 +3,10 @@ package com.prodev.muslimq.presentation.view.shalat
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.app.AlarmManager
 import android.app.AlertDialog
+import android.content.Context.ALARM_SERVICE
+import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Address
@@ -13,6 +16,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.Toast
@@ -97,12 +101,19 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     ) { isGranted ->
         dataStoreViewModel.saveSwitchState(stateAdzanName, isGranted)
         if (isGranted) {
-            (activity as MainActivity).customSnackbar(
-                state = true,
-                context = requireContext(),
-                view = binding.root,
-                message = "${adzanLowerCase(stateAdzanName)} diaktifkan"
-            )
+            val alarmManager = requireContext().getSystemService(ALARM_SERVICE) as AlarmManager
+            if (Build.VERSION.SDK_INT >= 31 && !alarmManager.canScheduleExactAlarms()) {
+                Intent().apply {
+                    action = ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                }.also { startActivity(it) }
+            } else {
+                (activity as MainActivity).customSnackbar(
+                    state = true,
+                    context = requireContext(),
+                    view = binding.root,
+                    message = "${adzanLowerCase(stateAdzanName)} diaktifkan"
+                )
+            }
         } else {
             (activity as MainActivity).customSnackbar(
                 state = false,
