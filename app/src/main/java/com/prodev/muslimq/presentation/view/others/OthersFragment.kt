@@ -6,6 +6,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.prodev.muslimq.R
@@ -68,43 +69,46 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                 }
             }
 
-            onClick = { item ->
-                val title = item.title
-                when {
-                    title.contains("Baca") -> {
-                        findNavController().navigate(
-                            OthersFragmentDirections.actionOthersFragmentToQuranBookmarkFragment()
-                        )
-                    }
+            onClick = { navigateBasedOnTitle(it.title) }
+        }
+    }
 
-                    title.contains("Husna") -> {
-                        findNavController().navigate(
-                            OthersFragmentDirections.actionOthersFragmentToAsmaulHusnaFragment()
-                        )
-                    }
+    private fun navigateBasedOnTitle(title: String) {
+        when {
+            title.contains("Baca") -> {
+                navigate(OthersFragmentDirections.actionOthersFragmentToQuranBookmarkFragment())
+            }
 
-                    title.contains("Notifikasi") -> {
-                        showDialogNotifSettings()
-                    }
+            title.contains("Husna") -> {
+                navigate(OthersFragmentDirections.actionOthersFragmentToAsmaulHusnaFragment())
+            }
 
-                    title.contains("Muadzin") -> {
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            dataStoreViewModel.getMuadzin.first().let { data ->
-                                val muadzinRegular = data.first
-                                val muadzinShubuh = data.second
-                                showBottomSheet(muadzinRegular, muadzinShubuh)
-                            }
-                        }
-                    }
+            title.contains("Tasbih") -> {
+                navigate(OthersFragmentDirections.actionOthersFragmentToTasbihFragment())
+            }
 
-                    title.contains("Info") -> {
-                        findNavController().navigate(
-                            OthersFragmentDirections.actionOthersFragmentToAboutAppFragment()
-                        )
+            title.contains("Notifikasi") -> {
+                showDialogNotifSettings()
+            }
+
+            title.contains("Muadzin") -> {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    dataStoreViewModel.getMuadzin.first().let { data ->
+                        val muadzinRegular = data.first
+                        val muadzinShubuh = data.second
+                        showBottomSheet(muadzinRegular, muadzinShubuh)
                     }
                 }
             }
+
+            title.contains("Info") -> {
+                navigate(OthersFragmentDirections.actionOthersFragmentToAboutAppFragment())
+            }
         }
+    }
+
+    private fun navigate(direction: NavDirections) {
+        findNavController().navigate(direction)
     }
 
     private fun showDialogNotifSettings() {

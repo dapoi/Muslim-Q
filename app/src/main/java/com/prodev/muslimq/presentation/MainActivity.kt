@@ -54,23 +54,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNavController(navController: NavController) {
-        val destinationToHideBottomnav = setOf(
-            R.id.quranDetailFragment,
-            R.id.shalatProvinceFragment,
-            R.id.shalatCityFragment,
-            R.id.bookmarkFragment,
-            R.id.aboutAppFragment,
-            R.id.qiblaFragment,
-            R.id.dzikirFragment,
-            R.id.asmaulHusnaFragment
+//        val destinationToHideBottomnav = setOf(
+//            R.id.quranDetailFragment,
+//            R.id.shalatProvinceFragment,
+//            R.id.shalatCityFragment,
+//            R.id.bookmarkFragment,
+//            R.id.aboutAppFragment,
+//            R.id.qiblaFragment,
+//            R.id.dzikirFragment,
+//            R.id.asmaulHusnaFragment,
+//            R.id.tasbihFragment
+//        )
+        val exceptFragment = setOf(
+            R.id.quranFragment,
+            R.id.shalatFragment,
+            R.id.doaFragment,
+            R.id.othersFragment
         )
         navController.addOnDestinationChangedListener { _, destination, _ ->
             // give animation when hide/show bottom nav
-            if (destination.id in destinationToHideBottomnav) {
-                showBottomNav(false, binding.bottomNav)
-            } else {
-                showBottomNav(true, binding.bottomNav)
-            }
+            showBottomNav(destination.id in exceptFragment, binding.bottomNav)
         }
         binding.bottomNav.setupWithNavController(navController)
     }

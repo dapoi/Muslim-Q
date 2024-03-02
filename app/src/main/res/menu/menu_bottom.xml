@@ -9,10 +9,6 @@
         android:icon="@drawable/ic_shalat"
         android:title="@string/schedule_pray" />
     <item
-        android:id="@+id/tasbihFragment"
-        android:icon="@drawable/ic_tasbih"
-        android:title="@string/tasbih" />
-    <item
         android:id="@+id/doaFragment"
         android:icon="@drawable/ic_doa"
         android:title="@string/daily_prayer" />

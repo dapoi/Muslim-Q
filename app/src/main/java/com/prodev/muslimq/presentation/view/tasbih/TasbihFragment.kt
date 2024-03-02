@@ -6,15 +6,12 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.view.View
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.TasbihEntity
@@ -40,7 +37,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     private var selectedType: DzikirType = DzikirType.DEFAULT
     private var selectedDzikir: TasbihEntity = defaultDzikir()[0]
     private var currentDzikirList: MutableList<TasbihEntity> = mutableListOf()
-    private lateinit var onBackPressedDispatcher: OnBackPressedDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +49,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.ivBack.setOnClickListener { findNavController().popBackStack() }
         getAllDzikir()
     }
 
@@ -66,7 +63,7 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
         val colorLightGray = ContextCompat.getColor(context, R.color.light_gray)
 
         dataStoreViewModel.getSelectedDzikirType.observe(viewLifecycleOwner) {
-            selectedType = DzikirType.values()[it]
+            selectedType = DzikirType.entries.toTypedArray()[it]
         }
 
         if (selectedDzikir.maxCount < tasbihViewModel.dzikirCountVM) {
@@ -159,34 +156,6 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                     )
                 }
             }
-        }
-
-        val bottomNav = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav)
-        tasbihViewModel.isFocus.observe(viewLifecycleOwner) { isFocus ->
-            binding.apply {
-                toolbar.isVisible = !isFocus
-                tvFocusMode.isVisible = !isFocus
-                bottomNav.isVisible = !isFocus
-                clCounter.setPadding(0, 0, 0, if (isFocus) 30 else 200)
-
-                onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
-                onBackPressedDispatcher.addCallback(
-                    viewLifecycleOwner,
-                    object : OnBackPressedCallback(true) {
-                        override fun handleOnBackPressed() {
-                            if (isFocus) {
-                                tasbihViewModel.setFocus(false)
-                            } else {
-                                findNavController().navigateUp()
-                            }
-                        }
-                    }
-                )
-            }
-        }
-
-        binding.tvFocusMode.setOnClickListener {
-            tasbihViewModel.setFocus(true)
         }
     }
 
@@ -387,10 +356,5 @@ class TasbihFragment : BaseFragment<FragmentTasbihBinding>(FragmentTasbihBinding
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        !onBackPressedDispatcher.hasEnabledCallbacks()
     }
 }

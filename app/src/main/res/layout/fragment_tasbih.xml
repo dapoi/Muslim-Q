@@ -5,34 +5,44 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false"
-    android:paddingHorizontal="16dp"
+    android:paddingBottom="32dp"
     tools:context=".presentation.view.tasbih.TasbihFragment">
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:contentInsetStart="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="16dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:fontFamily="@font/poppins_bold"
             android:includeFontPadding="false"
+            android:paddingTop="1dp"
             android:text="@string/tasbih"
-            android:textAlignment="center"
             android:textColor="@color/green_base"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
-    </com.google.android.material.appbar.MaterialToolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip_type"
         style="@style/Widget.MaterialComponents.Chip.Action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:checkable="false"
         android:fontFamily="@font/poppins_bold"
         android:includeFontPadding="false"
@@ -83,6 +93,7 @@
         android:layout_height="0dp"
         android:layout_marginVertical="4dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="@+id/chip_type"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/chip_type" />
@@ -97,7 +108,7 @@
             android:id="@+id/sv_detail"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:paddingBottom="5dp"
+            android:paddingVertical="10dp"
             android:scrollbars="none"
             app:layout_constraintBottom_toTopOf="@+id/cl_counter"
             app:layout_constraintTop_toTopOf="parent">
@@ -105,7 +116,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -151,7 +162,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="34sp"
-                    tools:text="أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ\nالرَّجِيمِ" />
+                    tools:text="أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ\nالرَّجِيمأَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ\nالرَّجِيمأَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ\nالرَّجِيمِ" />
 
                 <TextView
                     android:id="@+id/tv_dzikir_meaning"
@@ -195,19 +206,6 @@
                 android:layout_height="0dp"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/tv_focus_mode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:includeFontPadding="false"
-                android:text="@string/focus_mode"
-                android:textColor="@color/green_base"
-                android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider3" />
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_tasbih"
                 android:layout_width="wrap_content"
@@ -217,7 +215,7 @@
                 android:rotationY="180"
                 android:src="@drawable/ic_touch"
                 app:elevation="0dp"
-                app:fabCustomSize="160dp"
+                app:fabCustomSize="180dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

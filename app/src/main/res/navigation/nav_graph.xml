@@ -88,6 +88,13 @@
             app:exitAnim="@anim/to_left_anim"
             app:popEnterAnim="@anim/from_left_anim"
             app:popExitAnim="@anim/to_right_anim" />
+        <action
+            android:id="@+id/action_othersFragment_to_tasbihFragment"
+            app:destination="@id/tasbihFragment"
+            app:enterAnim="@anim/from_right_anim"
+            app:exitAnim="@anim/to_left_anim"
+            app:popEnterAnim="@anim/from_left_anim"
+            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/quranDetailFragment"
