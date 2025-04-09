@@ -1,5 +1,7 @@
 package com.prodev.muslimq.presentation.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -7,7 +9,6 @@ import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.prodev.muslimq.R
@@ -106,9 +107,9 @@ class OnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
 
             fabOnBoarding.setOnClickListener {
                 if (getItem() == onBoardingAdapter.itemCount - 1) {
-                    dataStoreViewModel.saveOnboardingState(true)
+                    dataStoreViewModel.saveOnboardingState()
                     vpOnboard.unregisterOnPageChangeCallback(checkState as OnPageChangeCallback)
-                    findNavController().popBackStack()
+                    recreateActivity(requireActivity())
                     root.visibility = View.GONE
                 } else {
                     vpOnboard.setCurrentItem(getItem() + 1, true)
@@ -118,6 +119,16 @@ class OnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
     }
 
     private fun getItem(): Int = binding.vpOnboard.currentItem
+
+    private fun recreateActivity(activity: Activity) {
+        activity.intent.let {
+            it.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            activity.finish()
+            activity.overridePendingTransition(0, 0)
+            activity.startActivity(it)
+            activity.overridePendingTransition(0, 0)
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

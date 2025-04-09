@@ -4,21 +4,20 @@ import com.dapascript.buildsrc.SharedLibs
 plugins {
     id("com.android.application")
     id("com.google.devtools.ksp")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.kapt")
-    id("dagger.hilt.android.plugin")
+    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
     namespace = "com.prodev.muslimq"
-    compileSdk = 34
+    compileSdk = Libs.targetSdk
 
     signingConfigs {
         create("release") {
-            storeFile = file("D:\\Projek\\Key\\muslimkey.jks")
+            storeFile = file("C:\\Projek\\muslimkey.jks")
             storePassword = "Lutpi220201"
             keyAlias = "muslimq"
             keyPassword = "Lutpi220201"
@@ -66,10 +65,6 @@ android {
 
     buildFeatures {
         viewBinding = true
-    }
-
-    kapt {
-        correctErrorTypes = true
     }
 }
 

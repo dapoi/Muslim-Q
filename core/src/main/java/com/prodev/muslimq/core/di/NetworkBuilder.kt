@@ -70,19 +70,6 @@ object NetworkBuilder {
     }
 
     @Provides
-    @Area
-    fun provideArea(
-        okHttpClient: OkHttpClient,
-        moshiConverterFactory: MoshiConverterFactory
-    ): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://dapoi.github.io/api-wilayah-indonesia/api/")
-            .addConverterFactory(moshiConverterFactory)
-            .client(okHttpClient)
-            .build()
-    }
-
-    @Provides
     @Shalat
     fun provideShalatApi(
         okHttpClient: OkHttpClient,

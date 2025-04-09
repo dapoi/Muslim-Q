@@ -23,7 +23,6 @@ import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet.*
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -58,7 +57,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import uk.co.samuelwall.materialtaptargetprompt.MaterialTapTargetSequence
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -206,7 +206,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
     private fun showDialogLocation() {
         val dialogLayout = DialogGetLocationBinding.inflate(layoutInflater)
         val tvTurnOnGPS = dialogLayout.tvTurnOnGps
-        val tvChooseManual = dialogLayout.tvChooseManual
         val tvCancel = dialogLayout.tvCancel
         with(curvedDialog.create()) {
             setView(dialogLayout.root)
@@ -224,12 +223,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                         message = "Tidak ada koneksi internet"
                     )
                 }
-            }
-            tvChooseManual.setOnClickListener {
-                dismiss()
-                findNavController().navigate(
-                    ShalatFragmentDirections.actionShalatFragmentToShalatProvinceFragment()
-                )
             }
             tvCancel.setOnClickListener {
                 dismiss()

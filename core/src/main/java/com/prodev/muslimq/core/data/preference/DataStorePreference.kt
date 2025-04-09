@@ -171,10 +171,8 @@ class DataStorePreference @Inject constructor(context: Context) {
      * Save onboarding state to data store
      */
     suspend fun saveOnboardingState(onboardingState: Boolean) {
-        runBlocking {
-            dataStore.edit { preferences ->
-                preferences[ONBOARDING_STATE] = onboardingState
-            }
+        dataStore.edit { preferences ->
+            preferences[ONBOARDING_STATE] = onboardingState
         }
     }
 

@@ -44,19 +44,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_location_message" />
 
     <TextView
-        android:id="@+id/tv_choose_manual"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:includeFontPadding="false"
-        android:text="@string/choose_manually"
-        android:textColor="@color/green_base"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_location_message" />
-
-    <TextView
         android:id="@+id/tv_cancel"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

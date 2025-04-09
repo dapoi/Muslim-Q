@@ -55,9 +55,9 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveOnboardingState(isOnboarding: Boolean) {
+    fun saveOnboardingState() {
         viewModelScope.launch {
-            dataStorePref.saveOnboardingState(isOnboarding)
+            dataStorePref.saveOnboardingState(true)
         }
     }
 
@@ -109,7 +109,7 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getSwitchState(switchName).asLiveData()
     }
 
-    val getOnboardingState = dataStorePref.getOnboardingState.asLiveData().distinctUntilChanged()
+    val getOnboardingState = dataStorePref.getOnboardingState.asLiveData()
 
     val getTapPromptState = dataStorePref.getTapPromptState.asLiveData().distinctUntilChanged()
 

@@ -7,17 +7,17 @@ object Libs {
     // App
     const val appId = "com.prodev.muslimq"
     const val minSdk = 24
-    const val targetSdk = 34
+    const val targetSdk = 35
     const val versionCode = 20240716
     const val versionName = "3.0"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     // Main
-    const val coreKtx = "androidx.core:core-ktx:1.12.0"
-    const val appCompat = "androidx.appcompat:appcompat:1.6.1"
-    const val material = "com.google.android.material:material:1.10.0"
-    const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.1.4"
-    const val datastore = "androidx.datastore:datastore-preferences:1.0.0"
+    const val coreKtx = "androidx.core:core-ktx:1.15.0"
+    const val appCompat = "androidx.appcompat:appcompat:1.7.0"
+    const val material = "com.google.android.material:material:1.12.0"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.1"
+    const val datastore = "androidx.datastore:datastore-preferences:1.1.4"
 
     // Appearance
     const val glide = "com.github.bumptech.glide:glide:4.14.2"
@@ -28,7 +28,7 @@ object Libs {
     const val primeCalendar = "com.aminography:primecalendar:1.7.0"
 
     // Navigation
-    private const val navigationVersion = "2.7.4"
+    private const val navigationVersion = "2.8.9"
     const val navigationFragment = "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     const val navigationUi = "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
@@ -45,8 +45,8 @@ object SharedLibs {
         add("implementation", dependency)
     }
 
-    private fun DependencyHandler.kapt(dependency: Any) {
-        add("kapt", dependency)
+    private fun DependencyHandler.ksp(dependency: Any) {
+        add("ksp", dependency)
     }
 
     private fun DependencyHandler.debugImplementation(dependency: Any) {
@@ -65,9 +65,9 @@ object SharedLibs {
             implementation("androidx.test.espresso:espresso-core:3.5.1")
 
             // Dagger hilt
-            val daggerHiltVersion = "2.48.1"
+            val daggerHiltVersion = "2.53.1"
             implementation("com.google.dagger:hilt-android:$daggerHiltVersion")
-            kapt("com.google.dagger:hilt-android-compiler:$daggerHiltVersion")
+            ksp("com.google.dagger:hilt-android-compiler:$daggerHiltVersion")
 
             // Chuck library
             val chuckVersion = "3.5.2"

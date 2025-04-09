@@ -54,17 +54,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNavController(navController: NavController) {
-//        val destinationToHideBottomnav = setOf(
-//            R.id.quranDetailFragment,
-//            R.id.shalatProvinceFragment,
-//            R.id.shalatCityFragment,
-//            R.id.bookmarkFragment,
-//            R.id.aboutAppFragment,
-//            R.id.qiblaFragment,
-//            R.id.dzikirFragment,
-//            R.id.asmaulHusnaFragment,
-//            R.id.tasbihFragment
-//        )
         val exceptFragment = setOf(
             R.id.quranFragment,
             R.id.shalatFragment,
