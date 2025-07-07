@@ -15,15 +15,6 @@ android {
     namespace = "com.prodev.muslimq"
     compileSdk = Libs.targetSdk
 
-    signingConfigs {
-        create("release") {
-            storeFile = file("C:\\Projek\\muslimkey.jks")
-            storePassword = "Lutpi220201"
-            keyAlias = "muslimq"
-            keyPassword = "Lutpi220201"
-        }
-    }
-
     defaultConfig {
         applicationId = Libs.appId
         minSdk = Libs.minSdk
@@ -33,7 +24,6 @@ android {
 
         testInstrumentationRunner = Libs.testInstrumentationRunner
         vectorDrawables.useSupportLibrary = true
-        signingConfig = signingConfigs.getByName("release")
     }
 
     android {
@@ -41,7 +31,7 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -49,18 +39,18 @@ android {
                 "proguard-rules.pro"
             )
         }
-        getByName("debug") {
+        debug {
             applicationIdSuffix = ".debug"
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 
     buildFeatures {

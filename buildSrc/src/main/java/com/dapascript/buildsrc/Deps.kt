@@ -6,15 +6,15 @@ object Libs {
 
     // App
     const val appId = "com.prodev.muslimq"
-    const val minSdk = 24
-    const val targetSdk = 35
-    const val versionCode = 20250410
-    const val versionName = "3.1"
+    const val minSdk = 26
+    const val targetSdk = 36
+    const val versionCode = 20250707
+    const val versionName = "3.2"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     // Main
-    const val coreKtx = "androidx.core:core-ktx:1.15.0"
-    const val appCompat = "androidx.appcompat:appcompat:1.7.0"
+    const val coreKtx = "androidx.core:core-ktx:1.16.0"
+    const val appCompat = "androidx.appcompat:appcompat:1.7.1"
     const val material = "com.google.android.material:material:1.12.0"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.2.1"
     const val datastore = "androidx.datastore:datastore-preferences:1.1.4"

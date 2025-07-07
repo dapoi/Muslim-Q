@@ -927,8 +927,11 @@ class QuranDetailFragment :
             }
         }
 
-        requireContext().registerReceiver(
-            downloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        ContextCompat.registerReceiver(
+            requireContext(),
+            downloadCompleteReceiver,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
+            ContextCompat.RECEIVER_NOT_EXPORTED
         )
 
         val query = DownloadManager.Query().setFilterById(downloadId)

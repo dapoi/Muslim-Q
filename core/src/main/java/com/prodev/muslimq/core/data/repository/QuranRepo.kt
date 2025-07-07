@@ -23,41 +23,38 @@ class QuranRepositoryImpl @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher
 ) : QuranRepository {
 
-    override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(query = {
-        dao.getQuran()
-    }, fetch = {
-        service.getQuran()
-    }, saveFetchResult = { quran ->
-        val local = ArrayList<QuranEntity>()
-        quran.data.map { response ->
-            val data = QuranEntity(
-                response.nomor,
-                response.nama,
-                response.namaLatin,
-                response.jumlahAyat,
-                response.tempatTurun,
-                response.arti,
-                response.deskripsi
-            )
-            local.add(data)
-        }
+    override fun getQuran(): Flow<Resource<List<QuranEntity>>> = networkBoundResource(
+        query = { dao.getQuran() },
+        fetch = { service.getQuran() },
+        saveFetchResult = { quran ->
+            val local = ArrayList<QuranEntity>()
+            quran.data.map { response ->
+                val data = QuranEntity(
+                    response.nomor,
+                    response.nama,
+                    response.namaLatin,
+                    response.jumlahAyat,
+                    response.tempatTurun,
+                    response.arti,
+                    response.deskripsi
+                )
+                local.add(data)
+            }
 
-        dao.deleteQuran()
-        dao.insertQuran(local)
-    }, shouldFetch = { listQuran ->
-        @Suppress("SENSELESS_COMPARISON") listQuran == null || listQuran.isEmpty()
-    }, ioDispatcher = { ioDispatcher })
+            dao.deleteQuran()
+            dao.insertQuran(local)
+        },
+        shouldFetch = { listQuran -> listQuran.isEmpty() },
+        ioDispatcher = { ioDispatcher }
+    )
 
-    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>> = networkBoundResource(
-        query = {
-            dao.getQuranDetail(id)
-        },
-        fetch = {
-            service.getQuranDetail(id)
-        },
+    override fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity?>> = networkBoundResource(
+        query = { dao.getQuranDetail(id) },
+        fetch = { service.getQuranDetail(id) },
         saveFetchResult = { response ->
             val quran = response.data
-            val local = QuranDetailEntity(id,
+            val local = QuranDetailEntity(
+                id,
                 quran.nama,
                 quran.namaLatin,
                 quran.jumlahAyat,
@@ -77,9 +74,7 @@ class QuranRepositoryImpl @Inject constructor(
 
             dao.insertQuranDetail(local)
         },
-        shouldFetch = { data ->
-            @Suppress("SENSELESS_COMPARISON") data == null || data.ayat.isEmpty()
-        },
+        shouldFetch = { data -> data == null || data.ayat.isEmpty() },
         ioDispatcher = { ioDispatcher }
     )
 
@@ -117,7 +112,7 @@ class QuranRepositoryImpl @Inject constructor(
 interface QuranRepository {
     fun getQuran(): Flow<Resource<List<QuranEntity>>>
 
-    fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity>>
+    fun getQuranDetail(id: Int): Flow<Resource<QuranDetailEntity?>>
 
     fun getQuranTafsir(surahId: Int, ayahNumber: Int): Flow<Resource<TafsirDetailItem>>
 

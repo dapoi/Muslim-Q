@@ -19,8 +19,8 @@ class QuranDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _getQuranDetail = MutableLiveData<Resource<QuranDetailEntity>>()
-    val getQuranDetail: LiveData<Resource<QuranDetailEntity>> = _getQuranDetail
+    private val _getQuranDetail = MutableLiveData<Resource<QuranDetailEntity?>>()
+    val getQuranDetail: LiveData<Resource<QuranDetailEntity?>> = _getQuranDetail
 
     private val _getQuranTafsir = MutableLiveData<Pair<Resource<TafsirDetailItem>, Int>>()
     val getQuranTafsir: LiveData<Pair<Resource<TafsirDetailItem>, Int>> = _getQuranTafsir

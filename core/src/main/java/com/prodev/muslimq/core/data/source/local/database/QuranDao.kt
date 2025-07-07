@@ -13,7 +13,7 @@ interface QuranDao {
     fun getQuran(): Flow<List<QuranEntity>>
 
     @Query("SELECT * FROM quran_detail WHERE surahId = :surahId")
-    fun getQuranDetail(surahId: Int): Flow<QuranDetailEntity>
+    fun getQuranDetail(surahId: Int): Flow<QuranDetailEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuran(quran: List<QuranEntity>)
