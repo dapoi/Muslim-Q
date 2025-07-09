@@ -8,8 +8,8 @@ object Libs {
     const val appId = "com.prodev.muslimq"
     const val minSdk = 26
     const val targetSdk = 36
-    const val versionCode = 20250707
-    const val versionName = "3.2"
+    const val versionCode = 20250709
+    const val versionName = "3.3"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     // Main

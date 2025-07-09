@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface ShalatDao {
 
     @Query("SELECT * FROM shalat")
-    fun getShalatDailyByCity(): Flow<ShalatEntity>
+    fun getShalatDailyByCity(): Flow<ShalatEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertShalat(shalat: ShalatEntity)

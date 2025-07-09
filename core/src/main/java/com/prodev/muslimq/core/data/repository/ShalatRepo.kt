@@ -21,7 +21,7 @@ class ShalatRepositoryImpl @Inject constructor(
 
     override fun getShalatDaily(
         city: String, country: String
-    ): Flow<Resource<ShalatEntity>> = networkBoundResource(
+    ): Flow<Resource<ShalatEntity?>> = networkBoundResource(
         query = {
             dao.getShalatDailyByCity()
         },
@@ -57,5 +57,5 @@ class ShalatRepositoryImpl @Inject constructor(
 }
 
 interface ShalatRepository {
-    fun getShalatDaily(city: String, country: String): Flow<Resource<ShalatEntity>>
+    fun getShalatDaily(city: String, country: String): Flow<Resource<ShalatEntity?>>
 }

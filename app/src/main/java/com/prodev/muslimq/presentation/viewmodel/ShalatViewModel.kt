@@ -17,7 +17,7 @@ class ShalatViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _getShalatTime = MutableLiveData<Pair<String, String>>()
-    val getShalatTime: LiveData<Resource<ShalatEntity>> = _getShalatTime.switchMap { pair ->
+    val getShalatTime: LiveData<Resource<ShalatEntity?>> = _getShalatTime.switchMap { pair ->
         val city = if (pair.first.contains("Ambon", true)) "Ibu Kota Kep. Maluku" else pair.first
         val country = pair.second
         repository.getShalatDaily(city, country).asLiveData()
