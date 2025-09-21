@@ -69,7 +69,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                 }
             }
 
-            onClick = { navigateBasedOnTitle(it.title) }
+            onClick = { navigateBasedOnTitle(binding.root.context.getString(it.title)) }
         }
     }
 
