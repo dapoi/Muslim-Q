@@ -91,6 +91,12 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    fun saveAppLanguage(language: String) {
+        viewModelScope.launch(ioDispatcher) {
+            dataStorePref.saveAppLanguage(language)
+        }
+    }
+
     private val getSurah = dataStorePref.getSurah
 
     private val getDetailSurahAyah = dataStorePref.getDetailSurahAyah
@@ -122,6 +128,8 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getAdzanSoundStateAndMuadzin.asLiveData().distinctUntilChanged()
 
     val getMuadzin = dataStorePref.getMuadzin
+
+    val getAppLanguage = dataStorePref.getAppLanguage.asLiveData()
 
     data class CombineLastRead(
         val detailSurah: Pair<String, String>,

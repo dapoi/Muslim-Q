@@ -42,7 +42,7 @@
         <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="CurvedDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <style name="CurvedDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowBackground">@drawable/bg_round_white</item>
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>

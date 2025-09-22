@@ -12,7 +12,7 @@ object OthersObject {
         R.drawable.ic_notif_setting,
         R.drawable.ic_hearing,
         R.drawable.ic_about,
-        R.drawable.ic_about
+        R.drawable.ic_settings
     )
 
     private val menuTitle = listOf(

@@ -1,7 +1,10 @@
 package com.prodev.muslimq.presentation.view.others
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -101,6 +104,10 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
                 }
             }
 
+            title.contains("Languages") || title.contains("Bahasa") || title.contains("ভাষাসমূহ") || title.contains("اللغات") -> {
+                showLanguageDialog()
+            }
+
             title.contains("Info") -> {
                 navigate(OthersFragmentDirections.actionOthersFragmentToAboutAppFragment())
             }
@@ -147,6 +154,37 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
             context = requireContext(),
             view = binding.root
         )
+    }
+
+    private fun showLanguageDialog() {
+        val languages = arrayOf("English", "বাংলা", "العربية", "Bahasa Indonesia")
+        val languageCodes = arrayOf("en", "bn", "ar", "in")
+        val currentLang = dataStoreViewModel.getAppLanguage.value ?: "en"
+        var selectedIndex = languageCodes.indexOf(currentLang).takeIf { it >= 0 } ?: 0
+
+        curvedDialog.setTitle("Select Language")
+        curvedDialog.setSingleChoiceItems(languages, selectedIndex) { _, which ->
+            selectedIndex = which
+        }
+        curvedDialog.setPositiveButton("OK") { _, _ ->
+            val selectedLang = languageCodes[selectedIndex]
+            dataStoreViewModel.saveAppLanguage(selectedLang)
+            (activity as MainActivity).customSnackbar(
+                state = true,
+                message = "Language changed. Restarting app...",
+                context = requireContext(),
+                view = binding.root
+            )
+                // Restart app
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val intent = Intent(requireActivity(), MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    requireActivity().finish()
+                    startActivity(intent)
+                }, 1500)
+        }
+        curvedDialog.setNegativeButton("Cancel", null)
+        curvedDialog.show()
     }
 
     private fun showBottomSheet(muadzinRegular: String, muadzinShubuh: String) {
