@@ -37,6 +37,7 @@ private val ADZAN_SOUND_STATE = booleanPreferencesKey("adzan_sound_state")
 private val DZIKIR_TYPE = intPreferencesKey("dzikir_type")
 private val MUADZIN_REGULAR = stringPreferencesKey("muadzin_regular")
 private val MUADZIN_SHUBUH = stringPreferencesKey("muadzin_shubuh")
+private val APP_LANGUAGE = stringPreferencesKey("app_language")
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -283,5 +284,21 @@ class DataStorePreference @Inject constructor(context: Context) {
         val muadzinRegular = preferences[MUADZIN_REGULAR] ?: "Ali Ahmad Mullah"
         val muadzinShubuh = preferences[MUADZIN_SHUBUH] ?: "Abu Hazim"
         Pair(muadzinRegular, muadzinShubuh)
+    }
+
+    /**
+     * Save app language
+     */
+    suspend fun saveAppLanguage(language: String) {
+        dataStore.edit { preferences ->
+            preferences[APP_LANGUAGE] = language
+        }
+    }
+
+    /**
+     * Get app language
+     */
+    val getAppLanguage = dataStore.data.map { preferences ->
+        preferences[APP_LANGUAGE] ?: "en"
     }
 }

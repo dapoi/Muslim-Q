@@ -1,0 +1,124 @@
+<resources>
+    <string name="last_read">সর্বশেষ পড়া</string>
+    <string name="daily_prayer">দোয়া</string>
+    <string name="schedule_pray">নামাজ</string>
+    <string name="other">অন্যান্য</string>
+    <string name="about">অ্যাপ সম্পর্কিত তথ্য</string>
+    <string name="contact">যোগাযোগ</string>
+    <string name="quran">কুরআন</string>
+    <string name="others">অন্যান্য</string>
+    <string name="no_internet">মনে হচ্ছে ইন্টারনেটে সমস্যা হয়েছে, রিফ্রেশ করতে নিচে টানুন</string>
+    <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
+    <string name="icon_loc">অবস্থান আইকন</string>
+    <string name="icon_mosque">মসজিদ আইকন</string>
+    <string name="next_prayer">পরবর্তী নামাজের সময়:</string>
+    <string name="province_choose">প্রদেশ নির্বাচন করুন</string>
+    <string name="city_choose">%s-এ শহর নির্বাচন করুন</string>
+    <string name="location_not_found">অবস্থান পাওয়া যায়নি, অন্য অবস্থান খুঁজুন</string>
+    <string name="last_read_surah_empty">এখনও কোনো সূরা চিহ্নিত হয়নি</string>
+    <string name="shubuh">ফজর</string>
+    <string name="dzuhur">জোহর</string>
+    <string name="ashar">আসর</string>
+    <string name="maghrib">মাগরিব</string>
+    <string name="isya">এশা</string>
+    <string name="small">ছোট</string>
+    <string name="medium">মাঝারি</string>
+    <string name="big">বড়</string>
+    <string name="super_big">খুব বড়</string>
+    <string name="find_qibla">কিবলার দিক নির্ধারণ করুন</string>
+    <string name="found_qibla">কিবলার দিক পাওয়া গেছে</string>
+    <string name="north">উত্তর</string>
+    <string name="south">দক্ষিণ</string>
+    <string name="east">পূর্ব</string>
+    <string name="west">পশ্চিম</string>
+    <string name="setting_font">আয়াতের ফন্ট সাইজ নির্ধারণ করুন</string>
+    <string name="save">সংরক্ষণ</string>
+    <string name="daily_doa">দৈনিক দোয়া</string>
+    <string name="alarm">অ্যালার্ম</string>
+    <string name="bookmark">পরে পড়ুন</string>
+    <string name="bookmark_empty">কোনো সূরা সংরক্ষণ করা হয়নি</string>
+    <string name="tv_city_and_total_ayah">%1$s • %2$d আয়াত</string>
+    <string name="delete_all">সব মুছে ফেলুন</string>
+    <string name="are_you_sure">আপনি কি নিশ্চিত মুছে ফেলতে চান?</string>
+    <string name="delete">মুছে ফেলুন</string>
+    <string name="cancel">বাতিল</string>
+    <string name="are_you_sure_desc">যদি মুছে ফেলেন, তাহলে পূর্বে সংরক্ষিত সূরার তথ্য মুছে যাবে।</string>
+    <string name="your_location">আপনার অবস্থান</string>
+    <string name="not_found_location">-</string>
+    <string name="on">চালু</string>
+    <string name="off">বন্ধ</string>
+    <string name="search_surah">সূরা খুঁজুন</string>
+    <string name="search_ayah">আয়াত খুঁজুন</string>
+    <string name="fileName">%s/MuslimQ/%s.mp3</string>
+    <string name="ask_audio_title">সূরা %s</string>
+    <string name="ask_gps_title">অবস্থান খুঁজুন</string>
+    <string name="ask_audio_desc">সূরা %s এর অডিও এখনও ডাউনলোড হয়নি। এটি ডাউনলোড করতে ইন্টারনেট প্রয়োজন। আপনি কি এখনই ডাউনলোড করতে চান?</string>
+    <string name="ask_gps_desc">আপনার বর্তমান অবস্থান নির্ধারণ করতে GPS ব্যবহার করা হবে।</string>
+    <string name="download">ডাউনলোড করুন</string>
+    <string name="gps">ঠিক আছে</string>
+    <string name="play_online">অনলাইনে চালান</string>
+    <string name="choose_manually">ম্যানুয়ালি নির্বাচন করুন</string>
+    <string name="download_surah_notif">MuslimQ - সূরা %s</string>
+    <string name="download_surah">সূরা %s অডিও ডাউনলোড হচ্ছে</string>
+    <string name="wait_download">"অনুগ্রহ করে ডাউনলোড সম্পূর্ণ হওয়া পর্যন্ত অপেক্ষা করুন…"</string>
+    <string name="about_surah">সূরা সম্পর্কে</string>
+    <string name="delete_audio">অডিও মুছে ফেলুন</string>
+    <string name="tag">চিহ্নিত করুন</string>
+    <string name="app_id">ca-app-pub-5351128060428013~4196500302</string>
+    <string name="banner_id">ca-app-pub-5351128060428013/8076907702</string>
+    <string name="interstitial_id">ca-app-pub-5351128060428013/9948941311</string>
+    <string name="not_found">কোনো ফলাফল পাওয়া যায়নি</string>
+    <string name="close">বন্ধ করুন</string>
+    <string name="tagging">চিহ্নিত করুন ও ফিরে যান</string>
+    <string name="ask_tagging_desc">আপনি কি এই আয়াতকে সর্বশেষ পড়া আয়াত হিসেবে চিহ্নিত করতে চান?</string>
+    <string name="ask_tagging_title">আয়াত চিহ্নিত করবেন?</string>
+    <string name="show">দেখান</string>
+    <string name="input_number">আয়াত নম্বর লিখুন</string>
+    <string name="app_version">সংস্করণ %s</string>
+    <string name="continue_reading">পড়া চালিয়ে যান</string>
+    <string name="copyright">কপিরাইট © ২০২৩</string>
+    <string name="license">Lisensi</string>
+    <string name="mit_license">লাইসেন্স (MIT License টেক্সট একই রাখা হয়েছে)</string>
+    <string name="done">সম্পন্ন</string>
+    <string name="info">তথ্য</string>
+    <string name="see_qibla">কিবলা দেখুন ></string>
+    <string name="tasbih">ডিজিটাল তসবিহ</string>
+    <string name="list_dzikir">যিকির</string>
+    <string name="list_dzikir_type">যিকিরের ধরন নির্বাচন করুন</string>
+    <string name="plus">+</string>
+    <string name="input_dzikir">যিকির লিখুন</string>
+    <string name="input_max_dzikir">সর্বোচ্চ যিকির সংখ্যা লিখুন</string>
+    <string name="reset">রিসেট</string>
+    <string name="max_count_dzikir">সর্বোচ্চ যিকির সংখ্যা</string>
+    <string name="minus">-</string>
+    <string name="sound_notif">আজান ও নোটিফিকেশন</string>
+    <string name="only_notif">শুধু নোটিফিকেশন</string>
+    <string name="setting_notif">নোটিফিকেশন সেটিংস</string>
+    <string name="custom_dzikir_empty">কোনো কাস্টম যিকির সংরক্ষণ করা হয়নি</string>
+    <string-array name="tipe_dzikir">
+        <item>সাধারণ</item>
+        <item>সকালের যিকির</item>
+        <item>সন্ধ্যার যিকির</item>
+        <item>নামাজ পরবর্তী যিকির</item>
+        <item>কাস্টম</item>
+    </string-array>
+    <string name="target_count">/ %1$s</string>
+    <string name="muadzin">মুয়াজ্জিন নির্বাচন করুন</string>
+    <string name="adzan_regular">সাধারণ আজান</string>
+    <string name="adzan_shubuh">ফজরের আজান</string>
+    <string name="focus_mode"><![CDATA[Mode Fokus>>]]></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="asmaul_husna">আল্লাহর ৯৯ নাম (আসমাউল হুসনা)</string>
+    <string name="menu_read_later">পরে পড়ুন</string>
+    <string name="menu_dark_mode">ডার্ক মোড</string>
+    <string name="menu_asmaul_husna">আসমাউল হুসনা</string>
+    <string name="menu_digital_tasbih">ডিজিটাল তসবিহ</string>
+    <string name="menu_notification_settings">নোটিফিকেশন সেটিংস</string>
+    <string name="menu_choose_muezzin">মুয়াজ্জিন নির্বাচন করুন</string>
+    <string name="menu_app_info">অ্যাপ সম্পর্কিত তথ্য</string>
+    <string name="menu_languages">ভাষাসমূহ</string>
+
+    <string name="notif_desc_template">এখন %1$s নামাজ আদায় করার সময়, এলাকা: %2$s</string>
+</resources>
+

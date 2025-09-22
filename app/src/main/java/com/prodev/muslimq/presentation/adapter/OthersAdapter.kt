@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.ItemListOtherBinding
 import com.prodev.muslimq.presentation.view.others.Others
@@ -49,7 +50,7 @@ class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(others: Others) {
             with(binding) {
-                tvMenuOther.text = others.title
+                tvMenuOther.text = binding.root.context.getString(others.title)
                 ivMenuOther.setImageResource(others.image)
 
                 vDivider.isVisible = adapterPosition != listOthers.size - 1
@@ -57,7 +58,9 @@ class OthersAdapter : RecyclerView.Adapter<OthersAdapter.OthersViewHolder>() {
                 swDarkMode.apply {
 
                     // Set visibility of switch
-                    swDarkMode.visibility = if (others.title.contains("Gelap")) {
+                    swDarkMode.visibility = if (context.getString(others.title).contains(context.getString(
+                            R.string.menu_dark_mode
+                        ))) {
                         View.VISIBLE
                     } else {
                         View.INVISIBLE

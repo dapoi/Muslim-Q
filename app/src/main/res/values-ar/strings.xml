@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="last_read">آخر قراءة</string>
+    <string name="daily_prayer">دعاء</string>
+    <string name="schedule_pray">الصلاة</string>
+    <string name="other">أخرى</string>
+    <string name="about">معلومات التطبيق</string>
+    <string name="contact">اتصال</string>
+    <string name="quran">القرآن</string>
+    <string name="others">أخرى</string>
+    <string name="no_internet">يبدو أن هناك مشكلة، اسحب للأسفل لإعادة التحميل</string>
+    <string name="bismillah">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</string>
+    <string name="icon_loc">أيقونة الموقع</string>
+    <string name="icon_mosque">أيقونة المسجد</string>
+    <string name="next_prayer">وقت الصلاة القادمة :</string>
+    <string name="province_choose">اختر المقاطعة</string>
+    <string name="city_choose">اختر مدينة في %s</string>
+    <string name="location_not_found">الموقع غير موجود، ابحث عن موقع آخر</string>
+    <string name="last_read_surah_empty">"لم يتم تحديد أي سورة"</string>
+    <string name="shubuh">الفجر</string>
+    <string name="dzuhur">الظهر</string>
+    <string name="ashar">العصر</string>
+    <string name="maghrib">المغرب</string>
+    <string name="isya">العشاء</string>
+    <string name="small">صغير</string>
+    <string name="medium">متوسط</string>
+    <string name="big">كبير</string>
+    <string name="super_big">كبير جدًا</string>
+    <string name="find_qibla">ابحث عن اتجاه القبلة</string>
+    <string name="found_qibla">تم العثور على اتجاه القبلة</string>
+    <string name="north">ش</string>
+    <string name="south">ج</string>
+    <string name="east">شـر</string>
+    <string name="west">غ</string>
+    <string name="setting_font">ضبط حجم الآية</string>
+    <string name="save">حفظ</string>
+    <string name="daily_doa">الأدعية اليومية</string>
+    <string name="alarm">منبه</string>
+    <string name="bookmark">اقرأ لاحقًا</string>
+    <string name="bookmark_empty">لا توجد سور محفوظة</string>
+    <string name="tv_city_and_total_ayah">%1$s • %2$d آية</string>
+    <string name="delete_all">حذف الكل</string>
+    <string name="are_you_sure">هل أنت متأكد أنك تريد الحذف؟</string>
+    <string name="delete">حذف</string>
+    <string name="cancel">إلغاء</string>
+    <string name="are_you_sure_desc">إذا اخترت الحذف، سيتم حذف بيانات السور المحفوظة مسبقًا.</string>
+    <string name="your_location">موقعك</string>
+    <string name="not_found_location">-</string>
+    <string name="on">تشغيل</string>
+    <string name="off">إيقاف</string>
+    <string name="search_surah">ابحث عن سورة</string>
+    <string name="search_ayah">ابحث عن آية</string>
+    <string name="fileName">%s/MuslimQ/%s.mp3</string>
+    <string name="ask_audio_title">سورة %s</string>
+    <string name="ask_gps_title">ابحث عن الموقع</string>
+    <string name="ask_audio_desc">لم يتم تنزيل تلاوة سورة %s بعد، يتطلب هذا الاتصال بالإنترنت. هل تريد تنزيله الآن؟</string>
+    <string name="ask_gps_desc">سيتم استخدام GPS لتحديد موقعك الحالي.</string>
+    <string name="download">تحميل</string>
+    <string name="gps">موافق</string>
+    <string name="play_online">تشغيل عبر الإنترنت</string>
+    <string name="choose_manually">اختر يدويًا</string>
+    <string name="download_surah_notif">MuslimQ - سورة %s</string>
+    <string name="download_surah">يتم تحميل تلاوة سورة %s</string>
+    <string name="wait_download">"الرجاء الانتظار حتى يكتمل التحميل…"</string>
+    <string name="about_surah">حول السورة</string>
+    <string name="delete_audio">حذف التلاوة</string>
+    <string name="tag">وضع علامة</string>
+    <string name="app_id">ca-app-pub-5351128060428013~4196500302</string>
+    <string name="banner_id">ca-app-pub-5351128060428013/8076907702</string>
+    <string name="interstitial_id">ca-app-pub-5351128060428013/9948941311</string>
+    <string name="not_found">لم يتم العثور على نتائج</string>
+    <string name="close">إغلاق</string>
+    <string name="tagging">وضع علامة &amp; عودة</string>
+    <string name="ask_tagging_desc">هل تريد وضع علامة على هذه الآية كآخر آية تمت قراءتها؟</string>
+    <string name="ask_tagging_title">وضع علامة على آية؟</string>
+    <string name="show">عرض</string>
+    <string name="input_number">أدخل رقم الآية</string>
+    <string name="app_version">الإصدار %s</string>
+    <string name="continue_reading">متابعة القراءة</string>
+    <string name="copyright">حقوق النشر © 2023</string>
+    <string name="license">الترخيص</string>
+    <string name="mit_license">MIT License\n\nCopyright © 2023 Muslim Q\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+    <string name="done">تم</string>
+    <string name="info">معلومات</string>
+    <string name="see_qibla">عرض القبلة ></string>
+    <string name="tasbih">مسبحة رقمية</string>
+    <string name="list_dzikir">الأذكار</string>
+    <string name="list_dzikir_type">اختر نوع الذكر</string>
+    <string name="plus">+</string>
+    <string name="input_dzikir">أدخل الذكر</string>
+    <string name="input_max_dzikir">أدخل الحد الأقصى للذكر</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="max_count_dzikir">الحد الأقصى للذكر</string>
+    <string name="minus">-</string>
+    <string name="sound_notif"><![CDATA[الأذان والإشعارات]]></string>
+    <string name="only_notif">الإشعارات فقط</string>
+    <string name="setting_notif">إعدادات الإشعارات</string>
+    <string name="custom_dzikir_empty">لا يوجد أذكار مخصصة محفوظة</string>
+    <string-array name="tipe_dzikir">
+        <item>عام</item>
+        <item>أذكار الصباح</item>
+        <item>أذكار المساء</item>
+        <item>أذكار بعد الصلاة</item>
+        <item>مخصص</item>
+    </string-array>
+    <string name="target_count">/ %1$s</string>
+    <string name="muadzin">اختر المؤذن</string>
+    <string name="adzan_regular">الأذان العادي</string>
+    <string name="adzan_shubuh">أذان الفجر</string>
+    <string name="focus_mode"><![CDATA[وضع التركيز>>]]></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">مرحبا بالمكون الفارغ</string>
+    <string name="asmaul_husna">أسماء الله الحسنى</string>
+    <string name="menu_read_later">اقرأ لاحقًا</string>
+    <string name="menu_dark_mode">الوضع الداكن</string>
+    <string name="menu_asmaul_husna">أسماء الله الحسنى</string>
+    <string name="menu_digital_tasbih">مسبحة رقمية</string>
+    <string name="menu_notification_settings">إعدادات الإشعارات</string>
+    <string name="menu_choose_muezzin">اختر المؤذن</string>
+    <string name="menu_app_info">معلومات التطبيق</string>
+    <string name="menu_languages">اللغات</string>
+
+    <string name="notif_desc_template">حان وقت صلاة %1$s لمنطقة %2$s</string>
+</resources>

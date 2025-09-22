@@ -11,17 +11,19 @@ object OthersObject {
         R.drawable.ic_tasbih,
         R.drawable.ic_notif_setting,
         R.drawable.ic_hearing,
-        R.drawable.ic_about
+        R.drawable.ic_about,
+        R.drawable.ic_settings
     )
 
     private val menuTitle = listOf(
-        "Baca Nanti",
-        "Mode Gelap",
-        "Asmaul Husna",
-        "Tasbih Digital",
-        "Pengaturan Notifikasi",
-        "Pilih Muadzin",
-        "Info Aplikasi"
+        R.string.menu_read_later,
+        R.string.menu_dark_mode,
+        R.string.menu_asmaul_husna,
+        R.string.menu_digital_tasbih,
+        R.string.menu_notification_settings,
+        R.string.menu_choose_muezzin,
+        R.string.menu_app_info,
+        R.string.menu_languages,
     )
 
     val listData: ArrayList<Others>
@@ -38,6 +40,6 @@ object OthersObject {
 }
 
 data class Others(
-    var title: String = "",
+    var title: Int = 0,
     var image: Int = 0
 )
