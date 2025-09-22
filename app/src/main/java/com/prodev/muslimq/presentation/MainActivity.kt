@@ -49,9 +49,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun attachBaseContext(newBase: Context) {
-        val prefs = newBase.getSharedPreferences("settings", Context.MODE_PRIVATE)
-        val language = prefs.getString("app_language", "en") ?: "en"
-        val locale = Locale(language)
+        val dataStorePref = com.prodev.muslimq.core.data.preference.DataStorePreference(newBase)
+        val language = runBlocking { dataStorePref.getAppLanguage.first() }
+        val locale = when (language) {
+            "in" -> Locale("in", "ID")
+            else -> Locale(language)
+        }
         val config = newBase.resources.configuration
         config.setLocale(locale)
         val context = newBase.createConfigurationContext(config)

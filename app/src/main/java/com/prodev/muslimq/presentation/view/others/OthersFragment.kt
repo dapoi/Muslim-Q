@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.runBlocking
 import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.DialogSettingNotificationBinding
@@ -159,7 +160,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
     private fun showLanguageDialog() {
         val languages = arrayOf("English", "বাংলা", "العربية", "Bahasa Indonesia")
         val languageCodes = arrayOf("en", "bn", "ar", "in")
-        val currentLang = dataStoreViewModel.getAppLanguage.value ?: "en"
+        val currentLang = runBlocking { dataStoreViewModel.getCurrentLanguage() }
         var selectedIndex = languageCodes.indexOf(currentLang).takeIf { it >= 0 } ?: 0
 
         curvedDialog.setTitle("Select Language")
@@ -168,7 +169,7 @@ class OthersFragment : BaseFragment<FragmentOthersBinding>(FragmentOthersBinding
         }
         curvedDialog.setPositiveButton("OK") { _, _ ->
             val selectedLang = languageCodes[selectedIndex]
-            dataStoreViewModel.saveAppLanguage(selectedLang)
+            runBlocking { dataStoreViewModel.saveAppLanguage(selectedLang) }
             (activity as MainActivity).customSnackbar(
                 state = true,
                 message = "Language changed. Restarting app...",

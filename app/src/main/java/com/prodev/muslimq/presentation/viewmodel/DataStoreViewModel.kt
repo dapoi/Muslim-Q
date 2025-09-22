@@ -11,6 +11,7 @@ import com.prodev.muslimq.core.utils.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -91,10 +92,14 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
-    fun saveAppLanguage(language: String) {
-        viewModelScope.launch(ioDispatcher) {
-            dataStorePref.saveAppLanguage(language)
-        }
+    suspend fun saveAppLanguage(language: String) {
+        dataStorePref.saveAppLanguage(language)
+        // Clear city and country when language changes to force re-selection
+        dataStorePref.saveCityAndCountryData("", "")
+    }
+
+    suspend fun getCurrentLanguage(): String {
+        return dataStorePref.getAppLanguage.first()
     }
 
     private val getSurah = dataStorePref.getSurah
