@@ -1,5 +1,7 @@
 import com.dapascript.buildsrc.Libs
 import com.dapascript.buildsrc.SharedLibs
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("com.android.library")
@@ -36,8 +38,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    kotlinOptions {
-        jvmTarget = "21"
+    tasks.withType<KotlinCompile>().configureEach {
+        compilerOptions {
+            jvmTarget.set(JVM_21)
+            freeCompilerArgs.addAll("-opt-in=kotlin.RequiresOptIn")
+        }
     }
 
     buildFeatures {
