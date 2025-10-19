@@ -40,15 +40,17 @@
 
         <TextView
             android:id="@+id/tv_shubuh_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:includeFontPadding="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/gray"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_shubuh"
             app:layout_constraintEnd_toStartOf="@id/sw_shubuh"
+            app:layout_constraintStart_toEndOf="@+id/tv_shubuh"
             app:layout_constraintTop_toTopOf="@id/tv_shubuh"
             tools:text="05.00 WIB" />
 
@@ -96,15 +98,17 @@
 
         <TextView
             android:id="@+id/tv_dzuhur_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:includeFontPadding="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/gray"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_dzuhur"
             app:layout_constraintEnd_toStartOf="@id/sw_dzuhur"
+            app:layout_constraintStart_toEndOf="@+id/tv_dzuhur"
             app:layout_constraintTop_toTopOf="@id/tv_dzuhur"
             tools:text="12.00 WIB" />
 
@@ -152,15 +156,17 @@
 
         <TextView
             android:id="@+id/tv_ashar_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:includeFontPadding="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/gray"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ashar"
             app:layout_constraintEnd_toStartOf="@id/sw_ashar"
+            app:layout_constraintStart_toEndOf="@+id/tv_ashar"
             app:layout_constraintTop_toTopOf="@id/tv_ashar"
             tools:text="15.00 WIB" />
 
@@ -206,17 +212,19 @@
             app:layout_constraintStart_toEndOf="@id/iv_maghrib"
             app:layout_constraintTop_toTopOf="@id/iv_maghrib" />
 
-       <TextView
+        <TextView
             android:id="@+id/tv_maghrib_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:includeFontPadding="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/gray"
             android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/tv_maghrib"
             app:layout_constraintEnd_toStartOf="@id/sw_maghrib"
+            app:layout_constraintStart_toEndOf="@+id/tv_maghrib"
             app:layout_constraintTop_toTopOf="@id/tv_maghrib"
             tools:text="18.00 WIB" />
 
@@ -264,16 +272,19 @@
 
         <TextView
             android:id="@+id/tv_isya_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:paddingBottom="2dp"
+            android:layout_marginHorizontal="16dp"
+            android:includeFontPadding="false"
+            android:textAlignment="textEnd"
             android:textColor="@color/gray"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_isya"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/sw_isya"
-            app:layout_constraintTop_toTopOf="@id/tv_isya"
+            app:layout_constraintStart_toEndOf="@+id/tv_isya"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
             tools:text="19.30 WIB" />
 
         <androidx.appcompat.widget.SwitchCompat

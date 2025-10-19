@@ -11,8 +11,7 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="0dp"
-        android:fitsSystemWindows="true">
+        android:elevation="0dp">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
@@ -26,6 +25,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:scrimAnimationDuration="200"
             app:scrimVisibleHeightTrigger="400dp"
+            app:statusBarScrim="@color/white_base"
             app:titleCollapseMode="fade"
             app:titleEnabled="true">
 
@@ -118,9 +118,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_kaligrafi"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
                     app:layout_constraintStart_toStartOf="@id/cl_surah"
                     app:layout_constraintTop_toTopOf="@id/cl_surah"
-                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
                     tools:ignore="ContentDescription" />
 
                 <ImageView
@@ -129,9 +129,9 @@
                     android:layout_height="wrap_content"
                     android:rotationY="180"
                     android:src="@drawable/ic_kaligrafi"
+                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
                     app:layout_constraintEnd_toEndOf="@id/cl_surah"
                     app:layout_constraintTop_toTopOf="@id/cl_surah"
-                    app:layout_constraintBottom_toBottomOf="@id/cl_surah"
                     tools:ignore="ContentDescription" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -202,7 +202,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/transparent"
-                android:fitsSystemWindows="true"
                 android:gravity="center_horizontal"
                 android:theme="@style/Theme.MuslimQ.Toolbar"
                 app:layout_collapseMode="pin"
