@@ -15,7 +15,7 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.utils.AdzanConstants
 import com.prodev.muslimq.helper.getChannelId
 import com.prodev.muslimq.helper.getChannelName
-import okio.IOException
+import java.io.IOException
 
 class AdzanService : Service() {
 

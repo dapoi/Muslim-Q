@@ -1,19 +1,12 @@
-// change to kts
-buildscript {
-    dependencies {
-        classpath("com.android.tools.build:gradle:8.11.0")
-        classpath("com.google.gms:google-services:4.4.3")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.4")
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.1")
-    }
-}
-
 plugins {
-    id("com.android.application") version "8.11.0" apply false
-    id("com.android.library") version "8.11.0" apply false
-    id("org.jetbrains.kotlin.android") version "2.2.0" apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0" apply false
-    id("com.google.dagger.hilt.android") version "2.56.2" apply false
-    id("com.google.devtools.ksp") version "2.2.0-2.0.2" apply false
-    id("org.jetbrains.kotlin.jvm") version "2.2.0" apply false
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.google.firebase.crashlytics) apply false
+    alias(libs.plugins.google.gms.google.services) apply false
+    alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.ksp) apply false
+    id("androidx.navigation.safeargs.kotlin") version "2.9.6" apply false
 }

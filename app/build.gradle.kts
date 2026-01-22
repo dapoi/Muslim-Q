@@ -1,36 +1,29 @@
-import com.dapascript.buildsrc.Libs
-import com.dapascript.buildsrc.SharedLibs
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.application")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
     namespace = "com.prodev.muslimq"
-    compileSdk = Libs.targetSdk
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = Libs.appId
-        minSdk = Libs.minSdk
-        targetSdk = Libs.targetSdk
-        versionCode = Libs.versionCode
-        versionName = Libs.versionName
+        applicationId = "com.prodev.muslimq"
+        minSdk = 26
+        targetSdk = 36
+        versionCode = 20251028
+        versionName = "3.5"
 
-        testInstrumentationRunner = Libs.testInstrumentationRunner
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
-    }
-
-    android {
-        ndkVersion = "21.4.7075529"
     }
 
     buildTypes {
@@ -65,34 +58,26 @@ android {
 }
 
 dependencies {
-    // Apply shared dependencies
-    SharedLibs.applySharedDeps(dependencies)
-
-    // Core
     implementation(project(":core"))
 
-    // Main
-    implementation(Libs.coreKtx)
-    implementation(Libs.appCompat)
-    implementation(Libs.material)
-    implementation(Libs.constraintLayout)
-    implementation(Libs.datastore)
-
-    // Appearance
-    implementation(Libs.glide)
-    implementation(Libs.lottie)
-    implementation(Libs.shimmer)
-    implementation(Libs.pullToRefresh)
-    implementation(Libs.dotsIndicator)
-    implementation(Libs.primeCalendar)
-
-    // Navigation
-    implementation(Libs.navigationFragment)
-    implementation(Libs.navigationUi)
-
-    // Api Splash Screen
-    implementation(Libs.apiSplashScreen)
-
-    // ShowCaseView
-    implementation(Libs.showCaseView)
+    debugImplementation(libs.chucker.debug)
+    releaseImplementation(libs.chucker.release)
+    implementation(libs.appcompat)
+    implementation(libs.constraintlayout)
+    implementation(libs.core.ktx)
+    implementation(libs.core.splashscreen)
+    implementation(libs.dots.indicator)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.glide)
+    implementation(libs.google.location)
+    implementation(libs.hilt.android)
+    implementation(libs.lottie)
+    implementation(libs.material)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.prime.calendar)
+    implementation(libs.pull.to.refresh)
+    implementation(libs.shimmer)
+    implementation(libs.showcaseview)
+    ksp(libs.hilt.compiler)
 }

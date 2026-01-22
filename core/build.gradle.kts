@@ -1,25 +1,23 @@
-import com.dapascript.buildsrc.Libs
-import com.dapascript.buildsrc.SharedLibs
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.library")
-    id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.prodev.muslimq.core"
-    compileSdk = Libs.targetSdk
+    compileSdk = 36
 
     defaultConfig {
-        minSdk = Libs.minSdk
-        testOptions.targetSdk = Libs.targetSdk
+        minSdk = 26
+        testOptions.targetSdk = 36
 
-        testInstrumentationRunner = Libs.testInstrumentationRunner
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -51,40 +49,22 @@ android {
 }
 
 dependencies {
-
-    // Apply shared dependencies
-    SharedLibs.applySharedDeps(dependencies)
-
-    // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-
-    // Room
-    val roomVersion = "2.7.2"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-
-    // Retrofit
-    val retrofitVersion = "3.0.0"
-    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
-    implementation("com.squareup.retrofit2:converter-moshi:$retrofitVersion")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0")
-
-    // Moshi
-    api("com.squareup.moshi:moshi-kotlin:1.15.2")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
-
-    // Coroutines
-    val coroutinesVersion = "1.10.2"
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
-
-    // Coroutine lifecycle scopes
-    val lifeCycleScopeVersion = "2.9.1"
-    api("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifeCycleScopeVersion")
-    api("androidx.lifecycle:lifecycle-runtime-ktx:$lifeCycleScopeVersion")
-    api("androidx.lifecycle:lifecycle-livedata-ktx:$lifeCycleScopeVersion")
-
-    // Location
-    api("com.google.android.gms:play-services-location:21.3.0")
+    debugImplementation(libs.chucker.debug)
+    releaseImplementation(libs.chucker.release)
+    implementation(libs.datastore)
+    implementation(libs.google.location)
+    implementation(libs.hilt.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.okhttp.interceptor)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.moshi.converter)
+    implementation(libs.room.ktx)
+    implementation(libs.room.runtime)
+    ksp(libs.hilt.compiler)
+    ksp(libs.moshi.codegen)
+    ksp(libs.room.compiler)
 }
