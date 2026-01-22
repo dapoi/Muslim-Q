@@ -20,11 +20,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.prodev.muslimq.R
+import com.prodev.muslimq.core.data.preference.DataStorePreference
 import com.prodev.muslimq.core.utils.UITheme
 import com.prodev.muslimq.databinding.ActivityMainBinding
 import com.prodev.muslimq.presentation.viewmodel.DataStoreViewModel
 import com.prodev.muslimq.presentation.viewmodel.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -43,6 +48,19 @@ class MainActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, binding.root)
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        val dataStorePref = com.prodev.muslimq.core.data.preference.DataStorePreference(newBase)
+        val language = runBlocking { dataStorePref.getAppLanguage.first() }
+        val locale = when (language) {
+            "in" -> Locale("in", "ID")
+            else -> Locale(language)
+        }
+        val config = newBase.resources.configuration
+        config.setLocale(locale)
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().setKeepOnScreenCondition { splashViewModel.isLoading.value }
@@ -52,6 +70,8 @@ class MainActivity : AppCompatActivity() {
         setNavController(navController)
         setDarkMode()
     }
+
+
 
     private fun setNavController(navController: NavController) {
         val exceptFragment = setOf(

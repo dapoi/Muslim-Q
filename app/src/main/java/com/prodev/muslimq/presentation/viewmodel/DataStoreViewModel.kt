@@ -11,6 +11,7 @@ import com.prodev.muslimq.core.utils.UITheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -91,6 +92,16 @@ class DataStoreViewModel @Inject constructor(
         }
     }
 
+    suspend fun saveAppLanguage(language: String) {
+        dataStorePref.saveAppLanguage(language)
+        // Clear city and country when language changes to force re-selection
+        dataStorePref.saveCityAndCountryData("", "")
+    }
+
+    suspend fun getCurrentLanguage(): String {
+        return dataStorePref.getAppLanguage.first()
+    }
+
     private val getSurah = dataStorePref.getSurah
 
     private val getDetailSurahAyah = dataStorePref.getDetailSurahAyah
@@ -122,6 +133,8 @@ class DataStoreViewModel @Inject constructor(
         dataStorePref.getAdzanSoundStateAndMuadzin.asLiveData().distinctUntilChanged()
 
     val getMuadzin = dataStorePref.getMuadzin
+
+    val getAppLanguage = dataStorePref.getAppLanguage.asLiveData()
 
     data class CombineLastRead(
         val detailSurah: Pair<String, String>,
