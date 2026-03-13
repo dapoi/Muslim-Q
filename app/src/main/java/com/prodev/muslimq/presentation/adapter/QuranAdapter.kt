@@ -10,7 +10,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.databinding.ItemListSurahBinding
-import java.util.*
+import java.util.Locale
 
 class QuranAdapter(
     private val emptyState: LinearLayout
@@ -63,7 +63,7 @@ class QuranAdapter(
                 tvMeaningAndAyah.text = "${surah.arti} • ${surah.jumlahAyat} Ayat"
                 tvSurahNameArabic.text = surah.nama
 
-                vDivider.visibility = if (adapterPosition == listSurah.size - 1) {
+                vDivider.visibility = if (absoluteAdapterPosition == listSurah.size - 1) {
                     ViewGroup.INVISIBLE
                 } else {
                     ViewGroup.VISIBLE

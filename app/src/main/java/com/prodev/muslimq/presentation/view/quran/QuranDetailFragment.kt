@@ -4,15 +4,28 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.media.MediaPlayer
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.view.View
-import android.widget.*
+import android.widget.ImageView
+import android.widget.PopupMenu
+import android.widget.ProgressBar
+import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -57,11 +70,11 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
-import java.util.*
 
 @AndroidEntryPoint
-class QuranDetailFragment :
-    BaseFragment<FragmentQuranDetailBinding>(FragmentQuranDetailBinding::inflate) {
+class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
+    FragmentQuranDetailBinding::inflate
+) {
 
     private lateinit var detailAdapter: QuranDetailAdapter
     private lateinit var sbCurrentFontSize: SeekBar
@@ -140,9 +153,7 @@ class QuranDetailFragment :
 
         binding.ivBack.setOnClickListener { findNavController().popBackStack() }
 
-        swipeRefresh(
-            { detailViewModel.fetchQuranDetail() }, binding.srlSurah
-        )
+        swipeRefresh(binding.srlSurah) { detailViewModel.fetchQuranDetail() }
         initAdapter()
         initViewModel()
     }

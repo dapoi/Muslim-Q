@@ -26,6 +26,10 @@ class QuranViewModel @Inject constructor(
     val isCollapse: LiveData<Boolean> get() = _isCollapse
 
     init {
+        getQuran()
+    }
+
+    fun getQuran() {
         viewModelScope.launch {
             quranRepository.getQuran().collect {
                 _getListQuran.value = it

@@ -1,7 +1,6 @@
 package com.prodev.muslimq.presentation.view.quran
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,7 +15,6 @@ import com.prodev.muslimq.R
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.utils.Resource
 import com.prodev.muslimq.databinding.FragmentQuranBinding
-import com.prodev.muslimq.helper.InternetReceiver
 import com.prodev.muslimq.helper.hideKeyboard
 import com.prodev.muslimq.helper.swipeRefresh
 import com.prodev.muslimq.presentation.adapter.QuranAdapter
@@ -47,9 +45,7 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
             }
         }
 
-        swipeRefresh(
-            { InternetReceiver().onReceive(requireActivity(), Intent()) }, binding.srlSurah
-        )
+        swipeRefresh(binding.srlSurah) { quranViewModel.getQuran() }
         initAdapter()
         initViewModel()
     }
@@ -136,37 +132,10 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
 
             getListQuran.observe(viewLifecycleOwner) { response ->
                 with(binding) {
-                    etSurah.apply {
-                        addTextChangedListener(object : TextWatcher {
-                            override fun afterTextChanged(s: Editable?) {}
-
-                            override fun beforeTextChanged(
-                                s: CharSequence?, start: Int, count: Int, after: Int
-                            ) {
-                            }
-
-                            override fun onTextChanged(
-                                s: CharSequence?, start: Int, before: Int, count: Int
-                            ) {
-                                quranAdapter.filter.filter(s)
-                            }
-                        })
-
-                        setOnEditorActionListener { _, _, _ ->
-                            hideKeyboard(requireActivity())
-                            etSurah.clearFocus()
-                            true
-                        }
-                    }
-
                     val isLoading = response is Resource.Loading && response.data.isNullOrEmpty()
                     val isError = response is Resource.Error && response.data.isNullOrEmpty()
                     val isSuccess = response is Resource.Success
                     progressBar.isVisible = isLoading
-                    progressHeader.isVisible = isLoading
-                    tvTitle.isVisible = isSuccess
-                    clSurah.isVisible = isSuccess
-                    ctlHeader.isVisible = isSuccess
                     clNoInternet.isVisible = isError
 
                     if (isSuccess) {
@@ -191,6 +160,29 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                             hideKeyboard(requireActivity())
                             etSurah.text?.clear()
                             etSurah.clearFocus()
+                        }
+
+                        etSurah.apply {
+                            addTextChangedListener(object : TextWatcher {
+                                override fun afterTextChanged(s: Editable?) {}
+
+                                override fun beforeTextChanged(
+                                    s: CharSequence?, start: Int, count: Int, after: Int
+                                ) {
+                                }
+
+                                override fun onTextChanged(
+                                    s: CharSequence?, start: Int, before: Int, count: Int
+                                ) {
+                                    quranAdapter.filter.filter(s)
+                                }
+                            })
+
+                            setOnEditorActionListener { _, _, _ ->
+                                hideKeyboard(requireActivity())
+                                etSurah.clearFocus()
+                                true
+                            }
                         }
                     } else {
                         fabBackToTop.hide()

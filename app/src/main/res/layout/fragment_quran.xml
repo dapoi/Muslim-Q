@@ -184,22 +184,6 @@
 
                 </androidx.cardview.widget.CardView>
 
-                <com.facebook.shimmer.ShimmerFrameLayout
-                    android:id="@+id/progress_header"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <include layout="@layout/item_header_quran" />
-
-                    </LinearLayout>
-
-                </com.facebook.shimmer.ShimmerFrameLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.appcompat.widget.Toolbar
@@ -228,7 +212,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="20dp"
-            tools:layout_editor_absoluteX="20dp">
+            tools:layout_editor_absoluteX="24dp"
+            tools:layout_editor_absoluteY="125dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_surah"
@@ -267,6 +252,13 @@
                 <include layout="@layout/item_list_surah_placeholder" />
 
                 <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
+                <include layout="@layout/item_list_surah_placeholder" />
+
             </LinearLayout>
 
         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -279,6 +271,42 @@
             android:layout_marginTop="150dp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_no_internet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_empty"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="no_internet.json"
+                app:lottie_loop="true"
+                app:lottie_speed="1" />
+
+            <TextView
+                android:id="@+id/tv_result"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/no_internet"
+                android:textAlignment="center"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -296,39 +324,5 @@
         app:maxImageSize="35dp"
         app:tint="@color/white_always"
         tools:ignore="ContentDescription" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_no_internet"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_empty"
-            android:layout_width="210dp"
-            android:layout_height="210dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="no_internet.json"
-            app:lottie_loop="true"
-            app:lottie_speed="1" />
-
-        <TextView
-            android:id="@+id/tv_result"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/poppins_semibold"
-            android:text="@string/no_internet"
-            android:textAlignment="center"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lottie_empty" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

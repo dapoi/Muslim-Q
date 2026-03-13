@@ -106,13 +106,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                 Intent().apply {
                     action = ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                 }.also { startActivity(it) }
-            } else {
-                (activity as MainActivity).customSnackbar(
-                    state = true,
-                    context = requireContext(),
-                    view = binding.root,
-                    message = "${adzanLowerCase(stateAdzanName)} diaktifkan"
-                )
             }
         } else {
             (activity as MainActivity).customSnackbar(
@@ -182,15 +175,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
             val pm: PackageManager = requireContext().packageManager
             if (!pm.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)) {
-                // This device does not have a compass, turn off the compass feature
                 tvQibla.isVisible = false
             }
         }
 
-        swipeRefresh(
-            { shalatViewModel.refreshShalatTime() },
-            binding.srlShalat
-        )
+        swipeRefresh(binding.srlShalat) { shalatViewModel.fetchShalatTime(shalatViewModel.location) }
         initViewModel()
         dateGregorianAndHijri()
 
@@ -352,6 +341,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             })
         } else {
             try {
+                @Suppress("DEPRECATION")
                 val addresses = geocoder.getFromLocationName("$lat, $lon", 1)
                 if (!addresses.isNullOrEmpty()) {
                     val city = addresses[0].locality
@@ -382,7 +372,7 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
     private fun dateGregorianAndHijri() {
         binding.apply {
-            val indonesia = Locale("in", "ID")
+            val indonesia = Locale.forLanguageTag("id-ID")
             val simpleDateFormat = SimpleDateFormat("EEEE, dd MMM yyyy", indonesia)
             val date = simpleDateFormat.format(Date())
             tvGregorianDate.text = date
@@ -394,25 +384,23 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         }
     }
 
-    private fun initViewModel() {
+    private fun initViewModel() = with(binding) {
         shalatViewModel.getShalatTime.observe(viewLifecycleOwner) { result ->
-            binding.apply {
-                val isLoading = result is Resource.Loading
-                val isSuccess = result is Resource.Success || result.data != null && !isLoading
-                val isError = result is Resource.Error && result.data == null
+            val isLoading = result is Resource.Loading
+            val isSuccess = result is Resource.Success || result.data != null && !isLoading
+            val isError = result is Resource.Error && result.data == null
 
-                progressBar.isVisible = isLoading
-                clNegativeCase.isVisible = isError
-                shalatLayout.root.isVisible = isSuccess
-                if (isSuccess) getAllShalatData(result.data)
+            progressBar.isVisible = isLoading
+            clNegativeCase.isVisible = isError
+            shalatLayout.root.isVisible = isSuccess
+            if (isSuccess) getAllShalatData(result.data)
 
-                tvResult.text = getString(R.string.no_internet)
-                tvQibla.setOnClickListener {
-                    navigateToQibla(
-                        result.data?.lat,
-                        listOf(result.data?.city!!, result.data?.country!!)
-                    )
-                }
+            tvResult.text = getString(R.string.no_internet)
+            tvQibla.setOnClickListener {
+                navigateToQibla(
+                    result.data?.lat,
+                    listOf(result.data?.city!!, result.data?.country!!)
+                )
             }
         }
 
@@ -425,8 +413,11 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
             }
 
             getAreaData.observe(viewLifecycleOwner) { area ->
-                binding.tvYourLocation.text = area.first
-                shalatViewModel.setShalatTime(area)
+                tvYourLocation.text = area.first
+                if (shalatViewModel.location.first != area.first) {
+                    shalatViewModel.fetchShalatTime(area)
+                    shalatViewModel.location = area
+                }
             }
         }
     }
@@ -580,35 +571,33 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
 
         val timeNow = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
         binding.apply {
-            if (!tvYourLocation.text.contains("DKI")) {
-                // reset all backgrounds
-                resetBackgrounds()
+            // reset all backgrounds
+            resetBackgrounds()
 
-                when {
-                    timeNow > shubuh && timeNow <= dzuhur -> {
-                        tvTimeShalat.text = "${countDownShalat(dzuhur, timeNow)} menuju dzuhur"
-                        setNextPrayShalatBackground(shalatLayout.clDzuhur)
-                    }
+            when {
+                timeNow > shubuh && timeNow <= dzuhur -> {
+                    tvTimeShalat.text = "${countDownShalat(dzuhur, timeNow)} menuju dzuhur"
+                    setNextPrayShalatBackground(shalatLayout.clDzuhur)
+                }
 
-                    timeNow > dzuhur && timeNow <= ashar -> {
-                        tvTimeShalat.text = "${countDownShalat(ashar, timeNow)} menuju ashar"
-                        setNextPrayShalatBackground(shalatLayout.clAshar)
-                    }
+                timeNow > dzuhur && timeNow <= ashar -> {
+                    tvTimeShalat.text = "${countDownShalat(ashar, timeNow)} menuju ashar"
+                    setNextPrayShalatBackground(shalatLayout.clAshar)
+                }
 
-                    timeNow > ashar && timeNow <= maghrib -> {
-                        tvTimeShalat.text = "${countDownShalat(maghrib, timeNow)} menuju maghrib"
-                        setNextPrayShalatBackground(shalatLayout.clMaghrib)
-                    }
+                timeNow > ashar && timeNow <= maghrib -> {
+                    tvTimeShalat.text = "${countDownShalat(maghrib, timeNow)} menuju maghrib"
+                    setNextPrayShalatBackground(shalatLayout.clMaghrib)
+                }
 
-                    timeNow > maghrib && timeNow <= isya -> {
-                        tvTimeShalat.text = "${countDownShalat(isya, timeNow)} menuju isya"
-                        setNextPrayShalatBackground(shalatLayout.clIsya)
-                    }
+                timeNow > maghrib && timeNow <= isya -> {
+                    tvTimeShalat.text = "${countDownShalat(isya, timeNow)} menuju isya"
+                    setNextPrayShalatBackground(shalatLayout.clIsya)
+                }
 
-                    else -> {
-                        tvTimeShalat.text = "${countDownShalat(shubuh, timeNow)} menuju shubuh"
-                        setNextPrayShalatBackground(shalatLayout.clShubuh)
-                    }
+                else -> {
+                    tvTimeShalat.text = "${countDownShalat(shubuh, timeNow)} menuju shubuh"
+                    setNextPrayShalatBackground(shalatLayout.clShubuh)
                 }
             }
         }
@@ -657,7 +646,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         index: Int,
         resetSwitch: Boolean
     ) {
-        val lowerCaseAdzanName = adzanLowerCase(adzanName)
         listAdzanTime[adzanName]?.let { adzanTime ->
             if (isChecked) {
                 adzanReceiver.setAdzanReminder(
@@ -669,12 +657,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                     isShubuh = adzanName == AdzanConstants.KEY_ADZAN_SHUBUH
                 )
                 dataStoreViewModel.saveSwitchState(adzanName, true)
-                (activity as MainActivity).customSnackbar(
-                    true,
-                    requireContext(),
-                    binding.root,
-                    "$lowerCaseAdzanName diaktifkan"
-                )
             } else {
                 adzanReceiver.cancelAdzanReminder(
                     context = requireContext(),
@@ -691,13 +673,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
                             "Ubah lokasi berhasil, aktifkan kembali adzan"
                         )
                     }, 600)
-                } else {
-                    (activity as MainActivity).customSnackbar(
-                        false,
-                        requireContext(),
-                        binding.root,
-                        "$lowerCaseAdzanName dimatikan"
-                    )
                 }
             }
         }
@@ -732,10 +707,6 @@ class ShalatFragment : BaseFragment<FragmentShalatBinding>(FragmentShalatBinding
         val minutes = diff
 
         return "$hours jam $minutes menit"
-    }
-
-    private fun adzanLowerCase(adzanName: String): String {
-        return adzanName.substring(0, 1).uppercase() + adzanName.substring(1).lowercase()
     }
 
     override fun onDestroyView() {

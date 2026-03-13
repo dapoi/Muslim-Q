@@ -96,19 +96,17 @@ fun isOnline(context: Context): Boolean {
 }
 
 fun swipeRefresh(
-    method: () -> Unit,
     srl: SSPullToRefreshLayout,
+    method: () -> Unit
 ) {
     srl.apply {
         setLottieAnimation("loading.json")
         setRepeatMode(SSPullToRefreshLayout.RepeatMode.REPEAT)
         setRepeatCount(SSPullToRefreshLayout.RepeatCount.INFINITE)
-        setOnRefreshListener(object : SSPullToRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
-                method()
-                setRefreshing(false)
-            }
-        })
+        setOnRefreshListener {
+            method()
+            setRefreshing(false)
+        }
     }
 }
 

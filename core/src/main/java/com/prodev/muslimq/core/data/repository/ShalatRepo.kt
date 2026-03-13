@@ -34,7 +34,7 @@ class ShalatRepositoryImpl @Inject constructor(
             val today = calendar.get(Calendar.DAY_OF_MONTH)
             shalat.data.filter {
                 it.date.gregorian.day?.toInt() == today
-            }.map { pray ->
+            }.forEach { pray ->
                 val local = ShalatEntity(
                     day = pray.date.gregorian.day.toString(),
                     city = city,
