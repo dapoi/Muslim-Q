@@ -31,13 +31,6 @@
         android:label="fragment_shalat"
         tools:layout="@layout/fragment_shalat">
         <action
-            android:id="@+id/action_shalatFragment_to_shalatProvinceFragment"
-            app:destination="@id/shalatProvinceFragment"
-            app:enterAnim="@anim/from_bottom_anim"
-            app:exitAnim="@anim/no_anim"
-            app:popEnterAnim="@anim/no_anim"
-            app:popExitAnim="@anim/to_bottom_anim" />
-        <action
             android:id="@+id/action_shalatFragment_to_qiblaFragment"
             app:destination="@id/qiblaFragment"
             app:enterAnim="@anim/from_bottom_anim"
@@ -113,38 +106,6 @@
             android:name="ayahNumber"
             android:defaultValue="0"
             app:argType="integer" />
-    </fragment>
-    <fragment
-        android:id="@+id/shalatCityFragment"
-        android:name="com.prodev.muslimq.presentation.view.shalat.ShalatCityFragment"
-        android:label="fragment_shalat_city"
-        tools:layout="@layout/fragment_shalat_city">
-        <action
-            android:id="@+id/action_shalatCityFragment_to_shalatFragment"
-            app:destination="@id/shalatFragment"
-            app:popEnterAnim="@anim/no_anim"
-            app:popExitAnim="@anim/to_bottom_anim"
-            app:popUpTo="@id/shalatProvinceFragment"
-            app:popUpToInclusive="true" />
-        <argument
-            android:name="provinceId"
-            app:argType="string" />
-        <argument
-            android:name="provinceName"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/shalatProvinceFragment"
-        android:name="com.prodev.muslimq.presentation.view.shalat.ShalatProvinceFragment"
-        android:label="fragment_shalat_province"
-        tools:layout="@layout/fragment_shalat_province">
-        <action
-            android:id="@+id/action_shalatProvinceFragment_to_shalatCityFragment"
-            app:destination="@id/shalatCityFragment"
-            app:enterAnim="@anim/from_right_anim"
-            app:exitAnim="@anim/to_left_anim"
-            app:popEnterAnim="@anim/from_left_anim"
-            app:popExitAnim="@anim/to_right_anim" />
     </fragment>
     <fragment
         android:id="@+id/bookmarkFragment"

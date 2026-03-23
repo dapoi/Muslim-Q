@@ -11,7 +11,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -30,11 +29,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
@@ -83,8 +82,6 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
     private val detailViewModel: QuranDetailViewModel by viewModels()
     private val bookmarkViewModel: BookmarkViewModel by viewModels()
     private val dataStoreViewModel: DataStoreViewModel by viewModels()
-
-    private val args: QuranDetailFragmentArgs by navArgs()
 
     private val curvedDialog by lazy {
         AlertDialog.Builder(requireContext(), R.style.CurvedDialog)
@@ -153,7 +150,9 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
 
         binding.ivBack.setOnClickListener { findNavController().popBackStack() }
 
-        swipeRefresh(binding.srlSurah) { detailViewModel.fetchQuranDetail() }
+        swipeRefresh(binding.srlSurah) {
+            detailViewModel.fetchQuranDetail(detailViewModel.args.surahId)
+        }
         initAdapter()
         initViewModel()
     }
@@ -209,14 +208,14 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                         getString(R.string.tv_city_and_total_ayah, place, totalAyah)
 
                     // set list
-                    val ayahNumber = args.ayahNumber
-                    val isFromLastRead = args.isFromLastRead
+                    val ayahNumber = detailViewModel.args.ayahNumber
+                    val isFromLastRead = detailViewModel.args.isFromLastRead
                     showListAyah(
-                        ayahs,
-                        appBar,
-                        rvAyah,
-                        ayahNumber,
-                        isFromLastRead
+                        ayahs = ayahs,
+                        appBar = appBar,
+                        rvAyah = rvAyah,
+                        ayahNumber = ayahNumber,
+                        isFromLastRead = isFromLastRead
                     )
 
                     // setup bookmark
@@ -326,7 +325,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                 with(curvedDialog.create()) {
                     tvAyahArabic.text = it.ayatArab
                     tvAyahLatin.text = it.ayatLatin
-                    val mpAyah = MediaPlayer.create(requireContext(), Uri.parse(it.ayatAudio))
+                    val mpAyah = MediaPlayer.create(requireContext(), it.ayatAudio.toUri())
                     mpAyah.apply {
                         setOnPreparedListener {
                             isLooping = false
@@ -359,9 +358,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
 
     private fun tafsirSurah() {
         detailAdapter.tafsirClick = {
-            detailViewModel.fetchQuranTafsir(
-                ayahNumber = it.ayatNumber
-            )
+            detailViewModel.fetchQuranTafsir(ayahNumber = it.ayatNumber)
         }
     }
 
@@ -453,7 +450,6 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun showFontSettingDialog() {
         val dialogLayout = DialogFontSettingBinding.inflate(layoutInflater)
         val seekBar = dialogLayout.seekbarFontSize
@@ -854,7 +850,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                     )
                     playPauseAudio(binding.ivSound, false, audioUrl)
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 withContext(Dispatchers.Main) {
                     if (file.exists()) file.delete()
                     dialog?.dismiss()
@@ -890,7 +886,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
     private fun downloadAudio(audio: String) {
         dialog?.show()
 
-        val request = DownloadManager.Request(Uri.parse(audio))
+        val request = DownloadManager.Request(audio.toUri())
             .setTitle(getString(R.string.download_surah_notif, binding.tvSurahName.text))
             .setDescription(getString(R.string.download_surah, binding.tvSurahName.text))
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
@@ -1067,7 +1063,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                             message = "Tidak ada koneksi internet"
                         )
                     }
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     handler.removeCallbacks(this)
                 }
             }
@@ -1082,6 +1078,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun formatDuration(duration: Int): String {
         val minutes = duration / 1000 / 60
         val seconds = duration / 1000 % 60

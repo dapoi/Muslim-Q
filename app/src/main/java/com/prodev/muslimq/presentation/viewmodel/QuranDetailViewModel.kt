@@ -9,6 +9,7 @@ import com.prodev.muslimq.core.data.repository.QuranRepository
 import com.prodev.muslimq.core.data.source.local.model.QuranDetailEntity
 import com.prodev.muslimq.core.data.source.remote.model.TafsirDetailItem
 import com.prodev.muslimq.core.utils.Resource
+import com.prodev.muslimq.presentation.view.quran.QuranDetailFragmentArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -19,34 +20,29 @@ class QuranDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val args by lazy { QuranDetailFragmentArgs.fromSavedStateHandle(savedStateHandle) }
+
     private val _getQuranDetail = MutableLiveData<Resource<QuranDetailEntity?>>()
     val getQuranDetail: LiveData<Resource<QuranDetailEntity?>> = _getQuranDetail
 
     private val _getQuranTafsir = MutableLiveData<Pair<Resource<TafsirDetailItem>, Int>>()
     val getQuranTafsir: LiveData<Pair<Resource<TafsirDetailItem>, Int>> = _getQuranTafsir
 
-    private val surahId = savedStateHandle.get<Int>("surahId")
-
     init {
-        fetchQuranDetail()
+        fetchQuranDetail(args.surahId)
     }
 
-    fun fetchQuranDetail() {
+    fun fetchQuranDetail(surahId: Int) {
         viewModelScope.launch {
-            if (surahId != null) {
-                quranRepository.getQuranDetail(surahId).collect {
-                    _getQuranDetail.value = it
-                }
+            quranRepository.getQuranDetail(surahId).collect {
+                _getQuranDetail.value = it
             }
         }
     }
 
-    fun fetchQuranTafsir(
-        surahId: Int = this.surahId!!,
-        ayahNumber: Int
-    ) {
+    fun fetchQuranTafsir(ayahNumber: Int) {
         viewModelScope.launch {
-            quranRepository.getQuranTafsir(surahId, ayahNumber).collect { response ->
+            quranRepository.getQuranTafsir(args.surahId, ayahNumber).collect { response ->
                 _getQuranTafsir.value = Pair(response, ayahNumber)
             }
         }
