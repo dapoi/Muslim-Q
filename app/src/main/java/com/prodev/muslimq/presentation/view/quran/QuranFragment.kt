@@ -45,7 +45,9 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
             }
         }
 
-        swipeRefresh(binding.srlSurah) { quranViewModel.getQuran() }
+        swipeRefresh(binding.srlSurah) {
+            quranViewModel.getQuran()
+        }
         initAdapter()
         initViewModel()
     }
@@ -132,8 +134,8 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
 
             getListQuran.observe(viewLifecycleOwner) { response ->
                 with(binding) {
-                    val isLoading = response is Resource.Loading && response.data.isNullOrEmpty()
-                    val isError = response is Resource.Error && response.data.isNullOrEmpty()
+                    val isLoading = response is Resource.Loading
+                    val isError = response is Resource.Error
                     val isSuccess = response is Resource.Success
                     progressBar.isVisible = isLoading
                     clNoInternet.isVisible = isError
@@ -142,9 +144,9 @@ class QuranFragment : BaseFragment<FragmentQuranBinding>(FragmentQuranBinding::i
                         val listToSet = when {
                             searchQuery.isNotEmpty() && filteredData.isNotEmpty() -> filteredData
                             searchQuery.isNotEmpty() && filteredData.isEmpty() -> ArrayList()
-                            else -> response.data!!
+                            else -> response.data
                         }
-                        quranAdapter.setList(listToSet)
+                        listToSet?.let { quranAdapter.setList(it) }
 
                         if (searchQuery.isNotEmpty() && filteredData.isEmpty()) {
                             emptyState.root.visibility = View.VISIBLE

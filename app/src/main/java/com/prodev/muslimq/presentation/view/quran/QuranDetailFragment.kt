@@ -53,7 +53,6 @@ import com.prodev.muslimq.databinding.DialogSearchBinding
 import com.prodev.muslimq.databinding.DialogTaggingAyahBinding
 import com.prodev.muslimq.databinding.FragmentQuranDetailBinding
 import com.prodev.muslimq.helper.isOnline
-import com.prodev.muslimq.helper.swipeRefresh
 import com.prodev.muslimq.presentation.MainActivity
 import com.prodev.muslimq.presentation.adapter.QuranDetailAdapter
 import com.prodev.muslimq.presentation.view.BaseFragment
@@ -150,9 +149,6 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
 
         binding.ivBack.setOnClickListener { findNavController().popBackStack() }
 
-        swipeRefresh(binding.srlSurah) {
-            detailViewModel.fetchQuranDetail(detailViewModel.args.surahId)
-        }
         initAdapter()
         initViewModel()
     }
@@ -174,28 +170,19 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
         // get quran detail
         detailViewModel.getQuranDetail.observe(viewLifecycleOwner) { result ->
             with(binding) {
-                val isLoading = result is Resource.Loading && result.data == null
-                val isError = result is Resource.Error && result.data == null
-                val isSuccess = result is Resource.Success
-
-                progressHeader.isVisible = isLoading
-                progressBar.isVisible = isLoading
-                clSurah.isVisible = isSuccess
-                clSound.isVisible = isSuccess
-                rvAyah.isVisible = isSuccess
-                clNoInternet.isVisible = isError
-
-                if (isSuccess) {
-                    val dataSurah = result.data!!
+                result?.let {
+                    clSurah.isVisible = true
+                    clSound.isVisible = true
+                    rvAyah.isVisible = true
 
                     // set data
-                    val ayahs = ArrayList<Ayat>().apply { addAll(dataSurah.ayat) }
-                    enableActionBarFunctionality(dataSurah)
+                    val ayahs = ArrayList<Ayat>().apply { addAll(result.ayat) }
+                    enableActionBarFunctionality(result)
 
                     // set view data
-                    val place = dataSurah.tempatTurun.replaceFirstChar { it.uppercase() }
-                    val totalAyah = dataSurah.jumlahAyat
-                    val nameLatin = dataSurah.namaLatin
+                    val place = result.tempatTurun.replaceFirstChar { it.uppercase() }
+                    val totalAyah = result.jumlahAyat
+                    val nameLatin = result.namaLatin
                     if (nameLatin.contains("Al-Fatihah")) {
                         vDivider.isVisible = false
                         tvBismillah.isVisible = false
@@ -203,7 +190,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
 
                     toolbar.title = nameLatin
                     tvSurahName.text = nameLatin
-                    tvAyahMeaning.text = dataSurah.artiQuran
+                    tvAyahMeaning.text = result.artiQuran
                     tvCityAndTotalAyah.text =
                         getString(R.string.tv_city_and_total_ayah, place, totalAyah)
 
@@ -219,9 +206,9 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                     )
 
                     // setup bookmark
-                    bookmarkViewModel.setBookmark(dataSurah.surahId)
+                    bookmarkViewModel.setBookmark(result.surahId)
 
-                    setUpMediaPlayer(dataSurah.audio)
+                    setUpMediaPlayer(result.audio)
                     initProgressDialog(nameLatin)
 
                     // setup transparentdialog
@@ -229,7 +216,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
                     transparentDialog.setView(dialogLayout!!.root)
 
                     // tagging
-                    taggingSurah(dataSurah)
+                    taggingSurah(result)
 
                     // tafsir
                     tafsirSurah()
@@ -244,7 +231,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
         bookmarkViewModel.isBookmarked.observe(viewLifecycleOwner) { state ->
             checkBookmarkState(state)
 
-            detailViewModel.getQuranDetail.value?.data?.let { dataSurah ->
+            detailViewModel.getQuranDetail.value?.let { dataSurah ->
                 val bookmarkEntity = BookmarkEntity(
                     dataSurah.surahId,
                     dataSurah.nama,
@@ -358,7 +345,7 @@ class QuranDetailFragment : BaseFragment<FragmentQuranDetailBinding>(
 
     private fun tafsirSurah() {
         detailAdapter.tafsirClick = {
-            detailViewModel.fetchQuranTafsir(ayahNumber = it.ayatNumber)
+            detailViewModel.getQuranTafsir(ayahNumber = it.ayatNumber)
         }
     }
 

@@ -22,25 +22,21 @@ class QuranDetailViewModel @Inject constructor(
 
     val args by lazy { QuranDetailFragmentArgs.fromSavedStateHandle(savedStateHandle) }
 
-    private val _getQuranDetail = MutableLiveData<Resource<QuranDetailEntity?>>()
-    val getQuranDetail: LiveData<Resource<QuranDetailEntity?>> = _getQuranDetail
+    private val _getQuranDetail = MutableLiveData<QuranDetailEntity?>()
+    val getQuranDetail: LiveData<QuranDetailEntity?> = _getQuranDetail
 
     private val _getQuranTafsir = MutableLiveData<Pair<Resource<TafsirDetailItem>, Int>>()
     val getQuranTafsir: LiveData<Pair<Resource<TafsirDetailItem>, Int>> = _getQuranTafsir
 
     init {
-        fetchQuranDetail(args.surahId)
-    }
-
-    fun fetchQuranDetail(surahId: Int) {
         viewModelScope.launch {
-            quranRepository.getQuranDetail(surahId).collect {
-                _getQuranDetail.value = it
+            quranRepository.getQuranDetail(args.surahId).collect { response ->
+                _getQuranDetail.value = response.data
             }
         }
     }
 
-    fun fetchQuranTafsir(ayahNumber: Int) {
+    fun getQuranTafsir(ayahNumber: Int) {
         viewModelScope.launch {
             quranRepository.getQuranTafsir(args.surahId, ayahNumber).collect { response ->
                 _getQuranTafsir.value = Pair(response, ayahNumber)

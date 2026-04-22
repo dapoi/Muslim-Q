@@ -28,7 +28,7 @@ class QuranRepositoryImpl @Inject constructor(
         fetch = { service.getQuran() },
         saveFetchResult = { quran ->
             val local = ArrayList<QuranEntity>()
-            quran.data.map { response ->
+            quran.data.forEach { response ->
                 val data = QuranEntity(
                     response.nomor,
                     response.nama,

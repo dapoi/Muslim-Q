@@ -8,6 +8,9 @@ import com.prodev.muslimq.core.data.repository.QuranRepository
 import com.prodev.muslimq.core.data.source.local.model.QuranEntity
 import com.prodev.muslimq.core.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,8 +34,30 @@ class QuranViewModel @Inject constructor(
 
     fun getQuran() {
         viewModelScope.launch {
-            quranRepository.getQuran().collect {
-                _getListQuran.value = it
+            quranRepository.getQuran().collect { response ->
+                when (response) {
+                    is Resource.Loading -> _getListQuran.value = response
+                    is Resource.Success -> {
+                        _getListQuran.value = Resource.Loading(response.data)
+                        val deferredDetails = (1..114).map { surahId ->
+                            async {
+                                quranRepository.getQuranDetail(surahId).first { result ->
+                                    result is Resource.Success || result is Resource.Error
+                                }
+                            }
+                        }
+                        val detailsResults = deferredDetails.awaitAll()
+                        val findError = detailsResults.any { it is Resource.Error }
+
+                        if (findError) {
+                            _getListQuran.value = Resource.Error(Throwable())
+                        } else {
+                            _getListQuran.value = Resource.Success(response.data!!)
+                        }
+                    }
+
+                    is Resource.Error -> _getListQuran.value = response
+                }
             }
         }
     }
