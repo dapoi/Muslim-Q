@@ -18,8 +18,8 @@ android {
         applicationId = "com.prodev.muslimq"
         minSdk = 26
         targetSdk = 37
-        versionCode = 20251028
-        versionName = "3.5"
+        versionCode = 20260422
+        versionName = "4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
