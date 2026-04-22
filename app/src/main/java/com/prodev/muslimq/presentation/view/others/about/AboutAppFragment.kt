@@ -1,9 +1,14 @@
 package com.prodev.muslimq.presentation.view.others.about
 
 import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.fragment.findNavController
 import com.prodev.muslimq.BuildConfig
 import com.prodev.muslimq.R
@@ -21,6 +26,12 @@ class AboutAppFragment : BaseFragment<FragmentAboutAppBinding>(FragmentAboutAppB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Safely extract system bar physical height using modern WindowInsets without deprecated APIs
+        val insets = ViewCompat.getRootWindowInsets(requireActivity().window.decorView)
+        val topPadding = insets?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+        val bottomPadding = insets?.getInsets(WindowInsetsCompat.Type.navigationBars())?.bottom ?: 0
+        binding.root.setPadding(0, topPadding, 0, bottomPadding)
 
         binding.apply {
             ivBack.setOnClickListener { findNavController().popBackStack() }
@@ -44,16 +55,26 @@ class AboutAppFragment : BaseFragment<FragmentAboutAppBinding>(FragmentAboutAppB
 
     private fun hideSystemUI(state: Boolean) {
         val window = requireActivity().window
+        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
+
         if (state) {
-            window.statusBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.green_button)
-            window.navigationBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.green_button)
+            window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
+            window.statusBarColor = Color.TRANSPARENT
+            window.navigationBarColor = Color.TRANSPARENT
+            insetsController.isAppearanceLightStatusBars = false
+            insetsController.isAppearanceLightNavigationBars = false
         } else {
-            window.statusBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.white_base)
-            window.navigationBarColor =
-                ContextCompat.getColor(requireActivity(), R.color.white_second)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+
+            window.statusBarColor = ContextCompat.getColor(
+                requireContext(), R.color.white_base
+            )
+            window.navigationBarColor = ContextCompat.getColor(
+                requireContext(), R.color.white_second
+            )
+            insetsController.isAppearanceLightStatusBars = true
+            insetsController.isAppearanceLightNavigationBars = true
         }
     }
 
@@ -62,8 +83,8 @@ class AboutAppFragment : BaseFragment<FragmentAboutAppBinding>(FragmentAboutAppB
         hideSystemUI(true)
     }
 
-    override fun onDestroyView() {
+    override fun onPause() {
+        super.onPause()
         hideSystemUI(false)
-        super.onDestroyView()
     }
 }
