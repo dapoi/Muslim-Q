@@ -1,26 +1,26 @@
 [versions]
-androidGradlePlugin = "8.13.2"
+androidGradlePlugin = "9.1.1"
 appCompat = "1.7.1"
-chucker = "4.3.0"
+chucker = "4.3.1"
 constraintLayout = "2.2.1"
-coreKtx = "1.17.0"
-datastore = "1.2.0"
+coreKtx = "1.18.0"
+datastore = "1.2.1"
 dotsIndicator = "5.1.0"
-firebaseCrashlytics = "20.0.4"
-googleFirebaseCrashlytics = "3.0.6"
+firebaseCrashlytics = "20.0.5"
+googleFirebaseCrashlytics = "3.0.7"
 googleGmsGoogleServices = "4.4.4"
 googleLocation = "21.3.0"
-glide = "5.0.5"
-hilt = "2.58"
+glide = "5.0.7"
+hilt = "2.59.2"
 interceptor = "5.3.2"
-kotlin = "2.3.0"
-kotlinxSerializationJson = "1.9.0"
+kotlin = "2.3.20"
+kotlinxSerializationJson = "1.11.0"
 ksp = "2.3.4"
 lifeCycleScope = "2.10.0"
 lottie = "6.7.1"
 material = "1.13.0"
 moshi = "1.15.2"
-navigation = "2.9.6"
+navigation = "2.9.7"
 primeCalendar = "1.7.0"
 pullToRefresh = "1.5.3"
 retrofit = "3.0.0"
@@ -70,7 +70,6 @@ android-library = { id = "com.android.library", version.ref = "androidGradlePlug
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

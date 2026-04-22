@@ -6,19 +6,18 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
     alias(libs.plugins.hilt)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
     namespace = "com.prodev.muslimq"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.prodev.muslimq"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 20251028
         versionName = "3.5"
 
@@ -54,6 +53,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

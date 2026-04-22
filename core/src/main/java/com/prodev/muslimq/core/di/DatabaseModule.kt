@@ -23,19 +23,19 @@ object DatabaseModule {
     @Provides
     fun getQuranDB(@ApplicationContext context: Context): QuranDatabase = Room.databaseBuilder(
         context, QuranDatabase::class.java, "quran.db"
-    ).fallbackToDestructiveMigration().build()
+    ).fallbackToDestructiveMigration(false).build()
 
     @Singleton
     @Provides
     fun getShalatDB(@ApplicationContext context: Context): ShalatDatabase = Room.databaseBuilder(
         context, ShalatDatabase::class.java, "shalat.db"
-    ).fallbackToDestructiveMigration().build()
+    ).fallbackToDestructiveMigration(false).build()
 
     @Singleton
     @Provides
     fun getTasbihDB(@ApplicationContext context: Context): TasbihDatabase = Room.databaseBuilder(
         context, TasbihDatabase::class.java, "tasbih.db"
-    ).fallbackToDestructiveMigration().build()
+    ).fallbackToDestructiveMigration(false).build()
 
     @Provides
     fun getQuranDao(database: QuranDatabase): QuranDao = database.quranDao()
